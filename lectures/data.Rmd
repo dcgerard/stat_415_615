@@ -1,0 +1,20 @@
+---
+title: "Data"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: html_document
+bibliography: "data.bib"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- [hibbs.csv](./data/hibbs.csv): Data from Chapter 7 of [ROS](https://avehtari.github.io/ROS-Examples/) based on the "bread and peace" model of @hibbs2000bread which predicts incumbent party's share of the two-party vote as a function of income growth.
+    - `year`: Year of the election.
+    - `growth`: Inflation-adjusted growth in average personal income.
+    - `vote`: Incumbant party's vote share of the two-party vote (excludes third parties).
+    - `inc_party_candidate`: The candidate of the incumbant party.
+    - `other_candidate`: The candidate of the other party.
+
+# References

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2021-05-19" />
+
+<title>R Graphics with qplot</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">R Graphics with <code>qplot</code></h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2021-05-19</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#general-considerations">General Considerations</a></li>
+<li><a href="#one-variable">One Variable</a>
+<ul>
+<li><a href="#continuous">Continuous</a></li>
+<li><a href="#discrete">Discrete</a></li>
+</ul></li>
+<li><a href="#two-variables">Two Variables</a>
+<ul>
+<li><a href="#continuous-x-continuous-y">Continuous X, Continuous Y</a></li>
+<li><a href="#discrete-x-continuous-y">Discrete X, Continuous Y</a></li>
+</ul></li>
+<li><a href="#color-coding-and-legends">Color Coding and Legends</a></li>
+<li><a href="#changing-a-legend-title">Changing a legend title</a></li>
+<li><a href="#faceting">Faceting</a></li>
+<li><a href="#change-theme">Change Theme</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>I show you how to create the most important plots for this course.</p>
+<p>Before using <code>qplot</code> in a new R session, always first load the <code>{ggplot2}</code> library.</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<p>I use this dataset</p>
+<pre class="r"><code>data(mpg, package = &quot;ggplot2&quot;)</code></pre>
+<p>In this vignette, we’ll also make some variable transformations, so we will need the <code>{dplyr}</code> package.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+</div>
+<div id="general-considerations" class="section level1">
+<h1>General Considerations</h1>
+<p>The main options that I use are</p>
+<ul>
+<li>Options for <code>"geom"</code> argument:
+<ul>
+<li><code>"point"</code>: Makes scatterplots.</li>
+<li><code>"line"</code>: Makes a line plot.</li>
+<li><code>"histogram"</code>: Makes a histogram.</li>
+<li><code>"boxplot"</code>: Makes a boxplot.</li>
+<li><code>"density"</code>: Makes the density plot.</li>
+<li><code>"bar"</code>: First tabulates frequencies of each value, then makes a barplot.</li>
+<li><code>"smooth"</code>: Fits a smooth line to a cloud of points and plots the output.</li>
+<li><code>"dotplot"</code>: Makes a dotplot.</li>
+</ul></li>
+</ul>
+<p><code>qplot</code> has other arguments that control the way the plot looks. You should read about these arguments. In particular, read carefully the help page <code>?qplot</code>. Useful ones are:</p>
+<ul>
+<li><code>data</code>: Specify the dataframe that all variables belong to.</li>
+<li><code>main</code>: This controls the title.</li>
+<li><code>xlab</code>, <code>ylab</code>: These control the x and y axis labels.</li>
+<li><code>color</code>: Controls the color of the lines/points.</li>
+<li><code>fill</code>: Controls the color of areas (e.g. for histograms).</li>
+<li><code>size</code>: Controls the size of points.</li>
+<li><code>shape</code>: The shape of points (<code>"circle"</code>, <code>"square"</code>, <code>"triangle"</code>, etc…)</li>
+<li><code>alpha</code>: Controls the level of transparency of points/lines/fills.</li>
+<li><code>lwd</code>: Line width.</li>
+<li><code>lty</code>: Line type (<code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, etc…).</li>
+<li><code>facets</code>: Split up the data into multiple plots.</li>
+</ul>
+<p>If you want to make all points the same shape/size/color, you need to enclose the size/shape/color using the function <code>I()</code>.</p>
+<p>If a variable is being treated as continuous rather than categorical, you need to enclose that variable in a <code>factor()</code> function call.</p>
+</div>
+<div id="one-variable" class="section level1">
+<h1>One Variable</h1>
+<div id="continuous" class="section level2">
+<h2>Continuous</h2>
+<p>Histogram</p>
+<pre class="r"><code>qplot(x = hwy, data = mpg, geom = &quot;histogram&quot;, bins = 10)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Make the bin lines black and the fill white.</p>
+<pre class="r"><code>qplot(x = hwy,
+      data = mpg,
+      geom = &quot;histogram&quot;,
+      bins = 10, 
+      color = I(&quot;black&quot;),
+      fill = I(&quot;white&quot;))</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="discrete" class="section level2">
+<h2>Discrete</h2>
+<p>Barplot</p>
+<pre class="r"><code>qplot(x = drv, data = mpg, geom = &quot;bar&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="two-variables" class="section level1">
+<h1>Two Variables</h1>
+<div id="continuous-x-continuous-y" class="section level2">
+<h2>Continuous X, Continuous Y</h2>
+<p>Scatterplot</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div style="page-break-after: always;"></div>
+<p>Jitter points to account for overlaying points.</p>
+<pre class="r"><code>mpg &lt;- mutate(mpg, cty_jit = jitter(cty), hwy_jit = jitter(hwy))
+qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Add a Loess Smoother</p>
+<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = &quot;point&quot;) + 
+  geom_smooth()</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="discrete-x-continuous-y" class="section level2">
+<h2>Discrete X, Continuous Y</h2>
+<p>Boxplot</p>
+<pre class="r"><code>qplot(x = class, y = hwy, data = mpg, geom = &quot;boxplot&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="color-coding-and-legends" class="section level1">
+<h1>Color Coding and Legends</h1>
+<p>Color code a scatterplot by a categorical variable and add a legend.</p>
+<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div style="page-break-after: always;"></div>
+</div>
+<div id="changing-a-legend-title" class="section level1">
+<h1>Changing a legend title</h1>
+<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg) + 
+  scale_color_discrete(name = &quot;New Name1&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, shape = drv, data = mpg) +
+  scale_shape_discrete(name = &quot;New Name2&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="faceting" class="section level1">
+<h1>Faceting</h1>
+<p>You can facet by a categorical variable using the <code>facets</code> argument.</p>
+<p>The variable to the left of the tilde (“<code>~</code>”) indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot (“<code>.</code>”) in place of a variable means that there will only be one row/column facet.</p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-14-2.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-15-1.png" width="336" style="display: block; margin: auto;" /></p>
+</div>
+<div id="change-theme" class="section level1">
+<h1>Change Theme</h1>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg) +
+  theme_bw()</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

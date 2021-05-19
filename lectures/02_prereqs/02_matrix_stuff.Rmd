@@ -1,0 +1,22 @@
+---
+title: "Linear Algebra Basics"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Learning Objectives
+
+- Understand just enough linear algebra to get by.
+- Vectors, matrices, matrix multiplication, transpose, trace
+
+
+

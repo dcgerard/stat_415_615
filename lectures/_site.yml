@@ -1,0 +1,15 @@
+name: "Stat_415_615"
+output_dir: "../docs"
+navbar:
+  title: "Teaching Website for STAT 415/615"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Data"
+      href: data.html
+  right:
+    - text: GitHub
+      href: https://github.com/dcgerard/stat_415_615
+output:
+  html_document:
+    theme: yeti

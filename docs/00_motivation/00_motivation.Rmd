@@ -1,0 +1,42 @@
+---
+title: "Motivation"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+# What is linear regression?
+
+- Fitting lines and planes through clouds of points.
+
+# What can you use it for?
+
+- Detecting trends.
+    - Easy to see trends if you have two variables. Harder if you have more.
+    - Linear regression allows us to say "folks that have bigger x tend to have bigger y".
+
+- Control for other variables.
+
+# Generality
+
+- Many statistical procedures are special cases of (or approximations to) linear regression.
+
+## $t$-test
+
+```{r}
+## t-test p-value
+t.test(mpg ~ am, data = mtcars, var.equal = TRUE)$p.value
+
+## linear regression p-value
+lmout <- lm(mpg ~ am, data = mtcars)
+coef(summary(lmout))["am", "Pr(>|t|)"]
+```

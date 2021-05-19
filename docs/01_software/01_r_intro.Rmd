@@ -1,0 +1,269 @@
+---
+title: "Introduction to R"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+- R is a statistical programming language designed to analyze data.
+
+- This is not an R course. But you need to know some tools to summarize/plot/model data.
+
+- R is free, widely used, more generally applicable (beyond linear regression), and a useful tool for reproducibility. So this is what we will use.
+
+- Python would have been a good choice too, but you can learn that in the machine learning course (STAT 427/627).
+
+# Installation
+
+- Install here R : <https://cran.r-project.org/>
+
+- Install R Studio here: <https://www.rstudio.com/>
+
+- NOTE: R is a programming language. R Studio is an [IDE](https://en.wikipedia.org/wiki/Integrated_development_environment), a program for interacting with programming language (specifically R in this case). Thus, on your resume, you should say that you know R, *not* R Studio.
+
+# Before we begin
+
+- I cannot teach you everything there is to know in R. When you
+know the name of a function, but don't know the commands, use
+the `help()` function. For example, to learn more about `log()` type
+
+    ```{r, eval = FALSE}
+    help(log)
+    ```
+
+- Alternatively, if you do not know the name of the function, you can
+Google the functionality you want. Googling coding solutions is a
+lot of what real data scientists do. Just append what you are Googling with "in R". So, for example, "linear mixed effects models in R".
+
+# R Basics
+
+- When you first open up R Studio, it should look something like this
+
+  ![](./00_figures/rstudio_1.png)\ 
+  
+- The area to the right of the carrot "`>`" is called a **prompt**. You insert commands into the prompt.
+
+- You can use R as a powerful calculator. Try typing some of the following into the command prompt:
+
+    ```{r, eval = FALSE}
+    3 * 7
+    9 / 3
+    4 + 6
+    3 - 9
+    (3 + 5) * 6
+    3 ^ 2
+    4 ^ 2
+    ```
+
+- R consists of two things: variables and functions (computer scientists would probably disagree with
+this categorization).
+
+## Variables
+
+- A variable stores a value. You use the **assignment operator** "`<-`" to assign values to variables. For example, we can assign the value of `10` to the variable `x`.
+
+    ```{r}
+    x <- 10
+    ```
+    
+    - It is possible to use `=`, and I think there is nothing wrong with that. But for some reason the field has decided to only use `<-`, so you should too.
+    
+- Whenever we use `x` later, it will use the value of 10
+
+    ```{r}
+    x
+    ```
+    
+- This is useful because you can reuse this value over and over again:
+
+    ```{r, eval = FALSE}
+    y <- 0
+    x + y
+    x * y
+    x / y
+    x - y
+    ```
+
+- To assign a "string" (a fancy way to say a word) to `x`, put the string in quotes. For example, we can assing the value of `"Hello World"` to `x`.
+
+    ```{r}
+    x <- "Hello World"
+    x
+    ```
+
+## Functions
+
+- Functions take objects (such as numbers or variables) as input and output
+  new objects. Let's look at a 
+  simple function that takes the log of a number:
+  
+    ```{r, eval=FALSE}
+    log(x = 4, base = 2)
+    ```
+  
+- The inputs are called "arguments". Generally, every function will be for the
+  form:
+  
+    ```{r, eval = FALSE}
+    function_name(arg1 = val1, arg2 = val2, ...)
+    ```
+
+- If you do not specify the name of the argument, R will assume you are 
+  assigning in their order.
+  
+    ```{r, eval = FALSE}
+    log(4, 2)
+    ```
+
+- You can change the order of the arguments if you specify them.
+
+    ```{r, eval = FALSE}
+    log(base = 2, x = 4)
+    ```
+
+- To see the list of all possible arguments of a function, use the `help()` 
+  function:
+  
+    ```{r, eval=FALSE}
+    help(log)
+    ```
+
+- In the help file, there are often **default** values for an argument. For 
+  example, the following indicates the the default value of `base` is `exp(1)`.
+  
+    ```{r, eval = FALSE}
+    log(x, base = exp(1))
+    ```
+  
+- This indicates that you can omit the `base` argument and R will assume that 
+  it should be `exp(1)`.
+  
+    ```{r}
+    log(x = 4, base = exp(1))
+    log(x = 4)
+    ```
+
+- If an argument does not have a default, then it must be specified when calling a function.
+  
+- Type this:
+
+    ```{r, eval = FALSE}
+    log(x = 4,
+    ```
+
+- The "`+`" indicates that R is expecting more input (you forgot either a
+  parentheses or a quotation mark). You can get back to the prompt by hitting
+  the ESCAPE key.
+
+- A **package** is a collection of functions that don't come with R by default.
+
+- There are **many many** packages available. If you need to do any data
+  analysis, there is probably an R package for it.
+
+- Using `install.packages()`, you can install packages that contain functions 
+  and datasets that are not available by default. Do this now with the 
+  tidyverse package:
+  
+    ```{r, eval = FALSE}
+    install.packages("tidyverse")
+    ```
+
+- You will only need to install a package once per computer. Once it is 
+  installed you can gain access to all of the functions and datasets in a
+  package by using the `library()` function. 
+  
+    ```{r, eval=FALSE}
+    library(tidyverse)
+    ```
+
+- You will need to run `library()` at the start of every R session if you 
+  want to use the functions in a package.
+  
+- When I want to write the name of a function, I will write it like `this()`.
+
+# Data Frames
+
+- The fundamental unit object of data analysis is the **data frame**.
+
+- A data frame has variables in the columns, and observations in the rows. 
+
+    ![](./00_figures/dataframe.png){width=50%}\ 
+    
+- R comes with a bunch of famous datasets in the form of a data frame. Such as the `mtcars` dataset.
+
+    ```{r}
+    data("mtcars")
+    mtcars
+    ```
+    
+- You can explore these in a spreadsheet format using `View()` (note the capital "V").
+
+    ```{r, eval = FALSE}
+    View(mtcars)
+    ```
+
+## Reading in Data Frames
+
+- Most datasets will nead to be loaded into R. To do so, we will use the `{readr}` package.
+
+    ```{r}
+    library(readr)
+    ```
+
+- The only function I will require you to know from this package is `read_csv()`, which loads in data from a [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values) ("Comma-separated values"), a very popular format for storing data.
+
+- If you have the CSV file somewhere on your computer, then specify the pack from the current working directory, and assign the data frame to a variable.
+
+- For other file formats, you need to use other functions, such as `read_tsv()`, `read_table()`, `read_fwf()`, etc. I will try to make sure `read_csv()` works for all datasets in this course.
+
+# Basic Data Frame Manipulations
+
+- You will need to know just a few data frame manipulations, which we will perform using the `{dplyr}` package.
+
+    ```{r, message = FALSE}
+    library(dplyr)
+    ```
+
+- Use the `mutate()` function from the `{dplyr}` package to make variable transformations.
+    
+- Use `glimpse()` to get a brief look at the data frame.
+
+- Use `View()` to see a spreadsheet of the data frame (never put this in an R Markdown file). Note the capital "V".
+
+- Use `rename()` to rename variables.
+
+- Use `filter()` to remove rows.
+
+# Summary
+
+Here is the list of basic R stuff I expect you to know off the top of your head.
+
+- `help()`: Open help file.
+- `install.packages()`: Install an external R package.
+- `library()`: Load the functions of an external R package so you can use them.
+- `<-`: Variable assignment.
+- `+`, `-`, `/`, `*`: Arithmetic operations.
+- `^`: Powers.
+- `sqrt()`: Square root.
+- `log()`: Log (base e).
+- `$`: Extracting a variable from a data frame.
+- `View()`: Look at a spreadsheet of data.
+- `head()`: See first six elements.
+- From `{readr}`:
+  - `read_csv()`: Loading in tabular data.
+- From `{dplyr}`:
+  - `glimpse()`: Look at a data frame.
+  - `mutate()`: Variable transformation.
+  - `rename()`: Variable renaming.
+- From `{ggplot2}`
+  - `qplot()`: Make a histogram or scatterplot.
