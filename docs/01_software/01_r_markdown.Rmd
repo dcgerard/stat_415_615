@@ -56,11 +56,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - Open up a new R Markdown file:
 
-![](./00_figures/rmarkdown.png)\ 
+![](./01_figures/rmarkdown.png)\ 
 
 - Choose the options for the type of output you want
 
-![](./00_figures/rmarkdown_options.png)\ 
+![](./01_figures/rmarkdown_options.png)\ 
 
 
 - You should now have a rudimentary R Markdown file.

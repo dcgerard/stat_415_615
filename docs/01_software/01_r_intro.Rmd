@@ -49,7 +49,7 @@ lot of what real data scientists do. Just append what you are Googling with "in 
 
 - When you first open up R Studio, it should look something like this
 
-  ![](./00_figures/rstudio_1.png)\ 
+  ![](./01_figures/rstudio_1.png)\ 
   
 - The area to the right of the carrot "`>`" is called a **prompt**. You insert commands into the prompt.
 
@@ -197,7 +197,7 @@ this categorization).
 
 - A data frame has variables in the columns, and observations in the rows. 
 
-    ![](./00_figures/dataframe.png){width=50%}\ 
+    ![](./01_figures/dataframe.png){width=50%}\ 
     
 - R comes with a bunch of famous datasets in the form of a data frame. Such as the `mtcars` dataset.
 
@@ -246,7 +246,7 @@ this categorization).
 
 # Summary
 
-Here is the list of basic R stuff I expect you to know off the top of your head.
+Here is the list of basic R stuff I expect you to know off the top of your head. We will add to this list throughout the semester.
 
 - `help()`: Open help file.
 - `install.packages()`: Install an external R package.

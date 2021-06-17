@@ -39,9 +39,13 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 # Textbooks
 
-- **Required**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best books I've read on applied regression analysis. The only issue is that the code they use is a little non-standard, so I will supplement this book with code examples.
+<!-- - **Required**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best books I've read on applied regression analysis. The only issue is that the code they use is a little non-standard, so I will supplement this book with code examples. -->
+
+- **Required**: Free PDF version of [Applied Linear Statistical Models (Fifth Edition)](http://users.stat.ufl.edu/~winner/sta4211/ALSM_5Ed_Kutner.pdf) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book. I will generally abbreviate this book as KNNL.
 
 - **Supplemental**: The *free* [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
+
+- I will also provide you with supplemental PDF readings as required.
 
 # Computing and Software
 
@@ -56,8 +60,8 @@ We will use the R computing language to complete assignments. R is free and may 
   - Status update 1: 5%
   - Status update 2: 5%
   - Status update 3: 5%
-  - Final Report: 15%
-  - Final Presentation: 5%
+  - Final Report: 10%
+  - Final Presentation: 10%
   
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
@@ -71,17 +75,24 @@ Individual assignments will not be curved. However, at the discretion of the ins
 
 # List of Topics
 
-1. R basics (Chapter 2 of ROS)
-2. Mathematical and Statistical Prerequisites (Chapters 3, 4, and 5 of ROS)
-3. Simple Linear Regression (Chapters 6, 7, and 8 of ROS)
-4. Multiple Linear Regression (Chapter 10 of ROS)
-    - (STAT 615 only): Matrix form of linear regression and matrix derivation of OLS estimators.
-5. Assumptions and Diagnostics (Chapter 11 of ROS)
-6. Transformations (Chapter 12)
-7. Study/Experimental Design (Chapter 16)
-8. Missing Data (Chapter 17)
-9. Logistic Regression (Chapters 13 and 14)
-10. Basics of Causal Inference (Chapter 18).
+1. R basics.
+2. Mathematical and Statistical Prerequisites.
+3. Simple Linear Regression (Chapters 1-5 of KNNL).
+    a. The model and interpretation.
+    b. Inference (estimation/hypothesis testing).
+    c. Diagnostics and remedial measures.
+4. Multiple Linear Regression (Chapters 6-8 of KNNL).
+    a. The model and interpretation.
+    b. Inference (estimation/hypothesis testing).
+    c. Diagnostics and remedial measures.
+5. Model Building (Chapters 9-11 of KNNL).
+    a. Theoretical considerations.
+    b. The limited usability of automated procedures.
+6. Experimental Design.
+    a. Simulation as a general tool.
+    b. Sample size calculation.
+7. Dealing with Missing data.
+    a. Imputation.
 
 # Course Learning Outcomes
 

@@ -246,7 +246,7 @@ this categorization).
 
 # Summary
 
-Here is the list of basic R stuff I expect you to know off the top of your head.
+Here is the list of basic R stuff I expect you to know off the top of your head. We will add to this list throughout the semester.
 
 - `help()`: Open help file.
 - `install.packages()`: Install an external R package.

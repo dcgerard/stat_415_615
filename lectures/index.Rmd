@@ -26,8 +26,7 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [R graphics with `qplot()`](./01_qplot.html).
   - Chapter 2 of ROS
 - 02 Review
-  - Mathematical prerequisites
-  - [Matrix stuff](./02_matrix_stuff.html)
+  - [Mathematical prerequisites](./02_math_prereq.html)
   - Distributions
   - Statistical inference.
   - Chapters 3 and 4 of ROS

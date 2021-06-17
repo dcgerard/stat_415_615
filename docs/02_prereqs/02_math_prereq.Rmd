@@ -1,0 +1,34 @@
+---
+title: "Math Prerequisites"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Learning Objectives
+
+- Minimum mathematics required to complete this course.
+- Summations/averages
+- Equations for lines
+- Logarithms/exponentials
+- Vectors/matrices
+- Intuition behind derivatives
+
+# Weighted Averages
+
+# Lines
+
+# Logarithms and Exponentials
+
+# Vectors and Matrices
+
+# Derivatives
+
