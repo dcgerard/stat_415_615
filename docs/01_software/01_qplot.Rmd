@@ -21,31 +21,196 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 klippy::klippy()
 ```
 
-# Introduction
-
-I show you how to create the most important plots for this course.
-
 ```{r, echo=FALSE}
 set.seed(1)
 ```
 
-Before using `qplot` in a new R session, always first load the `{ggplot2}` library.
+# Learning objectives
 
-```{r}
-library(ggplot2)
-```
+- Basic plotting in R using `qplot()` from the `{ggplot2}` package.
 
-I use this dataset
+# Introduction
 
-```{r}
-data(mpg, package = "ggplot2")
-```
+- `{ggplot2}` is very powerful, so I am just going to show you the most important and basic plots that are necessary for data analysis.
 
-In this vignette, we'll also make some variable transformations, so we will need the `{dplyr}` package.
+- Before using `qplot()` in a new R session, always first load the `{ggplot2}` library.
 
-```{r, message=FALSE}
-library(dplyr)
-```
+    ```{r}
+    library(ggplot2)
+    ```
+
+- In this vignette, we'll also make some variable transformations, so we will need the `{dplyr}` package.
+
+    ```{r, message=FALSE}
+    library(dplyr)
+    ```
+
+- I will use the `mpg` dataset to demonstrate plots
+
+    ```{r}
+    data(mpg, package = "ggplot2")
+    glimpse(mpg)
+    ```
+
+# `qplot()`
+
+- All plots will be created with `qplot()`. 
+
+- You specify the type of plot with the `geom` argument (for "geometry").
+
+- You specify which variables map to features of this plot via the other arguments.
+
+- E.g. to say that `hwy` maps to the x-axis, use `x = hwy`. To say that it maps to the color, use `color = hwy`, etc.
+
+- To map a constant to a feature (e.g. "red" to the color), wrap "red" in `I()`. E.g. `color = I("red")`.
+
+# One Variable
+
+## Continuous
+
+- Histogram
+
+    ```{r}
+    qplot(x = hwy, data = mpg, geom = "histogram", bins = 10)
+    ```
+
+- Make the bin lines black and the fill white.
+
+    ```{r}
+    qplot(x = hwy,
+          data = mpg,
+          geom = "histogram",
+          bins = 10, 
+          color = I("black"),
+          fill = I("white"))
+    ```
+
+- **Exercise**: Load in the [estate](https://dcgerard.github.io/stat_415_615/data/estate.csv) data (see [here](https://dcgerard.github.io/stat_415_615/data.html#real-estate-sales) for a description) and make a histogram of price with 20 bins. Make the bins red.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    library(readr)
+    library(ggplot2)
+    estate <- read_csv("https://dcgerard.github.io/stat_415_615/data/estate.csv")
+    qplot(x = price, data = estate, bins = 20, fill = I("red"))
+    ```
+
+## Discrete
+
+- Barplot
+
+    ```{r}
+    qplot(x = drv, data = mpg, geom = "bar")
+    ```
+
+- **Exercise**: What variables from the `estate` data are appropriately plotted using a bar plot? Plot them.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    qplot(x = quality, data = estate, geom = "bar")
+    qplot(x = style, data = estate, geom = "bar")
+    qplot(x = ac, data = estate, geom = "bar")
+    qplot(x = pool, data = estate, geom = "bar")
+    qplot(x = highway, data = estate, geom = "bar")
+    ```
+
+# Two Variables
+
+## Continuous X, Continuous Y
+
+- Scatterplot
+
+    ```{r}
+    qplot(x = cty, y = hwy, data = mpg, geom = "point")
+    ```
+
+- Jitter points to account for overlaying points.
+
+    ```{r}
+    qplot(x = cty, y = hwy, data = mpg, geom = "jitter")
+    ```
+
+- Add a Loess Smoother
+
+    ```{r, message=FALSE}
+    qplot(x = cty, y = hwy, data = mpg, geom = "jitter") + 
+      geom_smooth()
+    ```
+
+- **Exercise**: Using the `estate` data, make a scatterplot of number of bedrooms versus number of bathrooms. Adjust for any overplotting.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    qplot(x = bed, y = bath, data = estate, geom = "jitter")
+    ```
+
+
+## Discrete X, Continuous Y
+
+- Boxplot
+
+    ```{r}
+    qplot(x = class, y = hwy, data = mpg, geom = "boxplot")
+    ```
+
+- **Exercise**: Using the `estate` data, plot sales price versus style. (*hint*: you need to first convert `style` to a factor using `as.factor()`)
+
+    ```{r, eval = FALSE, echo = FALSE}
+    estate <- mutate(estate, style = as.factor(style))
+    qplot(x = style, y = price, data = estate, geom = "boxplot")
+    ```
+
+# Color Coding and Legends
+
+- Color code a scatterplot by a categorical variable and add a legend.
+
+    ```{r}
+    qplot(x = cty, y = hwy, color = drv, data = mpg, geom = "jitter")
+    ```
+
+- **Exercise**: Using the `estate` data, create a boxplot of price versus ac, color coding by pool.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    qplot(x = ac, y = price, color = pool, data = estate, geom = "boxplot")
+    ```
+
+# Changing a legend title
+
+- Add a `scale_*()` call to change the name:
+
+    ```{r}
+    qplot(x = cty, y = hwy, color = drv, data = mpg, geom = "jitter") + 
+      scale_color_discrete(name = "New Name1")
+    qplot(x = cty, y = hwy, shape = drv, data = mpg, geom = "jitter") +
+      scale_shape_discrete(name = "New Name2")
+    ```
+
+# Faceting
+
+- You can facet by a categorical variable using the `facets` argument.
+
+- The variable to the left of the tilde ("`~`") indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot ("`.`") in place of a variable means that there will only be one row/column facet.
+
+    ```{r}
+    qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = "point")
+    qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = "point")
+    ```
+    
+    ```{r, fig.height=2.7, fig.width=3.5}
+    qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = "point")
+    ```
+
+- **Exercise**: Using the `estate` data, plot price versus area, faceting by ac, color coding by pool.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    qplot(x = area, y = price, color = pool, facets = .~ac, geom = "point", data = estate)
+    ```
+
+# Change Theme
+
+- Add a `theme_*()` function to change the theme:
+
+    ```{r}
+    qplot(x = cty, y = hwy, data = mpg) +
+      theme_bw()
+    ```
 
 # General Considerations
 
@@ -78,105 +243,3 @@ The main options that I use are
 If you want to make all points the same shape/size/color, you need to enclose the size/shape/color using the function `I()`.
 
 If a variable is being treated as continuous rather than categorical, you need to enclose that variable in a `factor()` function call.
-
-# One Variable
-
-## Continuous
-
-Histogram
-```{r}
-qplot(x = hwy, data = mpg, geom = "histogram", bins = 10)
-```
-
-Make the bin lines black and the fill white.
-
-```{r}
-qplot(x = hwy,
-      data = mpg,
-      geom = "histogram",
-      bins = 10, 
-      color = I("black"),
-      fill = I("white"))
-```
-
-
-## Discrete
-Barplot
-```{r}
-qplot(x = drv, data = mpg, geom = "bar")
-```
-
-# Two Variables
-
-## Continuous X, Continuous Y
-
-Scatterplot
-```{r}
-qplot(x = cty, y = hwy, data = mpg, geom = "point")
-```
-
-\newpage
-Jitter points to account for overlaying points.
-```{r}
-mpg <- mutate(mpg, cty_jit = jitter(cty), hwy_jit = jitter(hwy))
-qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = "point")
-```
-
-Add a Loess Smoother
-```{r, message=FALSE}
-qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = "point") + 
-  geom_smooth()
-```
-
-## Discrete X, Continuous Y
-
-Boxplot
-```{r}
-qplot(x = class, y = hwy, data = mpg, geom = "boxplot")
-```
-
-\newpage
-
-# Color Coding and Legends
-Color code a scatterplot by a categorical variable and add a legend.
-```{r}
-qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg)
-```
-
-\newpage
-
-# Changing a legend title
-
-```{r}
-qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg) + 
-  scale_color_discrete(name = "New Name1")
-qplot(x = cty_jit, y = hwy_jit, shape = drv, data = mpg) +
-  scale_shape_discrete(name = "New Name2")
-```
-
-# Faceting
-
-You can facet by a categorical variable using the `facets` argument.
-
-The variable to the left of the tilde ("`~`") indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot ("`.`") in place of a variable means that there will only be one row/column facet.
-
-```{r}
-qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = "point")
-qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = "point")
-```
-
-```{r, fig.height=2.7, fig.width=3.5}
-qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = "point")
-```
-
-# Change Theme
-
-```{r}
-qplot(x = cty, y = hwy, data = mpg) +
-  theme_bw()
-```
-
-
-
-
-
