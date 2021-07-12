@@ -68,3 +68,63 @@ university %>%
          year = X5) %>%
   write_csv("./university.csv")
 
+## C.5
+prostate <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC05.txt", col_names = FALSE)
+prostate %>%
+  rename(id = X1,
+         psa = X2,
+         volume = X3,
+         weight = X4,
+         age = X5,
+         benign = X6,
+         seminal = X7,
+         capsular = X8,
+         gleason = X9) %>%
+  mutate(seminal = recode(seminal, "1" = "yes", "0" = "no")) %>%
+  write_csv("./prostate.csv")
+
+## C.6
+website <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC06.txt", col_names = FALSE)
+website %>%
+  rename(id = X1,
+         number = X2,
+         backlog = X3,
+         team = X4,
+         experience = X5,
+         change = X6,
+         year = X7,
+         quarter = X8) %>%
+  write_csv("./website.csv")
+
+
+## C.7
+estate <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC07.txt", col_names = FALSE)
+estate %>%
+  rename(id = X1,
+         price = X2,
+         area = X3,
+         bed = X4,
+         bath = X5,
+         ac = X6,
+         garage = X7,
+         pool = X8,
+         year = X9,
+         quality = X10,
+         style = X11,
+         lot = X12,
+         highway = X13) %>%
+  mutate(ac = recode(ac, "1" = "yes", "0" = "no"),
+         pool = recode(pool, "1" = "yes", "0" = "no"),
+         quality = recode(quality, "1" = "high", "2" = "medium", "3" = "low"),
+         highway = recode(highway, "1" = "yes", "0" = "no")) %>%
+  write_csv("./estate.csv")
+
+
+
+
+
+
+
+
+
+

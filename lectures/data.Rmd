@@ -59,6 +59,35 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `promotion`: Was there a promotion during this month? (`"yes"` or `"no"`).
     - `month`: Month.
     - `year`: Year.
+    
+### Prostate Cancer
+
+- [prostate.csv](./data/prostate.csv): Dataset C.5 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
+    - `id`: Identification number of the patient.
+    - `psa`: Serum prostate-specific antigen level (mg/ml)
+    - `volume`: Estimate of prostate cancer volume (cubic centimeters)
+    - `weight`: Prostate weight (grams)
+    - `age`: Age of patient (years)
+    - `benign`: Amount of benign prostatic hyperplasia (square centimeters)
+    - `seminal`: Presence or absence of seminal vesicle invation (`"yes"` or `"no"`).
+    - `capsular`: Degree of cpsular penetration (cm)
+    - `gleason`: Pathologically determined grade of disease using total score of two patters (summed scores were either 6, 7, or 8, with higher scores indicating worse prognosis).
+    
+### Real Estate Sales
+
+- [estate.csv](./data/estate.csv): Dataset C.7 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
+    - `price`: Sales price of residence (in dollars)
+    - `area`: Finished area of residence (in square feet)
+    - `bed`: Total number of bedrooms in residence
+    - `bath`: Total number of bathrooms in residence
+    - `ac`: `"yes"` = presence of air conditioning, `"no"` = absence of air conditioning
+    - `garage`: Number of cars that a garage will hold
+    - `pool`: `"yes"` = presence of a pool, `"no"` = absence of a pool
+    - `year`: Year property was originally constructed
+    - `quality`: Index for quality of construction. `high`, `medium`, or `low`.
+    - `style`: Categorical variable indicating architectural style 
+    - `lot`: Lot size (in square feet)
+    - `highway`: `"yes"` = highway adjacent, `"no"` = highway not adjacent.
  
 ### Study on the Efficacy of Nosocomial Infection Control (SENIC)
 
@@ -84,6 +113,19 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `rank`: High school class rank as percentile. Lower percentiles imply higher class ranks.
     - `act`: ACT entrance examination score.
     - `year`: Calendar year that the freshman entered university.
+
+### Wesbsite Developer
+- [website.csv](./data/website.csv): Dataset C.6 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
+    - `id`: Identification number for row.
+    - `number`: Number of websites completed and delivered to customers during the quarter.
+    - `backlog`: Number of website orders in backlog at the close of the quarter.
+    - `team`: Team number (1--13)
+    - `experience`: Number of months the team has been together.
+    - `change`: A change in the website development process occurred during the second quarter of 2002. This is an indicator variable adjusting for this change. `1` if quarter 2 or 3 of 2002, and `0` otherwise.
+    - `year`: Year, either 2001 or 2002.
+    - `quarter`: 1, 2, 3, or 4.
+    
+
 
 
 # References

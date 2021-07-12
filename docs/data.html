@@ -296,8 +296,11 @@ $(document).ready(function () {
 <li><a href="#county-demographic-information">County Demographic Information</a></li>
 <li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
 <li><a href="#market-share">Market Share</a></li>
+<li><a href="#prostate-cancer">Prostate Cancer</a></li>
+<li><a href="#real-estate-sales">Real Estate Sales</a></li>
 <li><a href="#study-on-the-efficacy-of-nosocomial-infection-control-senic">Study on the Efficacy of Nosocomial Infection Control (SENIC)</a></li>
 <li><a href="#university-admissions">University Admissions</a></li>
+<li><a href="#wesbsite-developer">Wesbsite Developer</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -356,6 +359,43 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
+<div id="prostate-cancer" class="section level3">
+<h3>Prostate Cancer</h3>
+<ul>
+<li><a href="./data/prostate.csv">prostate.csv</a>: Dataset C.5 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
+<ul>
+<li><code>id</code>: Identification number of the patient.</li>
+<li><code>psa</code>: Serum prostate-specific antigen level (mg/ml)</li>
+<li><code>volume</code>: Estimate of prostate cancer volume (cubic centimeters)</li>
+<li><code>weight</code>: Prostate weight (grams)</li>
+<li><code>age</code>: Age of patient (years)</li>
+<li><code>benign</code>: Amount of benign prostatic hyperplasia (square centimeters)</li>
+<li><code>seminal</code>: Presence or absence of seminal vesicle invation (<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>capsular</code>: Degree of cpsular penetration (cm)</li>
+<li><code>gleason</code>: Pathologically determined grade of disease using total score of two patters (summed scores were either 6, 7, or 8, with higher scores indicating worse prognosis).</li>
+</ul></li>
+</ul>
+</div>
+<div id="real-estate-sales" class="section level3">
+<h3>Real Estate Sales</h3>
+<ul>
+<li><a href="./data/estate.csv">estate.csv</a>: Dataset C.7 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
+<ul>
+<li><code>price</code>: Sales price of residence (in dollars)</li>
+<li><code>area</code>: Finished area of residence (in square feet)</li>
+<li><code>bed</code>: Total number of bedrooms in residence</li>
+<li><code>bath</code>: Total number of bathrooms in residence</li>
+<li><code>ac</code>: <code>"yes"</code> = presence of air conditioning, <code>"no"</code> = absence of air conditioning</li>
+<li><code>garage</code>: Number of cars that a garage will hold</li>
+<li><code>pool</code>: <code>"yes"</code> = presence of a pool, <code>"no"</code> = absence of a pool</li>
+<li><code>year</code>: Year property was originally constructed</li>
+<li><code>quality</code>: Index for quality of construction. <code>high</code>, <code>medium</code>, or <code>low</code>.</li>
+<li><code>style</code>: Categorical variable indicating architectural style</li>
+<li><code>lot</code>: Lot size (in square feet)</li>
+<li><code>highway</code>: <code>"yes"</code> = highway adjacent, <code>"no"</code> = highway not adjacent.</li>
+</ul></li>
+</ul>
+</div>
 <div id="study-on-the-efficacy-of-nosocomial-infection-control-senic" class="section level3">
 <h3>Study on the Efficacy of Nosocomial Infection Control (SENIC)</h3>
 <ul>
@@ -386,6 +426,22 @@ $(document).ready(function () {
 <li><code>rank</code>: High school class rank as percentile. Lower percentiles imply higher class ranks.</li>
 <li><code>act</code>: ACT entrance examination score.</li>
 <li><code>year</code>: Calendar year that the freshman entered university.</li>
+</ul></li>
+</ul>
+</div>
+<div id="wesbsite-developer" class="section level3">
+<h3>Wesbsite Developer</h3>
+<ul>
+<li><a href="./data/website.csv">website.csv</a>: Dataset C.6 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
+<ul>
+<li><code>id</code>: Identification number for row.</li>
+<li><code>number</code>: Number of websites completed and delivered to customers during the quarter.</li>
+<li><code>backlog</code>: Number of website orders in backlog at the close of the quarter.</li>
+<li><code>team</code>: Team number (1–13)</li>
+<li><code>experience</code>: Number of months the team has been together.</li>
+<li><code>change</code>: A change in the website development process occurred during the second quarter of 2002. This is an indicator variable adjusting for this change. <code>1</code> if quarter 2 or 3 of 2002, and <code>0</code> otherwise.</li>
+<li><code>year</code>: Year, either 2001 or 2002.</li>
+<li><code>quarter</code>: 1, 2, 3, or 4.</li>
 </ul></li>
 </ul>
 </div>
