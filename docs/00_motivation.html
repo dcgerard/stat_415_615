@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-05-19" />
+<meta name="date" content="2021-07-12" />
 
 <title>Motivation</title>
 
-<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -265,45 +265,99 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Motivation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-05-19</h4>
+<h4 class="date">2021-07-12</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
+<li><a href="#learning-objectives">Learning Objectives</a></li>
 <li><a href="#what-is-linear-regression">What is linear regression?</a></li>
 <li><a href="#what-can-you-use-it-for">What can you use it for?</a></li>
 <li><a href="#generality">Generality</a>
 <ul>
-<li><a href="#t-test"><span class="math inline">\(t\)</span>-test</a></li>
+<li><a href="#one-sample-t-test">One sample <span class="math inline">\(t\)</span>-test</a></li>
+<li><a href="#two-sample-t-test">Two-sample <span class="math inline">\(t\)</span>-test</a></li>
+<li><a href="#one-way-anova">One-way ANOVA</a></li>
+<li><a href="#many-other-connections">Many other connections</a></li>
 </ul></li>
 </ul>
 </div>
 
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
+<ul>
+<li>Goals of linear regression.</li>
+<li>What can linear regression accomplish</li>
+<li>Other procedures are specific examples (or approximations) of linear regression.</li>
+<li><a href="https://lindeloev.github.io/tests-as-linear/" class="uri">https://lindeloev.github.io/tests-as-linear/</a></li>
+</ul>
+</div>
 <div id="what-is-linear-regression" class="section level1">
 <h1>What is linear regression?</h1>
-<ul>
-<li>Fitting lines and planes through clouds of points.</li>
-</ul>
+<ol style="list-style-type: decimal">
+<li><p>Equation for line: <span class="math inline">\(y = \beta_0 + \beta_1 x\)</span></p>
+<p><img src="figs/line_review.png" /> </p></li>
+<li><p>Have cloud of points</p>
+<p><img src="00_motivation_files/figure-html/unnamed-chunk-1-1.png" width="446.4" /></p></li>
+<li><p>Fit line to cloud of points</p>
+<pre class="r"><code>qplot(x = drat, y = mpg, data = mtcars) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="00_motivation_files/figure-html/unnamed-chunk-2-1.png" width="446.4" /></p></li>
+<li><p>Infer slope(s) from fitted line</p>
+<p><img src="figs/infer_line.png" /> </p></li>
+<li><p>Inference:</p>
+<ol style="list-style-type: lower-alpha">
+<li>Test if slopes are 0</li>
+<li>Confidence intervals on slopes.</li>
+<li>Interpret sign/magnitude of slopes.</li>
+</ol></li>
+</ol>
 </div>
 <div id="what-can-you-use-it-for" class="section level1">
 <h1>What can you use it for?</h1>
 <ul>
 <li>Detecting trends.
 <ul>
-<li>Easy to see trends if you have two variables. Harder if you have more.</li>
+<li>Easy to see trends if you have two variables. Harder if you have more. Need something more sophisticated.</li>
 <li>Linear regression allows us to say “folks that have bigger x tend to have bigger y”.</li>
 </ul></li>
-<li>Control for other variables.</li>
+<li>Control for other variables.
+<ul>
+<li>“Folks that have the <em>same</em> z but <em>bigger</em> x tend to have bigger y.”</li>
+</ul></li>
+<li>Prediction
+<ul>
+<li>Most machine learning tasks in the read world are “small data”.</li>
+<li>The fancy ML methods have many parameters that require lots of data to estimate.</li>
+<li>Linear regression is often the best you can do in small data tasks.</li>
+</ul></li>
 </ul>
 </div>
 <div id="generality" class="section level1">
 <h1>Generality</h1>
 <ul>
-<li>Many statistical procedures are special cases of (or approximations to) linear regression.</li>
+<li><p>Many statistical procedures are special cases of (or approximations to) linear regression.</p></li>
+<li><p>Understanding linear regression really well will give you a deeper understanding of statistics in general.</p></li>
 </ul>
-<div id="t-test" class="section level2">
-<h2><span class="math inline">\(t\)</span>-test</h2>
+<div id="one-sample-t-test" class="section level2">
+<h2>One sample <span class="math inline">\(t\)</span>-test</h2>
+<ul>
+<li><span class="math inline">\(H_0\)</span>: Average MPG = 20</li>
+<li><span class="math inline">\(H_A\)</span>: Average MPG <span class="math inline">\(\neq\)</span> 20</li>
+</ul>
+<p><img src="00_motivation_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>## t-test p-value
+t.test(mtcars$mpg, mu = 20)$p.value</code></pre>
+<pre><code>## [1] 0.9328</code></pre>
+<pre class="r"><code>## linear regression p-value
+lmout &lt;- lm(mpg - 20 ~ 1, data = mtcars)
+coef(summary(lmout))[, &quot;Pr(&gt;|t|)&quot;]</code></pre>
+<pre><code>## [1] 0.9328</code></pre>
+</div>
+<div id="two-sample-t-test" class="section level2">
+<h2>Two-sample <span class="math inline">\(t\)</span>-test</h2>
+<p><img src="00_motivation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code>## t-test p-value
 t.test(mpg ~ am, data = mtcars, var.equal = TRUE)$p.value</code></pre>
 <pre><code>## [1] 0.000285</code></pre>
@@ -311,6 +365,66 @@ t.test(mpg ~ am, data = mtcars, var.equal = TRUE)$p.value</code></pre>
 lmout &lt;- lm(mpg ~ am, data = mtcars)
 coef(summary(lmout))[&quot;am&quot;, &quot;Pr(&gt;|t|)&quot;]</code></pre>
 <pre><code>## [1] 0.000285</code></pre>
+</div>
+<div id="one-way-anova" class="section level2">
+<h2>One-way ANOVA</h2>
+<p><img src="00_motivation_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>## F-test p-value from ANOVA
+mtcars %&gt;%
+  mutate(gear = as.factor(gear)) %&gt;%
+  aov(mpg ~ gear, data = .) %&gt;%
+  anova()</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: mpg
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)
+## gear       2    483   241.6    10.9 0.00029
+## Residuals 29    643    22.2</code></pre>
+<pre class="r"><code>## F-test p-value from linear model
+mtcars %&gt;%
+  mutate(gear = as.factor(gear)) %&gt;%
+  model.matrix(~gear, data = .) %&gt;%
+  as_tibble() %&gt;%
+  mutate(mpg = mtcars$mpg) -&gt;
+  lmdat
+head(lmdat)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   `(Intercept)` gear4 gear5   mpg
+##           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1             1     1     0  21  
+## 2             1     1     0  21  
+## 3             1     1     0  22.8
+## 4             1     0     0  21.4
+## 5             1     0     0  18.7
+## 6             1     0     0  18.1</code></pre>
+<pre class="r"><code>lmout &lt;- lm(mpg ~ 1 + gear4 + gear5, data = lmdat)
+summary(lmout)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = mpg ~ 1 + gear4 + gear5, data = lmdat)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -6.733 -3.233 -0.907  2.848  9.367 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)    16.11       1.22   13.25  7.9e-14
+## gear4           8.43       1.82    4.62  7.3e-05
+## gear5           5.27       2.43    2.17    0.038
+## 
+## Residual standard error: 4.71 on 29 degrees of freedom
+## Multiple R-squared:  0.429,  Adjusted R-squared:  0.39 
+## F-statistic: 10.9 on 2 and 29 DF,  p-value: 0.000295</code></pre>
+<ul>
+<li><span class="math inline">\(p\)</span>-value for the <span class="math inline">\(F\)</span>-tests in both cases was about 0.000295</li>
+</ul>
+</div>
+<div id="many-other-connections" class="section level2">
+<h2>Many other connections</h2>
+<ul>
+<li>Correlation tests, rank tests, chi-square tests, and many others can be seen as approximations of linear regression.</li>
+</ul>
 </div>
 </div>
 

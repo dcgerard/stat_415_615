@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-06-17" />
+<meta name="date" content="2021-07-12" />
 
 <title>Data</title>
 
@@ -287,16 +287,48 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-06-17</h4>
+<h4 class="date">2021-07-12</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
+<li><a href="#county-demographic-information">County Demographic Information</a></li>
+<li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
+<li><a href="#market-share">Market Share</a></li>
+<li><a href="#study-on-the-efficacy-of-nosocomial-infection-control-senic">Study on the Efficacy of Nosocomial Infection Control (SENIC)</a></li>
+<li><a href="#university-admissions">University Admissions</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
+<div id="county-demographic-information" class="section level3">
+<h3>County Demographic Information</h3>
+<ul>
+<li><a href="./data/cdi.csv">cdi.csv</a>: Dataset C.2 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Demographic information on counties in 1990 and 1992. Variables include:
+<ul>
+<li><code>id</code>: Identification number of the county.</li>
+<li><code>county</code>: County name.</li>
+<li><code>state</code>: Two-letter state abbreviation.</li>
+<li><code>area</code>: Land area (square miles)</li>
+<li><code>pop</code>: Estimated 1990 population.</li>
+<li><code>percent_18_34</code>: Percent of 1990 population aged 18-34</li>
+<li><code>percent_65</code>: Percent of 1990 population aged 65 or older.</li>
+<li><code>physicians</code>: Number of professionally active non-federal physicians during 1990.</li>
+<li><code>beds</code>: Total number of hospital beds, cribs, and bassinets during 1990.</li>
+<li><code>crimes</code>: Total number of serious crimes in 1990, including murder, rape, robbery, aggravated assault, burglary, larceny-theft, and motor vehicle theft, as reported by law enforcement agencies.</li>
+<li><code>high_school</code>: Percent of adult population (25 and older) who completed 12 or more years of school.</li>
+<li><code>bachelors</code>: Percent of adult population (25 and older) with bachelor’s degree.</li>
+<li><code>poverty</code>: Percent of 1990 population with income below poverty level.</li>
+<li><code>unemployment</code>: Percent of 1990 labor force that is unemployed.</li>
+<li><code>capita_income</code>: Per capita income (dollars).</li>
+<li><code>total_income</code>: Total person income (millions of dollars).</li>
+<li><code>region</code>: Geographic region, Northeast (<code>"NE"</code>), North-central (<code>"NC"</code>), South (<code>"S"</code>), or West (<code>"W"</code>).</li>
+</ul></li>
+</ul>
+</div>
+<div id="hibbs-bread-and-peace" class="section level3">
+<h3>Hibb’s Bread and Peace</h3>
 <ul>
 <li><a href="./data/hibbs.csv">hibbs.csv</a>: Data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> based on the “bread and peace” model of <span class="citation">Hibbs (2000)</span> which predicts incumbent party’s share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
 <ul>
@@ -307,6 +339,56 @@ $(document).ready(function () {
 <li><code>other_candidate</code>: The candidate of the other party.</li>
 </ul></li>
 </ul>
+</div>
+<div id="market-share" class="section level3">
+<h3>Market Share</h3>
+<ul>
+<li><a href="./data/market.csv">market.csv</a>: Dataset C.3 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
+<ul>
+<li><code>num</code>: Month number (1–36)</li>
+<li><code>share</code>: Average monthly market share for product (percent)</li>
+<li><code>price</code>: Average monthly price of product (dollars)</li>
+<li><code>nielsen</code>: An index of the amount of advertising exposure that the product recieved (higher is larger exposure).</li>
+<li><code>discount</code>: Was there a discount during this month? (<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>promotion</code>: Was there a promotion during this month? (<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>month</code>: Month.</li>
+<li><code>year</code>: Year.</li>
+</ul></li>
+</ul>
+</div>
+<div id="study-on-the-efficacy-of-nosocomial-infection-control-senic" class="section level3">
+<h3>Study on the Efficacy of Nosocomial Infection Control (SENIC)</h3>
+<ul>
+<li><a href="./data/senic.csv">senic.csv</a>: Dataset C.1 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
+<ul>
+<li><code>id</code>: Hospital identification number.</li>
+<li><code>length</code>: Average length of stay of all patients in hospital (days).</li>
+<li><code>age</code>: Average age of patients (years).</li>
+<li><code>risk</code>: Average estimated probability of acquiring infection in hospital (percent).</li>
+<li><code>culturing_ratio</code>: Ratio of number of cultures performed to number of patients without signs or symptoms of hospital-acquired infection, times 100.</li>
+<li><code>xray_ratio</code>: Ratio of number of X-rays perfromed to number of patients without signs or symptom sof pneumonia, times 100.</li>
+<li><code>beds</code>: Average number of beds in hospital during study period.</li>
+<li><code>med_school</code>: Whether a hospital was aviliated with a medical school (<code>yes</code> or <code>no</code>).</li>
+<li><code>region</code>: Geographic region, Northeast (<code>"NE"</code>), North-central (<code>"NC"</code>), South (<code>"S"</code>), or West (<code>"W"</code>).</li>
+<li><code>patients</code>: Average number of patients in hospital per day during study period.</li>
+<li><code>nurses</code>: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).</li>
+<li><code>facilities</code>: Percent of 35 potential facilities and services that are provided by the hospital.</li>
+</ul></li>
+</ul>
+</div>
+<div id="university-admissions" class="section level3">
+<h3>University Admissions</h3>
+<ul>
+<li><a href="./data/university.csv">university.csv</a>: Dataset C.4 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
+<ul>
+<li><code>id</code>: The student identification number.</li>
+<li><code>gpa</code>: Grade-point average following freshman year.</li>
+<li><code>rank</code>: High school class rank as percentile. Lower percentiles imply higher class ranks.</li>
+<li><code>act</code>: ACT entrance examination score.</li>
+<li><code>year</code>: Calendar year that the freshman entered university.</li>
+</ul></li>
+</ul>
+</div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">

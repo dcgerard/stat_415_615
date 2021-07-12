@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-06-17" />
+<meta name="date" content="2021-07-12" />
 
 <title>Introduction to R</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to R</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-06-17</h4>
+<h4 class="date">2021-07-12</h4>
 
 </div>
 
@@ -282,12 +282,12 @@ $(document).ready(function () {
 <ul>
 <li><a href="#variables">Variables</a></li>
 <li><a href="#functions">Functions</a></li>
-</ul></li>
-<li><a href="#data-frames">Data Frames</a>
-<ul>
+<li><a href="#useful-functions">Useful Functions</a></li>
+<li><a href="#r-packages">R Packages</a></li>
+<li><a href="#data-frames">Data Frames</a></li>
 <li><a href="#reading-in-data-frames">Reading in Data Frames</a></li>
-</ul></li>
 <li><a href="#basic-data-frame-manipulations">Basic Data Frame Manipulations</a></li>
+</ul></li>
 <li><a href="#summary">Summary</a></li>
 </ul>
 </div>
@@ -335,6 +335,8 @@ $(document).ready(function () {
 (3 + 5) * 6
 3 ^ 2
 4 ^ 2</code></pre></li>
+<li><p><strong>Exercise</strong>: What do you think the following will evaluate to? Try to guess before running it in R:</p>
+<pre class="r"><code>8 / 4 + 3 * 2 ^ 2</code></pre></li>
 <li><p>R consists of two things: variables and functions (computer scientists would probably disagree with this categorization).</p></li>
 </ul>
 <div id="variables" class="section level2">
@@ -354,7 +356,7 @@ x + y
 x * y
 x / y
 x - y</code></pre></li>
-<li><p>To assign a “string” (a fancy way to say a word) to <code>x</code>, put the string in quotes. For example, we can assing the value of <code>"Hello World"</code> to <code>x</code>.</p>
+<li><p>To assign a “string” (a fancy way to say a word) to <code>x</code>, put the string in quotes. For example, we can assign the value of <code>"Hello World"</code> to <code>x</code>.</p>
 <pre class="r"><code>x &lt;- &quot;Hello World&quot;
 x</code></pre>
 <pre><code>## [1] &quot;Hello World&quot;</code></pre></li>
@@ -384,6 +386,46 @@ x</code></pre>
 <li><p>Type this:</p>
 <pre class="r"><code>log(x = 4,</code></pre></li>
 <li><p>The “<code>+</code>” indicates that R is expecting more input (you forgot either a parentheses or a quotation mark). You can get back to the prompt by hitting the ESCAPE key.</p></li>
+</ul>
+</div>
+<div id="useful-functions" class="section level2">
+<h2>Useful Functions</h2>
+<ul>
+<li><p><code>c()</code> creates a <em>vector</em> (sequence of values)</p>
+<pre class="r"><code>y &lt;- c(8, 1, 3, 4, 2)
+y</code></pre>
+<pre><code>## [1] 8 1 3 4 2</code></pre></li>
+<li><p>You can perform vectorized operations on these vectors</p>
+<pre class="r"><code>y + 2</code></pre>
+<pre><code>## [1] 10  3  5  6  4</code></pre>
+<pre class="r"><code>y / 2</code></pre>
+<pre><code>## [1] 4.0 0.5 1.5 2.0 1.0</code></pre>
+<pre class="r"><code>y - 2</code></pre>
+<pre><code>## [1]  6 -1  1  2  0</code></pre></li>
+<li><p><code>exp()</code>: Exponentiation. This is the inverse of <code>log()</code>.</p>
+<pre class="r"><code>exp(10)</code></pre>
+<pre><code>## [1] 22026</code></pre>
+<pre class="r"><code>log(exp(10))</code></pre>
+<pre><code>## [1] 10</code></pre></li>
+<li><p><code>mean()</code>: The mean of a vector</p>
+<pre class="r"><code>mean(y)</code></pre>
+<pre><code>## [1] 3.6</code></pre></li>
+<li><p><code>sd()</code> The standard deviation of a vector</p>
+<pre class="r"><code>sd(y)</code></pre>
+<pre><code>## [1] 2.702</code></pre></li>
+<li><p><code>sum()</code>: Sum the values of a vector.</p>
+<pre class="r"><code>sum(y)</code></pre>
+<pre><code>## [1] 18</code></pre></li>
+<li><p><code>seq()</code>: Create a sequence of numbers</p>
+<pre class="r"><code>seq(from = 1, to = 10)</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre></li>
+<li><p><strong>Exercise</strong>: What does the <code>by</code> argument do in <code>seq()</code>? Read the help file and modify it to <code>2</code> in the example code above.</p></li>
+<li><p><code>head()</code>: Show the first six values of an object.</p></li>
+</ul>
+</div>
+<div id="r-packages" class="section level2">
+<h2>R Packages</h2>
+<ul>
 <li><p>A <strong>package</strong> is a collection of functions that don’t come with R by default.</p></li>
 <li><p>There are <strong>many many</strong> packages available. If you need to do any data analysis, there is probably an R package for it.</p></li>
 <li><p>Using <code>install.packages()</code>, you can install packages that contain functions and datasets that are not available by default. Do this now with the tidyverse package:</p>
@@ -394,9 +436,8 @@ x</code></pre>
 <li><p>When I want to write the name of a function, I will write it like <code>this()</code>.</p></li>
 </ul>
 </div>
-</div>
-<div id="data-frames" class="section level1">
-<h1>Data Frames</h1>
+<div id="data-frames" class="section level2">
+<h2>Data Frames</h2>
 <ul>
 <li><p>The fundamental unit object of data analysis is the <strong>data frame</strong>.</p></li>
 <li><p>A data frame has variables in the columns, and observations in the rows.</p>
@@ -437,39 +478,123 @@ mtcars</code></pre>
 ## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
 ## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
 ## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</code></pre></li>
+<li><p>You can extract individual variables from a data frame using <code>$</code></p>
+<pre class="r"><code>mtcars$mpg</code></pre>
+<pre><code>##  [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2 10.4
+## [16] 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4 15.8 19.7
+## [31] 15.0 21.4</code></pre></li>
 <li><p>You can explore these in a spreadsheet format using <code>View()</code> (note the capital “V”).</p>
 <pre class="r"><code>View(mtcars)</code></pre></li>
 </ul>
+</div>
 <div id="reading-in-data-frames" class="section level2">
 <h2>Reading in Data Frames</h2>
 <ul>
 <li><p>Most datasets will nead to be loaded into R. To do so, we will use the <code>{readr}</code> package.</p>
 <pre class="r"><code>library(readr)</code></pre></li>
 <li><p>The only function I will require you to know from this package is <code>read_csv()</code>, which loads in data from a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a> (“Comma-separated values”), a very popular format for storing data.</p></li>
-<li><p>If you have the CSV file somewhere on your computer, then specify the pack from the current working directory, and assign the data frame to a variable.</p></li>
+<li><p>If you have the CSV file somewhere on your computer, then specify the path from the current working directory, and assign the data frame to a variable.</p></li>
 <li><p>For other file formats, you need to use other functions, such as <code>read_tsv()</code>, <code>read_table()</code>, <code>read_fwf()</code>, etc. I will try to make sure <code>read_csv()</code> works for all datasets in this course.</p></li>
 </ul>
 </div>
-</div>
-<div id="basic-data-frame-manipulations" class="section level1">
-<h1>Basic Data Frame Manipulations</h1>
+<div id="basic-data-frame-manipulations" class="section level2">
+<h2>Basic Data Frame Manipulations</h2>
 <ul>
 <li><p>You will need to know just a few data frame manipulations, which we will perform using the <code>{dplyr}</code> package.</p>
 <pre class="r"><code>library(dplyr)</code></pre></li>
-<li><p>Use the <code>mutate()</code> function from the <code>{dplyr}</code> package to make variable transformations.</p></li>
-<li><p>Use <code>glimpse()</code> to get a brief look at the data frame.</p></li>
-<li><p>Use <code>View()</code> to see a spreadsheet of the data frame (never put this in an R Markdown file). Note the capital “V”.</p></li>
-<li><p>Use <code>rename()</code> to rename variables.</p></li>
-<li><p>Use <code>filter()</code> to remove rows.</p></li>
+<li><p>The first argument for <code>{dplyr}</code> functions is always the data frame you are modifying. The following arguments typically involve the columns of that data frame.</p></li>
+<li><p>Use the <code>mutate()</code> function from the <code>{dplyr}</code> package to make variable transformations.</p>
+<pre class="r"><code>mtcars &lt;- mutate(mtcars, kpg = mpg * 1.61)
+head(mtcars)</code></pre>
+<pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb   kpg
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 33.81
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 33.81
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 36.71
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 34.45
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 30.11
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 29.14</code></pre></li>
+<li><p>Use <code>glimpse()</code> to get a brief look at the data frame.</p>
+<pre class="r"><code>glimpse(mtcars)</code></pre>
+<pre><code>## Rows: 32
+## Columns: 12
+## $ mpg  &lt;dbl&gt; 21.0, 21.0, 22.8, 21.4, 18.7, 18.1, 14.3, 24.4, 22.8, 19.2, 17.8,…
+## $ cyl  &lt;dbl&gt; 6, 6, 4, 6, 8, 6, 8, 4, 4, 6, 6, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 8,…
+## $ disp &lt;dbl&gt; 160.0, 160.0, 108.0, 258.0, 360.0, 225.0, 360.0, 146.7, 140.8, 16…
+## $ hp   &lt;dbl&gt; 110, 110, 93, 110, 175, 105, 245, 62, 95, 123, 123, 180, 180, 180…
+## $ drat &lt;dbl&gt; 3.90, 3.90, 3.85, 3.08, 3.15, 2.76, 3.21, 3.69, 3.92, 3.92, 3.92,…
+## $ wt   &lt;dbl&gt; 2.620, 2.875, 2.320, 3.215, 3.440, 3.460, 3.570, 3.190, 3.150, 3.…
+## $ qsec &lt;dbl&gt; 16.46, 17.02, 18.61, 19.44, 17.02, 20.22, 15.84, 20.00, 22.90, 18…
+## $ vs   &lt;dbl&gt; 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,…
+## $ am   &lt;dbl&gt; 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,…
+## $ gear &lt;dbl&gt; 4, 4, 4, 3, 3, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 3, 3,…
+## $ carb &lt;dbl&gt; 4, 4, 1, 1, 2, 1, 4, 2, 2, 4, 4, 3, 3, 3, 4, 4, 4, 1, 2, 1, 1, 2,…
+## $ kpg  &lt;dbl&gt; 33.81, 33.81, 36.71, 34.45, 30.11, 29.14, 23.02, 39.28, 36.71, 30…</code></pre></li>
+<li><p>Use <code>View()</code> to see a spreadsheet of the data frame (never put this in an R Markdown file). Note the capital “V”.</p>
+<pre class="r"><code>View(mtcars)</code></pre></li>
+<li><p>Use <code>rename()</code> to rename variables.</p>
+<pre class="r"><code>mtcars &lt;- rename(mtcars, auto_man = am)
+head(mtcars)</code></pre>
+<pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs auto_man gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0        1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0        1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1        1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1        0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0        0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1        0    3    1
+##                     kpg
+## Mazda RX4         33.81
+## Mazda RX4 Wag     33.81
+## Datsun 710        36.71
+## Hornet 4 Drive    34.45
+## Hornet Sportabout 30.11
+## Valiant           29.14</code></pre></li>
+<li><p>Use <code>filter()</code> to remove rows.</p>
+<ul>
+<li>Use <code>==</code> to select rows based on equality</li>
+<li>Use <code>&lt;</code> and <code>&gt;</code> to select rows based on inequality</li>
+<li>Use <code>&lt;=</code> and <code>&gt;=</code> to select rows based on inequality/equality.</li>
 </ul>
+<pre class="r"><code>filter(mtcars, auto_man == 1)</code></pre>
+<pre><code>##                 mpg cyl  disp  hp drat    wt  qsec vs auto_man gear carb   kpg
+## Mazda RX4      21.0   6 160.0 110 3.90 2.620 16.46  0        1    4    4 33.81
+## Mazda RX4 Wag  21.0   6 160.0 110 3.90 2.875 17.02  0        1    4    4 33.81
+## Datsun 710     22.8   4 108.0  93 3.85 2.320 18.61  1        1    4    1 36.71
+## Fiat 128       32.4   4  78.7  66 4.08 2.200 19.47  1        1    4    1 52.16
+## Honda Civic    30.4   4  75.7  52 4.93 1.615 18.52  1        1    4    2 48.94
+## Toyota Corolla 33.9   4  71.1  65 4.22 1.835 19.90  1        1    4    1 54.58
+## Fiat X1-9      27.3   4  79.0  66 4.08 1.935 18.90  1        1    4    1 43.95
+## Porsche 914-2  26.0   4 120.3  91 4.43 2.140 16.70  0        1    5    2 41.86
+## Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.90  1        1    5    2 48.94
+## Ford Pantera L 15.8   8 351.0 264 4.22 3.170 14.50  0        1    5    4 25.44
+## Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.50  0        1    5    6 31.72
+## Maserati Bora  15.0   8 301.0 335 3.54 3.570 14.60  0        1    5    8 24.15
+## Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1        1    4    2 34.45</code></pre>
+<pre class="r"><code>filter(mtcars, mpg &lt; 15)    </code></pre>
+<pre><code>##                      mpg cyl disp  hp drat    wt  qsec vs auto_man gear carb
+## Duster 360          14.3   8  360 245 3.21 3.570 15.84  0        0    3    4
+## Cadillac Fleetwood  10.4   8  472 205 2.93 5.250 17.98  0        0    3    4
+## Lincoln Continental 10.4   8  460 215 3.00 5.424 17.82  0        0    3    4
+## Chrysler Imperial   14.7   8  440 230 3.23 5.345 17.42  0        0    3    4
+## Camaro Z28          13.3   8  350 245 3.73 3.840 15.41  0        0    3    4
+##                       kpg
+## Duster 360          23.02
+## Cadillac Fleetwood  16.74
+## Lincoln Continental 16.74
+## Chrysler Imperial   23.67
+## Camaro Z28          21.41</code></pre></li>
+<li><p><strong>Exercise</strong>: Calculate the log-displacement, add this to the <code>mtcars</code> data frame.</p></li>
+<li><p><strong>Exercise</strong>: Filter out cars with only one carborator (keep cars with more than 1 carborator).</p></li>
+<li><p><strong>Exercise</strong>: Rename the <code>hp</code> variable to <code>horse</code>.</p></li>
+</ul>
+</div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <p>Here is the list of basic R stuff I expect you to know off the top of your head. We will add to this list throughout the semester.</p>
 <ul>
 <li><code>help()</code>: Open help file.</li>
-<li><code>install.packages()</code>: Install an external R package.</li>
-<li><code>library()</code>: Load the functions of an external R package so you can use them.</li>
+<li><code>install.packages()</code>: Install an external R package. Do this once per computer for each package.</li>
+<li><code>library()</code>: Load the functions of an external R package so you can use them. Do this each time you start up R for each package.</li>
 <li><code>&lt;-</code>: Variable assignment.</li>
 <li><code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>: Arithmetic operations.</li>
 <li><code>^</code>: Powers.</li>
@@ -487,10 +612,11 @@ mtcars</code></pre>
 <li><code>glimpse()</code>: Look at a data frame.</li>
 <li><code>mutate()</code>: Variable transformation.</li>
 <li><code>rename()</code>: Variable renaming.</li>
+<li><code>filter()</code>: Select rows based on variable values.</li>
 </ul></li>
 <li>From <code>{ggplot2}</code>
 <ul>
-<li><code>qplot()</code>: Make a histogram or scatterplot.</li>
+<li><code>qplot()</code>: Make a histogram or scatterplot (see <a href="./01_qplot.html">01_qplot</a>).</li>
 </ul></li>
 </ul>
 </div>

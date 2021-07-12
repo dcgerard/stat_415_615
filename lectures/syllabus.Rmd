@@ -106,10 +106,9 @@ The learning objective of this course is to give you the main concepts and a wor
 - Interpret and summarize the results of regression analysis results in the context of the study.
 - Understand limitations of the regression analysis.
 - Design and conduct a study to investigate a research problem using real-world data and regression analysis.
-- STAT 615 only: 
-    - Derive the least squares estimators for linear regression.
-    - Write the linear regression model in matrix form.
-    - Understand matrix derivations for estimation, testing, and model building in multiple linear regression.
+- Derive the least squares estimators for linear regression.
+- Write the linear regression model in matrix form.
+- Understand matrix derivations for estimation, testing, and model building in multiple linear regression.
     
 # Late Work Policy
 
@@ -215,7 +214,7 @@ The Counseling Center offers a variety of psychological services, online resourc
 
 The Office of the Dean of Students offers individual meetings to discuss issues that impact the student experience including academic, social, and personal matters.  Staff work with students and make referrals to appropriate campus resources for resolution.
 
-Additionally, while academic regulations state that medical absences are to be excused, if faculty require correspondence to verify the student’s explanation, medical documentation should be submitted to the Office of the Dean of Students (“DOS”).  The DOS staff will review the documentation and verify the medical excuse.  Faculty have the discretion to approve absences and do not need permission from the Office of the Dean of Students to excuse absences.  Students should be referred to the Office of the Dean of Students only if faculty require further proof or if they have concerns about the impact of absences on the student’s ability to succeed (202-885-3300; Butler Pavilion 408; <www.american.edu/dos>)
+Additionally, while academic regulations state that medical absences are to be excused, if faculty require correspondence to verify the student’s explanation, medical documentation should be submitted to the Office of the Dean of Students ("DOS").  The DOS staff will review the documentation and verify the medical excuse.  Faculty have the discretion to approve absences and do not need permission from the Office of the Dean of Students to excuse absences.  Students should be referred to the Office of the Dean of Students only if faculty require further proof or if they have concerns about the impact of absences on the student’s ability to succeed (202-885-3300; Butler Pavilion 408; <www.american.edu/dos>)
 
 ## Food and Housing Insecurity Statement
 

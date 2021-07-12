@@ -17,6 +17,29 @@ knitr::opts_chunk$set(echo       = TRUE,
                       fig.align  = "center")
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
+    
+### County Demographic Information
+
+- [cdi.csv](./data/cdi.csv): Dataset C.2 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Demographic information on counties in 1990 and 1992. Variables include:
+    - `id`: Identification number of the county.
+    - `county`: County name.
+    - `state`: Two-letter state abbreviation.
+    - `area`: Land area (square miles)
+    - `pop`: Estimated 1990 population.
+    - `percent_18_34`: Percent of 1990 population aged 18-34
+    - `percent_65`: Percent of 1990 population aged 65 or older.
+    - `physicians`: Number of professionally active non-federal physicians during 1990.
+    - `beds`: Total number of hospital beds, cribs, and bassinets during 1990.
+    - `crimes`: Total number of serious crimes in 1990, including murder, rape, robbery, aggravated assault, burglary, larceny-theft, and motor vehicle theft, as reported by law enforcement agencies.
+    - `high_school`: Percent of adult population (25 and older) who completed 12 or more years of school.
+    - `bachelors`: Percent of adult population (25 and older) with bachelor's degree.
+    - `poverty`: Percent of 1990 population with income below poverty level.
+    - `unemployment`: Percent of 1990 labor force that is unemployed.
+    - `capita_income`: Per capita income (dollars).
+    - `total_income`: Total person income (millions of dollars).
+    - `region`:  Geographic region, Northeast (`"NE"`), North-central (`"NC"`), South (`"S"`), or West (`"W"`).
+    
+### Hibb's Bread and Peace
 
 - [hibbs.csv](./data/hibbs.csv): Data from Chapter 7 of [ROS](https://avehtari.github.io/ROS-Examples/) based on the "bread and peace" model of @hibbs2000bread which predicts incumbent party's share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
     - `year`: Year of the election.
@@ -24,5 +47,43 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `vote`: Incumbant party's vote share of the two-party vote (excludes third parties).
     - `inc_party_candidate`: The candidate of the incumbant party.
     - `other_candidate`: The candidate of the other party.
+    
+### Market Share
+
+- [market.csv](./data/market.csv): Dataset C.3 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
+    - `num`: Month number (1--36)
+    - `share`: Average monthly market share for product (percent)
+    - `price`: Average monthly price of product (dollars)
+    - `nielsen`: An index of the amount of advertising exposure that the product recieved (higher is larger exposure).
+    - `discount`: Was there a discount during this month? (`"yes"` or `"no"`).
+    - `promotion`: Was there a promotion during this month? (`"yes"` or `"no"`).
+    - `month`: Month.
+    - `year`: Year.
+ 
+### Study on the Efficacy of Nosocomial Infection Control (SENIC)
+
+- [senic.csv](./data/senic.csv): Dataset C.1 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
+    - `id`: Hospital identification number.
+    - `length`: Average length of stay of all patients in hospital (days).
+    - `age`: Average age of patients (years).
+    - `risk`: Average estimated probability of acquiring infection in hospital (percent).
+    - `culturing_ratio`: Ratio of number of cultures performed to number of patients without signs or symptoms of hospital-acquired infection, times 100.
+    - `xray_ratio`: Ratio of number of X-rays perfromed to number of patients without signs or symptom sof pneumonia, times 100.
+    - `beds`: Average number of beds in hospital during study period.
+    - `med_school`: Whether a hospital was aviliated with a medical school (`yes` or `no`).
+    - `region`: Geographic region, Northeast (`"NE"`), North-central (`"NC"`), South (`"S"`), or West (`"W"`).
+    - `patients`: Average number of patients in hospital per day during study period.
+    - `nurses`: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).
+    - `facilities`: Percent of 35 potential facilities and services that are provided by the hospital.
+
+### University Admissions
+
+- [university.csv](./data/university.csv): Dataset C.4 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
+    - `id`: The student identification number.
+    - `gpa`: Grade-point average following freshman year.
+    - `rank`: High school class rank as percentile. Lower percentiles imply higher class ranks.
+    - `act`: ACT entrance examination score.
+    - `year`: Calendar year that the freshman entered university.
+
 
 # References

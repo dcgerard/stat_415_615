@@ -12,25 +12,93 @@ urlcolor: "blue"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+library(ggplot2)
+library(dplyr)
+data("mtcars")
 ```
+
+# Learning Objectives
+
+- Goals of linear regression.
+- What can linear regression accomplish
+- Other procedures are specific examples (or approximations) of linear regression.
+- <https://lindeloev.github.io/tests-as-linear/>
 
 # What is linear regression?
 
-- Fitting lines and planes through clouds of points.
+1. Equation for line: $y = \beta_0 + \beta_1 x$
+
+    ![](./figs/line_review.png)\ 
+
+2. Have cloud of points
+
+    ```{r, echo = FALSE, fig.width=4.65, fig.height=3.6}
+    qplot(x = drat, y = mpg, data = mtcars)
+    ```
+    
+3. Fit line to cloud of points
+
+    ```{r, message=FALSE, fig.width = 4.65, fig.height = 3.6}
+    qplot(x = drat, y = mpg, data = mtcars) +
+      geom_smooth(method = "lm", se = FALSE)
+    ```
+    
+4. Infer slope(s) from fitted line
+
+    ![](./figs/infer_line.png)\ 
+    
+5. Inference:
+    a. Test if slopes are 0
+    b. Confidence intervals on slopes.
+    c. Interpret sign/magnitude of slopes.
 
 # What can you use it for?
 
 - Detecting trends.
-    - Easy to see trends if you have two variables. Harder if you have more.
+    - Easy to see trends if you have two variables. Harder if you have more. Need something more sophisticated.
     - Linear regression allows us to say "folks that have bigger x tend to have bigger y".
 
-- Control for other variables.
+- Control for other variables. 
+    - "Folks that have the *same* z but *bigger* x tend to have bigger y."
+    
+- Prediction
+    - Most machine learning tasks in the read world are "small data".
+    - The fancy ML methods have many parameters that require lots of data to estimate.
+    - Linear regression is often the best you can do in small data tasks.
 
 # Generality
 
 - Many statistical procedures are special cases of (or approximations to) linear regression.
 
-## $t$-test
+- Understanding linear regression really well will give you a deeper understanding of statistics in general.
+
+## One sample $t$-test
+
+- $H_0$: Average MPG = 20
+- $H_A$: Average MPG $\neq$ 20
+
+```{r, echo = FALSE}
+mtcars %>%
+  qplot(x = mpg, data = ., geom = "histogram", bins = 10) +
+  geom_vline(xintercept = 20, lty = 2, col = 2)
+```
+
+```{r}
+## t-test p-value
+t.test(mtcars$mpg, mu = 20)$p.value
+
+## linear regression p-value
+lmout <- lm(mpg - 20 ~ 1, data = mtcars)
+coef(summary(lmout))[, "Pr(>|t|)"]
+```
+
+## Two-sample $t$-test
+
+```{r, echo = FALSE}
+mtcars %>%
+  mutate(am = as.factor(am)) %>%
+  qplot(x = am, y = mpg, data = ., geom = "boxplot")
+```
 
 ```{r}
 ## t-test p-value
@@ -40,3 +108,37 @@ t.test(mpg ~ am, data = mtcars, var.equal = TRUE)$p.value
 lmout <- lm(mpg ~ am, data = mtcars)
 coef(summary(lmout))["am", "Pr(>|t|)"]
 ```
+
+## One-way ANOVA
+
+```{r, echo = FALSE}
+mtcars %>%
+  mutate(gear = as.factor(gear)) %>%
+  qplot(y = mpg, x = gear, data = ., geom = "boxplot")
+```
+
+```{r}
+## F-test p-value from ANOVA
+mtcars %>%
+  mutate(gear = as.factor(gear)) %>%
+  aov(mpg ~ gear, data = .) %>%
+  anova()
+
+## F-test p-value from linear model
+mtcars %>%
+  mutate(gear = as.factor(gear)) %>%
+  model.matrix(~gear, data = .) %>%
+  as_tibble() %>%
+  mutate(mpg = mtcars$mpg) ->
+  lmdat
+head(lmdat)
+
+lmout <- lm(mpg ~ 1 + gear4 + gear5, data = lmdat)
+summary(lmout)
+```
+
+- $p$-value for the $F$-tests in both cases was about 0.000295
+
+## Many other connections
+
+- Correlation tests, rank tests, chi-square tests, and many others can be seen as approximations of linear regression.
