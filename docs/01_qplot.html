@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-06-17" />
+<meta name="date" content="2021-07-12" />
 
 <title>R Graphics with qplot</title>
 
@@ -269,14 +269,15 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R Graphics with <code>qplot</code></h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-06-17</h4>
+<h4 class="date">2021-07-12</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
+<li><a href="#learning-objectives">Learning objectives</a></li>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#general-considerations">General Considerations</a></li>
+<li><a href="#qplot"><code>qplot()</code></a></li>
 <li><a href="#one-variable">One Variable</a>
 <ul>
 <li><a href="#continuous">Continuous</a></li>
@@ -291,6 +292,7 @@ $(document).ready(function () {
 <li><a href="#changing-a-legend-title">Changing a legend title</a></li>
 <li><a href="#faceting">Faceting</a></li>
 <li><a href="#change-theme">Change Theme</a></li>
+<li><a href="#general-considerations">General Considerations</a></li>
 </ul>
 </div>
 
@@ -298,15 +300,148 @@ $(document).ready(function () {
   addClassKlippyTo("pre.r, pre.markdown");
   addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
 </script>
+<div id="learning-objectives" class="section level1">
+<h1>Learning objectives</h1>
+<ul>
+<li>Basic plotting in R using <code>qplot()</code> from the <code>{ggplot2}</code> package.</li>
+</ul>
+</div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>I show you how to create the most important plots for this course.</p>
-<p>Before using <code>qplot</code> in a new R session, always first load the <code>{ggplot2}</code> library.</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<p>I use this dataset</p>
-<pre class="r"><code>data(mpg, package = &quot;ggplot2&quot;)</code></pre>
-<p>In this vignette, we’ll also make some variable transformations, so we will need the <code>{dplyr}</code> package.</p>
-<pre class="r"><code>library(dplyr)</code></pre>
+<ul>
+<li><p><code>{ggplot2}</code> is very powerful, so I am just going to show you the most important and basic plots that are necessary for data analysis.</p></li>
+<li><p>Before using <code>qplot()</code> in a new R session, always first load the <code>{ggplot2}</code> library.</p>
+<pre class="r"><code>library(ggplot2)</code></pre></li>
+<li><p>In this vignette, we’ll also make some variable transformations, so we will need the <code>{dplyr}</code> package.</p>
+<pre class="r"><code>library(dplyr)</code></pre></li>
+<li><p>I will use the <code>mpg</code> dataset to demonstrate plots</p>
+<pre class="r"><code>data(mpg, package = &quot;ggplot2&quot;)
+glimpse(mpg)</code></pre>
+<pre><code>## Rows: 234
+## Columns: 11
+## $ manufacturer &lt;chr&gt; &quot;audi&quot;, &quot;audi&quot;, &quot;audi&quot;, &quot;audi&quot;, &quot;audi&quot;, &quot;audi&quot;, &quot;audi&quot;, &quot;…
+## $ model        &lt;chr&gt; &quot;a4&quot;, &quot;a4&quot;, &quot;a4&quot;, &quot;a4&quot;, &quot;a4&quot;, &quot;a4&quot;, &quot;a4&quot;, &quot;a4 quattro&quot;, &quot;…
+## $ displ        &lt;dbl&gt; 1.8, 1.8, 2.0, 2.0, 2.8, 2.8, 3.1, 1.8, 1.8, 2.0, 2.0, 2.…
+## $ year         &lt;int&gt; 1999, 1999, 2008, 2008, 1999, 1999, 2008, 1999, 1999, 200…
+## $ cyl          &lt;int&gt; 4, 4, 4, 4, 6, 6, 6, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, …
+## $ trans        &lt;chr&gt; &quot;auto(l5)&quot;, &quot;manual(m5)&quot;, &quot;manual(m6)&quot;, &quot;auto(av)&quot;, &quot;auto…
+## $ drv          &lt;chr&gt; &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4…
+## $ cty          &lt;int&gt; 18, 21, 20, 21, 16, 18, 18, 18, 16, 20, 19, 15, 17, 17, 1…
+## $ hwy          &lt;int&gt; 29, 29, 31, 30, 26, 26, 27, 26, 25, 28, 27, 25, 25, 25, 2…
+## $ fl           &lt;chr&gt; &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p&quot;, &quot;p…
+## $ class        &lt;chr&gt; &quot;compact&quot;, &quot;compact&quot;, &quot;compact&quot;, &quot;compact&quot;, &quot;compact&quot;, &quot;c…</code></pre></li>
+</ul>
+</div>
+<div id="qplot" class="section level1">
+<h1><code>qplot()</code></h1>
+<ul>
+<li><p>All plots will be created with <code>qplot()</code>.</p></li>
+<li><p>You specify the type of plot with the <code>geom</code> argument (for “geometry”).</p></li>
+<li><p>You specify which variables map to features of this plot via the other arguments.</p></li>
+<li><p>E.g. to say that <code>hwy</code> maps to the x-axis, use <code>x = hwy</code>. To say that it maps to the color, use <code>color = hwy</code>, etc.</p></li>
+<li><p>To map a constant to a feature (e.g. “red” to the color), wrap “red” in <code>I()</code>. E.g. <code>color = I("red")</code>.</p></li>
+</ul>
+</div>
+<div id="one-variable" class="section level1">
+<h1>One Variable</h1>
+<div id="continuous" class="section level2">
+<h2>Continuous</h2>
+<ul>
+<li><p>Histogram</p>
+<pre class="r"><code>qplot(x = hwy, data = mpg, geom = &quot;histogram&quot;, bins = 10)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Make the bin lines black and the fill white.</p>
+<pre class="r"><code>qplot(x = hwy,
+      data = mpg,
+      geom = &quot;histogram&quot;,
+      bins = 10, 
+      color = I(&quot;black&quot;),
+      fill = I(&quot;white&quot;))</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Load in the <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv">estate</a> data (see <a href="https://dcgerard.github.io/stat_415_615/data.html#real-estate-sales">here</a> for a description) and make a histogram of price with 20 bins. Make the bins red.</p></li>
+</ul>
+</div>
+<div id="discrete" class="section level2">
+<h2>Discrete</h2>
+<ul>
+<li><p>Barplot</p>
+<pre class="r"><code>qplot(x = drv, data = mpg, geom = &quot;bar&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: What variables from the <code>estate</code> data are appropriately plotted using a bar plot? Plot them.</p></li>
+</ul>
+</div>
+</div>
+<div id="two-variables" class="section level1">
+<h1>Two Variables</h1>
+<div id="continuous-x-continuous-y" class="section level2">
+<h2>Continuous X, Continuous Y</h2>
+<ul>
+<li><p>Scatterplot</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Jitter points to account for overlaying points.</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;jitter&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Add a Loess Smoother</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;jitter&quot;) + 
+  geom_smooth()</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, make a scatterplot of number of bedrooms versus number of bathrooms. Adjust for any overplotting.</p></li>
+</ul>
+</div>
+<div id="discrete-x-continuous-y" class="section level2">
+<h2>Discrete X, Continuous Y</h2>
+<ul>
+<li><p>Boxplot</p>
+<pre class="r"><code>qplot(x = class, y = hwy, data = mpg, geom = &quot;boxplot&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, plot sales price versus style. (<em>hint</em>: you need to first convert <code>style</code> to a factor using <code>as.factor()</code>)</p></li>
+</ul>
+</div>
+</div>
+<div id="color-coding-and-legends" class="section level1">
+<h1>Color Coding and Legends</h1>
+<ul>
+<li><p>Color code a scatterplot by a categorical variable and add a legend.</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, color = drv, data = mpg, geom = &quot;jitter&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, create a boxplot of price versus ac, color coding by pool.</p></li>
+</ul>
+</div>
+<div id="changing-a-legend-title" class="section level1">
+<h1>Changing a legend title</h1>
+<ul>
+<li><p>Add a <code>scale_*()</code> call to change the name:</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, color = drv, data = mpg, geom = &quot;jitter&quot;) + 
+  scale_color_discrete(name = &quot;New Name1&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-18-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = cty, y = hwy, shape = drv, data = mpg, geom = &quot;jitter&quot;) +
+  scale_shape_discrete(name = &quot;New Name2&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-18-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="faceting" class="section level1">
+<h1>Faceting</h1>
+<ul>
+<li><p>You can facet by a categorical variable using the <code>facets</code> argument.</p></li>
+<li><p>The variable to the left of the tilde (“<code>~</code>”) indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot (“<code>.</code>”) in place of a variable means that there will only be one row/column facet.</p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-19-2.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = &quot;point&quot;)</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-20-1.png" width="336" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, plot price versus area, faceting by ac, color coding by pool.</p></li>
+</ul>
+</div>
+<div id="change-theme" class="section level1">
+<h1>Change Theme</h1>
+<ul>
+<li><p>Add a <code>theme_*()</code> function to change the theme:</p>
+<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg) +
+  theme_bw()</code></pre>
+<p><img src="01_qplot_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
 </div>
 <div id="general-considerations" class="section level1">
 <h1>General Considerations</h1>
@@ -340,87 +475,6 @@ $(document).ready(function () {
 </ul>
 <p>If you want to make all points the same shape/size/color, you need to enclose the size/shape/color using the function <code>I()</code>.</p>
 <p>If a variable is being treated as continuous rather than categorical, you need to enclose that variable in a <code>factor()</code> function call.</p>
-</div>
-<div id="one-variable" class="section level1">
-<h1>One Variable</h1>
-<div id="continuous" class="section level2">
-<h2>Continuous</h2>
-<p>Histogram</p>
-<pre class="r"><code>qplot(x = hwy, data = mpg, geom = &quot;histogram&quot;, bins = 10)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Make the bin lines black and the fill white.</p>
-<pre class="r"><code>qplot(x = hwy,
-      data = mpg,
-      geom = &quot;histogram&quot;,
-      bins = 10, 
-      color = I(&quot;black&quot;),
-      fill = I(&quot;white&quot;))</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p>
-</div>
-<div id="discrete" class="section level2">
-<h2>Discrete</h2>
-<p>Barplot</p>
-<pre class="r"><code>qplot(x = drv, data = mpg, geom = &quot;bar&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="two-variables" class="section level1">
-<h1>Two Variables</h1>
-<div id="continuous-x-continuous-y" class="section level2">
-<h2>Continuous X, Continuous Y</h2>
-<p>Scatterplot</p>
-<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;point&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p>
-<div style="page-break-after: always;"></div>
-<p>Jitter points to account for overlaying points.</p>
-<pre class="r"><code>mpg &lt;- mutate(mpg, cty_jit = jitter(cty), hwy_jit = jitter(hwy))
-qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = &quot;point&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Add a Loess Smoother</p>
-<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, data = mpg, geom = &quot;point&quot;) + 
-  geom_smooth()</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p>
-</div>
-<div id="discrete-x-continuous-y" class="section level2">
-<h2>Discrete X, Continuous Y</h2>
-<p>Boxplot</p>
-<pre class="r"><code>qplot(x = class, y = hwy, data = mpg, geom = &quot;boxplot&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p>
-<div style="page-break-after: always;"></div>
-</div>
-</div>
-<div id="color-coding-and-legends" class="section level1">
-<h1>Color Coding and Legends</h1>
-<p>Color code a scatterplot by a categorical variable and add a legend.</p>
-<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p>
-<div style="page-break-after: always;"></div>
-</div>
-<div id="changing-a-legend-title" class="section level1">
-<h1>Changing a legend title</h1>
-<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, color = drv, data = mpg) + 
-  scale_color_discrete(name = &quot;New Name1&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = cty_jit, y = hwy_jit, shape = drv, data = mpg) +
-  scale_shape_discrete(name = &quot;New Name2&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
-</div>
-<div id="faceting" class="section level1">
-<h1>Faceting</h1>
-<p>You can facet by a categorical variable using the <code>facets</code> argument.</p>
-<p>The variable to the left of the tilde (“<code>~</code>”) indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot (“<code>.</code>”) in place of a variable means that there will only be one row/column facet.</p>
-<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = &quot;point&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = &quot;point&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-14-2.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = &quot;point&quot;)</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-15-1.png" width="336" style="display: block; margin: auto;" /></p>
-</div>
-<div id="change-theme" class="section level1">
-<h1>Change Theme</h1>
-<pre class="r"><code>qplot(x = cty, y = hwy, data = mpg) +
-  theme_bw()</code></pre>
-<p><img src="01_qplot_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 
 
