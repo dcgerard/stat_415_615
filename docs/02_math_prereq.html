@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-05-28" />
+<meta name="date" content="2021-07-13" />
 
 <title>Math Prerequisites</title>
 
-<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -34,6 +34,10 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -265,13 +269,14 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-05-28</h4>
+<h4 class="date">2021-07-13</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
+<li><a href="#motivation">Motivation</a></li>
 <li><a href="#weighted-averages">Weighted Averages</a></li>
 <li><a href="#lines">Lines</a></li>
 <li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a></li>
@@ -280,6 +285,10 @@ $(document).ready(function () {
 </ul>
 </div>
 
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
 <div id="learning-objectives" class="section level1">
 <h1>Learning Objectives</h1>
 <ul>
@@ -289,19 +298,168 @@ $(document).ready(function () {
 <li>Logarithms/exponentials</li>
 <li>Vectors/matrices</li>
 <li>Intuition behind derivatives</li>
+<li>Chapter 3 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a></li>
+</ul>
+</div>
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
+<ul>
+<li><p>Mathematics and simple statistics are the building blocks of linear regression.</p></li>
+<li><p>Linear algebra is important for the characterization and interpretation of linear models.</p></li>
+<li><p>Log/exponential transformations are important for the practice and interpretation of linear models.</p></li>
+<li><p>Calculus is important for estimating the parameters of linear models.</p></li>
+<li><p>Here, we will provide a brief mathematical/statistical review.</p></li>
 </ul>
 </div>
 <div id="weighted-averages" class="section level1">
 <h1>Weighted Averages</h1>
+<ul>
+<li><p>Consider the following data on USA, Mexico, and Canada:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Label</th>
+<th>Population <span class="math inline">\(N_j\)</span></th>
+<th>Average Age <span class="math inline">\(\bar{y}_j\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>USA</td>
+<td>310 Million</td>
+<td>36.8</td>
+</tr>
+<tr class="even">
+<td>Mexico</td>
+<td>112 Million</td>
+<td>26.7</td>
+</tr>
+<tr class="odd">
+<td>Canada</td>
+<td>34 Million</td>
+<td>40.7</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>What is the average age for these three countries?</p></li>
+<li><p>Proportion USA: <span class="math inline">\(\frac{310}{310 + 112 + 34} = 0.68\)</span>.</p></li>
+<li><p>Proportion Mexico: <span class="math inline">\(\frac{112}{310 + 112 + 34} = 0.25\)</span>.</p></li>
+<li><p>Proportion Canada: <span class="math inline">\(\frac{34}{310 + 112 + 34} = 0.07\)</span>.</p></li>
+<li><p>So the USA contributes 68% of the population, mexico contributes 25% of the population, and Canada contributes 7% of the population. To find the overall average age, we calculate:</p></li>
+</ul>
+<p><span class="math display">\[
+0.68 \times 36.8 + 0.25 \times 26.7 + 0.07 \times 40.7 = 34.6
+\]</span></p>
+<ul>
+<li>We can equivalently write this as</li>
+</ul>
+<p><span class="math display">\[
+\frac{310 \times 36.8 + 112 \times 26.7 + 34 \times 40.7}{310 + 112 + 34} = \frac{310}{456}\times 36.8 + \frac{112}{456}\times 26.7 + \frac{34}{456}\times 40.7
+\]</span></p>
+<ul>
+<li><p>The proportions 0.68, 0.25, and 0.07 are called the <strong>weights</strong>. When the weights sum to one, the overall sumation is called a <strong>weighted average</strong>.</p></li>
+<li><p>In <strong>summation notation</strong> (using the capital-sigma), we would write:</p>
+<p><span class="math display">\[\begin{align}
+  \text{weighted average} &amp;= \sum_{j=1}^n w_j y_j\\
+  &amp;= w_1y_1 + w_2y_2 + \cdots w_ny_n
+  \end{align}\]</span></p>
+<p>where <span class="math inline">\(w_j\)</span> is the <span class="math inline">\(j\)</span>th weight and <span class="math inline">\(y_j\)</span> is the <span class="math inline">\(j\)</span>th value.</p></li>
+<li><p>What would be an “unweighted” average? This is where each <span class="math inline">\(w_j = \frac{1}{n}\)</span> since</p>
+<p><span class="math display">\[\begin{align}
+  \sum_{j=1}^n w_j y_j &amp;= \sum_{j=1}^n \frac{1}{n} y_j\\
+  &amp;= \frac{1}{n}y_1 + \frac{1}{n}y_2 + \cdots + \frac{1}{n}y_n\\
+  &amp;= \frac{1}{n}(y_1 +y_2 + \cdots + y_n)\\
+  &amp;= \frac{1}{n}\sum_{j=1}^n y_j\\
+  &amp;= \bar{y}
+  \end{align}\]</span></p></li>
+<li><p>Properties:</p>
+<ul>
+<li><span class="math inline">\(\sum_{i=1}^n c a_i = c\sum_{i=1}^na_i\)</span></li>
+<li><span class="math inline">\(\sum_{i=1}^n a_i + \sum_{i=1}^nb_i = \sum_{i=1}^n(a_i + b_i)\)</span></li>
+</ul></li>
+<li><p><strong>Exercise</strong>: 51% of Americans are female while 49% of Americans are male. 79% of teachers are female while 21% of teachers are male. Female teachers make on average $45,865, while male teachers make on average $49,207. What is the average salary for all teachers?</p></li>
+<li><p><strong>Exercise</strong>: What is <span class="math inline">\(\sum_{i=0}^4 i\)</span>?</p></li>
+<li><p><strong>Exercise</strong>: Prove that it is not generally true that $^2 = _{i=1}^n y_i^2 (<em>hint</em>: provide a counterexample).</p></li>
+</ul>
 </div>
 <div id="lines" class="section level1">
 <h1>Lines</h1>
+<ul>
+<li><p>All lines are of the form <span class="math display">\[
+  y = \beta_0 + \beta_1 x
+  \]</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is the <strong>slope</strong>, the amount <span class="math inline">\(y\)</span> is larger by when <span class="math inline">\(x\)</span> is 1 unit larger.</p></li>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>negative</em>, the line slopes <em>down</em>.</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-4-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>positive</em>, the line slopes <em>up</em>.</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>0</em>, the line is <em>horizontal</em>. In this case, <span class="math inline">\(y\)</span> is the same for every value of <span class="math inline">\(x\)</span> (in other words, <span class="math inline">\(x\)</span> does not affect <span class="math inline">\(y\)</span>).</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Example</strong>:</p></li>
+</ul>
 </div>
 <div id="logarithms-and-exponentials" class="section level1">
 <h1>Logarithms and Exponentials</h1>
 </div>
 <div id="vectors-and-matrices" class="section level1">
 <h1>Vectors and Matrices</h1>
+<ul>
+<li><p>A <strong>vector</strong> is a list of numbers.</p>
+<p><span class="math display">\[
+  \mathbf{x} = 
+  \left(
+  \begin{array}{c}
+  10\\
+  3\\
+  5
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>In the above vector, the first element is 10, the second is 3, and the third is 5.</p></li>
+<li><p>I will generally use bold, lower-case letters to represent vectors.</p></li>
+<li><p>A <strong>matrix</strong> is a rectangular array of numbers.</p>
+<p><span class="math display">\[
+  \mathbf{A} = 
+  \left(
+  \begin{array}{cc}
+  -1 &amp; 4\\
+  11 &amp; -4\\
+  2 &amp; 8
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>We index elements by the rows first, then the columns second. For example, in the above matrix, the <span class="math inline">\((1, 1)\)</span>th element is -1, the <span class="math inline">\((1, 2)\)</span>th element is 4, the <span class="math inline">\((2, 1)\)</span>th element is 11, the <span class="math inline">\((2,2)\)</span>th element is -4, the <span class="math inline">\((3, 1)\)</span>th element is 2, and the <span class="math inline">\((3,2)\)</span>th element is 8.</p></li>
+<li><p>I will generally use bold, upper-case letters to represent matrices.</p></li>
+<li><p>A vector is just a matrix with one column.</p></li>
+<li><p>The <strong>transpose</strong> of a matrix/vector swaps the row and column indices.</p>
+<p><span class="math display">\[\begin{align}
+  \mathbf{x}^T &amp;= (10, 3, 5)\\
+  \mathbf{A}^T &amp;= 
+  \left(
+  \begin{array}{ccc}
+  -1 &amp; 11 &amp; 2\\
+  4 &amp; -4 &amp; 8
+  \end{array}
+  \right)
+  \end{align}\]</span></p></li>
+<li><p>You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix.</p></li>
+<li><p><strong>Exercise</strong>: Let <span class="math display">\[\begin{align}
+  \mathbf{X} &amp;= 
+  \left(
+  \begin{array}{cc}
+  3 &amp; -1\\
+  1 &amp; -2
+  \end{array}
+  \right)\\
+  \mathbf{Y} &amp;= 
+  \left(
+  \begin{array}{cc}
+  1 &amp; 2\\
+  2 &amp; 1
+  \end{array}
+  \right)
+  \end{align}\]</span> Calculate <span class="math inline">\(\mathbf{X}^T\mathbf{Y}\)</span>.</p></li>
+</ul>
 </div>
 <div id="derivatives" class="section level1">
 <h1>Derivatives</h1>

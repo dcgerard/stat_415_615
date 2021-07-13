@@ -121,9 +121,11 @@ estate %>%
 
 
 
-
-
-
+## Mile
+mile <- read_csv("https://raw.githubusercontent.com/avehtari/ROS-Examples/master/Mile/data/mile.csv")
+mile %>%
+  select(year, seconds) %>%
+  write_csv(file = "./mile.csv")
 
 
 

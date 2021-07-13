@@ -39,11 +39,11 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 # Textbooks
 
-<!-- - **Required**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best books I've read on applied regression analysis. The only issue is that the code they use is a little non-standard, so I will supplement this book with code examples. -->
-
 - **Required**: Free PDF version of [Applied Linear Statistical Models (Fifth Edition)](http://users.stat.ufl.edu/~winner/sta4211/ALSM_5Ed_Kutner.pdf) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book. I will generally abbreviate this book as KNNL.
 
 - **Supplemental**: The *free* [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
+
+- **Optional**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
 
 - I will also provide you with supplemental PDF readings as required.
 

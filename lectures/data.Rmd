@@ -60,6 +60,12 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `month`: Month.
     - `year`: Year.
     
+### Mile Times
+
+- [mile.csv](./data/mile.csv): World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of [ROS](https://avehtari.github.io/ROS-Examples/). Variables include
+    - `year`: The date (in years) of the new world record.
+    - `seconds`: The new world record (in seconds).
+    
 ### Prostate Cancer
 
 - [prostate.csv](./data/prostate.csv): Dataset C.5 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
@@ -114,7 +120,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `act`: ACT entrance examination score.
     - `year`: Calendar year that the freshman entered university.
 
-### Wesbsite Developer
+### Website Developer
 - [website.csv](./data/website.csv): Dataset C.6 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
     - `id`: Identification number for row.
     - `number`: Number of websites completed and delivered to customers during the quarter.
