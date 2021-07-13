@@ -277,7 +277,10 @@ $(document).ready(function () {
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
 <li><a href="#motivation">Motivation</a></li>
-<li><a href="#weighted-averages">Weighted Averages</a></li>
+<li><a href="#weighted-averages">Weighted Averages</a>
+<ul>
+<li><a href="#products">Products</a></li>
+</ul></li>
 <li><a href="#lines">Lines</a></li>
 <li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a></li>
 <li><a href="#vectors-and-matrices">Vectors and Matrices</a></li>
@@ -381,6 +384,15 @@ $(document).ready(function () {
 <li><p><strong>Exercise</strong>: What is <span class="math inline">\(\sum_{i=0}^4 i\)</span>?</p></li>
 <li><p><strong>Exercise</strong>: Prove that it is not generally true that $^2 = _{i=1}^n y_i^2 (<em>hint</em>: provide a counterexample).</p></li>
 </ul>
+<div id="products" class="section level2">
+<h2>Products</h2>
+<ul>
+<li><p>We use capital-pi notation to represent product.</p>
+<p><span class="math display">\[
+  \prod_{i=1}^n a_i = a_1 \times a_2 \times \cdots \times a_n
+  \]</span></p></li>
+</ul>
+</div>
 </div>
 <div id="lines" class="section level1">
 <h1>Lines</h1>
@@ -395,11 +407,50 @@ $(document).ready(function () {
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" /></p></li>
 <li><p>When <span class="math inline">\(\beta_1\)</span> is <em>0</em>, the line is <em>horizontal</em>. In this case, <span class="math inline">\(y\)</span> is the same for every value of <span class="math inline">\(x\)</span> (in other words, <span class="math inline">\(x\)</span> does not affect <span class="math inline">\(y\)</span>).</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Example</strong>:</p></li>
+<li><p><strong>Example</strong>: The progression of mile world records during the 20th century is well approximated by the line <span class="math inline">\(y = 1007 - 0.393x\)</span></p>
+<pre class="r"><code>library(readr)
+library(ggplot2)
+mile &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/mile.csv&quot;)
+qplot(x = year, y = seconds, data = mile) + 
+  geom_abline(slope = -0.393, intercept = 1007, lty = 2, col = 2)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>The world record in 1950 was about <span class="math display">\[
+  y = 1007 - 0.393 * 1950 = 240.6 \text{ seconds},
+  \]</span> which is actually between the two world record values of 241.4 seconds in 1946 and 239.4 seconds in 1954.</p></li>
+<li><p>Interpretation of <span class="math inline">\(\beta_0\)</span>: Can we interpret 1007 seconds (16.8 minutes) as the approximate world record in ancient times? No! Our data are only from 1913 to 1999, so this is an obviously improper extrapolation. It is just the <span class="math inline">\(y\)</span>-intercept, with no other interpretation.</p></li>
+<li><p>Interpretation of <span class="math inline">\(\beta_1\)</span>: For two adjacent years, the world record is about 0.393 seconds less for the more recent year.</p></li>
+<li><p>Do <em>not</em> say “the world record decreases by about 0.393 seconds each year” as this creates an implicit causal connection.</p></li>
+<li><p><strong>Exercise</strong>: Year versus maximum life expectancy (where maximum was taken over country) is well approximated by the line <span class="math inline">\(y = -296 + 0.189 x\)</span>.</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>What is the expected life expectancy in 1990?</p></li>
+<li><p>Interpret -296</p></li>
+<li><p>Interpret 0.189</p></li>
+</ol></li>
 </ul>
 </div>
 <div id="logarithms-and-exponentials" class="section level1">
 <h1>Logarithms and Exponentials</h1>
+<ul>
+<li><p>Often, we consider linear relationships on the log-scale.</p></li>
+<li><p><span class="math inline">\(\exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}\)</span>.</p></li>
+<li><p>The last equality only follows if <span class="math inline">\(x\)</span> is positive integer, but exponentiation can be extended to any real number.</p></li>
+<li><p><span class="math inline">\(\log(x)\)</span> is the <strong>natural</strong> logarithm of <span class="math inline">\(x\)</span> (not base 10). This is the inverse of exponentiation <span class="math display">\[
+  \log(\exp(x)) = \exp(\log(x)) = x
+  \]</span></p></li>
+<li><p>You can verify this in R</p>
+<pre class="r"><code>exp(log(31))</code></pre>
+<pre><code>## [1] 31</code></pre>
+<pre class="r"><code>log(exp(31))</code></pre>
+<pre><code>## [1] 31</code></pre></li>
+<li><p>You can also interpret <span class="math inline">\(\log(x)\)</span> as the number of times you have to divide <span class="math inline">\(x\)</span> by <span class="math inline">\(e\)</span> to obtain 1. For example, since you would have to divide <span class="math inline">\(e^4\)</span> by <span class="math inline">\(e\)</span> 4 times to get 1 (<span class="math inline">\(1 = \frac{e^4}{e \times e \times e \times e}\)</span>), we have that <span class="math inline">\(\log(e^4) = 4\)</span>.</p></li>
+<li><p>A useful property of logs/exponents is how it can convert multiplication to summation and vice versa.</p>
+<ul>
+<li><span class="math inline">\(\exp(a + b) = \exp(a)\exp(b)\)</span>.</li>
+<li><span class="math inline">\(\log(ab) = \log(a) + \log(b)\)</span>.</li>
+</ul></li>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span> represents exponential <em>growth</em> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and exponential <em>decline</em> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+</ul>
 </div>
 <div id="vectors-and-matrices" class="section level1">
 <h1>Vectors and Matrices</h1>
