@@ -26,21 +26,18 @@ klippy::klippy()
 - Summations/averages
 - Equations for lines
 - Logarithms/exponentials
-- Vectors/matrices
 - Intuition behind derivatives
 - Chapter 3 of [ROS](https://avehtari.github.io/ROS-Examples/)
 
 # Motivation
 
-- Mathematics and simple statistics are the building blocks of linear regression.
-
-- Linear algebra is important for the characterization and interpretation of linear models.
+- Mathematics are the building blocks of linear regression.
 
 - Log/exponential transformations are important for the practice and interpretation of linear models.
 
 - Calculus is important for estimating the parameters of linear models.
 
-- Here, we will provide a brief mathematical/statistical review.
+- Here, we will provide a brief mathematical review.
 
 # Weighted Averages
 
@@ -93,7 +90,7 @@ $$
     &= \bar{y}
     \end{align}
     
-- Properties:
+- Properties of summations:
     - $\sum_{i=1}^n c a_i = c\sum_{i=1}^na_i$
     - $\sum_{i=1}^n a_i + \sum_{i=1}^nb_i = \sum_{i=1}^n(a_i + b_i)$
     
@@ -111,7 +108,7 @@ $$
     0 + 1 + 2 + 3 + 4 = 10
     ```
 
-- **Exercise**: Prove that it is not generally true that $\left[\sum_{i=1}^n y_i\right]^2 = \sum_{i=1}^n y_i^2 (*hint*: provide a counterexample).
+- **Exercise**: Prove that it is not generally true that $\left(\sum_{i=1}^n y_i\right)^2 = \sum_{i=1}^n y_i^2$ (*hint*: provide a counterexample).
 
     ```{block, eval = FALSE, echo = FALSE}
     $(1 + 2)^2 = 3^2 = 9 \neq 5 = 1^2 + 2^2$
@@ -209,7 +206,8 @@ $$
       sumdat
     ggplot(sumdat, aes(x = year, y = lifeExp)) +
       geom_point() +
-      geom_smooth(method = "lm", se = FALSE)
+      geom_smooth(method = "lm", se = FALSE) +
+      ylab("Maximum Life Expectancy")
     ```
     
     a. What is the expected life expectancy in 1990?
@@ -227,9 +225,12 @@ $$
 
 # Logarithms and Exponentials
 
-- Often, we consider linear relationships on the log-scale.
+- Often, we consider linear relationships on the log-scale. So we need to know something about logarithms and exponentials.
 
-- $\exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}$.
+- Let's start with exponentials:
+    $$
+    \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
+    $$.
 
 - The last equality only follows if $x$ is positive integer, but exponentiation can be extended to any real number.
 
@@ -251,91 +252,6 @@ $$
     - $\log(ab) = \log(a) + \log(b)$.
 
 - $\log(y) = \beta_0 + \beta_1 x$ represents exponential *growth* if $\beta_1 > 0$ and exponential *decline* if $\beta_1 < 0$.
-
-# Vectors and Matrices
-
-- A **vector** is a list of numbers.
-
-    $$
-    \mathbf{x} = 
-    \left(
-    \begin{array}{c}
-    10\\
-    3\\
-    5
-    \end{array}
-    \right)
-    $$
-    
-- In the above vector, the first element is 10, the second is 3, and the third is 5.
-
-- I will generally use bold, lower-case letters to represent vectors.
-
-- A **matrix** is a rectangular array of numbers.
-
-    $$
-    \mathbf{A} = 
-    \left(
-    \begin{array}{cc}
-    -1 & 4\\
-    11 & -4\\
-    2 & 8
-    \end{array}
-    \right)
-    $$
-
-- We index elements by the rows first, then the columns second. For example, in the above matrix, the $(1, 1)$th element is -1, the $(1, 2)$th element is 4, the $(2, 1)$th element is 11, the $(2,2)$th element is -4, the $(3, 1)$th element is 2, and the $(3,2)$th element is 8.
-
-- I will generally use bold, upper-case letters to represent matrices.
-
-- A vector is just a matrix with one column.
-
-- The **transpose** of a matrix/vector swaps the row and column indices.
-
-    \begin{align}
-    \mathbf{x}^T &= (10, 3, 5)\\
-    \mathbf{A}^T &= 
-    \left(
-    \begin{array}{ccc}
-    -1 & 11 & 2\\
-    4 & -4 & 8
-    \end{array}
-    \right)
-    \end{align}
-    
-- You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix.
-
-
-- **Exercise**: Let
-    \begin{align}
-    \mathbf{X} &= 
-    \left(
-    \begin{array}{cc}
-    3 & -1\\
-    1 & -2
-    \end{array}
-    \right)\\
-    \mathbf{Y} &= 
-    \left(
-    \begin{array}{cc}
-    1 & 2\\
-    2 & 1
-    \end{array}
-    \right)
-    \end{align}
-    Calculate $\mathbf{X}^T\mathbf{Y}$.
-    
-    ```{block, eval = FALSE, echo = FALSE}
-    \begin{align}
-    \left(
-    \begin{array}{cc}
-    5 & 7\\
-    -5 & -4
-    \end{array}
-    \right)
-    \end{align}
-    ```
-
 
 # Derivatives
 

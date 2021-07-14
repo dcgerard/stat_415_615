@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-13" />
+<meta name="date" content="2021-07-14" />
 
 <title>Math Prerequisites</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-13</h4>
+<h4 class="date">2021-07-14</h4>
 
 </div>
 
@@ -283,7 +283,6 @@ $(document).ready(function () {
 </ul></li>
 <li><a href="#lines">Lines</a></li>
 <li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a></li>
-<li><a href="#vectors-and-matrices">Vectors and Matrices</a></li>
 <li><a href="#derivatives">Derivatives</a></li>
 </ul>
 </div>
@@ -299,7 +298,6 @@ $(document).ready(function () {
 <li>Summations/averages</li>
 <li>Equations for lines</li>
 <li>Logarithms/exponentials</li>
-<li>Vectors/matrices</li>
 <li>Intuition behind derivatives</li>
 <li>Chapter 3 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a></li>
 </ul>
@@ -307,11 +305,10 @@ $(document).ready(function () {
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
 <ul>
-<li><p>Mathematics and simple statistics are the building blocks of linear regression.</p></li>
-<li><p>Linear algebra is important for the characterization and interpretation of linear models.</p></li>
+<li><p>Mathematics are the building blocks of linear regression.</p></li>
 <li><p>Log/exponential transformations are important for the practice and interpretation of linear models.</p></li>
 <li><p>Calculus is important for estimating the parameters of linear models.</p></li>
-<li><p>Here, we will provide a brief mathematical/statistical review.</p></li>
+<li><p>Here, we will provide a brief mathematical review.</p></li>
 </ul>
 </div>
 <div id="weighted-averages" class="section level1">
@@ -375,14 +372,14 @@ $(document).ready(function () {
   &amp;= \frac{1}{n}\sum_{j=1}^n y_j\\
   &amp;= \bar{y}
   \end{align}\]</span></p></li>
-<li><p>Properties:</p>
+<li><p>Properties of summations:</p>
 <ul>
 <li><span class="math inline">\(\sum_{i=1}^n c a_i = c\sum_{i=1}^na_i\)</span></li>
 <li><span class="math inline">\(\sum_{i=1}^n a_i + \sum_{i=1}^nb_i = \sum_{i=1}^n(a_i + b_i)\)</span></li>
 </ul></li>
 <li><p><strong>Exercise</strong>: 51% of Americans are female while 49% of Americans are male. 79% of teachers are female while 21% of teachers are male. Female teachers make on average $45,865, while male teachers make on average $49,207. What is the average salary for all teachers?</p></li>
 <li><p><strong>Exercise</strong>: What is <span class="math inline">\(\sum_{i=0}^4 i\)</span>?</p></li>
-<li><p><strong>Exercise</strong>: Prove that it is not generally true that $^2 = _{i=1}^n y_i^2 (<em>hint</em>: provide a counterexample).</p></li>
+<li><p><strong>Exercise</strong>: Prove that it is not generally true that <span class="math inline">\(\left(\sum_{i=1}^n y_i\right)^2 = \sum_{i=1}^n y_i^2\)</span> (<em>hint</em>: provide a counterexample).</p></li>
 </ul>
 <div id="products" class="section level2">
 <h2>Products</h2>
@@ -432,8 +429,10 @@ qplot(x = year, y = seconds, data = mile) +
 <div id="logarithms-and-exponentials" class="section level1">
 <h1>Logarithms and Exponentials</h1>
 <ul>
-<li><p>Often, we consider linear relationships on the log-scale.</p></li>
-<li><p><span class="math inline">\(\exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}\)</span>.</p></li>
+<li><p>Often, we consider linear relationships on the log-scale. So we need to know something about logarithms and exponentials.</p></li>
+<li><p>Let’s start with exponentials: <span class="math display">\[
+  \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
+  \]</span>.</p></li>
 <li><p>The last equality only follows if <span class="math inline">\(x\)</span> is positive integer, but exponentiation can be extended to any real number.</p></li>
 <li><p><span class="math inline">\(\log(x)\)</span> is the <strong>natural</strong> logarithm of <span class="math inline">\(x\)</span> (not base 10). This is the inverse of exponentiation <span class="math display">\[
   \log(\exp(x)) = \exp(\log(x)) = x
@@ -450,66 +449,6 @@ qplot(x = year, y = seconds, data = mile) +
 <li><span class="math inline">\(\log(ab) = \log(a) + \log(b)\)</span>.</li>
 </ul></li>
 <li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span> represents exponential <em>growth</em> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and exponential <em>decline</em> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
-</ul>
-</div>
-<div id="vectors-and-matrices" class="section level1">
-<h1>Vectors and Matrices</h1>
-<ul>
-<li><p>A <strong>vector</strong> is a list of numbers.</p>
-<p><span class="math display">\[
-  \mathbf{x} = 
-  \left(
-  \begin{array}{c}
-  10\\
-  3\\
-  5
-  \end{array}
-  \right)
-  \]</span></p></li>
-<li><p>In the above vector, the first element is 10, the second is 3, and the third is 5.</p></li>
-<li><p>I will generally use bold, lower-case letters to represent vectors.</p></li>
-<li><p>A <strong>matrix</strong> is a rectangular array of numbers.</p>
-<p><span class="math display">\[
-  \mathbf{A} = 
-  \left(
-  \begin{array}{cc}
-  -1 &amp; 4\\
-  11 &amp; -4\\
-  2 &amp; 8
-  \end{array}
-  \right)
-  \]</span></p></li>
-<li><p>We index elements by the rows first, then the columns second. For example, in the above matrix, the <span class="math inline">\((1, 1)\)</span>th element is -1, the <span class="math inline">\((1, 2)\)</span>th element is 4, the <span class="math inline">\((2, 1)\)</span>th element is 11, the <span class="math inline">\((2,2)\)</span>th element is -4, the <span class="math inline">\((3, 1)\)</span>th element is 2, and the <span class="math inline">\((3,2)\)</span>th element is 8.</p></li>
-<li><p>I will generally use bold, upper-case letters to represent matrices.</p></li>
-<li><p>A vector is just a matrix with one column.</p></li>
-<li><p>The <strong>transpose</strong> of a matrix/vector swaps the row and column indices.</p>
-<p><span class="math display">\[\begin{align}
-  \mathbf{x}^T &amp;= (10, 3, 5)\\
-  \mathbf{A}^T &amp;= 
-  \left(
-  \begin{array}{ccc}
-  -1 &amp; 11 &amp; 2\\
-  4 &amp; -4 &amp; 8
-  \end{array}
-  \right)
-  \end{align}\]</span></p></li>
-<li><p>You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix.</p></li>
-<li><p><strong>Exercise</strong>: Let <span class="math display">\[\begin{align}
-  \mathbf{X} &amp;= 
-  \left(
-  \begin{array}{cc}
-  3 &amp; -1\\
-  1 &amp; -2
-  \end{array}
-  \right)\\
-  \mathbf{Y} &amp;= 
-  \left(
-  \begin{array}{cc}
-  1 &amp; 2\\
-  2 &amp; 1
-  \end{array}
-  \right)
-  \end{align}\]</span> Calculate <span class="math inline">\(\mathbf{X}^T\mathbf{Y}\)</span>.</p></li>
 </ul>
 </div>
 <div id="derivatives" class="section level1">

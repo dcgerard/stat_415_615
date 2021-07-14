@@ -36,13 +36,16 @@ University by [David Gerard](https://dcgerard.github.io/).
   - Hypothesis testing
   - Assumptions
   - Transformations
-- 04 Multiple linear regression
+- 04 Linear algebra
+  - [Linear algebra basics](./04_linear_algebra.html).
+  - Simple linear regression in terms of linear algebra.
+- 05 Multiple linear regression
   - Model/Interpretation (including interactions, indicators)
   - Estimation
   - Hypothesis Testing
   - Assumptions
   - Transformations
-- 05 Design
+- 06 Design
   - Power
   - Sample size calculation
-- 06 Missing data
+- 07 Missing data

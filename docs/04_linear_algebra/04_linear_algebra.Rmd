@@ -1,0 +1,146 @@
+---
+title: "Linear Algebra"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+library(latex2exp)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Introduce/review basic linear algebra.
+- Sections 5.1--5.7 of KNNL
+
+# Vectors and Matrices
+
+- A **vector** is a list of numbers.
+
+    $$
+    \mathbf{x} = 
+    \left(
+    \begin{array}{c}
+    10\\
+    3\\
+    5
+    \end{array}
+    \right)
+    $$
+    
+- In the above vector, the first element is 10, the second is 3, and the third is 5.
+
+- I will generally use bold, lower-case letters to represent vectors.
+
+- A **matrix** is a rectangular array of numbers.
+
+    $$
+    \mathbf{A} = 
+    \left(
+    \begin{array}{cc}
+    -1 & 4\\
+    11 & -4\\
+    2 & 8
+    \end{array}
+    \right)
+    $$
+    
+- The **dimension** of a matrix is the number of rows and columns of that matrix. So the dimension of the above matrix is $3\times 2$ since it has three rows and two columns.
+
+- We index elements by the rows first, then the columns second. For example, in the above matrix, the $(1, 1)$th element is -1, the $(1, 2)$th element is 4, the $(2, 1)$th element is 11, the $(2,2)$th element is -4, the $(3, 1)$th element is 2, and the $(3,2)$th element is 8.
+
+- I will generally use bold, upper-case letters to represent matrices.
+
+- A vector is just a matrix with one column.
+
+- The **transpose** of a matrix/vector swaps the row and column indices.
+
+    \begin{align}
+    \mathbf{x}^T &= (10, 3, 5)\\
+    \mathbf{A}^T &= 
+    \left(
+    \begin{array}{ccc}
+    -1 & 11 & 2\\
+    4 & -4 & 8
+    \end{array}
+    \right)
+    \end{align}
+    
+- You can add two matrices together as long as they have the same dimensions. You just sum up the values element-wise:
+
+    $$
+    \left(
+    \begin{array}{cc}
+    1 & 2 \\
+    3 & 4
+    \end{array}
+    \right) 
+    +
+    \left(
+    \begin{array}{cc}
+    5 & 6 \\
+    7 & 8
+    \end{array}
+    \right)
+    = 
+    \left(
+    \begin{array}{cc}
+    6 & 8 \\
+    10 & 12
+    \end{array}
+    \right)
+    $$
+    
+- You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix. The rules for matrix multiplication are kinda weird (but they are justified if you ever take linear algebra). In effect, you multiply the *row* of the left matrix with the *column* of the right matrix, and add up the resulting multiplied numbers:
+
+    ![](./matmult.gif)\ 
+
+- The **identity matrix** is the diagonal matrix with 1's in the diagonal. It is the matrix analogue to the number 1. For example, the $3 \times 3$ diagonal matrix is
+
+```{r}
+
+```
+
+
+- **Exercise**: Let
+    \begin{align}
+    \mathbf{X} &= 
+    \left(
+    \begin{array}{cc}
+    3 & -1\\
+    1 & -2
+    \end{array}
+    \right)\\
+    \mathbf{Y} &= 
+    \left(
+    \begin{array}{cc}
+    1 & 2\\
+    2 & 1
+    \end{array}
+    \right)
+    \end{align}
+    Calculate $\mathbf{X}^T\mathbf{Y}$.
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    \begin{align}
+    \left(
+    \begin{array}{cc}
+    5 & 7\\
+    -5 & -4
+    \end{array}
+    \right)
+    \end{align}
+    ```
+    

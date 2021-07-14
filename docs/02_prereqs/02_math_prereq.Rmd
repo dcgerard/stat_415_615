@@ -26,21 +26,18 @@ klippy::klippy()
 - Summations/averages
 - Equations for lines
 - Logarithms/exponentials
-- Vectors/matrices
 - Intuition behind derivatives
 - Chapter 3 of [ROS](https://avehtari.github.io/ROS-Examples/)
 
 # Motivation
 
-- Mathematics and simple statistics are the building blocks of linear regression.
-
-- Linear algebra is important for the characterization and interpretation of linear models.
+- Mathematics are the building blocks of linear regression.
 
 - Log/exponential transformations are important for the practice and interpretation of linear models.
 
 - Calculus is important for estimating the parameters of linear models.
 
-- Here, we will provide a brief mathematical/statistical review.
+- Here, we will provide a brief mathematical review.
 
 # Weighted Averages
 
@@ -93,7 +90,7 @@ $$
     &= \bar{y}
     \end{align}
     
-- Properties:
+- Properties of summations:
     - $\sum_{i=1}^n c a_i = c\sum_{i=1}^na_i$
     - $\sum_{i=1}^n a_i + \sum_{i=1}^nb_i = \sum_{i=1}^n(a_i + b_i)$
     
@@ -111,11 +108,19 @@ $$
     0 + 1 + 2 + 3 + 4 = 10
     ```
 
-- **Exercise**: Prove that it is not generally true that $\left[\sum_{i=1}^n y_i\right]^2 = \sum_{i=1}^n y_i^2 (*hint*: provide a counterexample).
+- **Exercise**: Prove that it is not generally true that $\left(\sum_{i=1}^n y_i\right)^2 = \sum_{i=1}^n y_i^2$ (*hint*: provide a counterexample).
 
     ```{block, eval = FALSE, echo = FALSE}
     $(1 + 2)^2 = 3^2 = 9 \neq 5 = 1^2 + 2^2$
     ```
+    
+## Products
+
+- We use capital-pi notation to represent product.
+
+    $$
+    \prod_{i=1}^n a_i = a_1 \times a_2 \times \cdots \times a_n
+    $$
 
 # Lines
 
@@ -136,7 +141,7 @@ $$
       bty="l", type="n", xlab="x", ylab="y", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
     axis(1, c(0,1,2))
     axis(2, c(a,a+b,a+2*b), c(TeX("$\\beta_0$"),TeX("$\\beta_0+\\beta_1$"),TeX("$\\beta_0+2\\beta_1$")))
-    abline(a, b)
+    abline(a, b, lwd = 3, col = "blue")
     ```
 
 - When $\beta_1$ is *positive*, the line slopes *up*.
@@ -149,7 +154,7 @@ $$
       bty="l", type="n", xlab="x", ylab="y", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
     axis(1, c(0,1,2))
     axis(2, c(a,a+b,a+2*b), c(TeX("$\\beta_0$"),TeX("$\\beta_0+\\beta_1$"),TeX("$\\beta_0+2\\beta_1$")))
-    abline(a, b)
+    abline(a, b, lwd = 3, col = "blue")
     ```
 
 - When $\beta_1$ is *0*, the line is *horizontal*. In this case, $y$ is the same for every value of $x$ (in other words, $x$ does not affect $y$).
@@ -162,99 +167,91 @@ $$
       bty="l", type="n", xlab="x", ylab="y", xaxt="n", yaxt="n", xaxs="i", yaxs="i")
     axis(1, c(0,1,2))
     axis(2, c(a), c(TeX("$\\beta_0$")))
-    abline(a, b)
+    abline(a, b, lwd = 3, col = "blue")
     ```
     
-- **Example**: 
+- **Example**: The progression of mile world records during the 20th century is well approximated by the line $y = 1007 - 0.393x$
 
+    ```{r, message = FALSE}
+    library(readr)
+    library(ggplot2)
+    mile <- read_csv("https://dcgerard.github.io/stat_415_615/data/mile.csv")
+    qplot(x = year, y = seconds, data = mile) + 
+      geom_abline(slope = -0.393, intercept = 1007, lty = 2, col = 2)
+    ```
+    
+- The world record in 1950 was about 
+    $$
+    y = 1007 - 0.393 * 1950 = 240.6 \text{ seconds},
+    $$
+    which is actually between the two world record values of 241.4 seconds in 1946 and 239.4 seconds in 1954.
+    
+- Interpretation of $\beta_0$: Can we interpret 1007 seconds (16.8 minutes) as the approximate world record in ancient times? No! Our data are only from 1913 to 1999, so this is an obviously improper extrapolation. It is just the $y$-intercept, with no other interpretation.
+
+- Interpretation of $\beta_1$: For two adjacent years, the world record is about 0.393 seconds less for the more recent year.
+
+- Do *not* say "the world record decreases by about 0.393 seconds each year" as this creates an implicit causal connection.
+
+- **Exercise**: Year versus maximum life expectancy (where maximum was taken over country) is well approximated by the line $y = -296 + 0.189 x$.
+    
+    ```{r, echo = FALSE, message = FALSE}
+    library(gapminder)
+    library(tidyverse)
+    data("gapminder_unfiltered")
+    gapminder_unfiltered %>%
+      group_by(year) %>%
+      filter(lifeExp == max(lifeExp)) %>%
+      select(country, lifeExp, year) %>%
+      arrange(year) ->
+      sumdat
+    ggplot(sumdat, aes(x = year, y = lifeExp)) +
+      geom_point() +
+      geom_smooth(method = "lm", se = FALSE) +
+      ylab("Maximum Life Expectancy")
+    ```
+    
+    a. What is the expected life expectancy in 1990?
+        ```{block, eval = FALSE, echo = FALSE}
+        -296 + 0.189 * 1990 = 80.11
+        ```
+    b. Interpret -296
+        ```{block, eval = FALSE, echo = FALSE}
+        It is the $y$-intercept
+        ```
+    c. Interpret 0.189
+        ```{block, eval = FALSE, echo = FALSE}
+        The life expectancy is about 0.189 years higher each subsequent year.
+        ```
 
 # Logarithms and Exponentials
 
-# Vectors and Matrices
+- Often, we consider linear relationships on the log-scale. So we need to know something about logarithms and exponentials.
 
-- A **vector** is a list of numbers.
-
+- Let's start with exponentials:
     $$
-    \mathbf{x} = 
-    \left(
-    \begin{array}{c}
-    10\\
-    3\\
-    5
-    \end{array}
-    \right)
+    \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
+    $$.
+
+- The last equality only follows if $x$ is positive integer, but exponentiation can be extended to any real number.
+
+- $\log(x)$ is the **natural** logarithm of $x$ (not base 10). This is the inverse of exponentiation
+    $$
+    \log(\exp(x)) = \exp(\log(x)) = x
     $$
     
-- In the above vector, the first element is 10, the second is 3, and the third is 5.
-
-- I will generally use bold, lower-case letters to represent vectors.
-
-- A **matrix** is a rectangular array of numbers.
-
-    $$
-    \mathbf{A} = 
-    \left(
-    \begin{array}{cc}
-    -1 & 4\\
-    11 & -4\\
-    2 & 8
-    \end{array}
-    \right)
-    $$
-
-- We index elements by the rows first, then the columns second. For example, in the above matrix, the $(1, 1)$th element is -1, the $(1, 2)$th element is 4, the $(2, 1)$th element is 11, the $(2,2)$th element is -4, the $(3, 1)$th element is 2, and the $(3,2)$th element is 8.
-
-- I will generally use bold, upper-case letters to represent matrices.
-
-- A vector is just a matrix with one column.
-
-- The **transpose** of a matrix/vector swaps the row and column indices.
-
-    \begin{align}
-    \mathbf{x}^T &= (10, 3, 5)\\
-    \mathbf{A}^T &= 
-    \left(
-    \begin{array}{ccc}
-    -1 & 11 & 2\\
-    4 & -4 & 8
-    \end{array}
-    \right)
-    \end{align}
-    
-- You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix.
-
-
-- **Exercise**: Let
-    \begin{align}
-    \mathbf{X} &= 
-    \left(
-    \begin{array}{cc}
-    3 & -1\\
-    1 & -2
-    \end{array}
-    \right)\\
-    \mathbf{Y} &= 
-    \left(
-    \begin{array}{cc}
-    1 & 2\\
-    2 & 1
-    \end{array}
-    \right)
-    \end{align}
-    Calculate $\mathbf{X}^T\mathbf{Y}$.
-    
-    ```{block, eval = FALSE, echo = FALSE}
-    \begin{align}
-    \left(
-    \begin{array}{cc}
-    5 & 7\\
-    -5 & -4
-    \end{array}
-    \right)
-    \end{align}
+- You can verify this in R
+    ```{r}
+    exp(log(31))
+    log(exp(31))
     ```
     
+- You can also interpret $\log(x)$ as the number of times you have to divide $x$ by $e$ to obtain 1. For example, since you would have to divide $e^4$ by $e$ 4 times to get 1 ($1 = \frac{e^4}{e \times e \times e \times e}$), we have that $\log(e^4) = 4$.
 
+- A useful property of logs/exponents is how it can convert multiplication to summation and vice versa.
+    - $\exp(a + b) = \exp(a)\exp(b)$.
+    - $\log(ab) = \log(a) + \log(b)$.
+
+- $\log(y) = \beta_0 + \beta_1 x$ represents exponential *growth* if $\beta_1 > 0$ and exponential *decline* if $\beta_1 < 0$.
 
 # Derivatives
 
