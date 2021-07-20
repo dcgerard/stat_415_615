@@ -48,6 +48,15 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `inc_party_candidate`: The candidate of the incumbant party.
     - `other_candidate`: The candidate of the other party.
     
+### Kleiber's law
+
+- [kleiber.csv](./data/kleiber.csv): [Kleiber's law](https://en.wikipedia.org/wiki/Kleiber%27s_law) states that animals' metabolic rates follow a power law to their masses. Data are from @savage2004predominance, where they collected data on mammals to study this power law. Variables include
+    - `order`: The [order](https://en.wikipedia.org/wiki/Order_(biology)) of the species.
+    - `family`: The [family](https://en.wikipedia.org/wiki/Family_(biology)) of the species.
+    - `species`: The [genus](https://en.wikipedia.org/wiki/Genus) and [species](https://en.wikipedia.org/wiki/Species) names.
+    - `mass`: The average mass (in grams) of the species.
+    - `bmr`: The average basal metabolic rate (in watts) of the species.
+    
 ### Market Share
 
 - [market.csv](./data/market.csv): Dataset C.3 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:

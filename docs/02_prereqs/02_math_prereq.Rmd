@@ -26,7 +26,6 @@ klippy::klippy()
 - Summations/averages
 - Equations for lines
 - Logarithms/exponentials
-- Intuition behind derivatives
 - Chapter 3 of [ROS](https://avehtari.github.io/ROS-Examples/)
 
 # Motivation
@@ -231,8 +230,24 @@ $$
     $$
     \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
     $$.
+    
+    ```{r}
+    ## Define e
+    e <- exp(1)
+    e
+    
+    ## show exp(3) == e * e * e
+    exp(3) 
+    e * e * e
+    ```
+    
+- Recall that $e$ is [Euler's number](https://en.wikipedia.org/wiki/E_(mathematical_constant)), which is about `r exp(1)`.
 
-- The last equality only follows if $x$ is positive integer, but exponentiation can be extended to any real number.
+- The last equality in the above equation for `exp()` only follows if $x$ is positive integer, but exponentiation can be extended to any real number.
+
+    ```{r}
+    exp(1.414)
+    ```
 
 - $\log(x)$ is the **natural** logarithm of $x$ (not base 10). This is the inverse of exponentiation
     $$

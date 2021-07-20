@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-14" />
+<meta name="date" content="2021-07-20" />
 
 <title>Math Prerequisites</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-14</h4>
+<h4 class="date">2021-07-20</h4>
 
 </div>
 
@@ -282,7 +282,11 @@ $(document).ready(function () {
 <li><a href="#products">Products</a></li>
 </ul></li>
 <li><a href="#lines">Lines</a></li>
-<li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a></li>
+<li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a>
+<ul>
+<li><a href="#exponential-growthdecline">Exponential growth/decline</a></li>
+<li><a href="#power-law-growthdecline">Power-law growth/decline</a></li>
+</ul></li>
 <li><a href="#derivatives">Derivatives</a></li>
 </ul>
 </div>
@@ -298,7 +302,6 @@ $(document).ready(function () {
 <li>Summations/averages</li>
 <li>Equations for lines</li>
 <li>Logarithms/exponentials</li>
-<li>Intuition behind derivatives</li>
 <li>Chapter 3 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a></li>
 </ul>
 </div>
@@ -432,8 +435,20 @@ qplot(x = year, y = seconds, data = mile) +
 <li><p>Often, we consider linear relationships on the log-scale. So we need to know something about logarithms and exponentials.</p></li>
 <li><p>Let’s start with exponentials: <span class="math display">\[
   \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
-  \]</span>.</p></li>
-<li><p>The last equality only follows if <span class="math inline">\(x\)</span> is positive integer, but exponentiation can be extended to any real number.</p></li>
+  \]</span>.</p>
+<pre class="r"><code>## Define e
+e &lt;- exp(1)
+e</code></pre>
+<pre><code>## [1] 2.718</code></pre>
+<pre class="r"><code>## show exp(3) == e * e * e
+exp(3) </code></pre>
+<pre><code>## [1] 20.09</code></pre>
+<pre class="r"><code>e * e * e</code></pre>
+<pre><code>## [1] 20.09</code></pre></li>
+<li><p>Recall that <span class="math inline">\(e\)</span> is <a href="https://en.wikipedia.org/wiki/E_(mathematical_constant)">Euler’s number</a>, which is about 2.7183.</p></li>
+<li><p>The last equality in the above equation for <code>exp()</code> only follows if <span class="math inline">\(x\)</span> is positive integer, but exponentiation can be extended to any real number.</p>
+<pre class="r"><code>exp(1.414)</code></pre>
+<pre><code>## [1] 4.112</code></pre></li>
 <li><p><span class="math inline">\(\log(x)\)</span> is the <strong>natural</strong> logarithm of <span class="math inline">\(x\)</span> (not base 10). This is the inverse of exponentiation <span class="math display">\[
   \log(\exp(x)) = \exp(\log(x)) = x
   \]</span></p></li>
@@ -448,8 +463,48 @@ qplot(x = year, y = seconds, data = mile) +
 <li><span class="math inline">\(\exp(a + b) = \exp(a)\exp(b)\)</span>.</li>
 <li><span class="math inline">\(\log(ab) = \log(a) + \log(b)\)</span>.</li>
 </ul></li>
-<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span> represents exponential <em>growth</em> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and exponential <em>decline</em> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+<li><p>Why do we care about exponentials and logarithms? Because many relationships in the real world follow <strong>exponential</strong> or <strong>power</strong> laws.</p></li>
 </ul>
+<div id="exponential-growthdecline" class="section level2">
+<h2>Exponential growth/decline</h2>
+<ul>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span> represents <strong>exponential growth</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>exponential decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+<li><p>Exponentiating both sides, we get <span class="math display">\[
+  y = e^{\beta_0}e^{\beta_1 x}
+  \]</span></p></li>
+<li><p>Exponential growth:</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Exponential decline:</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is the value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> determines the rate of growth or decline.</p></li>
+<li><p>A 1-unit difference in <span class="math inline">\(x\)</span> corresponds to a multiplicative factor of <span class="math inline">\(e^{\beta_1}\)</span> in <span class="math inline">\(y\)</span>. (you multiply the old <span class="math inline">\(y\)</span> value by <span class="math inline">\(e^{\beta_1}\)</span> to figure out the new <span class="math inline">\(y\)</span> value when you have an <span class="math inline">\(x\)</span> value that is 1 larger).</p></li>
+<li><p>This follows from: <span class="math display">\[\begin{align}
+  y_{old} &amp;= e^{\beta_0}e^{\beta_1 x}\\
+  y_{new} &amp;= e^{\beta_0}e^{\beta_1 (x + 1)}\\
+          &amp;= e^{\beta_0}e^{\beta_1 x + \beta_1}\\
+          &amp;= e^{\beta_0}e^{\beta_1 x} e^{\beta_1}\\
+          &amp;= y_{old}e^{\beta_1}
+  \end{align}\]</span></p></li>
+<li><p>Example:</p></li>
+</ul>
+</div>
+<div id="power-law-growthdecline" class="section level2">
+<h2>Power-law growth/decline</h2>
+<ul>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span> represents <strong>power-law growth</strong> if <span class="math inline">\(beta_1 &gt; 0\)</span> and <strong>power-law decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+<li><p>Exponentiating both sides, we get the relationship <span class="math display">\[
+  y = e^{\beta_0}x^{\beta_1}
+  \]</span></p></li>
+<li><p>Example: From the <code>Sleuth3</code> R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.</p>
+<pre class="r"><code>library(Sleuth3)
+data(&quot;case0801&quot;)
+qplot(x = Area, y = Species, data = case0801)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>This relationship is well-approximated by the curve <span class="math inline">\(y = 6.9345x^{0.2497}\)</span>.</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
 </div>
 <div id="derivatives" class="section level1">
 <h1>Derivatives</h1>

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-13" />
+<meta name="date" content="2021-07-20" />
 
 <title>Data</title>
 
@@ -287,7 +287,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-13</h4>
+<h4 class="date">2021-07-20</h4>
 
 </div>
 
@@ -295,6 +295,7 @@ $(document).ready(function () {
 <ul>
 <li><a href="#county-demographic-information">County Demographic Information</a></li>
 <li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
+<li><a href="#kleibers-law">Kleiber’s law</a></li>
 <li><a href="#market-share">Market Share</a></li>
 <li><a href="#mile-times">Mile Times</a></li>
 <li><a href="#prostate-cancer">Prostate Cancer</a></li>
@@ -341,6 +342,19 @@ $(document).ready(function () {
 <li><code>vote</code>: Incumbant party’s vote share of the two-party vote (excludes third parties).</li>
 <li><code>inc_party_candidate</code>: The candidate of the incumbant party.</li>
 <li><code>other_candidate</code>: The candidate of the other party.</li>
+</ul></li>
+</ul>
+</div>
+<div id="kleibers-law" class="section level3">
+<h3>Kleiber’s law</h3>
+<ul>
+<li><a href="./data/kleiber.csv">kleiber.csv</a>: <a href="https://en.wikipedia.org/wiki/Kleiber%27s_law">Kleiber’s law</a> states that animals’ metabolic rates follow a power law to their masses. Data are from <span class="citation">Savage et al. (2004)</span>, where they collected data on mammals to study this power law. Variables include
+<ul>
+<li><code>order</code>: The <a href="https://en.wikipedia.org/wiki/Order_(biology)">order</a> of the species.</li>
+<li><code>family</code>: The <a href="https://en.wikipedia.org/wiki/Family_(biology)">family</a> of the species.</li>
+<li><code>species</code>: The <a href="https://en.wikipedia.org/wiki/Genus">genus</a> and <a href="https://en.wikipedia.org/wiki/Species">species</a> names.</li>
+<li><code>mass</code>: The average mass (in grams) of the species.</li>
+<li><code>bmr</code>: The average basal metabolic rate (in watts) of the species.</li>
 </ul></li>
 </ul>
 </div>
@@ -461,6 +475,9 @@ $(document).ready(function () {
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-hibbs2000bread" class="csl-entry">
 Hibbs, Douglas A. 2000. <span>“Bread and Peace Voting in US Presidential Elections.”</span> <em>Public Choice</em> 104 (1): 149–80. <a href="https://doi.org/10.1023/A:1005292312412">https://doi.org/10.1023/A:1005292312412</a>.
+</div>
+<div id="ref-savage2004predominance" class="csl-entry">
+Savage, V. M., J. F. Gillooly, W. H. Woodruff, G. B. West, A. P. Allen, B. J. Enquist, and J. H. Brown. 2004. <span>“The Predominance of Quarter-Power Scaling in Biology.”</span> <em>Functional Ecology</em> 18 (2): 257–82. <a href="https://doi.org/10.1111/j.0269-8463.2004.00856.x">https://doi.org/10.1111/j.0269-8463.2004.00856.x</a>.
 </div>
 </div>
 </div>

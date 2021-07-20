@@ -1,4 +1,5 @@
 library(tidyverse)
+library(janitor)
 
 ## C.1 -----------------------
 senic <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC01.txt", col_names = FALSE)
@@ -128,5 +129,18 @@ mile %>%
   write_csv(file = "./mile.csv")
 
 
-
-
+## Kleiber
+## kleiber <- read_csv("kleiber.csv")
+# kleiber <- janitor::clean_names(kleiber)
+# kleiber %>%
+#   select(order, family, species, mass = species_avg_mass_g, bmr = species_avg_bmr_w) %>%
+#   filter(!is.na(mass)) %>%
+#   mutate(mass = str_remove_all(mass, "\\s+"),
+#          bmr = str_remove_all(bmr, "\\s+"),
+#          mass = str_replace_all(mass, "·", "\\."),
+#          bmr = str_replace_all(bmr, "·", "\\."),
+#          mass = parse_double(mass),
+#          bmr = parse_double(bmr)) ->
+#   kleiber
+#
+# write_csv(x = kleiber, file = "kleiber.csv")
