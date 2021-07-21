@@ -32,9 +32,9 @@ klippy::klippy()
 
 - Mathematics are the building blocks of linear regression.
 
-- Log/exponential transformations are important for the practice and interpretation of linear models.
+- You must be proficient with linear equations and summations to implement and understand linear models.
 
-- Calculus is important for estimating the parameters of linear models.
+- Log/exponential transformations are important for the practice and interpretation of many types of linear models.
 
 - Here, we will provide a brief mathematical review.
 
@@ -314,19 +314,154 @@ $$
             &= y_{old}e^{\beta_1}
     \end{align}
     
-- Example:
+- **Example**: The early growth of [COVID-19 in DC](https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests) looked exponential:
+    ```{r, message = FALSE}
+    dc <- read_csv("https://dcgerard.github.io/stat_415_615/data/dccovid.csv")
+    dc <- select(dc, day, positives)
+    dc <- filter(dc, day <= "2020-04-01", day >= "2020-03-11") 
+    qplot(x = day, y = positives, data = dc)
+    ```
+    
+    We determine if an exponential growth model is appropriate by seeing if day versus log-positives is approximately linear:
+    
+    ```{r}
+    dc <- mutate(dc, 
+                 lpos = log(positives),
+                 daysin = as.numeric(day) - as.numeric(day[[1]]))
+    qplot(x = daysin, y = lpos, data = dc)
+    ```
+    
+    ```{r, echo = FALSE}
+    coefvec <- coef(lm(lpos ~ daysin, data = dc))
+    beta0 <- coefvec[[1]]
+    beta1 <- coefvec[[2]]
+    ```
+
+    A curve that fits this growth well is $y = `r exp(beta0)`e^{`r beta1`x}$.
+    
+    ```{r, echo = FALSE}
+    df <- data.frame(x = seq(min(dc$daysin), max(dc$daysin), length.out = 100))
+    df$y <- exp(beta0) * exp(df$x * beta1)
+    ggplot() +
+      geom_point(data = dc, mapping = aes(x = daysin, y = positives)) +
+      geom_line(data = df, mapping = aes(x = x, y = y))
+    ```
+    
+    So that means that early on in the pandemic, each day positive tests were multiplicatively increasing by about $e^{\beta_1} = e^{`r beta1`} = `r exp(beta1)`$. Or, about a 24\% increase each day.
+    
+- **Exercise**: Consider the population growth of DC from 1800 to 1950, taken from [Wikipedia](https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics).
+    ```{r}
+    dcpop <- tribble(~year,   ~pop,
+                     1800L,   8144,
+                     1810L,  15471,
+                     1820L,  23336,
+                     1830L,  30261,
+                     1840L,  33745,
+                     1850L,  51687,
+                     1860L,  75080,
+                     1870L, 131700,
+                     1880L, 177624,
+                     1890L, 230392,
+                     1900L, 278718,
+                     1910L, 331069,
+                     1920L, 437571,
+                     1930L, 486869,
+                     1940L, 663091,
+                     1950L, 802178)
+    qplot(x = year, y = pop, data = dcpop)
+    ```
+    ```{r, echo = FALSE}
+    coefvec <- coef(lm(log(pop) ~ year, data = dcpop))
+    beta0 <- coefvec[[1]]
+    beta1 <- coefvec[[2]]
+    ```
+    
+    A researcher has determined that the following relationship approximates this growth well:
+    
+    $$
+    \log(y) = `r beta0` + `r beta1` x
+    $$
+    
+    ```{r, echo = FALSE}
+    df <- data.frame(x = seq(min(dcpop$year), max(dcpop$year), length.out = 100))
+    df$y <- exp(beta0) * exp(df$x * beta1)
+    ggplot() +
+      geom_point(data = dcpop, mapping = aes(x = year, y = pop)) +
+      geom_line(data = df, mapping = aes(x = x, y = y))
+    ```
+    
+
+    1. Interpret the `r beta1` value.
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    DC experienced about 3\% growth each year. This is since `exp(0.0289) = 1.03`.
+    ```
+
+    2. Interpret the `r beta0` value.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    It is the $y$-intercept of the line $\log(y) = \beta_0 + \beta_1x$. It has no other interpretation because the range of values are from 1800 to 1950, and 0 is outside of this range.
+    
+    So it is **incorrect** to say that `exp(beta0)` is the population at year 0.
+    ```
+    
+    3. What is the average growth every 10 years?
+    
+    ```{block, echo = FALSE, eval = FALSE}
+    `exp(10 * 0.0289)` = 1.335, or about 34\% growth every 10 years.
+    ```
+    
+## Why use $e$ and not some other base?
+
+- Tradition.
+
+- For small values of $\beta_1$ (say, $-0.1 \leq \beta_1 \leq 0.1$), we can interpret $\beta_1$ as the proportion change for a 1 unit difference in $x$.
+
+- This is because for small $\beta_1$, we have $\beta_1 \approx e^{\beta_1}$.
+
+```{r, echo = FALSE}
+tibble(beta1 = seq(0, 0.2, length = 11)) %>%
+  mutate(`exp(beta1)` = exp(beta1),
+         `Percent Change` = (`exp(beta1)` - 1) * 100) %>%
+  knitr::kable()
+```
+
+- In many real world applications, $\beta_1$ is typically small.
+
+- This relationship does not hold with other bases. E.g. $10^{0.02} = `r 10^0.02` \not\approx 1.02$.
+
+- **Example**: From the DC population example above, we had $\beta_1 = `r beta1`$ and $e^{\beta_1} = `r exp(beta1)`$. So, a 3\% increase in population each year, and you can get that either from $\beta_1$ or $e^{\beta_1}$.
 
 ## Power-law growth/decline
 
-- $\log(y) = \beta_0 + \beta_1 \log(x)$ represents **power-law growth** if $beta_1 > 0$ and **power-law decline** if $\beta_1 < 0$.
+- $\log(y) = \beta_0 + \beta_1 \log(x)$ represents **power-law growth** if $\beta_1 > 0$ and **power-law decline** if $\beta_1 < 0$.
+    - Sub-linear growth if $0 < \beta_1 < 1$.
+    - Super-linear growth if $\beta_1 > 1$.
 
 - Exponentiating both sides, we get the relationship
     $$
     y = e^{\beta_0}x^{\beta_1}
     $$
 
+- Interpret $\beta_0$: The value of $y$ when $x = 1$ is $e^{\beta_0}$.
 
-- Example: From the `Sleuth3` R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.
+- Interpret $\beta_1$: 
+    - When you double $x$, you multiply $y$ by $2^{\beta_1}$.
+    - When you multiply $x$ by 10, you multiply $y$ by $10^{\beta_1}$.
+    - When you multiply $x$ by 1.1 (10\% increase), you multiply $y$ by $1.1^{\beta_1}$.
+    - Choose a multiplier that makes sense for the range of your data. E.g., if it is never the case that one value is 10 times larger than another, don't use that as the interpretation.
+    
+- This follows from:
+
+    \begin{align}
+    y_{old} &= e^{\beta_0}x^{\beta_1}\\
+    y_{new} &= e^{\beta_0}(2x)^{\beta_1}\\
+            &= e^{\beta_0}2^{\beta_1}x^{\beta_1}\\
+            &= 2^{\beta_1}e^{\beta_0}x^{\beta_1}\\
+            &= 2^{\beta_1}y_{old}
+    \end{align}
+    
+- **Example**: From the `{Sleuth3}` R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.
 
     ```{r}
     library(Sleuth3)
@@ -340,7 +475,7 @@ $$
     beta1 <- coefout[[2]]
     ```
     
-- This relationship is well-approximated by the curve $y = `r exp(beta0)`x^{`r beta1`}$.
+    - This relationship is well-approximated by the curve $y = `r exp(beta0)`x^{`r beta1`}$.
 
     ```{r, echo = FALSE}
     df <- data.frame(x = seq(0, max(case0801$Area), length.out = 100))
@@ -350,3 +485,61 @@ $$
       geom_line(data = df, aes(x = x, y = y))
     ```
 
+    - So islands that are twice as large tend to have $2^{\beta_1} = 2^{`r beta1`} = `r 2^beta1`$ times as many species. Or, islands that are twice as large tend to have 19\% more species.
+    
+    - Notice that I didn't use the language "change" or "increase", because those would imply causal connections.
+    
+- **Exercise**: Prove that the interpretation "when you multiply $x$ by 10, you multiply $y$ by $10^{\beta_1}$" is correct.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Just redo the calculations for the interpretation of doubling, but with 10 instead of 2.
+    ```
+
+- **Exercise**: Consider the wine consumption and heart disease data from the `{Sleuth3}` package. The observational units are the counties and the variables are
+    - `Wine`: consumption of wine (liters per person per year)
+    - `Mortality`: heart disease mortality rate (deaths per 1,000)
+
+    ```{r}
+    data("ex0823")
+    qplot(x = Wine, y = Mortality, data = ex0823)
+    ```
+ 
+    - Researchers have determined that this relationship is well-approximated by the following equation.
+    
+    ```{r, echo = FALSE}
+    coefout <- coef(lm(log(Mortality) ~ log(Wine), data = ex0823))
+    beta0 <- coefout[[1]]
+    beta1 <- coefout[[2]]
+    ```
+    
+    $$
+    y = `r exp(beta0)`x^{`r beta1`}
+    $$
+    
+    ```{r, echo = FALSE}
+    df <- data.frame(x = seq(min(ex0823$Wine), max(ex0823$Wine), length.out = 100))
+    df$y <- exp(beta0) * df$x ^ beta1
+    ggplot() +
+      geom_point(data = ex0823, mapping = aes(x = Wine, y = Mortality)) +
+      geom_line(data = df, mapping = aes(x = x, y = y))
+    ```
+
+    1. Interpret `r beta1`.
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Countries that drink twice as much wine tend to have mortality rates 22% lower. This is since 2^-0.3556 = 0.7815.
+    ```
+    
+    2. Interpret `r beta0` (the value of $\beta_0$).
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    The y-intercept of the line of log(Mortality) on log(Wine). You can kind of interpret $exp(\beta_0) = 12.88$ as the average mortality rate of countries that don't drink, since the data are near there, but it is a stretch since no countries are at 0.
+    ```
+        
+    3. If one country drinks 50\% more wine per person per year than another country, what is the expected difference in mortality rates?
+    
+    ```{block, echo = FALSE, eval = FALSE}
+    `1.5^-0.3556 = 0.8657`, so a mortality rate that is 13\% lower.
+    ```
+        
+ 

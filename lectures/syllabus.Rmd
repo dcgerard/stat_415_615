@@ -53,15 +53,17 @@ We will use the R computing language to complete assignments. R is free and may 
 
 # Assignments and Grading
 
-- Weekly homeworks: 25%
-- Midterm 1: 20%
-- Midterm 2: 20%
-- Final Project: 35%
+- Weekly homeworks: 35%
+- Midterm: 20%
+  - In class, closed notes, closed book.
+- Final Exam: 20%
+  - In class, closed notes, closed book.
+  - Focuses on the second half of material, but indirectly cumulative.
+- Final Project: 25%
   - Status update 1: 5%
   - Status update 2: 5%
-  - Status update 3: 5%
   - Final Report: 10%
-  - Final Presentation: 10%
+  - Final Presentation: 5%
   
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
@@ -93,6 +95,13 @@ Individual assignments will not be curved. However, at the discretion of the ins
     b. Sample size calculation.
 7. Dealing with Missing data.
     a. Imputation.
+    
+# Important Dates
+
+- 10/12/2021--10/13/2021: Tentative dates for midterm exams.
+- 11/23/2021: Tuesday classes cancelled; Friday classes meet.
+- 11/24/2021: Wednesday classes cancelled; Thanksgiving holiday.
+- 12/13/2021--12/18/2021: Final exam week (final exam times TBD).
 
 # Course Learning Outcomes
 
