@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-20" />
+<meta name="date" content="2021-07-21" />
 
 <title>Data</title>
 
@@ -287,13 +287,14 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-20</h4>
+<h4 class="date">2021-07-21</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#county-demographic-information">County Demographic Information</a></li>
+<li><a href="#dc-covid-tests">DC COVID Tests</a></li>
 <li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
 <li><a href="#kleibers-law">Kleiber’s law</a></li>
 <li><a href="#market-share">Market Share</a></li>
@@ -329,6 +330,20 @@ $(document).ready(function () {
 <li><code>capita_income</code>: Per capita income (dollars).</li>
 <li><code>total_income</code>: Total person income (millions of dollars).</li>
 <li><code>region</code>: Geographic region, Northeast (<code>"NE"</code>), North-central (<code>"NC"</code>), South (<code>"S"</code>), or West (<code>"W"</code>).</li>
+</ul></li>
+</ul>
+</div>
+<div id="dc-covid-tests" class="section level3">
+<h3>DC COVID Tests</h3>
+<ul>
+<li><a href="./data/dccovid.csv">dccovid.csv</a>: Test data taken (and cleaned) from the <a href="https://coronavirus.dc.gov/data">COVID-19 surveillance website</a> run by the DC government. These data were downloaded on 2021-07-21. Variables include:
+<ul>
+<li><code>day</code>: The day of the measurements.</li>
+<li><code>cleared</code>: Number of individuals cleared from isolation.</li>
+<li><code>lost</code>: Total number of COVID deaths.</li>
+<li><code>dctested</code>: Total number of DC residents tested.</li>
+<li><code>tested</code>: Total overall number of tests.</li>
+<li><code>positives</code>: Total number of positive test results.</li>
 </ul></li>
 </ul>
 </div>

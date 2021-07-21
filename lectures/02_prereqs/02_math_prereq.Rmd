@@ -350,5 +350,3 @@ $$
       geom_line(data = df, aes(x = x, y = y))
     ```
 
-# Derivatives
-

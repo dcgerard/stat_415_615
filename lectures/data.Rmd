@@ -39,6 +39,16 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `total_income`: Total person income (millions of dollars).
     - `region`:  Geographic region, Northeast (`"NE"`), North-central (`"NC"`), South (`"S"`), or West (`"W"`).
     
+### DC COVID Tests
+
+- [dccovid.csv](./data/dccovid.csv): Test data taken (and cleaned) from the [COVID-19 surveillance website](https://coronavirus.dc.gov/data) run by the DC government. These data were downloaded on 2021-07-21. Variables include:
+    - `day`: The day of the measurements.
+    - `cleared`: Number of individuals cleared from isolation.
+    - `lost`: Total number of COVID deaths.
+    - `dctested`: Total number of DC residents tested.
+    - `tested`: Total overall number of tests.
+    - `positives`: Total number of positive test results.
+    
 ### Hibb's Bread and Peace
 
 - [hibbs.csv](./data/hibbs.csv): Data from Chapter 7 of [ROS](https://avehtari.github.io/ROS-Examples/) based on the "bread and peace" model of @hibbs2000bread which predicts incumbent party's share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.

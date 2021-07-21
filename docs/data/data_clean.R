@@ -1,5 +1,6 @@
 library(tidyverse)
 library(janitor)
+library(lubridate)
 
 ## C.1 -----------------------
 senic <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC01.txt", col_names = FALSE)
@@ -130,17 +131,48 @@ mile %>%
 
 
 ## Kleiber
-## kleiber <- read_csv("kleiber.csv")
-# kleiber <- janitor::clean_names(kleiber)
-# kleiber %>%
-#   select(order, family, species, mass = species_avg_mass_g, bmr = species_avg_bmr_w) %>%
-#   filter(!is.na(mass)) %>%
-#   mutate(mass = str_remove_all(mass, "\\s+"),
-#          bmr = str_remove_all(bmr, "\\s+"),
-#          mass = str_replace_all(mass, "·", "\\."),
-#          bmr = str_replace_all(bmr, "·", "\\."),
-#          mass = parse_double(mass),
-#          bmr = parse_double(bmr)) ->
-#   kleiber
-#
-# write_csv(x = kleiber, file = "kleiber.csv")
+kleiber <- read_csv("../../raw_data/kleiber_raw.csv")
+kleiber <- janitor::clean_names(kleiber)
+kleiber %>%
+  select(order, family, species, mass = species_avg_mass_g, bmr = species_avg_bmr_w) %>%
+  filter(!is.na(mass)) %>%
+  mutate(mass = str_remove_all(mass, "\\s+"),
+         bmr = str_remove_all(bmr, "\\s+"),
+         mass = str_replace_all(mass, "·", "\\."),
+         bmr = str_replace_all(bmr, "·", "\\."),
+         mass = parse_double(mass),
+         bmr = parse_double(bmr)) ->
+  kleiber
+
+write_csv(x = kleiber, file = "kleiber.csv")
+
+
+dccovid <- read_csv("../../raw_data/dccovid.csv")
+tibble(date = names(dccovid)) %>%
+  mutate(date = str_remove(date, "\\.\\.\\.\\d+")) %>%
+  mutate(is2021 = cumsum(date == "1-Jan") == 1) %>%
+  mutate(date = case_when(is2021 ~ str_c(date, "-2021"),
+                          !is2021 ~ str_c(date, "-2020"))) %>%
+  .$date ->
+  names(dccovid)
+names(dccovid)[1:2] <- c("type", "var")
+
+dccovid %>%
+  filter(type == "Testing") %>%
+  select(-type) %>%
+  gather(-var, key = "day", value = "count", na.rm = FALSE) %>%
+  spread(key = var, value = count, drop = FALSE) %>%
+  janitor::clean_names() %>%
+  mutate(day = dmy(day)) %>%
+  arrange(day) %>%
+  rename(cleared = cleared_from_isolation,
+         lost = total_lives_lost,
+         dctested = total_number_of_dc_residents_tested,
+         tested = total_overall_number_of_tests,
+         positives = total_positives) %>%
+  mutate(cleared = parse_number(cleared),
+         lost = parse_number(lost),
+         dctested = parse_number(dctested),
+         tested = parse_number(tested),
+         positives = parse_number(positives)) %>%
+  write_csv("./dccovid.csv")

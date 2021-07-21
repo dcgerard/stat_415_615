@@ -265,8 +265,88 @@ $$
 - A useful property of logs/exponents is how it can convert multiplication to summation and vice versa.
     - $\exp(a + b) = \exp(a)\exp(b)$.
     - $\log(ab) = \log(a) + \log(b)$.
+    
+- Why do we care about exponentials and logarithms? Because many relationships in the real world follow **exponential** or **power** laws.
 
-- $\log(y) = \beta_0 + \beta_1 x$ represents exponential *growth* if $\beta_1 > 0$ and exponential *decline* if $\beta_1 < 0$.
+## Exponential growth/decline
 
-# Derivatives
+- $\log(y) = \beta_0 + \beta_1 x$ represents **exponential growth** if $\beta_1 > 0$ and **exponential decline** if $\beta_1 < 0$.
+
+- Exponentiating both sides, we get
+    $$
+    y = e^{\beta_0}e^{\beta_1 x}
+    $$
+    
+- Exponential growth:
+
+    ```{r, echo = FALSE}
+    xseq <- seq(0, 4, length.out = 100)
+    df <- tibble(x = xseq, y = exp(xseq))
+    ggplot(df, aes(x = x, y = y)) +
+      geom_line() +
+      theme(axis.text = element_blank(),
+            axis.ticks = element_blank())
+    ```
+    
+- Exponential decline:
+
+    ```{r, echo = FALSE}
+    xseq <- seq(0, 4, length.out = 100)
+    df <- tibble(x = xseq, y = exp(-xseq))
+    ggplot(df, aes(x = x, y = y)) +
+      geom_line() +
+      theme(axis.text = element_blank(),
+            axis.ticks = element_blank())
+    ```
+
+- $\beta_0$ is the value of $y$ when $x = 0$
+
+- $\beta_1$ determines the rate of growth or decline.
+
+- A 1-unit difference in $x$ corresponds to a multiplicative factor of $e^{\beta_1}$ in $y$. (you multiply the old $y$ value by $e^{\beta_1}$ to figure out the new $y$ value when you have an $x$ value that is 1 larger).
+    
+- This follows from:
+    \begin{align}
+    y_{old} &= e^{\beta_0}e^{\beta_1 x}\\
+    y_{new} &= e^{\beta_0}e^{\beta_1 (x + 1)}\\
+            &= e^{\beta_0}e^{\beta_1 x + \beta_1}\\
+            &= e^{\beta_0}e^{\beta_1 x} e^{\beta_1}\\
+            &= y_{old}e^{\beta_1}
+    \end{align}
+    
+- Example:
+
+## Power-law growth/decline
+
+- $\log(y) = \beta_0 + \beta_1 \log(x)$ represents **power-law growth** if $beta_1 > 0$ and **power-law decline** if $\beta_1 < 0$.
+
+- Exponentiating both sides, we get the relationship
+    $$
+    y = e^{\beta_0}x^{\beta_1}
+    $$
+
+
+- Example: From the `Sleuth3` R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.
+
+    ```{r}
+    library(Sleuth3)
+    data("case0801")
+    qplot(x = Area, y = Species, data = case0801)
+    ```
+    
+    ```{r, echo = FALSE}
+    coefout <- coef(lm(log(Species) ~ log(Area), data = case0801))
+    beta0 <- coefout[[1]]
+    beta1 <- coefout[[2]]
+    ```
+    
+- This relationship is well-approximated by the curve $y = `r exp(beta0)`x^{`r beta1`}$.
+
+    ```{r, echo = FALSE}
+    df <- data.frame(x = seq(0, max(case0801$Area), length.out = 100))
+    df$y <- exp(beta0) * df$x^beta1
+    ggplot() +
+      geom_point(data = case0801, aes(x = Area, y = Species)) +
+      geom_line(data = df, aes(x = x, y = y))
+    ```
 
