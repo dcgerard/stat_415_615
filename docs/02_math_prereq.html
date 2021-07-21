@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-20" />
+<meta name="date" content="2021-07-21" />
 
 <title>Math Prerequisites</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-20</h4>
+<h4 class="date">2021-07-21</h4>
 
 </div>
 
@@ -285,9 +285,9 @@ $(document).ready(function () {
 <li><a href="#logarithms-and-exponentials">Logarithms and Exponentials</a>
 <ul>
 <li><a href="#exponential-growthdecline">Exponential growth/decline</a></li>
+<li><a href="#why-use-e-and-not-some-other-base">Why use <span class="math inline">\(e\)</span> and not some other base?</a></li>
 <li><a href="#power-law-growthdecline">Power-law growth/decline</a></li>
 </ul></li>
-<li><a href="#derivatives">Derivatives</a></li>
 </ul>
 </div>
 
@@ -309,8 +309,8 @@ $(document).ready(function () {
 <h1>Motivation</h1>
 <ul>
 <li><p>Mathematics are the building blocks of linear regression.</p></li>
-<li><p>Log/exponential transformations are important for the practice and interpretation of linear models.</p></li>
-<li><p>Calculus is important for estimating the parameters of linear models.</p></li>
+<li><p>You must be proficient with linear equations and summations to implement and understand linear models.</p></li>
+<li><p>Log/exponential transformations are important for the practice and interpretation of many types of linear models.</p></li>
 <li><p>Here, we will provide a brief mathematical review.</p></li>
 </ul>
 </div>
@@ -486,28 +486,195 @@ exp(3) </code></pre>
           &amp;= e^{\beta_0}e^{\beta_1 x} e^{\beta_1}\\
           &amp;= y_{old}e^{\beta_1}
   \end{align}\]</span></p></li>
-<li><p>Example:</p></li>
+<li><p><strong>Example</strong>: The early growth of <a href="https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests">COVID-19 in DC</a> looked exponential:</p>
+<pre class="r"><code>dc &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/dccovid.csv&quot;)
+dc &lt;- select(dc, day, positives)
+dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
+qplot(x = day, y = positives, data = dc)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We determine if an exponential growth model is appropriate by seeing if day versus log-positives is approximately linear:</p>
+<pre class="r"><code>dc &lt;- mutate(dc, 
+             lpos = log(positives),
+             daysin = as.numeric(day) - as.numeric(day[[1]]))
+qplot(x = daysin, y = lpos, data = dc)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A curve that fits this growth well is <span class="math inline">\(y = 8.8815e^{0.218x}\)</span>.</p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>So that means that early on in the pandemic, each day positive tests were multiplicatively increasing by about <span class="math inline">\(e^{\beta_1} = e^{0.218} = 1.2436\)</span>. Or, about a 24% increase each day.</p></li>
+<li><p><strong>Exercise</strong>: Consider the population growth of DC from 1800 to 1950, taken from <a href="https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics">Wikipedia</a>.</p>
+<pre class="r"><code>dcpop &lt;- tribble(~year,   ~pop,
+                 1800L,   8144,
+                 1810L,  15471,
+                 1820L,  23336,
+                 1830L,  30261,
+                 1840L,  33745,
+                 1850L,  51687,
+                 1860L,  75080,
+                 1870L, 131700,
+                 1880L, 177624,
+                 1890L, 230392,
+                 1900L, 278718,
+                 1910L, 331069,
+                 1920L, 437571,
+                 1930L, 486869,
+                 1940L, 663091,
+                 1950L, 802178)
+qplot(x = year, y = pop, data = dcpop)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A researcher has determined that the following relationship approximates this growth well:</p>
+<p><span class="math display">\[
+  \log(y) = -44.409 + 0.0299 x
+  \]</span></p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li><p>Interpret the 0.0299 value.</p></li>
+<li><p>Interpret the -44.409 value.</p></li>
+<li><p>What is the average growth every 10 years?</p></li>
+</ol></li>
+</ul>
+</div>
+<div id="why-use-e-and-not-some-other-base" class="section level2">
+<h2>Why use <span class="math inline">\(e\)</span> and not some other base?</h2>
+<ul>
+<li><p>Tradition.</p></li>
+<li><p>For small values of <span class="math inline">\(\beta_1\)</span> (say, <span class="math inline">\(-0.1 \leq \beta_1 \leq 0.1\)</span>), we can interpret <span class="math inline">\(\beta_1\)</span> as the proportion change for a 1 unit difference in <span class="math inline">\(x\)</span>.</p></li>
+<li><p>This is because for small <span class="math inline">\(\beta_1\)</span>, we have <span class="math inline">\(\beta_1 \approx e^{\beta_1}\)</span>.</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th align="right">beta1</th>
+<th align="right">exp(beta1)</th>
+<th align="right">Percent Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.00</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="right">0.02</td>
+<td align="right">1.020</td>
+<td align="right">2.020</td>
+</tr>
+<tr class="odd">
+<td align="right">0.04</td>
+<td align="right">1.041</td>
+<td align="right">4.081</td>
+</tr>
+<tr class="even">
+<td align="right">0.06</td>
+<td align="right">1.062</td>
+<td align="right">6.184</td>
+</tr>
+<tr class="odd">
+<td align="right">0.08</td>
+<td align="right">1.083</td>
+<td align="right">8.329</td>
+</tr>
+<tr class="even">
+<td align="right">0.10</td>
+<td align="right">1.105</td>
+<td align="right">10.517</td>
+</tr>
+<tr class="odd">
+<td align="right">0.12</td>
+<td align="right">1.127</td>
+<td align="right">12.750</td>
+</tr>
+<tr class="even">
+<td align="right">0.14</td>
+<td align="right">1.150</td>
+<td align="right">15.027</td>
+</tr>
+<tr class="odd">
+<td align="right">0.16</td>
+<td align="right">1.173</td>
+<td align="right">17.351</td>
+</tr>
+<tr class="even">
+<td align="right">0.18</td>
+<td align="right">1.197</td>
+<td align="right">19.722</td>
+</tr>
+<tr class="odd">
+<td align="right">0.20</td>
+<td align="right">1.221</td>
+<td align="right">22.140</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>In many real world applications, <span class="math inline">\(\beta_1\)</span> is typically small.</p></li>
+<li><p>This relationship does not hold with other bases. E.g. <span class="math inline">\(10^{0.02} = 1.0471 \not\approx 1.02\)</span>.</p></li>
+<li><p><strong>Example</strong>: From the DC population example above, we had <span class="math inline">\(\beta_1 = 0.0299\)</span> and <span class="math inline">\(e^{\beta_1} = 1.0303\)</span>. So, a 3% increase in population each year, and you can get that either from <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(e^{\beta_1}\)</span>.</p></li>
 </ul>
 </div>
 <div id="power-law-growthdecline" class="section level2">
 <h2>Power-law growth/decline</h2>
 <ul>
-<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span> represents <strong>power-law growth</strong> if <span class="math inline">\(beta_1 &gt; 0\)</span> and <strong>power-law decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span> represents <strong>power-law growth</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>power-law decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p>
+<ul>
+<li>Sub-linear growth if <span class="math inline">\(0 &lt; \beta_1 &lt; 1\)</span>.</li>
+<li>Super-linear growth if <span class="math inline">\(\beta_1 &gt; 1\)</span>.</li>
+</ul></li>
 <li><p>Exponentiating both sides, we get the relationship <span class="math display">\[
   y = e^{\beta_0}x^{\beta_1}
   \]</span></p></li>
-<li><p>Example: From the <code>Sleuth3</code> R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.</p>
+<li><p>Interpret <span class="math inline">\(\beta_0\)</span>: The value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 1\)</span> is <span class="math inline">\(e^{\beta_0}\)</span>.</p></li>
+<li><p>Interpret <span class="math inline">\(\beta_1\)</span>:</p>
+<ul>
+<li>When you double <span class="math inline">\(x\)</span>, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(2^{\beta_1}\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 10, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(10^{\beta_1}\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 1.1 (10% increase), you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(1.1^{\beta_1}\)</span>.</li>
+<li>Choose a multiplier that makes sense for the range of your data. E.g., if it is never the case that one value is 10 times larger than another, don’t use that as the interpretation.</li>
+</ul></li>
+<li><p>This follows from:</p>
+<p><span class="math display">\[\begin{align}
+  y_{old} &amp;= e^{\beta_0}x^{\beta_1}\\
+  y_{new} &amp;= e^{\beta_0}(2x)^{\beta_1}\\
+          &amp;= e^{\beta_0}2^{\beta_1}x^{\beta_1}\\
+          &amp;= 2^{\beta_1}e^{\beta_0}x^{\beta_1}\\
+          &amp;= 2^{\beta_1}y_{old}
+  \end{align}\]</span></p></li>
+<li><p><strong>Example</strong>: From the <code>{Sleuth3}</code> R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;case0801&quot;)
 qplot(x = Area, y = Species, data = case0801)</code></pre>
-<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>This relationship is well-approximated by the curve <span class="math inline">\(y = 6.9345x^{0.2497}\)</span>.</p>
-<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>This relationship is well-approximated by the curve <span class="math inline">\(y = 6.9345x^{0.2497}\)</span>.</li>
+</ul>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>So islands that are twice as large tend to have <span class="math inline">\(2^{\beta_1} = 2^{0.2497} = 1.1889\)</span> times as many species. Or, islands that are twice as large tend to have 19% more species.</p></li>
+<li><p>Notice that I didn’t use the language “change” or “increase”, because those would imply causal connections.</p></li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Prove that the interpretation “when you multiply <span class="math inline">\(x\)</span> by 10, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(10^{\beta_1}\)</span>” is correct.</p></li>
+<li><p><strong>Exercise</strong>: Consider the wine consumption and heart disease data from the <code>{Sleuth3}</code> package. The observational units are the counties and the variables are</p>
+<ul>
+<li><code>Wine</code>: consumption of wine (liters per person per year)</li>
+<li><code>Mortality</code>: heart disease mortality rate (deaths per 1,000)</li>
+</ul>
+<pre class="r"><code>data(&quot;ex0823&quot;)
+qplot(x = Wine, y = Mortality, data = ex0823)</code></pre>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Researchers have determined that this relationship is well-approximated by the following equation.</li>
+</ul>
+<p><span class="math display">\[
+  y = 12.8784x^{-0.3556}
+  \]</span></p>
+<p><img src="02_math_prereq_files/figure-html/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li><p>Interpret -0.3556.</p></li>
+<li><p>Interpret 2.5556 (the value of <span class="math inline">\(\beta_0\)</span>).</p></li>
+<li><p>If one country drinks 50% more wine per person per year than another country, what is the expected difference in mortality rates?</p></li>
+</ol></li>
 </ul>
 </div>
-</div>
-<div id="derivatives" class="section level1">
-<h1>Derivatives</h1>
 </div>
 
 
