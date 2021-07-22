@@ -23,22 +23,19 @@ University by [David Gerard](https://dcgerard.github.io/).
 - 00 Motivation
   - [Other tests as linear regression](./00_motivation.html).
 - 01 Crash Course in R
-  - [R introduction](./01_r_intro.html): R Studio, R basics, data frames, loading data into R, plotting with `qplot()`.
+  - [R introduction](./01_r_intro.html).
   - [R markdown introduction](01_r_markdown.html).
   - [R graphics with `qplot()`](./01_qplot.html).
 - 02 Review
   - [Mathematical prerequisites](./02_math_prereq.html)
-  - Distributions
-  - Statistical inference.
+  - Statistical prerequisites.
 - 03 Simple linear regression
-  - Model
-  - [Estimation by Ordinary Least Squares](./03_ols.html)
-  - Hypothesis testing
-  - Assumptions
-  - Transformations
+  - [The Model](./03_ols.html). Chapter 1 of KNNL.
+  - Inference. Chapter 2 of KNNL.
+  - Assumptions/Diagnostics. Chapter 3 of KNNL.
 - 04 Linear algebra
-  - [Linear algebra basics](./04_linear_algebra.html).
-  - Simple linear regression in terms of linear algebra.
+  - [Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
+  - Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.
 - 05 Multiple linear regression
   - Model/Interpretation (including interactions, indicators)
   - Estimation

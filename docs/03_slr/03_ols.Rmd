@@ -1,5 +1,5 @@
 ---
-title: "Ordinary Least Squares"
+title: "Simple Linear Regression: The Model"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:  
@@ -21,8 +21,11 @@ klippy::klippy()
 
 # Learning Objectives
 
-- Understand least squares objective and ordinary least squares (OLS) estimates.
-- Derive OLS estimates using matrix notation.
+- Chapter 1 of KNNL.
+- Goals of regression analysis.
+- The simple linear regression model.
+- Least-squares approach to estimating parameters.
+- The Ordinary Least Squares (OLS) estimates.
 
 # Data
 
