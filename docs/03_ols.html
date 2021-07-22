@@ -276,10 +276,11 @@ $(document).ready(function () {
 <div id="TOC">
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
-<li><a href="#data">Data</a></li>
-<li><a href="#visualization">Visualization</a></li>
-<li><a href="#mathematical-derivation">Mathematical Derivation</a></li>
-<li><a href="#r-implementation">R Implementation</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#the-simple-linear-regression-model">The Simple Linear Regression Model</a></li>
+<li><a href="#review-of-interpretation">Review of interpretation</a></li>
+<li><a href="#estimating-parameters">Estimating Parameters</a></li>
+<li><a href="#finding-ols-estimates-in-r">Finding OLS Estimates in R</a></li>
 </ul>
 </div>
 
@@ -297,26 +298,222 @@ $(document).ready(function () {
 <li>The Ordinary Least Squares (OLS) estimates.</li>
 </ul>
 </div>
-<div id="data" class="section level1">
-<h1>Data</h1>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
 <ul>
-<li><p>Consider the “bread and peace” data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a>.</p>
+<li><p><strong>Observational/experimental Units</strong>: The people/places/things/animals/groups that we collect information about. Also known as “individuals” or “cases”. Sometimes I just say “units”.</p></li>
+<li><p><strong>Variable</strong>: A property of the observational/experimental units.</p>
+<ul>
+<li>E.g.: height of a person, area of a country, marital status.</li>
+</ul></li>
+<li><p><strong>Value</strong>: The specific level of a variable for an observational/experimental unit.</p>
+<ul>
+<li>E.g.: Bob is 5’11’’, China has an area of 3,705,407 square miles, Jane is divorced.</li>
+</ul></li>
+<li><p><strong>Quantitative Variable</strong>: The variable takes on numerical values where arithmetic operations (<span class="math inline">\(+\)</span>/<span class="math inline">\(-\)</span>/<span class="math inline">\(\times\)</span>/<span class="math inline">\(\div\)</span>) make sense.</p>
+<ul>
+<li>E.g.: height, weight, area, income.</li>
+<li>Counterexample: Phone numbers, social security numbers.</li>
+</ul></li>
+<li><p><strong>Regression Analysis</strong>: Study relationship between or more <em>quantitative</em> variables.</p></li>
+<li><p><strong>Response Variable</strong>:</p>
+<ul>
+<li>What we think is either caused by or explained by the predictor variable.</li>
+<li>Also called “outcome variable” and “dependent variable”.</li>
+<li>Usually denote this with the letter <span class="math inline">\(y\)</span>.</li>
+</ul></li>
+<li><p><strong>Predictor Variable</strong>:</p>
+<ul>
+<li>What we think causes or explains the outcome variable.</li>
+<li>Also called a “feature”, “explanatory variable”, “independent variable”, and (when doing an experiment) a “treatment variable”.</li>
+<li>Typically have more than one predictor.</li>
+<li>Usually denote these with the letters <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>, <span class="math inline">\(\ldots\)</span>, <span class="math inline">\(x_p\)</span>.</li>
+</ul></li>
+<li><p>Two quantitative variables can have either a <strong>functional</strong> or a <strong>statistical</strong> relationship.</p></li>
+<li><p><strong>Functional relationship</strong>: There is an exact mathematical formula relating the value of one quantitative variable <span class="math inline">\(x\)</span> (the predictor) to the other <span class="math inline">\(y\)</span> (the response). <span class="math display">\[
+  y = f(x)
+  \]</span> <span class="math inline">\(f()\)</span> is some function relating the correspondence of <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
+<ul>
+<li>E.g.: <span class="math inline">\(x\)</span> = the radius of a circle and <span class="math inline">\(y\)</span> = the area of a circle then <span class="math display">\[
+  y = \pi x^2
+  \]</span></li>
+</ul>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Statistical Relationship</strong>:</p>
+<ul>
+<li><p>Is not a perfect relation.</p></li>
+<li><p>Functional + noise.</p></li>
+<li><p>E.g. “bread and peace” data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> looking at the statistical relationship between economic growth and vote-share of the incumbant for president.</p></li>
+</ul>
 <pre class="r"><code>library(readr)
 library(ggplot2)
 hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
-qplot(x = growth, y = vote, data = hibbs)</code></pre>
-<p><img src="03_ols_files/figure-html/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+qplot(x = growth, y = vote, data = hibbs) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>Can say higher higher growth tends to have higher vote-share. But relationship is not perfect (but still pretty good!)</p></li>
+<li><p>The scattering of points about the line represents variation in vote share that is not associated with economic growth.</p></li>
+</ul></li>
+<li><p>Goals of Regression:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Description</strong>:
+<ol style="list-style-type: lower-alpha">
+<li>Gene expression (<span class="math inline">\(x\)</span>) is associated with height (<span class="math inline">\(y\)</span>).</li>
+<li>Biological sex (<span class="math inline">\(x\)</span>) is associated with salary (<span class="math inline">\(y\)</span>).</li>
+</ol></li>
+<li><strong>Prediction</strong>:
+<ol style="list-style-type: lower-alpha">
+<li>Predict sales (<span class="math inline">\(y\)</span>) based on product attributes (<span class="math inline">\(x\)</span>’s)</li>
+<li>Predict crop yield (<span class="math inline">\(y\)</span>) based on genomic markers (<span class="math inline">\(x\)</span>’s)</li>
+</ol></li>
+</ol></li>
+<li><p>When we describe relationships, this does not imply causation.</p>
+<ul>
+<li>You need very special settings for “causal inference”, which we might cover later in the course.</li>
+<li>One special case where we can make causal claims is when we have a completely randomized experiment, where predictor values are randomly assigned.</li>
+</ul></li>
+<li><p>E.g. A researcher noticed that murder rates went up whenever ice cream consumption increased.</p></li>
 </ul>
 </div>
-<div id="visualization" class="section level1">
-<h1>Visualization</h1>
-<p><img src="ols.gif" /></p>
+<div id="the-simple-linear-regression-model" class="section level1">
+<h1>The Simple Linear Regression Model</h1>
+<ul>
+<li><p>The model: <span class="math display">\[
+  Y_i = \beta_0 + \beta_i X_i + \epsilon_i
+  \]</span></p>
+<ul>
+<li><p><span class="math inline">\(Y_i\)</span>: The response value for unit <span class="math inline">\(i\)</span>.</p></li>
+<li><p><span class="math inline">\(X_i\)</span>: The predictor value for unit <span class="math inline">\(i\)</span>.</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span>: The <span class="math inline">\(y\)</span>-intercept of the regression line.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: The slope of the regression line.</p></li>
+<li><p><span class="math inline">\(\epsilon_i\)</span>: The random noise of individual <span class="math inline">\(i\)</span>.</p>
+<ul>
+<li>This is a random variable.</li>
+<li><span class="math inline">\(E[\epsilon_i] = 0\)</span> (mean zero).</li>
+<li><span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span> (variance is the same for all <span class="math inline">\(i\)</span>).</li>
+<li><span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span> (uncorrelated errors).</li>
+</ul></li>
+</ul></li>
+<li><p><span class="math inline">\(X_i\)</span> and <span class="math inline">\(Y_i\)</span> are typically known. We usually have a sample of <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>.</p>
+<ul>
+<li>E.g. <span class="math inline">\(X_i\)</span> could be the economic growth in year <span class="math inline">\(i\)</span>, and <span class="math inline">\(Y_i\)</span> could be the incumbent vote-share for year <span class="math inline">\(i\)</span>.</li>
+</ul></li>
+<li><p><span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> are called <strong>parameters</strong> and are typically not observed. They must be inferred from a sample of values <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>.</p></li>
+<li><p><strong>Regression line</strong>: <span class="math inline">\(y = \beta_0 + \beta_1x\)</span></p></li>
+<li><p>Assumptions in decreasing order of importance:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Linearity</strong>: <span class="math inline">\(E[Y_i|X_i] = \beta_0 + \beta_1X_i\)</span></p></li>
+<li><p><strong>Uncorrelated errors</strong>: <span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span></p></li>
+<li><p><strong>Constant Variance</strong>: <span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span></p></li>
+</ol></li>
+<li><p>Note: Distribution of <span class="math inline">\(Y_i\)</span> is conditional on <span class="math inline">\(X_i\)</span>.</p>
+<p><img src="03_figs/dist.gif" style="width:50.0%" /> </p></li>
+<li><p><strong>Exercise</strong>: Suppose the regression model between two variables is <span class="math display">\[
+  Y_i = 3 + 2 x_i + \epsilon_i,~~var(\epsilon_i) = \sigma^2
+  \]</span></p>
+<ol style="list-style-type: decimal">
+<li><p>What is the mean of <span class="math inline">\(Y_i\)</span> if <span class="math inline">\(X_i = -1\)</span>?</p></li>
+<li><p>What is the variance of <span class="math inline">\(Y_i\)</span> if <span class="math inline">\(X_i = -1\)</span>?</p></li>
+<li><p>Suppose <span class="math inline">\(X_i = 1\)</span> and <span class="math inline">\(Y_i = 4\)</span>. What is <span class="math inline">\(\epsilon_i\)</span>?</p></li>
+</ol></li>
+</ul>
 </div>
-<div id="mathematical-derivation" class="section level1">
-<h1>Mathematical Derivation</h1>
+<div id="review-of-interpretation" class="section level1">
+<h1>Review of interpretation</h1>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>:</p>
+<ul>
+<li><span class="math inline">\(Y\)</span>-intercept of the regression line.</li>
+<li>If <span class="math inline">\(0\)</span> is in the range of the <span class="math inline">\(X_i\)</span>’s, then can also interpret this as the value of <span class="math inline">\(E[Y_i|X_i = 0]\)</span>. But cannot use this interpretation if 0 is outside of the <span class="math inline">\(X_i\)</span>’s.</li>
+</ul></li>
+<li><p><span class="math inline">\(\beta_1\)</span>:</p>
+<ul>
+<li>Difference in average of <span class="math inline">\(Y_i\)</span>’s when <span class="math inline">\(X_i\)</span>’s differ by 1.</li>
+<li>Do <strong>not</strong> use implicitely causal language like “change” or “increase” or “decrease”.</li>
+</ul></li>
+<li><p>Relationships are <strong>positive</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> (larger <span class="math inline">\(x\)</span> tend to correspond to larger <span class="math inline">\(y\)</span>).</p>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p>Relationships are <strong>negative</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span> (larger <span class="math inline">\(x\)</span> tend to correspond to smaller <span class="math inline">\(y\)</span>).</p>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-7-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p>Two variables are uncorrelated if <span class="math inline">\(\beta_1 = 0\)</span> (the value of <span class="math inline">\(x\)</span> does not matter, the value of <span class="math inline">\(y\)</span> tends to stay the same).</p>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-8-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Example</strong>: In the bread and peace example, a regression line that fits the data well is</p>
+<p><span class="math display">\[
+  y = 46.25 + 3.06
+  \]</span></p>
+<p><strong>Correct</strong>: Years that show 1% more growth tend to have 3% larger vote shares for the incumbant.</p>
+<p><strong>Incorrect</strong>: Incumbant vote-share increases 3% for each 1% increase in growth.</p></li>
+</ul>
 </div>
-<div id="r-implementation" class="section level1">
-<h1>R Implementation</h1>
+<div id="estimating-parameters" class="section level1">
+<h1>Estimating Parameters</h1>
+<ul>
+<li><p>We have data <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>, and we want to estimate <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> in the equation</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+  \]</span></p></li>
+<li><p>Idea: Try to get <span class="math inline">\(Y_i\)</span> as close to its mean. So we want each <span class="math inline">\(Y_i - (\beta_0 + \beta_1 X_i)\)</span> to be close to 0.</p></li>
+<li><p>To make all of these differences on average close to zero, consider minimizing the <span class="math inline">\(sum of squares\)</span>:</p>
+<p><span class="math display">\[
+  \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
+  \]</span></p></li>
+<li><p>Visualization:</p>
+<p><img src="ols.gif" /></p></li>
+<li><p>We can solve for the <span class="math inline">\(beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> that minimize this sum of squares.</p></li>
+<li><p>We denote the resulting estimates by <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>, and call them the <strong>OLS estimates</strong> (ordinary least squares estimates).</p></li>
+<li><p>In equations:</p>
+<p><span class="math display">\[\begin{align}
+  \hat{\beta}_0 &amp;= \bar{Y} - \hat{\beta}_1\bar{X},\\
+  \hat{\beta}_1 &amp;= cor(X, Y) \frac{sd(Y)}{sd(X)},\\
+  cor(X, Y) &amp;= \frac{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})(Y_i - \bar{Y})}{\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2}\sqrt{\frac{1}{n-1}\sum_{i=1}^n(Y_i - \bar{Y})^2}},\\
+  sd(X) &amp;= \sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2},\\
+  sd(Y) &amp;= \sqrt{\frac{1}{n-1}\sum_{i=1}^n(Y_i - \bar{Y})^2}.
+  \end{align}\]</span></p></li>
+<li><p>Notice that the estimate of <span class="math inline">\(\beta_1\)</span> is a linear function of the correlation coefficient.</p></li>
+<li><p>To derive these (if you are a Statistics BS or MS, you should do this exercise once without looking at the solution):</p>
+<ol style="list-style-type: decimal">
+<li>Take the derivative of the least squares objective function with respect to both <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</li>
+<li>Set equal to 0 and solve for <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> (2 equations and 2 unknowns).</li>
+<li>Simplify into the terms above.</li>
+<li>Use a second derivative test to verify that this is a minimum.</li>
+</ol></li>
+</ul>
+</div>
+<div id="finding-ols-estimates-in-r" class="section level1">
+<h1>Finding OLS Estimates in R</h1>
+<ul>
+<li><p>Use <code>lm()</code> (for “linear model”) to obtain coefficient estimates.</p></li>
+<li><p>The first argument of <code>lm()</code> is a <em>formula</em> of the form <code>response ~ predictor</code>. That squiggly line (<code>~</code>) separating the response from the predictor is called a “tilde”.</p></li>
+<li><p>The second argument is the data frame that holds the variables.</p></li>
+<li><p>Using the Hibbs data</p>
+<pre class="r"><code>lmout &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
+<li><p>You can print out the values and the values under <code>Coefficients</code> are the OLS estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p>
+<pre class="r"><code>lmout</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = vote ~ growth, data = hibbs)
+## 
+## Coefficients:
+## (Intercept)       growth  
+##       46.25         3.06</code></pre></li>
+<li><p><span class="math inline">\(\hat{\beta}_0 = 46.25\)</span></p></li>
+<li><p><span class="math inline">\(\hat{\beta}_1 = 3.06\)</span></p></li>
+<li><p>Estimated regression line: <span class="math inline">\(y = 46.25 + 3.06 x\)</span>.</p></li>
+<li><p>It is a pain to extract these values using base R, but the <code>{broom}</code> package has a nice function called <code>tidy()</code> that returns coefficient estimates in a data frame.</p>
+<pre class="r"><code>library(broom)
+est &lt;- tidy(lmout)
+est</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    46.2      1.62      28.5  8.41e-14
+## 2 growth          3.06     0.696      4.40 6.10e- 4</code></pre>
+<pre class="r"><code>est$estimate</code></pre>
+<pre><code>## [1] 46.248  3.061</code></pre></li>
+<li><p><strong>Exercise</strong>: From the <code>mtcars</code> data, find the OLS estimates of <code>mpg</code> (the response) on <code>wt</code> (the predictor). Interpret the coefficients. You can load these data into R using:</p>
+<pre class="r"><code>data(&quot;mtcars&quot;)</code></pre></li>
+</ul>
 </div>
 
 
