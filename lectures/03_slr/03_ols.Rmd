@@ -339,7 +339,7 @@ saveGIF(expr = {
 
     ![](./ols.gif)
 
-- We can solve for the $beta_0$ and $\beta_1$ that minimize this sum of squares.
+- We can solve for the $\beta_0$ and $\beta_1$ that minimize this sum of squares.
 
 - We denote the resulting estimates by $\hat{\beta}_0$ and $\hat{\beta}_1$, and call them the **OLS estimates** (ordinary least squares estimates).
 
