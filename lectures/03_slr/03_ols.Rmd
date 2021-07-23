@@ -10,6 +10,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
+set.seed(1)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center")
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
@@ -360,6 +361,29 @@ saveGIF(expr = {
     2. Set equal to 0 and solve for $\beta_0$ and $\beta_1$ (2 equations and 2 unknowns).
     3. Simplify into the terms above.
     4. Use a second derivative test to verify that this is a minimum.
+    
+## Note on Least Squares
+
+- Least squares inference is much more widely applicable to beyond the linear model.
+
+- Suppose
+
+    $$
+    Y_i = f(X_i;\theta) + \epsilon_i,
+    $$
+    
+    where $\theta$ is some vector of parameters. E.g. in the simple linear regression model 
+    $$
+    \theta = (\beta_0, \beta_1) \text{ and}\\
+    f(X_i;\theta) = \beta_0 + \beta_1X_i
+    $$
+    Then we can estimate $\theta$ by minimizing the sum of squares over $\theta$.
+    
+    $$
+    \hat{\theta} = \text{argmin}_{\theta}\sum_{i=1}^n\left[Y_i - f(X_i;\theta)\right]^2
+    $$
+    
+- If it is hard to find $\hat{\theta}$ analytically, then there are numerical procedures that can be used to systematically minimize the sum of squares (e.g. gradient descent).
 
 # Finding OLS Estimates in R
 
@@ -416,6 +440,354 @@ saveGIF(expr = {
     $\hat{\beta}_1$ = -5.344. Cars that are 1000 lbs heavier tend to have 5.3 worse miles per gallon.
     ```
 
+# Properties of OLS Estimates
+
+1. Unbiased:
+
+    $$
+    E[\hat{\beta}_0] = \beta_0\\
+    E[\hat{\beta}_1] = \beta_1
+    $$
+
+2. Gauss-Markov Theorem
+
+    The OLS estimates have minimum sampling variance in the class of unbiased estimators that are linear functions of $Y_1, Y_2,\ldots,Y_n$.
+    
+- Recall **sampling distribution**: The distribution of an estimator across many theoretical samples. The sampling variance is the variance of the sampling distribution.
+
+- Let's demonstrate the unbiased property through simulation. Let's choose $\beta_0$, $\beta_1$, and the $X_i$'s:
+
+    ```{r}
+    x <- runif(n = 100)
+    beta0 <- 1
+    beta1 <- 2
+    ```
+
+- To simulate $Y_i$'s, we generate new errors each replication.
+
+    ```{r}
+    epsilon <- runif(n = 100, min = -0.4, max = 0.4)
+    y <- beta0 + beta1 * x + epsilon
+    qplot(x, y)
+    ```
+
+- We then use `lm()` to find $\hat{\beta}_0$ and $\hat{\beta}_1$ each replication.
+    ```{r}
+    lmout <- lm(y ~ x)
+    beta0_hat <- tidy(lmout)$estimate[[1]]
+    beta1_hat <- tidy(lmout)$estimate[[2]]
+    beta0_hat
+    beta1_hat
+    ```
+
+- We can use a for-loop to generate many samples, and for each sample we collect the $\hat{\beta}_0$ and the $\hat{\beta}_1$
+
+    ```{r}
+    nrep <- 1000
+    beta0_hat <- rep(NA, nrep)
+    beta1_hat <- rep(NA, nrep)
+    for (i in 1:nrep) {
+      epsilon <- runif(n = 100, min = -0.4, max = 0.4)
+      y <- beta0 + beta1 * x + epsilon
+      lmout <- lm(y ~ x)
+      beta0_hat[[i]] <- tidy(lmout)$estimate[[1]]
+      beta1_hat[[i]] <- tidy(lmout)$estimate[[2]]
+    }
+    ```
+
+- The average of the estimates are near the parameters
+
+    ```{r}
+    mean(beta0_hat)
+    beta0
+    ```
+    
+    ```{r}
+    mean(beta1_hat)
+    beta1
+    ```
+
+- We can visualize the variability about the estimates
+
+    ```{r}
+    qplot(beta0_hat, bins = 30) + geom_vline(xintercept = beta0, color = "red")
+    
+    qplot(beta1_hat, bins = 30) + geom_vline(xintercept = beta1, color = "red")
+    ```
+
+- Note: In this simulation process, the $X_i$'s were **fixed** each replication (from sample to sample). This is an assumption of most sampling properties that we'll discuss.
 
 
+# Estimating mean response
 
+- The estimated regression line is
+    
+    $$
+    \hat{Y} = \hat{\beta}_0 + \hat{\beta}_1X
+    $$
+
+- $\hat{Y}$ is the estimate of the mean response when the level of the predictor is $X$.
+
+- We set $\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1X_i$ for the observed levels of predictors $X_1, X_2,\ldots, X_n$. These are called the **fitted values**. These are in contrast to the **observed values**, which are just the original $Y_1,Y_2,\ldots,Y_n$.
+
+- **Exercise**: Recall that in the bread and peace example, the estimated regression function is
+    $$
+    \hat{Y} = 46.248 + 3.061 X
+    $$
+    What is the estimated mean incumband vote-share when the growth is 2\%?
+    
+    ```{block, eval = FALSE}
+    46.248 + 3.061 * 2 = 52.37\%
+    ```
+
+# Residuals
+
+- We often evaluate the performance of a model by looking at how far the fitted values are from the observed values.
+
+- The $i$th **residual** are 
+    $$
+    e_i = Y_i - \hat{Y}_i.
+    $$
+- These are different from the model error terms, which are
+    $$
+    \epsilon_i = Y_i - E[Y_i|X_i]
+    $$
+
+- The residuals are the deviation from an *estimated* regression function, and so are known.
+
+- The error terms are the deviation from the *unknown true* regression function, and so are unknown.
+
+- Graphic:
+
+    ![](./03_figs/bread_line.png)\ 
+    
+- **Exercise**: In the above graphic, is the residual *positive* or *negative*? Did we underestimate or over estimate here?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    The residual is negative since $Y_i$ is less than $\hat{Y}_i$. We underestimated.
+    ```
+
+# Obtaining fitted values and residuals in R
+
+- To obtain predictions, you need to 
+  1. Have the output of `lm()` saved to a variable.
+  2. Have a data frame with the new predictor values you want.
+  3. Use the `predict()` function.
+  
+    ```{r}
+    lmout <- lm(vote ~ growth, data = hibbs)
+    newdf <- data.frame(growth = c(1.1, 2.2))
+    newdf
+    predict(object = lmout, newdata = newdf)
+    ```
+
+- To obtain the fitted values and the residuals, use the `augment()` from the `{broom}` package. Pass to it the output from `lm()`.
+
+    ```{r}
+    aout <- augment(x = lmout)
+    glimpse(aout)
+    ```
+
+# Properties of Fitted Regression Line
+
+- I've seen folks over-interpret these items when they are just properties of every OLS line. So it's good to be aware of these.
+
+1. Mean of residuals is 0.
+    $$
+    \frac{1}{n}\sum_{i=1}^n e_i = 0
+    $$
+
+2. Mean of observed values equals mean of fitted values.
+    $$
+    \frac{1}{n}\sum_{i=1}^nY_i = \frac{1}{n}\sum_{i=1}^n\hat{Y}_i
+    $$
+
+3. Residuals are uncorrelated with predictors
+    $$
+    \frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(e_i - \bar{e}) = 0
+    $$
+    (but remember that $\bar{e} = 0$.
+
+4. Residuals are uncorrelated with *fitted* values.
+    $$
+    \frac{1}{n-1}\sum_{i=1}^n(\hat{Y}_i-\bar{\hat{Y}})(e_i - \bar{e}) = 0
+    $$
+    But note that the residuals *can* be correlated with the *observed* values.
+    
+5. The regression line always goes through the mean $(\bar{X}, \bar{Y})$.
+
+- **Exercise**: Demonstrate each of these properties on using the bread and peace data using R.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    # 1. Mean residuals is 0
+    mean(aout$.resid)
+    
+    # 2. Mean observed = mean fitted
+    mean(aout$vote)
+    mean(aout$.fitted)
+    
+    # 3. X and e are uncorrelated
+    cor(aout$growth, aout$.resid)
+    
+    # 4. Fitted and resid are uncorrelated
+    cor(aout$.fitted, aout$.resid)
+    
+    # 5. Regression line goes through (xbar,ybar)
+    newdf <- data.frame(growth = mean(hibbs$growth))
+    predict(object = lmout, newdata = newdf)
+    mean(hibbs$vote)
+    ```
+
+# Estimating $\sigma^2$
+
+- We'll need an estimate of the variance to do inference (see Chapter 2).
+
+- Recall that the simple linear regression model is
+    $$
+    Y_i = \beta_0 + \beta_1X_i + \epsilon_i\\
+    E[\epsilon_i] = 0\\
+    var(\epsilon_i) = \sigma^2
+    $$
+
+- So if we knew $\beta_0$ and $\beta_1$ and wanted to estimate $\sigma^2$, we could calculate
+    $$
+    \epsilon_i = Y_i - (\beta_0 + \beta_1X_i)
+    $$
+    Then take the sample standard deviation of the $\epsilon_i$'s.
+
+- But we don't know $\beta_0$ and $\beta_1$, so we insert their OLS estimates to get the residuals
+    $$
+    e_i = Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)
+    $$
+    And then take the sample standard deviation of the residuals to estimate $\sigma^2$.
+    
+- We divide by $n-2$ to account for the two degrees of freedom lost when estimating $\beta_0$ and $\beta_1$.
+
+    \begin{align}
+    \hat{\sigma}^2 &= \frac{1}{n-2}\sum_{i=1}^ne_i^2\\
+                   &= \frac{1}{n-2}\sum_{i=1}^n(Y_i - \hat{Y}_i)^2\\
+                   &= \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+    \end{align}
+
+- This estimate is sometimes called the **Mean Squared Error** (MSE).
+
+### Intuition behind degrees of freedom
+
+- If we knew $\beta_0$ and $\beta_1$, the best variance estimator we could come up with would be
+    $$
+    s_1^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_i)]^2 
+    $$
+
+- But we don't know these quantities, so we use $\hat{\beta}_1$ and $\hat{\beta}_2$. 
+
+    $$
+    s_2^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+    $$
+
+- But remember that $\hat{\beta}_1$ and $\hat{\beta}_2$ minimize the objective, which is exactly the MSE. That means that
+    $$
+    s_2^2 < s_1^2
+    $$
+- Dividing by a smaller number ($n-2$) instead of a $n$ corrects for this. That's why we use
+
+    $$
+    \hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+    $$
+- It can be shown that
+    $$
+    E[\hat{\sigma}^2] = \sigma^2
+    $$
+
+# The Normal Linear Model
+
+- We have so far made only minimal distributional assumptions. We have **not** assumed normality so far. All of these properties of the OLS estimators hold without assuming normality.
+
+- We sometimes assume that the error terms are normally distributed. The **normal simple linear model** is
+
+    $$
+    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\\
+    \epsilon_i \sim N(0, \sigma^2)\\
+    \epsilon_1,\epsilon_2,\ldots,\epsilon_n \text{ are mutually independent}.
+    $$
+
+- "Mutually independent" means that knowing the value of one tells you nothing about the values of the others.
+
+- This implies that
+    $$
+    Y_i|X_i \sim N(\beta_0 + \beta_1 X_i, \sigma^2)
+    $$
+- **Exercise**: Do we assume that the predictors are normally distributed?
+    ```{block, eval = FALSE, echo = FALSE}
+    No. I said nothing about the distribution of the predictors. We do **not** require them to be normally distributed.
+    ```
+
+- In the normal linear model, we thus have four assumptions, in decreasing order of importance:
+    1. **Linearity**: $E[Y_i|X_i] = \beta_0 + \beta_1X_i$
+    
+    2. **Uncorrelated errors**: $cor(\epsilon_i, \epsilon_j) = 0$ for all $i \neq j$
+    
+    3. **Constant Variance**: $var(\epsilon_i) = \sigma^2$
+    
+    4. **Normality**: $\epsilon_i \sim N(0, \sigma^2)$
+    
+- The normality assumption is really only important if
+    1. You have a small sample size and the data are highly skewed, or
+    2. You are calculating prediction intervals (Chapter 2).
+    
+# Method of Maximum Likelihood
+
+- Note that, given the normal assumption and values of $\beta_0$, $\beta_1$, and $\sigma^2$, we can calculate the density (which roughly means the probability) of our observed sample $(X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)$.
+
+    $$
+    f(data|\beta_0,\beta_1,\sigma^2) = \prod_{i=1}^n N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)
+    $$
+    
+- This is called the **likelihood function**.
+
+- Here, $N(a|b,c^2)$ is notation for the density of value $a$ with mean $b$ and variance $c^2$:
+    $$
+    N(a|b,c^2) = \frac{1}{\sqrt{2\pi c^2}}\exp\left[-\frac{1}{2c^2}(a-b)^2\right]
+    $$
+
+- One idea is to find the values of $\beta_0$, $\beta_1$, and $\sigma^2$ to make the data that we did observe as likely as possible.
+
+- This approach is called **maximum likelihood estimation**.
+
+- Typically, we actually worth with the log-likelihood
+    $$
+    L(data|\beta_0,\beta_1,\sigma^2) = \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right]
+    $$
+
+- Let's calculate the log-likelihood from the bread and peace example at $\beta_0 = 45$, $\beta_1 = 3$ and $\sigma^2 = 3.5$
+
+    ```{r}
+    ll <- function(beta0, beta1, sigma2) {
+      dnorm(x = hibbs$vote, 
+            mean = beta0 + beta1 * hibbs$growth, 
+            sd = sqrt(sigma2),
+            log = TRUE) %>%
+        sum()
+    }
+    ll(4, 3, 3.5)
+    ```
+
+- Now let's do it at the OLS estimates
+    ```{r}
+    ll(46.25, 3.06, 3.76)
+    ```
+    
+    Much higher!
+    
+- It turns out the the OLS estimates of $\beta_0$ and $\beta_1$ are also the maximum likelihood estimates of $\beta_0$ and $\beta_1$.
+
+- The MLE of $\sigma^2$ is $\frac{n}{n-2}\hat{\sigma}^2$ (the uncorrected standard deviation estimate).
+
+- Derivation
+    \begin{align}
+    \max \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right] &= \max\sum_{i=1}^n\left[-\frac{1}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
+    &= \min\sum_{i=1}^n\left[\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
+    &= \min\left[n\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}\sum_{i=1}^n(Y_i - \beta_0 - \beta_1X_i)^2\right]
+    \end{align}
+  
+    When we minimize over $\beta_0$ and $\beta_1$, we just need to worry about
+    the second term. But this is equivalent to minimizing the sum of squares!
