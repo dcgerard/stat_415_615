@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-07-26" />
 
-<title>Regression</title>
+<title>Simple Linear Regression: Inference</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -34,6 +34,10 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -263,66 +267,31 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression</h1>
+<h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
 <h4 class="date">2021-07-26</h4>
 
 </div>
 
-
-<div id="synopsis" class="section level1">
-<h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
-</div>
-<div id="administrative" class="section level1">
-<h1>Administrative</h1>
+<div id="TOC">
 <ul>
-<li><a href="./syllabus.html">Syllabus</a></li>
+<li><a href="#learning-objectives">Learning Objectives</a></li>
 </ul>
 </div>
-<div id="lectures" class="section level1">
-<h1>Lectures</h1>
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
 <ul>
-<li>00 Motivation
-<ul>
-<li><a href="./00_motivation.html">Linear Regression Overview</a>.</li>
-</ul></li>
-<li>01 Crash Course in R
-<ul>
-<li><a href="./01_r_intro.html">R introduction</a>.</li>
-<li><a href="01_r_markdown.html">R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">R graphics with <code>qplot()</code></a>.</li>
-</ul></li>
-<li>02 Review
-<ul>
-<li><a href="./02_math_prereq.html">Mathematical prerequisites</a></li>
-<li>Statistical prerequisites.</li>
-</ul></li>
-<li>03 Simple linear regression
-<ul>
-<li><a href="./03_ols.html">The Model</a>. Chapter 1 of KNNL.</li>
-<li><a href="./03_inference.html">Inference</a>. Chapter 2 of KNNL.</li>
-<li>Assumptions/Diagnostics. Chapter 3 of KNNL.</li>
-</ul></li>
-<li>04 Linear algebra
-<ul>
-<li><a href="./04_linear_algebra.html">Linear algebra basics</a>. Chapter 5 of KNNL.</li>
-<li>Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.</li>
-</ul></li>
-<li>05 Multiple linear regression
-<ul>
-<li>Model/Interpretation (including interactions, indicators)</li>
-<li>Estimation</li>
-<li>Hypothesis Testing</li>
-<li>Assumptions</li>
-<li>Transformations</li>
-</ul></li>
-<li>06 Design
-<ul>
-<li>Power</li>
-<li>Sample size calculation</li>
-</ul></li>
-<li>07 Missing data</li>
+<li>Chapter 2 of KNNL (skip section 2.11).</li>
+<li>Sampling distributions of OLS estimates.</li>
+<li>Hypothesis testing for regression coefficients.</li>
+<li>Confidence intervals for regression coefficients.</li>
+<li>Regression line intervals: pointwise confidence, prediction, confidence bands</li>
+<li><span class="math inline">\(F\)</span>-tests for regression models.</li>
 </ul>
 </div>
 
