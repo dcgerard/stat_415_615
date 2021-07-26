@@ -49,6 +49,29 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `tested`: Total overall number of tests.
     - `positives`: Total number of positive test results.
     
+### Disease Outbreak
+
+- [disease.csv](./data/disease.csv): Dataset C.10 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
+    - `id`: Identification number.
+    - `age`: Age of the individual.
+    - `socioeconomic`: Socioeconomic status of the individual. `1` = upper, `2` = middle, `3` = lower.
+    - `sector`: Sector of the city sampled. Either `"s1"` or `"s2"`.
+    - `disease`: Disease status indicator. `1` = with disease, `0` = without disease.
+    - `savings`: Savings account status indicator. `1` = has savings account, `0` = does not have savings account.
+    
+### Heating Equipment
+
+- [heating.csv](./data/heating.csv): Dataset C.8 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
+    - `id`: Month identification number.
+    - `orders`: Number of heating equipment orders duing the month.
+    - `interest`: Prime rate in effect during the month.
+    - `homes`: Number of new homes completed and for sale in sales region during the month.
+    - `discount`: Percent discount offered to distributers during the month. Usually 0.
+    - `inventories`: Distributor inventories in warehouses during the month.
+    - `sold`: Number of units sold by distributer to contractors in previous month.
+    - `tempdev`: Difference between average temperature for the month and 30-year average for that month.
+    - `date`: YYYY-MM-01, indicating year and month of data.
+    
 ### Hibb's Bread and Peace
 
 - [hibbs.csv](./data/hibbs.csv): Data from Chapter 7 of [ROS](https://avehtari.github.io/ROS-Examples/) based on the "bread and peace" model of @hibbs2000bread which predicts incumbent party's share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
@@ -57,6 +80,29 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `vote`: Incumbant party's vote share of the two-party vote (excludes third parties).
     - `inc_party_candidate`: The candidate of the incumbant party.
     - `other_candidate`: The candidate of the other party.
+    
+### IPO
+
+- [ipo.csv](./data/ipo.csv): Dataset C.11 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
+    - `id`: Identification number.
+    - `vc`: Presence or absence of venture capital funding. Either `"yes"` or `"no"`.
+    - `value`: Estimated face value of company from prospectus (in dollars).
+    - `shares`: Total number of shares offered.
+    - `buyout`: Prsence or absence of leveraged buyout. Either `"yes"` or `"no"`.
+    
+### Ischemic Heart Disease
+
+- [ischemic.csv](./data/ischemic.csv): Dataset C.9 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
+    - `id`: Identification number.
+    - `cost`: Total cost of claims by subscriber (dollars).
+    - `age`: Age of subscriber (years).
+    - `gender`: `"male"` or `"other"`.
+    - `interventions`: Total number of interventions or procedures carried out.
+    - `drugs`: Number of tracked drugs prescribed.
+    - `er`: Number of emergency room visits.
+    - `complications`: Number of other complications that arose during heart disease treatment.
+    - `comorbidities`: Number of other diseases that the subscriber had during period.
+    - `duration`: Number of days of duration of treatment condition.
     
 ### Kleiber's law
 

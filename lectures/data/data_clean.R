@@ -176,3 +176,61 @@ dccovid %>%
          tested = parse_number(tested),
          positives = parse_number(positives)) %>%
   write_csv("./dccovid.csv")
+
+# C.8
+heating <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC08.txt", col_names = FALSE)
+heating %>%
+  rename(id = X1,
+         orders = X2,
+         interest = X3,
+         homes = X4,
+         discount = X5,
+         inventories = X6,
+         sold = X7,
+         tempdev = X8,
+         year = X9,
+         month = X10) %>%
+  mutate(date = make_date(year = year, month = month)) %>%
+  select(-year, -month) %>%
+  write_csv("./heating.csv")
+
+# C.9
+ischemic <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC09.txt", col_names = FALSE)
+ischemic %>%
+  rename(id = X1,
+         cost = X2,
+         age = X3,
+         gender = X4,
+         interventions = X5,
+         drugs = X6,
+         er = X7,
+         complications = X8,
+         comorbidities = X9,
+         duration = X10) %>%
+  mutate(gender = if_else(gender == 1, "male", "other")) %>%
+  write_csv("./ischemic.csv")
+
+# C.10
+disease <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC10.txt", col_names = FALSE)
+disease %>%
+  rename(id = X1,
+         age = X2,
+         socioeconomic = X3,
+         sector = X4,
+         disease = X5,
+         savings = X6) %>%
+  mutate(sector = if_else(sector == 1, "s1", "s2")) %>%
+  write_csv("./disease.csv")
+
+# C.11
+ipo <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC11.txt", col_names = FALSE)
+ipo %>%
+  rename(id = X1,
+         vc = X2,
+         value = X3,
+         shares = X4,
+         buyout = X5) %>%
+  mutate(vc = if_else(vc == 0, "no", "yes"),
+         buyout = if_else(buyout == 0, "no", "yes")) %>%
+  write_csv("./ipo.csv")
+

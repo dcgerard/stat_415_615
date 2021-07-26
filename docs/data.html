@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-21" />
+<meta name="date" content="2021-07-26" />
 
 <title>Data</title>
 
@@ -287,7 +287,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-21</h4>
+<h4 class="date">2021-07-26</h4>
 
 </div>
 
@@ -295,7 +295,11 @@ $(document).ready(function () {
 <ul>
 <li><a href="#county-demographic-information">County Demographic Information</a></li>
 <li><a href="#dc-covid-tests">DC COVID Tests</a></li>
+<li><a href="#disease-outbreak">Disease Outbreak</a></li>
+<li><a href="#heating-equipment">Heating Equipment</a></li>
 <li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
+<li><a href="#ipo">IPO</a></li>
+<li><a href="#ischemic-heart-disease">Ischemic Heart Disease</a></li>
 <li><a href="#kleibers-law">Kleiber’s law</a></li>
 <li><a href="#market-share">Market Share</a></li>
 <li><a href="#mile-times">Mile Times</a></li>
@@ -347,6 +351,37 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
+<div id="disease-outbreak" class="section level3">
+<h3>Disease Outbreak</h3>
+<ul>
+<li><a href="./data/disease.csv">disease.csv</a>: Dataset C.10 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
+<ul>
+<li><code>id</code>: Identification number.</li>
+<li><code>age</code>: Age of the individual.</li>
+<li><code>socioeconomic</code>: Socioeconomic status of the individual. <code>1</code> = upper, <code>2</code> = middle, <code>3</code> = lower.</li>
+<li><code>sector</code>: Sector of the city sampled. Either <code>"s1"</code> or <code>"s2"</code>.</li>
+<li><code>disease</code>: Disease status indicator. <code>1</code> = with disease, <code>0</code> = without disease.</li>
+<li><code>savings</code>: Savings account status indicator. <code>1</code> = has savings account, <code>0</code> = does not have savings account.</li>
+</ul></li>
+</ul>
+</div>
+<div id="heating-equipment" class="section level3">
+<h3>Heating Equipment</h3>
+<ul>
+<li><a href="./data/heating.csv">heating.csv</a>: Dataset C.8 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
+<ul>
+<li><code>id</code>: Month identification number.</li>
+<li><code>orders</code>: Number of heating equipment orders duing the month.</li>
+<li><code>interest</code>: Prime rate in effect during the month.</li>
+<li><code>homes</code>: Number of new homes completed and for sale in sales region during the month.</li>
+<li><code>discount</code>: Percent discount offered to distributers during the month. Usually 0.</li>
+<li><code>inventories</code>: Distributor inventories in warehouses during the month.</li>
+<li><code>sold</code>: Number of units sold by distributer to contractors in previous month.</li>
+<li><code>tempdev</code>: Difference between average temperature for the month and 30-year average for that month.</li>
+<li><code>date</code>: YYYY-MM-01, indicating year and month of data.</li>
+</ul></li>
+</ul>
+</div>
 <div id="hibbs-bread-and-peace" class="section level3">
 <h3>Hibb’s Bread and Peace</h3>
 <ul>
@@ -357,6 +392,37 @@ $(document).ready(function () {
 <li><code>vote</code>: Incumbant party’s vote share of the two-party vote (excludes third parties).</li>
 <li><code>inc_party_candidate</code>: The candidate of the incumbant party.</li>
 <li><code>other_candidate</code>: The candidate of the other party.</li>
+</ul></li>
+</ul>
+</div>
+<div id="ipo" class="section level3">
+<h3>IPO</h3>
+<ul>
+<li><a href="./data/ipo.csv">ipo.csv</a>: Dataset C.11 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
+<ul>
+<li><code>id</code>: Identification number.</li>
+<li><code>vc</code>: Presence or absence of venture capital funding. Either <code>"yes"</code> or <code>"no"</code>.</li>
+<li><code>value</code>: Estimated face value of company from prospectus (in dollars).</li>
+<li><code>shares</code>: Total number of shares offered.</li>
+<li><code>buyout</code>: Prsence or absence of leveraged buyout. Either <code>"yes"</code> or <code>"no"</code>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="ischemic-heart-disease" class="section level3">
+<h3>Ischemic Heart Disease</h3>
+<ul>
+<li><a href="./data/ischemic.csv">ischemic.csv</a>: Dataset C.9 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
+<ul>
+<li><code>id</code>: Identification number.</li>
+<li><code>cost</code>: Total cost of claims by subscriber (dollars).</li>
+<li><code>age</code>: Age of subscriber (years).</li>
+<li><code>gender</code>: <code>"male"</code> or <code>"other"</code>.</li>
+<li><code>interventions</code>: Total number of interventions or procedures carried out.</li>
+<li><code>drugs</code>: Number of tracked drugs prescribed.</li>
+<li><code>er</code>: Number of emergency room visits.</li>
+<li><code>complications</code>: Number of other complications that arose during heart disease treatment.</li>
+<li><code>comorbidities</code>: Number of other diseases that the subscriber had during period.</li>
+<li><code>duration</code>: Number of days of duration of treatment condition.</li>
 </ul></li>
 </ul>
 </div>

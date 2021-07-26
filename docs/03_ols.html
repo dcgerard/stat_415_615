@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-23" />
+<meta name="date" content="2021-07-26" />
 
 <title>Simple Linear Regression: The Model</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-23</h4>
+<h4 class="date">2021-07-26</h4>
 
 </div>
 
@@ -565,24 +565,26 @@ est</code></pre>
 beta0 &lt;- 1
 beta1 &lt;- 2</code></pre></li>
 <li><p>To simulate <span class="math inline">\(Y_i\)</span>’s, we generate new errors each replication.</p>
-<pre class="r"><code>epsilon &lt;- runif(n = 100, min = -0.4, max = 0.4)
-y &lt;- beta0 + beta1 * x + epsilon
-qplot(x, y)</code></pre>
-<p><img src="03_ols_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<pre class="r"><code>epsilon &lt;- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
+hist(epsilon)</code></pre>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>y &lt;- beta0 + beta1 * x + epsilon
+qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)</code></pre>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>We then use <code>lm()</code> to find <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> each replication.</p>
 <pre class="r"><code>lmout &lt;- lm(y ~ x)
 beta0_hat &lt;- tidy(lmout)$estimate[[1]]
 beta1_hat &lt;- tidy(lmout)$estimate[[2]]
 beta0_hat</code></pre>
-<pre><code>## [1] 1.007</code></pre>
+<pre><code>## [1] 0.9076</code></pre>
 <pre class="r"><code>beta1_hat</code></pre>
-<pre><code>## [1] 2.014</code></pre></li>
+<pre><code>## [1] 2.245</code></pre></li>
 <li><p>We can use a for-loop to generate many samples, and for each sample we collect the <span class="math inline">\(\hat{\beta}_0\)</span> and the <span class="math inline">\(\hat{\beta}_1\)</span></p>
 <pre class="r"><code>nrep &lt;- 1000
 beta0_hat &lt;- rep(NA, nrep)
 beta1_hat &lt;- rep(NA, nrep)
 for (i in 1:nrep) {
-  epsilon &lt;- runif(n = 100, min = -0.4, max = 0.4)
+  epsilon &lt;- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
   y &lt;- beta0 + beta1 * x + epsilon
   lmout &lt;- lm(y ~ x)
   beta0_hat[[i]] &lt;- tidy(lmout)$estimate[[1]]
@@ -590,17 +592,17 @@ for (i in 1:nrep) {
 }</code></pre></li>
 <li><p>The average of the estimates are near the parameters</p>
 <pre class="r"><code>mean(beta0_hat)</code></pre>
-<pre><code>## [1] 1</code></pre>
+<pre><code>## [1] 0.9992</code></pre>
 <pre class="r"><code>beta0</code></pre>
 <pre><code>## [1] 1</code></pre>
 <pre class="r"><code>mean(beta1_hat)</code></pre>
-<pre><code>## [1] 1.999</code></pre>
+<pre><code>## [1] 1.997</code></pre>
 <pre class="r"><code>beta1</code></pre>
 <pre><code>## [1] 2</code></pre></li>
 <li><p>We can visualize the variability about the estimates</p>
-<pre class="r"><code>qplot(beta0_hat, bins = 30) + geom_vline(xintercept = beta0, color = &quot;red&quot;)</code></pre>
+<pre class="r"><code>qplot(beta0_hat, bins = 20) + geom_vline(xintercept = beta0, color = &quot;red&quot;)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(beta1_hat, bins = 30) + geom_vline(xintercept = beta1, color = &quot;red&quot;)</code></pre>
+<pre class="r"><code>qplot(beta1_hat, bins = 20) + geom_vline(xintercept = beta1, color = &quot;red&quot;)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Note: In this simulation process, the <span class="math inline">\(X_i\)</span>’s were <strong>fixed</strong> each replication (from sample to sample). This is an assumption of most sampling properties that we’ll discuss.</p></li>
 </ul>

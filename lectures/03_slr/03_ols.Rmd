@@ -466,9 +466,10 @@ saveGIF(expr = {
 - To simulate $Y_i$'s, we generate new errors each replication.
 
     ```{r}
-    epsilon <- runif(n = 100, min = -0.4, max = 0.4)
+    epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
+    hist(epsilon)
     y <- beta0 + beta1 * x + epsilon
-    qplot(x, y)
+    qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)
     ```
 
 - We then use `lm()` to find $\hat{\beta}_0$ and $\hat{\beta}_1$ each replication.
@@ -487,7 +488,7 @@ saveGIF(expr = {
     beta0_hat <- rep(NA, nrep)
     beta1_hat <- rep(NA, nrep)
     for (i in 1:nrep) {
-      epsilon <- runif(n = 100, min = -0.4, max = 0.4)
+      epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
       y <- beta0 + beta1 * x + epsilon
       lmout <- lm(y ~ x)
       beta0_hat[[i]] <- tidy(lmout)$estimate[[1]]
@@ -510,9 +511,9 @@ saveGIF(expr = {
 - We can visualize the variability about the estimates
 
     ```{r}
-    qplot(beta0_hat, bins = 30) + geom_vline(xintercept = beta0, color = "red")
+    qplot(beta0_hat, bins = 20) + geom_vline(xintercept = beta0, color = "red")
     
-    qplot(beta1_hat, bins = 30) + geom_vline(xintercept = beta1, color = "red")
+    qplot(beta1_hat, bins = 20) + geom_vline(xintercept = beta1, color = "red")
     ```
 
 - Note: In this simulation process, the $X_i$'s were **fixed** each replication (from sample to sample). This is an assumption of most sampling properties that we'll discuss.
