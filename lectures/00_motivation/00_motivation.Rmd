@@ -14,6 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 library(ggplot2)
 library(dplyr)
+library(plotly)
+library(DiagrammeR)
 data("mtcars")
 ```
 
@@ -24,7 +26,7 @@ data("mtcars")
 - Other procedures are specific examples (or approximations) of linear regression.
 - <https://lindeloev.github.io/tests-as-linear/>
 
-# What is linear regression?
+# What is simple linear regression?
 
 1. Equation for line: $y = \beta_0 + \beta_1 x$
 
@@ -38,12 +40,12 @@ data("mtcars")
     
 3. Fit line to cloud of points
 
-    ```{r, message=FALSE, fig.width = 4.65, fig.height = 3.6}
+    ```{r, message=FALSE, fig.width = 4.65, fig.height = 3.6, echo = FALSE}
     qplot(x = drat, y = mpg, data = mtcars) +
       geom_smooth(method = "lm", se = FALSE)
     ```
     
-4. Infer slope(s) from fitted line
+4. Infer slope from fitted line
 
     ![](./figs/infer_line.png)\ 
     
@@ -51,6 +53,92 @@ data("mtcars")
     a. Test if slopes are 0
     b. Confidence intervals on slopes.
     c. Interpret sign/magnitude of slopes.
+    
+# What is multiple linear regression?
+
+1. Equation for a 2-d plane:
+    $$
+    y = \beta_0 + \beta_1 x_1 + \beta_2 x_2
+    $$
+
+    - When $x_1$ is fixed (not changing), $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2$ is the equation for a line with slope $\beta_2$ and $y$-intercept $\beta_0 + \beta_1 x_1$.
+    
+    - When $x_2$ is fixed (not changing), $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2$ is the equation for a line with slope $\beta_1$ and $y$-intercept $\beta_0 + \beta_2 x_2$.
+    
+    - So a plane can be interpreted as a line when you fix all predictors but one.
+
+2. Have a cloud of points:
+
+    ```{r, echo = FALSE, message = FALSE}
+    fig <- plot_ly() %>%
+      add_markers(data = mtcars, x = ~drat, y = ~wt, z = ~mpg, size = I(20))
+    fig <- fig %>% layout(scene = list(xaxis = list(title = 'drat'),
+                          yaxis = list(title = 'wt'),
+                          zaxis = list(title = 'mpg')))
+    fig
+    ```
+
+3. Fit plane to cloud of points:
+    
+    ```{r, echo = FALSE}
+    lmout <- lm(mpg ~ drat + wt, data = mtcars)
+    planedf <- expand.grid(drat = seq(from = min(mtcars$drat), to = max(mtcars$drat), length.out = 5),
+                           wt = seq(from = min(mtcars$wt), to = max(mtcars$wt), length.out = 5))
+    planedf$mpg <- predict(object = lmout, newdata = planedf)
+    
+    fig <- fig %>%
+      add_mesh(data = planedf, x = ~drat, y = ~wt, z = ~mpg, opacity = 0.3)
+    fig
+    ```
+
+4. Infer slopes from fitted plane.
+
+5. Inference:
+    a. Test if slopes are 0
+    b. Confidence intervals on slopes.
+    c. Interpret sign/magnitude of slopes.
+    
+# Steps of a Regression Analysis
+
+- The above procedures assume that:
+    1. The cloud of points roughly follows a line (or plane).
+    2. All predictors (the $x$'s) are associated with the response (the $y$). We might have many predictors and we need to choose which ones to include.
+
+- We typically need to transform the data or try out a few models. 
+
+- Steps:
+
+```{r, echo = FALSE, fig.height=7}
+grViz(diagram = "digraph flowchart {
+  node [fontname = arial, shape = rectangle]
+  tab1 [label = '@@1']
+  tab2 [label = '@@2']
+  tab3 [label = '@@3']
+  tab4 [label = '@@4']
+  tab5 [label = '@@5']
+  tab6 [label = '@@6']
+  tab7 [label = '@@7']
+  tab8 [label = '@@8']
+  taby [label = '@@9']
+  tabn [label = '@@10']
+  
+  tab1 -> tab2 -> tab3 -> tab4 -> taby -> tab6 -> tab7 -> tab8;
+  tab4 -> tabn -> tab5 -> tab3;
+}
+  
+  [1]: 'START'
+  [2]: 'Exploratory\\nData Analysis'
+  [3]: 'Develop one\\nor more tentative\\nregression models'
+  [4]: 'Is\\none or more of\\nthe regression models\\nsuitable for the data\\nat hand?'
+  [5]: 'Revise regression\\nmodels and/or\\ndevelop new ones'
+  [6]: 'Identify most\\nsuitable model'
+  [7]: 'Make inferences\\none basis of\\nregression model'
+  [8]: 'STOP'
+  [9]: 'YES'
+  [10]: 'NO'
+  ")
+```
+
 
 # What can you use it for?
 
