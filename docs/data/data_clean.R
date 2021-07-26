@@ -222,3 +222,15 @@ disease %>%
   mutate(sector = if_else(sector == 1, "s1", "s2")) %>%
   write_csv("./disease.csv")
 
+# C.11
+ipo <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC11.txt", col_names = FALSE)
+ipo %>%
+  rename(id = X1,
+         vc = X2,
+         value = X3,
+         shares = X4,
+         buyout = X5) %>%
+  mutate(vc = if_else(vc == 0, "no", "yes"),
+         buyout = if_else(buyout == 0, "no", "yes")) %>%
+  write_csv("./ipo.csv")
+

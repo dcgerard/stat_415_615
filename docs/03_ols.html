@@ -686,7 +686,7 @@ glimpse(aout)</code></pre>
  \]</span></p></li>
 <li><p>Residuals are uncorrelated with predictors <span class="math display">\[
  \frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(e_i - \bar{e}) = 0
- \]</span> (but remember that <span class="math inline">\(\bar{e} = 0\)</span>.</p></li>
+ \]</span> (but remember that <span class="math inline">\(\bar{e} = 0\)</span>).</p></li>
 <li><p>Residuals are uncorrelated with <em>fitted</em> values. <span class="math display">\[
  \frac{1}{n-1}\sum_{i=1}^n(\hat{Y}_i-\bar{\hat{Y}})(e_i - \bar{e}) = 0
  \]</span> But note that the residuals <em>can</em> be correlated with the <em>observed</em> values.</p></li>
@@ -732,8 +732,7 @@ glimpse(aout)</code></pre>
 <li><p>But remember that <span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span> minimize the objective, which is exactly the MSE. That means that <span class="math display">\[
   s_2^2 &lt; s_1^2
   \]</span></p></li>
-<li><p>Dividing by a smaller number (<span class="math inline">\(n-2\)</span>) instead of a <span class="math inline">\(n\)</span> corrects for this. That’s why we use</p>
-<p><span class="math display">\[
+<li><p>Dividing by the smaller <span class="math inline">\(n-2\)</span> instead of the larger <span class="math inline">\(n\)</span> corrects for this. That’s why we use <span class="math display">\[
   \hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
   \]</span></p></li>
 <li><p>It can be shown that <span class="math display">\[
@@ -752,7 +751,10 @@ glimpse(aout)</code></pre>
   \epsilon_i \sim N(0, \sigma^2)\\
   \epsilon_1,\epsilon_2,\ldots,\epsilon_n \text{ are mutually independent}.
   \]</span></p></li>
-<li><p>“Mutually independent” means that knowing the value of one tells you nothing about the values of the others.</p></li>
+<li><p>“Mutually independent” means that knowing the value of one tells you nothing about the values of the others.</p>
+<ul>
+<li>In the normal model, uncorrelated <span class="math inline">\(\Leftrightarrow\)</span> independent.</li>
+</ul></li>
 <li><p>This implies that <span class="math display">\[
   Y_i|X_i \sim N(\beta_0 + \beta_1 X_i, \sigma^2)
   \]</span></p></li>
@@ -774,16 +776,19 @@ glimpse(aout)</code></pre>
 <div id="method-of-maximum-likelihood" class="section level1">
 <h1>Method of Maximum Likelihood</h1>
 <ul>
-<li><p>Note that, given the normal assumption and values of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span>, we can calculate the density (which roughly means the probability) of our observed sample <span class="math inline">\((X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)\)</span>.</p>
+<li><p>We used the method of least squares to obtain the OLS estimates <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>.</p></li>
+<li><p>We can derive these estimators using a different technique: the method of maximum likelihood.</p></li>
+<li><p>Idea: Given a data-generative model (like the normal linear model), find the parameters that maximize the probability of seeing the data that we actually saw.</p>
+<p><img src="03_ols_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>This function of the parameter is called the <strong>likelihood function</strong>, and the parameter that maximized this function is called the <strong>maximum likelihood estimate</strong>.</p></li>
+<li><p>Given the normal assumption and values of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span>, we can calculate the density (which roughly means the probability) of our observed sample <span class="math inline">\((X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)\)</span>.</p>
 <p><span class="math display">\[
   f(data|\beta_0,\beta_1,\sigma^2) = \prod_{i=1}^n N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)
   \]</span></p></li>
-<li><p>This is called the <strong>likelihood function</strong>.</p></li>
 <li><p>Here, <span class="math inline">\(N(a|b,c^2)\)</span> is notation for the density of value <span class="math inline">\(a\)</span> with mean <span class="math inline">\(b\)</span> and variance <span class="math inline">\(c^2\)</span>: <span class="math display">\[
   N(a|b,c^2) = \frac{1}{\sqrt{2\pi c^2}}\exp\left[-\frac{1}{2c^2}(a-b)^2\right]
   \]</span></p></li>
 <li><p>One idea is to find the values of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> to make the data that we did observe as likely as possible.</p></li>
-<li><p>This approach is called <strong>maximum likelihood estimation</strong>.</p></li>
 <li><p>Typically, we actually worth with the log-likelihood <span class="math display">\[
   L(data|\beta_0,\beta_1,\sigma^2) = \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right]
   \]</span></p></li>
@@ -802,13 +807,14 @@ ll(4, 3, 3.5)</code></pre>
 <pre><code>## [1] -51.66</code></pre>
 <p>Much higher!</p></li>
 <li><p>It turns out the the OLS estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are also the maximum likelihood estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p></li>
-<li><p>The MLE of <span class="math inline">\(\sigma^2\)</span> is <span class="math inline">\(\frac{n}{n-2}\hat{\sigma}^2\)</span> (the uncorrected standard deviation estimate).</p></li>
+<li><p>The MLE of <span class="math inline">\(\sigma^2\)</span> is <span class="math inline">\(\frac{n-2}{n}\hat{\sigma}^2\)</span> (the uncorrected standard deviation estimate).</p></li>
 <li><p>Derivation <span class="math display">\[\begin{align}
   \max \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right] &amp;= \max\sum_{i=1}^n\left[-\frac{1}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
   &amp;= \min\sum_{i=1}^n\left[\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
   &amp;= \min\left[n\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}\sum_{i=1}^n(Y_i - \beta_0 - \beta_1X_i)^2\right]
   \end{align}\]</span></p>
 <p>When we minimize over <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, we just need to worry about the second term. But this is equivalent to minimizing the sum of squares!</p></li>
+<li><p>Maximum likelihood estimation is a very general approach to estimating a parameter given a data generative model.</p></li>
 </ul>
 </div>
 

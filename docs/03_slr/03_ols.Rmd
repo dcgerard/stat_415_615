@@ -607,7 +607,7 @@ saveGIF(expr = {
     $$
     \frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(e_i - \bar{e}) = 0
     $$
-    (but remember that $\bar{e} = 0$.
+    (but remember that $\bar{e} = 0$).
 
 4. Residuals are uncorrelated with *fitted* values.
     $$
@@ -689,11 +689,12 @@ saveGIF(expr = {
     $$
     s_2^2 < s_1^2
     $$
-- Dividing by a smaller number ($n-2$) instead of a $n$ corrects for this. That's why we use
-
+    
+- Dividing by the smaller $n-2$ instead of the larger $n$ corrects for this. That's why we use
     $$
     \hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
     $$
+    
 - It can be shown that
     $$
     E[\hat{\sigma}^2] = \sigma^2
@@ -712,6 +713,7 @@ saveGIF(expr = {
     $$
 
 - "Mutually independent" means that knowing the value of one tells you nothing about the values of the others.
+    - In the normal model, uncorrelated $\Leftrightarrow$ independent.
 
 - This implies that
     $$
@@ -737,22 +739,45 @@ saveGIF(expr = {
     
 # Method of Maximum Likelihood
 
-- Note that, given the normal assumption and values of $\beta_0$, $\beta_1$, and $\sigma^2$, we can calculate the density (which roughly means the probability) of our observed sample $(X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)$.
+- We used the method of least squares to obtain the OLS estimates $\hat{\beta}_0$ and $\hat{\beta}_1$.
+
+- We can derive these estimators using a different technique: the method of maximum likelihood.
+
+- Idea: Given a data-generative model (like the normal linear model), find the parameters that maximize the probability of seeing the data that we actually saw.
+
+    ```{r, echo = FALSE}
+    dat <- rnorm(10, mean = 2, sd = 1)
+    meanseq <- seq(-2, 4, length.out = 100)
+    likeseq <- rep(NA_real_, length.out = length(meanseq))
+    for (i in seq_along(meanseq)) {
+      likeseq[[i]] <- sum(dnorm(x = dat, mean = meanseq[[i]], sd = 1, log = TRUE))
+    }
+    
+    mleval <- mean(dat)
+    mlike <- sum(dnorm(x = dat, mean = mleval, sd = 1, log = TRUE))
+    tibble(like = likeseq, mean = meanseq) %>%
+      ggplot(aes(x = mean, y = like)) +
+      geom_line() +
+      xlab("Parameter Value") +
+      ylab("log-probability of data given parameter") +
+      annotate(x = mleval, y = mlike, geom = "point", color = "red") +
+      geom_vline(xintercept = mleval, lty = 2, col = 2)
+    ```
+    
+- This function of the parameter is called the **likelihood function**, and the parameter that maximized this function is called the **maximum likelihood estimate**.
+ 
+- Given the normal assumption and values of $\beta_0$, $\beta_1$, and $\sigma^2$, we can calculate the density (which roughly means the probability) of our observed sample $(X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)$.
 
     $$
     f(data|\beta_0,\beta_1,\sigma^2) = \prod_{i=1}^n N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)
     $$
     
-- This is called the **likelihood function**.
-
 - Here, $N(a|b,c^2)$ is notation for the density of value $a$ with mean $b$ and variance $c^2$:
     $$
     N(a|b,c^2) = \frac{1}{\sqrt{2\pi c^2}}\exp\left[-\frac{1}{2c^2}(a-b)^2\right]
     $$
 
 - One idea is to find the values of $\beta_0$, $\beta_1$, and $\sigma^2$ to make the data that we did observe as likely as possible.
-
-- This approach is called **maximum likelihood estimation**.
 
 - Typically, we actually worth with the log-likelihood
     $$
@@ -781,7 +806,7 @@ saveGIF(expr = {
     
 - It turns out the the OLS estimates of $\beta_0$ and $\beta_1$ are also the maximum likelihood estimates of $\beta_0$ and $\beta_1$.
 
-- The MLE of $\sigma^2$ is $\frac{n}{n-2}\hat{\sigma}^2$ (the uncorrected standard deviation estimate).
+- The MLE of $\sigma^2$ is $\frac{n-2}{n}\hat{\sigma}^2$ (the uncorrected standard deviation estimate).
 
 - Derivation
     \begin{align}
@@ -792,3 +817,5 @@ saveGIF(expr = {
   
     When we minimize over $\beta_0$ and $\beta_1$, we just need to worry about
     the second term. But this is equivalent to minimizing the sum of squares!
+    
+- Maximum likelihood estimation is a very general approach to estimating a parameter given a data generative model.

@@ -21,9 +21,10 @@ data("mtcars")
 
 # Learning Objectives
 
-- Goals of linear regression.
-- What can linear regression accomplish
-- Other procedures are specific examples (or approximations) of linear regression.
+- What is linear regression?
+- What are the goals of linear regression?
+- What can linear regression accomplish?
+- How are other procedures related to linear regression?
 - <https://lindeloev.github.io/tests-as-linear/>
 
 # What is simple linear regression?

@@ -21,7 +21,7 @@ University by [David Gerard](https://dcgerard.github.io/).
 # Lectures
 
 - 00 Motivation
-  - [Other tests as linear regression](./00_motivation.html).
+  - [Linear Regression Overview](./00_motivation.html).
 - 01 Crash Course in R
   - [R introduction](./01_r_intro.html).
   - [R markdown introduction](01_r_markdown.html).
