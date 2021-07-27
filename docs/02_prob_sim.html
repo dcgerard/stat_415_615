@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2021-07-27" />
+
+<title>Probability and Simulation</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Probability and Simulation</h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2021-07-27</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#learning-objectives">Learning Objectives</a></li>
+<li><a href="#probability-the-normal-and-t-distributions.">Probability, the normal and <span class="math inline">\(t\)</span> distributions.</a></li>
+<li><a href="#simulation-as-a-way-of-life">Simulation as a way of life</a></li>
+</ul>
+</div>
+
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
+<ul>
+<li>Basic Probability</li>
+<li>Normal/<span class="math inline">\(t\)</span>-distributions</li>
+<li>Simulation in R</li>
+</ul>
+</div>
+<div id="probability-the-normal-and-t-distributions." class="section level1">
+<h1>Probability, the normal and <span class="math inline">\(t\)</span> distributions.</h1>
+<ul>
+<li><p><strong>Distribution</strong>: The possible values of a variable and how often it takes those values.</p></li>
+<li><p>A <strong>density</strong> describes the distribution of a <em>quantitative</em> variable. You can think of it as approximating a histogram. It is a curve where</p>
+<ul>
+<li>The area under the curve between any two points is approximately the probability of being between those two points.</li>
+<li>The total area under the curve is 1 (something must happen).</li>
+<li>The curve is never negative (can’t have negative probabilities).</li>
+</ul></li>
+<li><p>The density of birth weights in America:</p>
+<p><img src="02_figs/birthweights.png" /> </p></li>
+<li><p>The distribution of many variables in Statistics approximate the <strong>normal distribution</strong>.</p>
+<ul>
+<li>If you know the mean and standard deviation of a normal distribution, then you know the whole distribution.</li>
+<li>Larger standard deviation implies more spread out (larger and smaller values are both more likely).</li>
+<li>Mean determines where the data are centered.</li>
+</ul></li>
+<li><p>Normal densities with different means. <img src="02_prob_sim_files/figure-html/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Normal densities with different standard deviations <img src="02_prob_sim_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Density Function (height of curve, <strong>NOT</strong> probability of a value).</p>
+<pre class="r"><code>dnorm(x = 2, mean = 1, sd = 1)</code></pre>
+<pre><code>## [1] 0.242</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Random Generation (generate samples from a given normal distribution).</p>
+<pre class="r"><code>samp &lt;- rnorm(n = 1000, mean = 1, sd = 1)
+head(samp)</code></pre>
+<pre><code>## [1]  0.03807  0.70747  1.25879 -0.15213  1.19578  1.03012</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Cumulative Distribution Function (probability of being less than or equal to some value).</p>
+<pre class="r"><code>pnorm(q = 2, mean = 1, sd = 1)</code></pre>
+<pre><code>## [1] 0.8413</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Quantile function (find value that has a given the probability of being less than or equal to it).</p>
+<pre class="r"><code>qnorm(p = 0.8413, mean = 1, sd = 1)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> to generate 10,000 random draws from a normal distribution with mean 5 and standard deviation 2. What proportion are less than 3? Can you think up a way to approximate this proportion using a different function?</p></li>
+<li><p><strong>Exercise</strong>: In Hong Kong, human male height is approximately normally distributed with mean 171.5 cm and standard deviation 5.5 cm. What proportion of the Hong Kong population is between 170 cm and 180 cm?</p></li>
+<li><p>A property of the normal distribution is that if <span class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> and <span class="math inline">\(Z - (X - \mu) / \sigma\)</span>, then <span class="math inline">\(Z \sim N(0, 1)\)</span>.</p></li>
+<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> and <code>qqplot()</code> to demonstrate this property. That is, simulate 1000 values of <span class="math inline">\(X\)</span> with some mean different than 0 and some variance different than 1. Then transform those <span class="math inline">\(X\)</span> values to <span class="math inline">\(Z\)</span>. Then simulate some other variable <span class="math inline">\(W\)</span> from <span class="math inline">\(N(0, 1)\)</span>. Use <code>qqplot()</code> to show that <span class="math inline">\(W\)</span> and <span class="math inline">\(Z\)</span> follow the same distribution.</p></li>
+<li><p>The <span class="math inline">\(t\)</span>-distribution shows up a lot in Statistics.</p>
+<ul>
+<li>It is also bell-curved but has “thicker tails” (more extreme observations are more likely).</li>
+<li>It is always centered at 0.</li>
+<li>It only has one parameter, called the “degrees of freedom”, which determines how thick the tails are.</li>
+<li>Smaller degrees of freedom mean thicker tails, larger degrees of freedom means thinner tails.</li>
+<li>If the degrees of freedom is large enough, the <span class="math inline">\(t\)</span>-distribution is approximately the same as a normal distribution with mean 0 and variance 1.</li>
+</ul></li>
+<li><p><span class="math inline">\(t\)</span>-distributions with different degrees of freedom:</p>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Density, distribution, quantile, and random generation functions also exist for the <span class="math inline">\(t\)</span>-distribution.</p>
+<pre class="r"><code>dt()
+pt()
+qt()
+rt()</code></pre></li>
+</ul>
+</div>
+<div id="simulation-as-a-way-of-life" class="section level1">
+<h1>Simulation as a way of life</h1>
+<ul>
+<li><p><strong>Simulation study</strong>: Generating random data sets to evaluate properties of the sample.</p></li>
+<li><p>Simulation is vital in applied statistics for:</p>
+<ol style="list-style-type: decimal">
+<li>Better understanding of variation in data (humans are naturally bad at this).</li>
+<li>Evaluating the properties of estimators and hypothesis tests across many samples. This is very important for sample size calculations.</li>
+<li>Representing uncertainty in predictions and forecasts.</li>
+</ol></li>
+<li><p>R functions for simulation:</p>
+<ul>
+<li><p><code>rnorm()</code>, <code>rt()</code>, etc: Simulate from a specific distribution.</p>
+<pre class="r"><code>rnorm(n = 10, mean = 1, sd = 2)</code></pre>
+<pre><code>##  [1]  1.8836 -1.2785 -0.9457 -3.4263  2.1866 -0.3820 -1.2261  3.6834 -1.5546
+## [10] -0.8367</code></pre></li>
+<li><p><code>sample()</code>: Obtain a random sample (with or without replacement) from a finite set of predefined values.</p>
+<pre class="r"><code>sample(c(&quot;Heads&quot;, &quot;Tails&quot;, &quot;Edge&quot;), size = 10, replace = TRUE, prob = c(0.45, 0.45, 0.1))</code></pre>
+<pre><code>##  [1] &quot;Heads&quot; &quot;Tails&quot; &quot;Heads&quot; &quot;Edge&quot;  &quot;Heads&quot; &quot;Edge&quot;  &quot;Tails&quot; &quot;Heads&quot; &quot;Edge&quot; 
+## [10] &quot;Heads&quot;</code></pre></li>
+<li><p><code>replicate()</code>: Replicate some code a certain number of times, and collect the output from each replication.</p>
+<pre class="r"><code>replicate(n = 10,expr = {
+  x &lt;- rnorm(10)
+  mean(x)
+}) </code></pre>
+<pre><code>##  [1] -0.01874 -0.01188  0.53837  0.50253 -0.50922 -0.20871  0.21974 -0.72113
+##  [9]  0.45390 -0.16443</code></pre></li>
+</ul></li>
+<li><p>Suppose your boss asks you if she should use the mean or the median. She has some trial data, but plans on collecting about 250 more values. She gives you this vector of observed values</p>
+<pre class="r"><code>x &lt;- c(1.31, 2.42, 1.76, 0.71, 9.07, 0.86, 2.78, 1.26, 2.79, 12.91)</code></pre></li>
+<li><p>Your first thought is to generate from the normal distribution using the estimated mean and standard deviation, and then compare the median to the mean using some metric.</p>
+<pre class="r"><code>xbar &lt;- mean(x)
+s &lt;- sd(x)
+sampsize &lt;- 250
+meanvec &lt;- replicate(n = 1000, expr = {
+  xsim &lt;- rnorm(n = sampsize, mean = xbar, sd = s)
+  mean(xsim)
+})
+
+qplot(meanvec, main = &quot;Mean&quot;, bins = 30) +
+  geom_vline(xintercept = xbar, lty = 2, col = 2)</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>medvec &lt;- replicate(n = 1000, expr = {
+  xsim &lt;- rnorm(n = sampsize, mean = xbar, sd = s)
+  median(xsim)
+})
+
+qplot(medvec, main = &quot;Median&quot;, bins = 30) +
+  geom_vline(xintercept = xbar, lty = 2, col = 2)</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>They both look to be unbiased. But when you compare the mean squared error, the mean does better (lower mean squared error):</p>
+<pre class="r"><code># Mean performance
+mean((meanvec - xbar)^2)</code></pre>
+<pre><code>## [1] 0.06511</code></pre>
+<pre class="r"><code># Median performance
+mean((medvec - xbar)^2)</code></pre>
+<pre><code>## [1] 0.09858</code></pre></li>
+<li><p>Which is a performance improvement of 33.9603% in the mean squared error.</p></li>
+<li><p>This assumes that you are simulating under the normal model. But it is a little iffy on whether the observed data are actually normal.</p>
+<pre class="r"><code>qplot(x, bins = 10)</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qqnorm(x)
+qqline(x)</code></pre>
+<p><img src="02_prob_sim_files/figure-html/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

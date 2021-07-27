@@ -22,7 +22,7 @@ klippy::klippy()
 
 # Learning Objectives
 
-- Chapter 2 of KNNL (Skip section 2.11).
+- Chapter 2 of KNNL (skip section 2.11).
 - Sampling distributions of OLS estimates.
 - Hypothesis testing for regression coefficients.
 - Confidence intervals for regression coefficients.

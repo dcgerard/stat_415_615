@@ -27,8 +27,8 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [R markdown introduction](01_r_markdown.html).
   - [R graphics with `qplot()`](./01_qplot.html).
 - 02 Review
-  - [Mathematical prerequisites](./02_math_prereq.html)
-  - Statistical prerequisites.
+  - [Mathematical prerequisites](./02_math_prereq.html).
+  - [Probability and simulation](./02_prob_sim.html).
 - 03 Simple linear regression
   - [The Model](./03_ols.html). Chapter 1 of KNNL.
   - [Inference](./03_inference.html). Chapter 2 of KNNL.

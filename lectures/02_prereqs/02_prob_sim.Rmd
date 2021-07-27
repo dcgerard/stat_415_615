@@ -1,0 +1,274 @@
+---
+title: "Probability and Simulation"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+set.seed(3)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+# Learning Objectives
+
+- Basic Probability
+- Normal/$t$-distributions
+- Simulation in R
+
+# Probability, the normal and $t$ distributions.
+
+- **Distribution**: The possible values of a variable and how often it takes those values. 
+  
+- A **density** describes the distribution of a *quantitative* variable. You can think of it as approximating a histogram. It is a curve where
+  - The area under the curve between any two points is approximately the probability of being between those two points.
+  - The total area under the curve is 1 (something must happen).
+  - The curve is never negative (can't have negative probabilities).
+  
+- The density of birth weights in America:
+
+    ![](./02_figs/birthweights.png)\ 
+  
+- The distribution of many variables in Statistics approximate the **normal distribution**.
+    - If you know the mean and standard deviation of a normal distribution, then you know the whole distribution.
+    - Larger standard deviation implies more spread out (larger and smaller values are both more likely).
+    - Mean determines where the data are centered.
+
+- Normal densities with different means.
+    ```{r, echo=FALSE}
+    library(ggplot2)
+    library(ggthemes)
+    x <- seq(-10, 10, length = 100)
+    y1 <- dnorm(x = x, mean = 0, sd = 2)
+    y2 <- dnorm(x = x, mean = -4, sd = 2)
+    y3 <- dnorm(x = x, mean = 4, sd = 2)
+    dfdat <- data.frame(x = rep(x, 3), 
+                        y = c(y1, y2, y3), 
+                        z = factor(rep(c(1, 2, 3), each = length(x))))
+    
+    ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
+      geom_line(lwd=1) + 
+      ggthemes::scale_color_colorblind() +
+      theme(legend.position="none") +
+      ylab("f(x)") +
+      xlab("x")
+    ```
+
+- Normal densities with different standard deviations
+    ```{r, echo=FALSE}
+    x <- seq(-10, 10, length = 100)
+    y1 <- dnorm(x = x, mean = 0, sd = 1)
+    y2 <- dnorm(x = x, mean = 0, sd = 2)
+    y3 <- dnorm(x = x, mean = 0, sd = 4)
+    dfdat <- data.frame(x = rep(x, 3), 
+                        y = c(y1, y2, y3), 
+                        z = factor(rep(c(1, 2, 3), each = length(x))))
+    
+    ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
+      geom_line(lwd=1) + 
+      ggthemes::scale_color_colorblind() +
+      theme(legend.position="none") +
+      ylab("f(x)") +
+      xlab("x")
+    ```
+  
+- Density Function (height of curve, **NOT** probability of a value).
+    ```{r}
+    dnorm(x = 2, mean = 1, sd = 1)
+    ```
+    
+    ```{r, echo = FALSE}
+    x <- seq(-2, 4, length = 100)
+    y <- dnorm(x, mean = 1, sd = 1)
+    qplot(x, y, geom = "line", ylab = "f(x)") +
+      geom_segment(dat = data.frame(x = 2, xend = 2, y = 0, 
+                                    yend = dnorm(x = 2, mean = 1, sd = 1)), 
+                   aes(x = x, y = y, xend = xend, yend = yend), lty = 2, col = 2)
+    ```
+    
+- Random Generation (generate samples from a given normal distribution).
+
+    ```{r}
+    samp <- rnorm(n = 1000, mean = 1, sd = 1)
+    head(samp)
+    ```
+    
+    ```{r, echo = FALSE}
+    qplot(samp, geom = "histogram", fill = I("white"), color = I("black"), bins = 20)
+    ```
+  
+- Cumulative Distribution Function (probability of being less than or equal to some value).
+
+    ```{r}
+    pnorm(q = 2, mean = 1, sd = 1)
+    ```
+    
+    ```{r, echo = FALSE}
+    x <- seq(-2, 4, length = 500)
+    y <- dnorm(x, mean = 1, sd = 1)
+    polydf <- data.frame(x = c(min(x), x[x < 2], 2, 0), 
+                         y = c(0, y[x < 2], 0, 0))
+    qplot(x, y, geom = "line", ylab = "f(x)") +
+      geom_polygon(data = polydf, mapping = aes(x = x, y = y), 
+                   fill = "blue", alpha = 1/4)
+    ```
+    
+- Quantile function (find value that has a given the probability of being less than or equal to it).
+  
+    ```{r}
+    qnorm(p = 0.8413, mean = 1, sd = 1)
+    ```
+    
+    ```{r, echo = FALSE}
+    x <- seq(-2, 4, length = 500)
+    y <- dnorm(x, mean = 1, sd = 1)
+    polydf <- data.frame(x = c(min(x), x[x < 2], 2, 0), 
+                         y = c(0, y[x < 2], 0, 0))
+    qplot(x, y, geom = "line", ylab = "f(x)") +
+      geom_polygon(data = polydf, mapping = aes(x = x, y = y), 
+                   fill = "blue", alpha = 1/4) +
+      annotate(geom = "text", x = 0.5, y = 0.1, label = "0.8413", color = "black")
+    ```  
+    
+- **Exercise**: Use `rnorm()` to generate 10,000 random draws from a normal distribution with mean 5 and standard deviation 2. What proportion are less than 3? Can you think up a way to approximate this proportion using a different function?
+  
+    ```{r, eval=FALSE, echo=FALSE}
+    samp <- rnorm(n = 10000, mean = 5, sd = 2)
+    mean(samp < 3)
+    pnorm(q = 3, mean = 5, sd = 2)
+    ```
+  
+- **Exercise**: In Hong Kong, human male height is approximately normally distributed with mean 171.5 cm and standard deviation 5.5 cm. What proportion of the Hong Kong population is between 170 cm and 180 cm?
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    pless180 <- pnorm(q = 180, mean = 171.5, sd = 5.5)
+    pless170 <- pnorm(q = 170, mean = 171.5, sd = 5.5)
+    pbetween <- pless180 - pless170
+    pbetween
+    ```
+    
+- A property of the normal distribution is that if $X \sim N(\mu, \sigma^2)$ and $Z - (X - \mu) / \sigma$, then $Z \sim N(0, 1)$.
+
+- **Exercise**: Use `rnorm()` and `qqplot()` to demonstrate this property. That is, simulate 1000 values of $X$ with some mean different than 0 and some variance different than 1. Then transform those $X$ values to $Z$. Then simulate some other variable $W$ from $N(0, 1)$. Use `qqplot()` to show that $W$ and $Z$ follow the same distribution.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    mu <- 1
+    sigma <- 2
+    X <- rnorm(n = 1000, mean = mu, sd = sigma)
+    Z <- (X - mu) / sigma
+    W <- rnorm(100)
+    qqplot(Z, W)
+    abline(0, 1)
+    
+    ks.test(Z, W)
+    ```
+
+- The $t$-distribution shows up a lot in Statistics. 
+    - It is also bell-curved but has "thicker tails" (more extreme observations are more likely). 
+    - It is always centered at 0. 
+    - It only has one parameter, called the "degrees of freedom", which determines how thick the tails are.
+    - Smaller degrees of freedom mean thicker tails, larger degrees of freedom means thinner tails.
+    - If the degrees of freedom is large enough, the $t$-distribution is approximately the same as a normal distribution with mean 0 and variance 1.
+      
+- $t$-distributions with different degrees of freedom:
+
+    ```{r, echo=FALSE}
+    x <- seq(-4, 4, length = 200)
+    data.frame(df = as.factor(c(rep(1, length(x)), rep(5, length(x)), rep(Inf, length(x)))),
+               x = c(x, x, x),
+               y = c(dt(x = x, df = 1),
+                     dt(x = x, df = 5),
+                     dt(x = x, df = Inf))) ->
+      dfdat
+    ggplot(dfdat, mapping = aes(x = x, y = y, color = df, lty = df)) +
+      geom_line() +
+      scale_color_colorblind() +
+      ylab("f(x)")
+    ```
+    
+- Density, distribution, quantile, and random generation functions also exist for the $t$-distribution.
+    ```{r, eval = FALSE}
+    dt()
+    pt()
+    qt()
+    rt()
+    ```
+
+# Simulation as a way of life
+
+- **Simulation study**: Generating random data sets to evaluate properties of the sample.
+
+- Simulation is vital in applied statistics for:
+    1. Better understanding of variation in data (humans are naturally bad at this).
+    2. Evaluating the properties of estimators and hypothesis tests across many samples. This is very important for sample size calculations.
+    3. Representing uncertainty in predictions and forecasts.
+
+- R functions for simulation:
+    - `rnorm()`, `rt()`, etc: Simulate from a specific distribution.
+        ```{r}
+        rnorm(n = 10, mean = 1, sd = 2)
+        ```
+    - `sample()`: Obtain a random sample (with or without replacement) from a finite set of predefined values.
+        ```{r}
+        sample(c("Heads", "Tails", "Edge"), size = 10, replace = TRUE, prob = c(0.45, 0.45, 0.1))
+        ```
+    - `replicate()`: Replicate some code a certain number of times, and collect the output from each replication.
+        ```{r}
+        replicate(n = 10,expr = {
+          x <- rnorm(10)
+          mean(x)
+        }) 
+        ```
+        
+- Suppose your boss asks you if she should use the mean or the median. She has some trial data, but plans on collecting about 250 more values. She gives you this vector of observed values
+    ```{r}
+    x <- c(1.31, 2.42, 1.76, 0.71, 9.07, 0.86, 2.78, 1.26, 2.79, 12.91)
+    ```
+
+- Your first thought is to generate from the normal distribution using the estimated mean and standard deviation, and then compare the median to the mean using some metric.
+    ```{r}
+    xbar <- mean(x)
+    s <- sd(x)
+    sampsize <- 250
+    meanvec <- replicate(n = 1000, expr = {
+      xsim <- rnorm(n = sampsize, mean = xbar, sd = s)
+      mean(xsim)
+    })
+    
+    qplot(meanvec, main = "Mean", bins = 30) +
+      geom_vline(xintercept = xbar, lty = 2, col = 2)
+    
+    medvec <- replicate(n = 1000, expr = {
+      xsim <- rnorm(n = sampsize, mean = xbar, sd = s)
+      median(xsim)
+    })
+    
+    qplot(medvec, main = "Median", bins = 30) +
+      geom_vline(xintercept = xbar, lty = 2, col = 2)
+    ```
+
+- They both look to be unbiased. But when you compare the mean squared error, the mean does better (lower mean squared error):
+    ```{r}
+    # Mean performance
+    mean((meanvec - xbar)^2)
+    
+    # Median performance
+    mean((medvec - xbar)^2)
+    ```
+
+- Which is a performance improvement of `r (1 - mean((meanvec - xbar)^2) / mean((medvec - xbar)^2))*100`\% in the mean squared error.
+
+- This assumes that you are simulating under the normal model. But it is a little iffy on whether the observed data are actually normal.
+
+    ```{r}
+    qplot(x, bins = 10)
+    qqnorm(x)
+    qqline(x)
+    ```
