@@ -39,5 +39,6 @@ klippy::klippy()
 
 # Confidence Bands
 
+  ![](./03_figs/cband.gif)\ 
 
 
