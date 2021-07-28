@@ -28,3 +28,16 @@ klippy::klippy()
 - Confidence intervals for regression coefficients.
 - Regression line intervals: pointwise confidence, prediction, confidence bands
 - $F$-tests for regression models.
+
+# Confidence Interval for $E[Y_i|X_i]$
+
+  ![](./03_figs/ci_mean.gif)\ 
+  
+# Prediction Interval for $\hat{Y}_{i(new)}$ given $X_{i(new)}$
+
+  ![](./03_figs/pred_int.gif)\ 
+
+# Confidence Bands
+
+
+

@@ -154,7 +154,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     pbetween
     ```
     
-- A property of the normal distribution is that if $X \sim N(\mu, \sigma^2)$ and $Z - (X - \mu) / \sigma$, then $Z \sim N(0, 1)$.
+- A property of the normal distribution is that if $X \sim N(\mu, \sigma^2)$ and $Z = (X - \mu) / \sigma$, then $Z \sim N(0, 1)$.
 
 - **Exercise**: Use `rnorm()` and `qqplot()` to demonstrate this property. That is, simulate 1000 values of $X$ with some mean different than 0 and some variance different than 1. Then transform those $X$ values to $Z$. Then simulate some other variable $W$ from $N(0, 1)$. Use `qqplot()` to show that $W$ and $Z$ follow the same distribution.
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-27" />
+<meta name="date" content="2021-07-28" />
 
 <title>Probability and Simulation</title>
 
@@ -265,7 +265,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Probability and Simulation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-27</h4>
+<h4 class="date">2021-07-28</h4>
 
 </div>
 
@@ -324,7 +324,7 @@ head(samp)</code></pre>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: Use <code>rnorm()</code> to generate 10,000 random draws from a normal distribution with mean 5 and standard deviation 2. What proportion are less than 3? Can you think up a way to approximate this proportion using a different function?</p></li>
 <li><p><strong>Exercise</strong>: In Hong Kong, human male height is approximately normally distributed with mean 171.5 cm and standard deviation 5.5 cm. What proportion of the Hong Kong population is between 170 cm and 180 cm?</p></li>
-<li><p>A property of the normal distribution is that if <span class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> and <span class="math inline">\(Z - (X - \mu) / \sigma\)</span>, then <span class="math inline">\(Z \sim N(0, 1)\)</span>.</p></li>
+<li><p>A property of the normal distribution is that if <span class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> and <span class="math inline">\(Z = (X - \mu) / \sigma\)</span>, then <span class="math inline">\(Z \sim N(0, 1)\)</span>.</p></li>
 <li><p><strong>Exercise</strong>: Use <code>rnorm()</code> and <code>qqplot()</code> to demonstrate this property. That is, simulate 1000 values of <span class="math inline">\(X\)</span> with some mean different than 0 and some variance different than 1. Then transform those <span class="math inline">\(X\)</span> values to <span class="math inline">\(Z\)</span>. Then simulate some other variable <span class="math inline">\(W\)</span> from <span class="math inline">\(N(0, 1)\)</span>. Use <code>qqplot()</code> to show that <span class="math inline">\(W\)</span> and <span class="math inline">\(Z\)</span> follow the same distribution.</p></li>
 <li><p>The <span class="math inline">\(t\)</span>-distribution shows up a lot in Statistics.</p>
 <ul>

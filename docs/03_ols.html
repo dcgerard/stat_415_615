@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-26" />
+<meta name="date" content="2021-07-28" />
 
 <title>Simple Linear Regression: The Model</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-26</h4>
+<h4 class="date">2021-07-28</h4>
 
 </div>
 
@@ -473,7 +473,7 @@ qplot(x = growth, y = vote, data = hibbs) +
   \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
   \]</span></p></li>
 <li><p>Visualization:</p>
-<p><img src="ols.gif" /></p></li>
+<p><img src="03_figs/ols.gif" /></p></li>
 <li><p>We can solve for the <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> that minimize this sum of squares.</p></li>
 <li><p>We denote the resulting estimates by <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>, and call them the <strong>OLS estimates</strong> (ordinary least squares estimates).</p></li>
 <li><p>In equations:</p>
@@ -536,7 +536,7 @@ qplot(x = growth, y = vote, data = hibbs) +
 <pre class="r"><code>library(broom)
 est &lt;- tidy(lmout)
 est</code></pre>
-<pre><code>## # A tibble: 2 x 5
+<pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)    46.2      1.62      28.5  8.41e-14
