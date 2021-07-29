@@ -180,3 +180,82 @@ saveGIF(expr = {
     print(pllist[[i]])
   }
 }, movie.name = "cband.gif", interval = 1)
+
+
+## Hypothesis testing strategy
+library(tidyverse)
+library(animation)
+library(broom)
+
+hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
+lmout <- lm(vote ~ growth, data = hibbs)
+tout <- tidy(lmout)
+gout <- glance(lmout)
+beta0 <- tout$estimate[[1]]
+beta1 <- tout$estimate[[2]]
+sigma <- gout$sigma[[1]]
+ymin <- min(hibbs$vote) - 2 * sigma
+ymax <- max(hibbs$vote) + 2 * sigma
+
+ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_classic() +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()) +
+  ylim(ymin, ymax) ->
+  pl
+
+ggsave(filename = "./hypothesis_testing/true_plot.pdf", plot = pl, height = 1, width = 1.5)
+
+hibbs %>%
+  select(growth) ->
+  simdf
+
+set.seed(3)
+for (i in seq_len(5)) {
+  simdf %>%
+    mutate(vote = mean(hibbs$vote) + rnorm(n = n(), mean = 0, sd = sigma)) ->
+    simdf
+  
+  print(summary(lm(vote ~ growth, data = simdf)))
+
+  ggplot(data = simdf, mapping = aes(x = growth, y = vote)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme_classic() +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank()) +
+    ylim(ymin, ymax) ->
+    pl
+  
+  ggsave(filename = paste0("./hypothesis_testing/sim_plot_", i, ".pdf"), plot = pl, height = 1, width = 1.5)
+}
+
+
+tibble(x = seq(-4, 4, length.out = 500)) %>%
+  mutate(y = dt(x = x, df = nrow(hibbs) - 2)) ->
+  tdat
+ggplot(tdat, aes(x = x, y = y)) +
+  geom_line() +
+  theme_classic() +
+  theme(axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank()) +
+  geom_ribbon(data = filter(tdat, x > 2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+  geom_ribbon(data = filter(tdat, x < -2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+  geom_vline(xintercept = 2.5, lty = 2, col = 2) ->
+  pl
+
+ggsave(filename = "./hypothesis_testing/tdist.pdf", plot = pl, height = 1, width = 1.5)
+
+
+
+
+
+
+
+
+

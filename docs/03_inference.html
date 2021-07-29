@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-28" />
+<meta name="date" content="2021-07-29" />
 
 <title>Simple Linear Regression: Inference</title>
 
@@ -269,16 +269,24 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-28</h4>
+<h4 class="date">2021-07-29</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
+<li><a href="#testing-h_0beta_10">Testing <span class="math inline">\(H_0:\beta_1=0\)</span></a>
+<ul>
+<li><a href="#sampling-distribution">Sampling distribution</a></li>
+<li><a href="#finding-a-test-statistic.">Finding a test statistic.</a></li>
+</ul></li>
 <li><a href="#confidence-interval-for-ey_ix_i">Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></a></li>
 <li><a href="#prediction-interval-for-haty_inew-given-x_inew">Prediction Interval for <span class="math inline">\(\hat{Y}_{i(new)}\)</span> given <span class="math inline">\(X_{i(new)}\)</span></a></li>
 <li><a href="#confidence-bands">Confidence Bands</a></li>
+<li><a href="#anova-approach-to-hypothesis-testing">ANOVA approach to hypothesis testing</a></li>
+<li><a href="#coefficient-of-determination">Coefficient of Determination</a></li>
+<li><a href="#correlation-coefficient">Correlation Coefficient</a></li>
 </ul>
 </div>
 
@@ -295,7 +303,108 @@ $(document).ready(function () {
 <li>Confidence intervals for regression coefficients.</li>
 <li>Regression line intervals: pointwise confidence, prediction, confidence bands</li>
 <li><span class="math inline">\(F\)</span>-tests for regression models.</li>
+<li><span class="math inline">\(R\)</span> and <span class="math inline">\(R^2\)</span>.</li>
 </ul>
+</div>
+<div id="testing-h_0beta_10" class="section level1">
+<h1>Testing <span class="math inline">\(H_0:\beta_1=0\)</span></h1>
+<ul>
+<li><p>Recall our model for simple linear regression: <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i\\
+  \epsilon_i &amp;\overset{i.i.d.}{\sim} N(0, \sigma^2)
+  \end{align}\]</span></p></li>
+<li><p>A common task is to test the following hypotheses:</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_1 = 0\)</span>.
+<ul>
+<li><span class="math inline">\(Y_i\)</span> and <span class="math inline">\(X_i\)</span> are not <em>linearly</em> associated.</li>
+<li><span class="math inline">\(E[Y_i|X_i] = \beta_0\)</span> no matter the value of <span class="math inline">\(X_i\)</span>. So <span class="math inline">\(X_i\)</span> doesn’t tell us anything about <span class="math inline">\(Y_i\)</span> (in the context of linear relationships).</li>
+</ul></li>
+<li><span class="math inline">\(H_A: \beta_1 \neq 0\)</span>.
+<ul>
+<li><span class="math inline">\(Y_i\)</span> and <span class="math inline">\(X_i\)</span> are <em>linearly</em> associated.</li>
+<li>We can get better guesses by of <span class="math inline">\(Y_i\)</span> by knowing <span class="math inline">\(X_i\)</span> than if we did not know <span class="math inline">\(X_i\)</span>.</li>
+</ul></li>
+</ul></li>
+<li><p>Overview of the strategy of hypothesis testing:</p>
+<p><img src="hypothesis_testing/hyp.png" /> </p>
+<ol style="list-style-type: decimal">
+<li>We obtain a test statistic whose large/small values will provide support against the null.</li>
+<li>We compare the observed test-statistic to the distribution of hypothetical test statistics we would have observed <em>if the null were true</em>.
+<ul>
+<li>This distribution is called the <strong>sampling distribution</strong> of the test statistic.</li>
+</ul></li>
+<li>We obtain the <strong><span class="math inline">\(p\)</span>-value</strong>: The probability of seeing a data as extreme or more extreme than what we saw <em>if the null were true</em>.</li>
+<li>If the <span class="math inline">\(p\)</span>-value is small, then our data would be very rare if the null were true, so we claim the null is not true.</li>
+<li>If the <span class="math inline">\(p\)</span>-value is large, then our data would be common if the null were true. But it could also be common if the null were false, so we make no claims.</li>
+</ol></li>
+</ul>
+<div id="sampling-distribution" class="section level2">
+<h2>Sampling distribution</h2>
+<ul>
+<li><p>The sampling distribution of <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math display">\[
+  \hat{\beta}_1 \sim N\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\right).
+  \]</span></p></li>
+<li><p>We will prove the mean result of this.</p></li>
+<li><p>Note that <span class="math inline">\(\hat{\beta}_1 = \sum_{i=1}^nk_iY_i\)</span> where <span class="math inline">\(k_i = \frac{X_i - \bar{X}}{\sum_{i=1}^n(X_i - \bar{X})^2}\)</span>.</p></li>
+<li><p>Property from theory: Any linear combination of independent normal random variables is also normal.</p>
+<ul>
+<li>So we just need the mean and variance of <span class="math inline">\(\hat{\beta}_1\)</span> to know its distribution.</li>
+</ul>
+<p><span class="math display">\[\begin{align}
+  E[\hat{\beta}_1] &amp;= E\left[\sum_{i=1}^nk_iY_i\right]\\
+  &amp;=\sum_{i=1}^nk_iE[Y_i]\\
+  &amp;=\sum_{i=1}^nk_i(\beta_0 + \beta_1 X_i)\\
+  &amp;= \beta_0\sum_{i=1}^nk_i + \beta_1\sum_{i=1}^nk_iX_i.
+  \end{align}\]</span></p></li>
+<li><p>We will now prove that <span class="math inline">\(\sum_{i=1}^nk_i = 0\)</span> and <span class="math inline">\(\sum_{i=1}^nk_iX_i = 1\)</span>.</p>
+<p><span class="math display">\[\begin{align}
+  \sum_{i=1}^nk_i &amp;= \frac{\sum_{i=1}^n(X_i - \bar{X})}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^nX_i - \sum_{i=1}^n\bar{X}}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{n\bar{X} - n\bar{X}}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= 0.
+  \end{align}\]</span></p>
+<p><span class="math display">\[\begin{align}
+  \sum_{i=1}^nk_iX_i &amp;= \frac{\sum_{i=1}^nX_i(X_i - \bar{X})}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^nX_i^2 - \bar{X}\sum_{i=1}^nX_i}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^nX_i^2 - n\bar{X}^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^nX_i^2 - 2n\bar{X}^2 + n\bar{X}^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^nX_i^2 - 2\bar{X}\sum_{i=1}^nX_i + n\bar{X}^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^n(X_i^2 - 2\bar{X}X_i + \bar{X}^2)}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= \frac{\sum_{i=1}^n(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+  &amp;= 1
+  \end{align}\]</span></p></li>
+<li><p>Putting this together, we have <span class="math display">\[
+  E[\hat{\beta}_1] =  \beta_0\sum_{i=1}^nk_i + \beta_1\sum_{i=1}^nk_iX_i = \beta_0 \times 0 + \beta_1 \times 1 = \beta_1.
+  \]</span></p></li>
+<li><p>The proof for <span class="math inline">\(var(\hat{\beta}_1)\)</span> is similar.</p></li>
+</ul>
+</div>
+<div id="finding-a-test-statistic." class="section level2">
+<h2>Finding a test statistic.</h2>
+<ul>
+<li><p>The standard deviation of the sampling distribution of an estimator is called the <strong>standard error</strong>.</p></li>
+<li><p>The standard error <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\)</span>.</p></li>
+<li><p>We don’t know <span class="math inline">\(\sigma^2\)</span>, but we have an estimator for it, the mean squared error (MSE).</p>
+<p><span class="math display">\[
+  MSE = \frac{1}{n-2} \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
+  \]</span></p></li>
+<li><p>So the estimated standard error of <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math inline">\(s(\hat{\beta}_1)\)</span> where <span class="math display">\[
+  s^2(\hat{\beta}_1) = \frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}
+  \]</span></p>
+<ul>
+<li>We usually just say “standard error”, even when we are talking about the estimated standard error.</li>
+</ul></li>
+<li><p>The distribution of <span class="math display">\[
+  \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \sim t_{n-2}
+  \]</span></p>
+<ul>
+<li>A <span class="math inline">\(t\)</span> distribution with <span class="math inline">\(n-2\)</span> degrees of freedom.</li>
+<li><span class="math inline">\(n\)</span> is the sample size.</li>
+<li>We subtract two because we estimated two parameters <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> when we were calculating the MSE.</li>
+</ul></li>
+</ul>
+</div>
 </div>
 <div id="confidence-interval-for-ey_ix_i" class="section level1">
 <h1>Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></h1>
@@ -308,6 +417,35 @@ $(document).ready(function () {
 <div id="confidence-bands" class="section level1">
 <h1>Confidence Bands</h1>
 <p><img src="03_figs/cband.gif" /> </p>
+</div>
+<div id="anova-approach-to-hypothesis-testing" class="section level1">
+<h1>ANOVA approach to hypothesis testing</h1>
+<ul>
+<li><p>Our hypothesis test is a comparison between the two models: <span class="math display">\[\begin{align}
+  Y_i = \beta_0 + \epsilon_i\\
+  Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+  \end{align}\]</span></p></li>
+<li><p>We will call the first model the <strong>reduced</strong> model and the second model the <strong>full</strong> model. This is because the reduced model is a subset of the full model (you get the reduced from the full by setting <span class="math inline">\(\beta_1 = 0\)</span>).</p></li>
+<li><p>Sum of squares of reduced model</p>
+<p><span class="math display">\[
+  SSE(R) = \sum_{i=1}^n(Y_i - \bar{Y})^2
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Sum of squares of full model</p>
+<p><span class="math display">\[
+  SSE(F) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Under the null that the reduced model is true, we have that the following statistic has a sampling distribution that is <span class="math inline">\(F(1, n-2)\)</span> <span class="math display">\[
+  F^* = \frac{[SSE(R) - SSE(F)]/(df_R - df_F)}{SSE(F)/df_F}
+  \]</span></p></li>
+</ul>
+</div>
+<div id="coefficient-of-determination" class="section level1">
+<h1>Coefficient of Determination</h1>
+</div>
+<div id="correlation-coefficient" class="section level1">
+<h1>Correlation Coefficient</h1>
 </div>
 
 
