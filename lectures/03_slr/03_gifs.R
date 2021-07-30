@@ -218,7 +218,7 @@ for (i in seq_len(5)) {
   simdf %>%
     mutate(vote = mean(hibbs$vote) + rnorm(n = n(), mean = 0, sd = sigma)) ->
     simdf
-  
+
   print(summary(lm(vote ~ growth, data = simdf)))
 
   ggplot(data = simdf, mapping = aes(x = growth, y = vote)) +
@@ -230,7 +230,7 @@ for (i in seq_len(5)) {
           axis.title = element_blank()) +
     ylim(ymin, ymax) ->
     pl
-  
+
   ggsave(filename = paste0("./hypothesis_testing/sim_plot_", i, ".pdf"), plot = pl, height = 1, width = 1.5)
 }
 
@@ -252,8 +252,53 @@ ggplot(tdat, aes(x = x, y = y)) +
 ggsave(filename = "./hypothesis_testing/tdist.pdf", plot = pl, height = 1, width = 1.5)
 
 
+## Confidence interval gif
+library(ggthemes)
+library(animation)
+library(latex2exp)
+set.seed(3)
+ncoll <- 20
+nind <- 15
+meanval <- 3
+sig <- 3.76
+tibble(diff2 = rnorm(n = nind * ncoll, mean = meanval, sd = sig),
+       sample = rep(1:ncoll, each = nind)) %>%
+  group_by(sample) %>%
+  nest_legacy() %>%
+  mutate(ttest = map(data, ~t.test(.$diff2)),
+         ttest = map(ttest, tidy)) %>%
+  unnest_legacy(ttest, .drop = TRUE) %>%
+  select(sample, conf.low, conf.high) %>%
+  mutate(cover = factor(conf.low < meanval & conf.high > meanval, levels = c("TRUE", "FALSE"))) ->
+  tdat
+
+ymin <- min(tdat$conf.low)
+ymax <- max(tdat$conf.high)
+
+pllist <- list()
+for (i in seq_len(nrow(tdat))) {
+  tdat %>%
+    filter(sample <= i) %>%
+    ggplot(aes(x = sample, xend = sample, y = conf.low, yend = conf.high, color = cover)) +
+    geom_segment(lwd = 2) +
+    geom_hline(yintercept = meanval, lty = 2) +
+    theme_classic() +
+    theme(legend.position = "none", text = element_text(size = 30)) +
+    xlab("Sample Number") +
+    ylab(TeX("$\\beta_1$")) +
+    scale_x_continuous(breaks = 1:ncoll, limits = c(1, ncoll)) +
+    scale_color_colorblind() +
+    ylim(ymin, ymax) ->
+    pl
+  pllist[[i]] <- pl
+}
 
 
+saveGIF(expr = {
+  for (i in seq_along(pllist)) {
+    print(pllist[[i]])
+  }
+}, movie.name = "ci_interp.gif", interval = 0.5, ani.width = 750)
 
 
 

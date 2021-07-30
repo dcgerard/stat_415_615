@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-29" />
+<meta name="date" content="2021-07-30" />
 
 <title>Simple Linear Regression: Inference</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-29</h4>
+<h4 class="date">2021-07-30</h4>
 
 </div>
 
@@ -279,11 +279,25 @@ $(document).ready(function () {
 <li><a href="#testing-h_0beta_10">Testing <span class="math inline">\(H_0:\beta_1=0\)</span></a>
 <ul>
 <li><a href="#sampling-distribution">Sampling distribution</a></li>
-<li><a href="#finding-a-test-statistic.">Finding a test statistic.</a></li>
+<li><a href="#standard-errors">Standard errors</a></li>
+<li><a href="#finding-a-test-statistic">Finding a test statistic</a></li>
+<li><a href="#implement-in-r">Implement in R</a></li>
 </ul></li>
-<li><a href="#confidence-interval-for-ey_ix_i">Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></a></li>
+<li><a href="#confidence-interval-for-beta_1">Confidence interval for <span class="math inline">\(\beta_1\)</span></a>
+<ul>
+<li><a href="#implementation-in-r.">Implementation in R.</a></li>
+</ul></li>
+<li><a href="#best-practices-and-other-comments">Best Practices and other comments</a></li>
+<li><a href="#other-interval-estimates">Other interval estimates</a>
+<ul>
+<li><a href="#confidence-interval-for-ey_ix_i">Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></a>
+<ul>
+<li><a href="#implementation-in-r">Implementation in R</a></li>
+</ul></li>
 <li><a href="#prediction-interval-for-haty_inew-given-x_inew">Prediction Interval for <span class="math inline">\(\hat{Y}_{i(new)}\)</span> given <span class="math inline">\(X_{i(new)}\)</span></a></li>
 <li><a href="#confidence-bands">Confidence Bands</a></li>
+<li><a href="#comparing-intervals">Comparing intervals</a></li>
+</ul></li>
 <li><a href="#anova-approach-to-hypothesis-testing">ANOVA approach to hypothesis testing</a></li>
 <li><a href="#coefficient-of-determination">Coefficient of Determination</a></li>
 <li><a href="#correlation-coefficient">Correlation Coefficient</a></li>
@@ -338,6 +352,8 @@ $(document).ready(function () {
 <li>If the <span class="math inline">\(p\)</span>-value is small, then our data would be very rare if the null were true, so we claim the null is not true.</li>
 <li>If the <span class="math inline">\(p\)</span>-value is large, then our data would be common if the null were true. But it could also be common if the null were false, so we make no claims.</li>
 </ol></li>
+<li><p><strong>Exercise</strong>: What is wrong with the statement: “We test against the null of <span class="math inline">\(H_0: \hat{\beta}_1 = 0\)</span>.”</p></li>
+<li><p><strong>Exercise</strong>: What is wrong with the following interpretation of the <span class="math inline">\(p\)</span>-value: “The <span class="math inline">\(p\)</span>-value is the probability that the null hypothesis is true, so small <span class="math inline">\(p\)</span>-values suggest we reject the null hypothesis.”</p></li>
 </ul>
 <div id="sampling-distribution" class="section level2">
 <h2>Sampling distribution</h2>
@@ -345,12 +361,10 @@ $(document).ready(function () {
 <li><p>The sampling distribution of <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math display">\[
   \hat{\beta}_1 \sim N\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\right).
   \]</span></p></li>
-<li><p>We will prove the mean result of this.</p></li>
+<li><p>We will prove the mean result of this. If you get a PhD in Statistics, you go through these type of calculations all of the time.</p></li>
 <li><p>Note that <span class="math inline">\(\hat{\beta}_1 = \sum_{i=1}^nk_iY_i\)</span> where <span class="math inline">\(k_i = \frac{X_i - \bar{X}}{\sum_{i=1}^n(X_i - \bar{X})^2}\)</span>.</p></li>
-<li><p>Property from theory: Any linear combination of independent normal random variables is also normal.</p>
-<ul>
-<li>So we just need the mean and variance of <span class="math inline">\(\hat{\beta}_1\)</span> to know its distribution.</li>
-</ul>
+<li><p>Property from theory: Any linear combination of independent normal random variables is also normal.</p></li>
+<li><p><strong>So we just need the mean and variance of <span class="math inline">\(\hat{\beta}_1\)</span> to know its distribution.</strong></p>
 <p><span class="math display">\[\begin{align}
   E[\hat{\beta}_1] &amp;= E\left[\sum_{i=1}^nk_iY_i\right]\\
   &amp;=\sum_{i=1}^nk_iE[Y_i]\\
@@ -377,13 +391,15 @@ $(document).ready(function () {
 <li><p>Putting this together, we have <span class="math display">\[
   E[\hat{\beta}_1] =  \beta_0\sum_{i=1}^nk_i + \beta_1\sum_{i=1}^nk_iX_i = \beta_0 \times 0 + \beta_1 \times 1 = \beta_1.
   \]</span></p></li>
-<li><p>The proof for <span class="math inline">\(var(\hat{\beta}_1)\)</span> is similar.</p></li>
+<li><p>The proof that <span class="math inline">\(var(\hat{\beta}_1) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\)</span> is similar.</p></li>
+<li><p><strong>Exercise</strong>: What happens to the variance of <span class="math inline">\(\hat{\beta}_1\)</span> when the <span class="math inline">\(X_i\)</span>’s are more spread out?</p></li>
 </ul>
 </div>
-<div id="finding-a-test-statistic." class="section level2">
-<h2>Finding a test statistic.</h2>
+<div id="standard-errors" class="section level2">
+<h2>Standard errors</h2>
 <ul>
 <li><p>The standard deviation of the sampling distribution of an estimator is called the <strong>standard error</strong>.</p></li>
+<li><p>This quantity is important for describing how certain we are about an estimate.</p></li>
 <li><p>The standard error <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\)</span>.</p></li>
 <li><p>We don’t know <span class="math inline">\(\sigma^2\)</span>, but we have an estimator for it, the mean squared error (MSE).</p>
 <p><span class="math display">\[
@@ -391,10 +407,14 @@ $(document).ready(function () {
   \]</span></p></li>
 <li><p>So the estimated standard error of <span class="math inline">\(\hat{\beta}_1\)</span> is <span class="math inline">\(s(\hat{\beta}_1)\)</span> where <span class="math display">\[
   s^2(\hat{\beta}_1) = \frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}
-  \]</span></p>
+  \]</span></p></li>
+<li><p>We usually just say “standard error”, even when we are talking about the estimated standard error.</p></li>
+</ul>
+</div>
+<div id="finding-a-test-statistic" class="section level2">
+<h2>Finding a test statistic</h2>
 <ul>
-<li>We usually just say “standard error”, even when we are talking about the estimated standard error.</li>
-</ul></li>
+<li><p>Our goal when testing against <span class="math inline">\(H_0: \beta_1 = 0\)</span> is to find a statistic that (i) can provide evidence against <span class="math inline">\(H_0\)</span> based on its value and (ii) we know the distribution of under <span class="math inline">\(H_0\)</span>.</p></li>
 <li><p>The distribution of <span class="math display">\[
   \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \sim t_{n-2}
   \]</span></p>
@@ -403,20 +423,207 @@ $(document).ready(function () {
 <li><span class="math inline">\(n\)</span> is the sample size.</li>
 <li>We subtract two because we estimated two parameters <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> when we were calculating the MSE.</li>
 </ul></li>
+<li><p>Thus, if <span class="math inline">\(H_0: \beta_1 = 0\)</span> were true, we would have that <span class="math display">\[
+  t^* = \frac{\hat{\beta}_1}{s(\hat{\beta}_1)} \sim t_{n-2}
+  \]</span> But if <span class="math inline">\(H_A\)</span> were true, then <span class="math inline">\(t^*\)</span> would not follow a <span class="math inline">\(t_{n-2}\)</span> distribution.</p></li>
+<li><p>We can compare <span class="math inline">\(t^*\)</span> to a <span class="math inline">\(t_{n-2}\)</span> distribution to see how extreme it is.</p>
+<p><span class="math display">\[
+  p-\text{value} = 2*\text{pt}(-|t^*|, n-2).
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="implement-in-r" class="section level2">
+<h2>Implement in R</h2>
+<ul>
+<li><p>R will automatically calculate <span class="math inline">\(t\)</span>-values and <span class="math inline">\(p\)</span>-values, so we never need to manually make these calculations.</p></li>
+<li><p>We first fit the linear model using <code>lm()</code> as before, saving the output to a variable.</p>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
+lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
+<li><p>We then again use the <code>tidy()</code> function from the <code>{broom}</code> package.</p>
+<pre class="r"><code>t_hibbs &lt;- tidy(lmhibbs)</code></pre></li>
+<li><p>The <code>statistic</code> variable contains the <span class="math inline">\(t\)</span>-statistics, while the <code>p.value</code> variable contains the <span class="math inline">\(p\)</span>-value for the test that the parameter equals 0.</p>
+<pre class="r"><code>t_hibbs</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    46.2      1.62      28.5  8.41e-14
+## 2 growth          3.06     0.696      4.40 6.10e- 4</code></pre></li>
+<li><p>In the above output the <span class="math inline">\(t\)</span>-statistic against the null of <span class="math inline">\(\beta_1 = 0\)</span> is 4.4.</p></li>
+<li><p>So in the above output, the <span class="math inline">\(p\)</span>-value against the null of <span class="math inline">\(\beta_1 = 0\)</span> is <code>6.1e-04</code> = <span class="math inline">\(6.1 \times 10^{-4} = 0.00061\)</span>.</p></li>
+<li><p>We can verify that the <span class="math inline">\(p\)</span>-value can be derived directly from the <span class="math inline">\(t\)</span>-statistic.</p>
+<pre class="r"><code>n &lt;- nrow(hibbs)
+2 * pt(q = -abs(4.396), df = n - 2)</code></pre>
+<pre><code>## [1] 0.0006095</code></pre></li>
+<li><p><strong>Exercise</strong>: Fill in the missing values (the <code>NA</code>’s) from the following R output:</p>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic   p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    -7.52     NA        -1.37 0.180    
+## 2 drat            7.68      1.51     NA    0.0000178</code></pre></li>
+<li><p><strong>Exercise</strong>: Verify your answer to the previous exercise by fitting a regression of <code>mpg</code> on <code>drat</code> from the <code>mtcars</code> dataset.</p></li>
 </ul>
 </div>
 </div>
-<div id="confidence-interval-for-ey_ix_i" class="section level1">
-<h1>Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></h1>
-<p><img src="03_figs/ci_mean.gif" /> </p>
+<div id="confidence-interval-for-beta_1" class="section level1">
+<h1>Confidence interval for <span class="math inline">\(\beta_1\)</span></h1>
+<ul>
+<li><p>Remember: interpreting confidence intervals:</p>
+<ul>
+<li>CORRECT: We used a procedure that would capture the true parameter in 95% of repeated samples.</li>
+<li>CORRECT: <em>Prior to sampling</em>, the probability of capturing the true parameter is 0.95.</li>
+<li>WRONG: After sampling, the probability of capturing the true parameter is 0.95.
+<ul>
+<li>Because after sampling the parameter is either in the interval or it’s not. We just don’t know which.</li>
+</ul></li>
+</ul>
+<p><img src="03_figs/ci_interp.gif" /> </p></li>
+<li><p>Let’s construct a <span class="math inline">\((1-\alpha)\)</span> confidence interval (typically <span class="math inline">\(\alpha = 0.05\)</span> so we would construct a 95% confidence interval).</p></li>
+<li><p>Let <span class="math display">\[
+  \ell = \text{qt}(\alpha/2, n-2)\\
+  u = \text{qt}(1 - \alpha/2, n-2)\\
+  \]</span> For some <span class="math inline">\(0 &lt; \alpha &lt; 1\)</span>.</p></li>
+<li><p>Note that <span class="math inline">\(\ell = - u\)</span></p>
+<pre class="r"><code>alpha &lt;- 0.05
+n &lt;- 10
+qt(alpha / 2, n - 2)</code></pre>
+<pre><code>## [1] -2.306</code></pre>
+<pre class="r"><code>qt(1 - alpha / 2, n - 2)</code></pre>
+<pre><code>## [1] 2.306</code></pre></li>
+<li><p>Since <span class="math inline">\(t^* = \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \sim t_{n-2}\)</span>, we have that <span class="math display">\[
+  Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Thus, we have <span class="math display">\[\begin{align}
+  &amp;Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha\\
+  &amp;\Leftrightarrow Pr\left(-u s(\hat{\beta}_1) \leq \hat{\beta}_1 - \beta_1 \leq u s(\hat{\beta}_1) \right) = 1 - \alpha\\
+  &amp;\Leftrightarrow Pr\left(-u s(\hat{\beta}_1) - \hat{\beta}_1\leq  -\beta_1 \leq u s(\hat{\beta}_1) - \hat{\beta}_1 \right) = 1 - \alpha\\
+  &amp;\Leftrightarrow Pr\left(\hat{\beta}_1 + u s(\hat{\beta}_1)\geq  \beta_1 \geq \hat{\beta}_1 - u s(\hat{\beta}_1) \right) = 1 - \alpha\\
+  \end{align}\]</span></p></li>
+<li><p>Thus <span class="math inline">\(\hat{\beta}_1 \pm u s(\hat{\beta}_1)\)</span>, where <span class="math inline">\(u = \text{qt}(1 - \alpha/2, n-2)\)</span> is a <span class="math inline">\((1-\alpha)\)</span> confidence interval for <span class="math inline">\(\beta_1\)</span>.</p></li>
+<li><p>Again, it is the interval that is random (and varies across repeated samples), not the parameter.</p></li>
+</ul>
+<div id="implementation-in-r." class="section level2">
+<h2>Implementation in R.</h2>
+<ul>
+<li><p>R will return confidence intervals if you ask, so you typically do not need to do these calculations.</p></li>
+<li><p>First, use <code>lm()</code> to fit the linear model.</p>
+<pre class="r"><code>hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
+lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
+<li><p>Use the <code>tidy()</code> function from the <code>{broom}</code> package, but use the <code>conf.int = TRUE</code> argument. The confidence interval will be in the <code>conf.low</code> and <code>conf.high</code> variables.</p>
+<pre class="r"><code>t_hibbs &lt;- tidy(lmhibbs, conf.int = TRUE)
+select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    46.2  8.41e-14    42.8      49.7 
+## 2 growth          3.06 6.10e- 4     1.57      4.55</code></pre></li>
+<li><p>A full interpretation might go something like this:</p>
+<blockquote>
+<p>We estimate that incumbants have 3.1% higher vote-share in years which experience 1% more growth (95% confidence interval of 1.6% higher to 4.6% higher). We have strong evidence that this association is not due to chance alone (<span class="math inline">\(p = 0.00061\)</span>, <span class="math inline">\(n = 16\)</span>).</p>
+</blockquote></li>
+<li><p><strong>Exercise</strong>: Find the</p></li>
+</ul>
 </div>
-<div id="prediction-interval-for-haty_inew-given-x_inew" class="section level1">
-<h1>Prediction Interval for <span class="math inline">\(\hat{Y}_{i(new)}\)</span> given <span class="math inline">\(X_{i(new)}\)</span></h1>
+</div>
+<div id="best-practices-and-other-comments" class="section level1">
+<h1>Best Practices and other comments</h1>
+<ul>
+<li><p>Always provide <span class="math inline">\(p\)</span>-values. Never state that results are “significant” or “not significant” without reporting a <span class="math inline">\(p\)</span>-value.</p></li>
+<li><p>Always report effect size (i.e. slope) estimates with their corresponding 95% confidence intervals.</p></li>
+<li><p>Always report the sample size.</p></li>
+<li><p>Almost never use 1-sided tests (folks will look at you suspiciously).</p></li>
+<li><p>Don’t interpret <span class="math inline">\(p\)</span>-values so discretely. I.e. 0.049 is not more significant than 0.051.</p></li>
+<li><p>Rules of thumb:</p>
+<ul>
+<li><span class="math inline">\(p &lt; 0.001\)</span>: Very strong evidence.</li>
+<li><span class="math inline">\(p &lt; 0.01\)</span>: Strong evidence.</li>
+<li><span class="math inline">\(p &lt; 0.05\)</span>: Evidence.</li>
+<li><span class="math inline">\(p &lt; 0.1\)</span>: Weak evidence.</li>
+<li><span class="math inline">\(p &gt; 0.1\)</span>: No evidence.</li>
+</ul></li>
+<li><p>We derived the sampling distribution of <span class="math inline">\(\hat{\beta}_1\)</span> using normality. But this is not that important as long as (i) you have a large sample size or (ii) the data aren’t too skewed.</p>
+<ul>
+<li>Central limit theorem guarantees distributional results for large sample size.</li>
+</ul></li>
+<li><p>The sampling distribution assumes the <span class="math inline">\(X_i\)</span>’s don’t change in repeated samples, but this only shows up as important if you are literally trying to reproduce a study.</p></li>
+<li><p>Inference on <span class="math inline">\(\beta_0\)</span></p>
+<ul>
+<li><span class="math inline">\(\hat{\beta}_0\)</span> is a statistic, so it has a sampling distribution.</li>
+<li>We can use this sampling distribution to run hypothesis tests for <span class="math inline">\(\beta_0\)</span>, or obtain confidence intervals for <span class="math inline">\(\beta_0\)</span>.</li>
+<li>R reports these automatically (in the row called “<code>(Intercept)</code>”)</li>
+<li>These are almost never useful.</li>
+</ul></li>
+</ul>
+</div>
+<div id="other-interval-estimates" class="section level1">
+<h1>Other interval estimates</h1>
+<ul>
+<li>There are three other types of intervals that we are interested in:</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>A confidence interval for the mean response at a given predictor level <span class="math inline">\(E[Y_i|X_i]\)</span>.</p></li>
+<li><p>A prediction interval for a single observation at a given predictor level.</p></li>
+<li><p>A confidence band to capture the entire regression line.</p></li>
+</ol>
+<p>We will go through these three intervals in turn.</p>
+<div id="confidence-interval-for-ey_ix_i" class="section level2">
+<h2>Confidence Interval for <span class="math inline">\(E[Y_i|X_i]\)</span></h2>
+<ul>
+<li><p>Recall <span class="math inline">\(E[Y_i|X_i] = \beta_0 + \beta_1 X_i\)</span></p></li>
+<li><p>Let <span class="math inline">\(\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i\)</span>.</p></li>
+<li><p>Since <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> are random (and having sampling distributions), that means that <span class="math inline">\(\hat{Y}_i\)</span> is random (and has a sampling distribution).</p>
+<p><span class="math display">\[
+  \hat{Y}_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]\right)
+  \]</span></p></li>
+<li><p><span class="math inline">\(\hat{Y}_i\)</span> is an unbiased estimator of <span class="math inline">\(\beta_0 + \beta_1 X_i\)</span>.</p></li>
+<li><p>The estimated standard error is <span class="math inline">\(s(\hat{Y}_i)\)</span> where <span class="math display">\[
+s^2(\hat{Y}_i) = \text{MSE}\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]
+\]</span></p></li>
+<li><p><strong>Exercise</strong>: What value of <span class="math inline">\(X_i\)</span> results in the smallest standard error?</p></li>
+<li><p>From stat theory, we have that <span class="math display">\[
+  \frac{\hat{Y}_i - E[Y_i|X_i]}{s(\hat{Y}_i)} \sim t_{n-2}
+  \]</span></p></li>
+<li><p>We can use this to obtain a confidence interval for <span class="math inline">\(E[Y_i|X_i]\)</span>. <span class="math display">\[
+  \hat{Y}_i \pm \text{qt}(1 - \alpha / 2, n-2)s(\hat{Y}_i)
+  \]</span></p></li>
+<li><p>Graphic of interpretation:</p>
+<p><img src="03_figs/ci_mean.gif" /> </p></li>
+<li><p>This confidence interval only applies when a <em>single</em> mean response is to be estimated.</p></li>
+<li><p>These are called <strong>pointwise confidence intervals</strong> because they provide confidence intervals for the mean at a single <span class="math inline">\(X_i\)</span>.</p></li>
+<li><p>If you use <code>geom_smooth()</code> from <code>{ggplot2}</code>, the resulting confidence intervals are all pointwise.</p></li>
+<li><p><strong>Exercise</strong>: Write a paragraph on the strategy you would use to test <span class="math inline">\(H_0: E[Y_i|X_i] = \mu\)</span> for some prespecified <span class="math inline">\(\mu\)</span>.</p></li>
+</ul>
+<div id="implementation-in-r" class="section level3">
+<h3>Implementation in R</h3>
+<ul>
+<li><p>Take the output of <code>lm()</code></p>
+<pre class="r"><code>lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
+<li><p>Create a new data frame that contains the desired level(s) of <span class="math inline">\(X_i\)</span>.</p>
+<pre class="r"><code>newdf &lt;- data.frame(growth = c(1.2, 2.4))</code></pre></li>
+<li><p>Use <code>predict()</code> with the <code>interval = "confidence"</code> argument to obtain confidence intervals.</p>
+<pre class="r"><code>predict(object = lmhibbs, newdata = newdf, interval = &quot;confidence&quot;) %&gt;%
+  cbind(newdf)</code></pre>
+<pre><code>##     fit   lwr   upr growth
+## 1 49.92 47.65 52.19    1.2
+## 2 53.59 51.44 55.75    2.4</code></pre></li>
+</ul>
+</div>
+</div>
+<div id="prediction-interval-for-haty_inew-given-x_inew" class="section level2">
+<h2>Prediction Interval for <span class="math inline">\(\hat{Y}_{i(new)}\)</span> given <span class="math inline">\(X_{i(new)}\)</span></h2>
 <p><img src="03_figs/pred_int.gif" /> </p>
 </div>
-<div id="confidence-bands" class="section level1">
-<h1>Confidence Bands</h1>
+<div id="confidence-bands" class="section level2">
+<h2>Confidence Bands</h2>
 <p><img src="03_figs/cband.gif" /> </p>
+</div>
+<div id="comparing-intervals" class="section level2">
+<h2>Comparing intervals</h2>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="anova-approach-to-hypothesis-testing" class="section level1">
 <h1>ANOVA approach to hypothesis testing</h1>
@@ -430,12 +637,12 @@ $(document).ready(function () {
 <p><span class="math display">\[
   SSE(R) = \sum_{i=1}^n(Y_i - \bar{Y})^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Sum of squares of full model</p>
 <p><span class="math display">\[
   SSE(F) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Under the null that the reduced model is true, we have that the following statistic has a sampling distribution that is <span class="math inline">\(F(1, n-2)\)</span> <span class="math display">\[
   F^* = \frac{[SSE(R) - SSE(F)]/(df_R - df_F)}{SSE(F)/df_F}
   \]</span></p></li>

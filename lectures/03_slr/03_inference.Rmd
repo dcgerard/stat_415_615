@@ -12,7 +12,8 @@ urlcolor: "blue"
 ```{r setup, include=FALSE}
 set.seed(1)
 knitr::opts_chunk$set(echo       = TRUE, 
-                      fig.align  = "center")
+                      fig.align  = "center",
+                      fig.height = 3)
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
 
@@ -57,6 +58,21 @@ klippy::klippy()
     4. If the $p$-value is small, then our data would be very rare if the null were true, so we claim the null is not true.
     5. If the $p$-value is large, then our data would be common if the null were true. But it could also be common if the null were false, so we make no claims.
     
+- **Exercise**: What is wrong with the statement: "We test against the null of $H_0: \hat{\beta}_1 = 0$."
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Hypotheses concern statements about parameters, not statistics.
+    ```
+
+- **Exercise**: What is wrong with the following interpretation of the $p$-value: "The $p$-value is the probability that the null hypothesis is true, so small $p$-values suggest we reject the null hypothesis."
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $p$-values are not probability statements about hypotheses. They are probability statements of data *assuming the null hypothesis were true*. 
+    
+    Think about it this way: The above interpretation is making statements of $Pr(H_0|data)$, while $p$-values give statements about $Pr(data|H_0)$.
+    ```
+
+
 ## Sampling distribution
 
 - The sampling distribution of $\hat{\beta}_1$ is
@@ -64,12 +80,13 @@ klippy::klippy()
     \hat{\beta}_1 \sim N\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}\right).
     $$
 
-- We will prove the mean result of this.
+- We will prove the mean result of this. If you get a PhD in Statistics, you go through these type of calculations all of the time.
 
 - Note that $\hat{\beta}_1 = \sum_{i=1}^nk_iY_i$ where $k_i = \frac{X_i - \bar{X}}{\sum_{i=1}^n(X_i - \bar{X})^2}$.
 
 - Property from theory: Any linear combination of independent normal random variables is also normal.
-    - So we just need the mean and variance of $\hat{\beta}_1$ to know its distribution.
+
+- **So we just need the mean and variance of $\hat{\beta}_1$ to know its distribution.**
     
     \begin{align}
     E[\hat{\beta}_1] &= E\left[\sum_{i=1}^nk_iY_i\right]\\
@@ -104,11 +121,19 @@ klippy::klippy()
     E[\hat{\beta}_1] =  \beta_0\sum_{i=1}^nk_i + \beta_1\sum_{i=1}^nk_iX_i = \beta_0 \times 0 + \beta_1 \times 1 = \beta_1.
     $$
     
-- The proof for $var(\hat{\beta}_1)$ is similar.
+- The proof that $var(\hat{\beta}_1) = \frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}$ is similar.
 
-## Finding a test statistic.
+- **Exercise**: What happens to the variance of $\hat{\beta}_1$ when the $X_i$'s are more spread out?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    It gets smaller, indicating that we get more certain of our estimate of $\beta_1$ when we have more dispersed predictor values.
+    ```
+
+## Standard errors
 
 - The standard deviation of the sampling distribution of an estimator is called the **standard error**.
+
+- This quantity is important for describing how certain we are about an estimate.
 
 - The standard error $\hat{\beta}_1$ is $\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}$.
 
@@ -122,8 +147,12 @@ klippy::klippy()
     $$
     s^2(\hat{\beta}_1) = \frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}
     $$
-    - We usually just say "standard error", even when we are talking about the estimated standard error.
-    
+
+- We usually just say "standard error", even when we are talking about the estimated standard error.
+
+## Finding a test statistic
+
+- Our goal when testing against $H_0: \beta_1 = 0$ is to find a statistic that (i) can provide evidence against $H_0$ based on its value and (ii) we know the distribution of under $H_0$.
 
 - The distribution of
     $$
@@ -132,19 +161,343 @@ klippy::klippy()
     - A $t$ distribution with $n-2$ degrees of freedom.
     - $n$ is the sample size.
     - We subtract two because we estimated two parameters $\beta_0$ and $\beta_1$ when we were calculating the MSE.
+    
+- Thus, if $H_0: \beta_1 = 0$ were true, we would have that
+    $$
+    t^* = \frac{\hat{\beta}_1}{s(\hat{\beta}_1)} \sim t_{n-2}
+    $$
+    But if $H_A$ were true, then $t^*$ would not follow a $t_{n-2}$ distribution.
+ 
+- We can compare $t^*$ to a $t_{n-2}$ distribution to see how extreme it is.
+
+    $$
+    p-\text{value} = 2*\text{pt}(-|t^*|, n-2).
+    $$
+
+    ```{r, echo=FALSE, message = FALSE}
+    library(tidyverse)
+    tibble(x = seq(-4, 4, length.out = 500)) %>%
+      mutate(y = dt(x = x, df = 2)) ->
+      tdat
+    ggplot(tdat, aes(x = x, y = y)) +
+      geom_line() +
+      theme_classic() +
+      theme(axis.text = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title = element_blank()) +
+      geom_ribbon(data = filter(tdat, x > 2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_ribbon(data = filter(tdat, x < -2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_vline(xintercept = 2.5, lty = 2, col = 2)
+    ```
 
 
-# Confidence Interval for $E[Y_i|X_i]$
+## Implement in R
+
+- R will automatically calculate $t$-values and $p$-values, so we never need to manually make these calculations.
+
+- We first fit the linear model using `lm()` as before, saving the output to a variable.
+
+    ```{r, message=FALSE}
+    library(tidyverse)
+    library(broom)
+    hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    ```
+
+- We then again use the `tidy()` function from the `{broom}` package.
+
+    ```{r}
+    t_hibbs <- tidy(lmhibbs)
+    ```
+
+- The `statistic` variable contains the $t$-statistics, while the `p.value` variable contains the $p$-value for the test that the parameter equals 0.
+
+    ```{r}
+    t_hibbs
+    ```
+
+- In the above output the $t$-statistic against the null of $\beta_1 = 0$ is 4.4.
+
+- So in the above output, the $p$-value against the null of $\beta_1 = 0$ is `6.1e-04` = $6.1 \times 10^{-4} = 0.00061$.
+
+- We can verify that the $p$-value can be derived directly from the $t$-statistic.
+
+    ```{r}
+    n <- nrow(hibbs)
+    2 * pt(q = -abs(4.396), df = n - 2)
+    ```
+
+- **Exercise**: Fill in the missing values (the `NA`'s) from the following R output:
+
+    ```{r, echo = FALSE}
+    data("mtcars")
+    tout <- tidy(lm(mpg ~ drat, data = mtcars))
+    tout$statistic[[2]] <- NA
+    tout$std.error[[1]] <- NA
+    tout
+    ```
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Since $t^* = \hat{\beta} / se(\hat{\beta})$, we have that $se(\hat{\beta}) = \hat{\beta} / t^*$. So the missing standard error is -7.525 / -1.374 = 5.477.
+    
+    The missing $t$-statistic is $\hat{\beta} / se(\hat{\beta})$ = 7.678 / 1.507 = 5.095
+    ```
+
+- **Exercise**: Verify your answer to the previous exercise by fitting a regression of `mpg` on `drat` from the `mtcars` dataset.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    data("mtcars")
+    tout <- tidy(lm(mpg ~ drat, data = mtcars))
+    tout
+    ```
+
+# Confidence interval for $\beta_1$
+
+- Remember: interpreting confidence intervals:
+    - CORRECT: We used a procedure that would capture the true parameter in 95%
+      of repeated samples.
+    - CORRECT: *Prior to sampling*, the probability of capturing the true
+      parameter is 0.95.
+    - WRONG: After sampling, the probability of capturing the true parameter
+      is 0.95. 
+        - Because after sampling the parameter is either in the interval
+          or it's not. We just don't know which.
+
+    ![](./03_figs/ci_interp.gif)\ 
+    
+- Let's construct a $(1-\alpha)$ confidence interval (typically $\alpha = 0.05$ so we would construct a 95\% confidence interval).
+
+- Let
+    $$
+    \ell = \text{qt}(\alpha/2, n-2)\\
+    u = \text{qt}(1 - \alpha/2, n-2)\\
+    $$
+    For some $0 < \alpha < 1$.
+
+- Note that $\ell = - u$
+
+    ```{r}
+    alpha <- 0.05
+    n <- 10
+    qt(alpha / 2, n - 2)
+    qt(1 - alpha / 2, n - 2)
+    ```
+
+- Since $t^* = \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \sim t_{n-2}$, we have that
+    $$
+    Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha
+    $$
+
+    ```{r, echo = FALSE, warning = FALSE}
+    library(latex2exp)
+    uval <- 2.5
+    tibble(x = seq(-4, 4, length.out = 500)) %>%
+          mutate(y = dt(x = x, df = 2)) ->
+          tdat
+    ggplot(tdat, aes(x = x, y = y)) +
+      geom_line() +
+      theme_classic() +
+      theme(axis.text = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title = element_blank()) +
+      geom_ribbon(data = filter(tdat, x < uval, x > -uval), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_vline(xintercept = uval, lty = 2, col = 2) +
+      geom_vline(xintercept = -uval, lty = 2, col = 2) +
+      annotate(x = uval + 0.2, y = max(tdat$y), geom = "text", label = "u", size = 8) +
+      annotate(x = -uval - 0.2, y = max(tdat$y), geom = "text", label = "-u", size = 8) +
+      annotate(x = 0, y = max(tdat$y) / 2, geom = "text", label = TeX("$1 - \\alpha$"), color = "white", size = 10)
+    ```
+    
+- Thus, we have
+    \begin{align}
+    &Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha\\
+    &\Leftrightarrow Pr\left(-u s(\hat{\beta}_1) \leq \hat{\beta}_1 - \beta_1 \leq u s(\hat{\beta}_1) \right) = 1 - \alpha\\
+    &\Leftrightarrow Pr\left(-u s(\hat{\beta}_1) - \hat{\beta}_1\leq  -\beta_1 \leq u s(\hat{\beta}_1) - \hat{\beta}_1 \right) = 1 - \alpha\\
+    &\Leftrightarrow Pr\left(\hat{\beta}_1 + u s(\hat{\beta}_1)\geq  \beta_1 \geq \hat{\beta}_1 - u s(\hat{\beta}_1) \right) = 1 - \alpha\\
+    \end{align}
+
+- Thus $\hat{\beta}_1 \pm u s(\hat{\beta}_1)$, where $u = \text{qt}(1 - \alpha/2, n-2)$ is a $(1-\alpha)$ confidence interval for $\beta_1$.
+
+- Again, it is the interval that is random (and varies across repeated samples), not the parameter.
+
+## Implementation in R.
+
+- R will return confidence intervals if you ask, so you typically do not need to do these calculations.
+
+- First, use `lm()` to fit the linear model.
+    ```{r, message=FALSE}
+    hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    ```
+
+- Use the `tidy()` function from the `{broom}` package, but use the `conf.int = TRUE` argument. The confidence interval will be in the `conf.low` and `conf.high` variables.
+
+    ```{r}
+    t_hibbs <- tidy(lmhibbs, conf.int = TRUE)
+    select(t_hibbs, term, estimate, p.value, conf.low, conf.high)
+    ```
+
+- A full interpretation might go something like this:
+
+    > We estimate that incumbants have 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
+    
+- **Exercise**: Find the 
+
+# Best Practices and other comments
+
+- Always provide $p$-values. Never state that results are "significant" or "not significant" without reporting a $p$-value.
+
+- Always report effect size (i.e. slope) estimates with their corresponding 95\% confidence intervals.
+
+- Always report the sample size.
+
+- Almost never use 1-sided tests (folks will look at you suspiciously).
+
+- Don't interpret $p$-values so discretely. I.e. 0.049 is not more significant than 0.051.
+
+- Rules of thumb:
+    - $p < 0.001$: Very strong evidence.
+    - $p < 0.01$: Strong evidence.
+    - $p < 0.05$: Evidence.
+    - $p < 0.1$: Weak evidence.
+    - $p > 0.1$: No evidence.
+
+- We derived the sampling distribution of $\hat{\beta}_1$ using normality. But this is not that important as long as (i) you have a large sample size or (ii) the data aren't too skewed.
+    - Central limit theorem guarantees distributional results for large sample size.
+    
+- The sampling distribution assumes the $X_i$'s don't change in repeated samples, but this only shows up as important if you are literally trying to reproduce a study.
+
+- Inference on $\beta_0$
+    - $\hat{\beta}_0$ is a statistic, so it has a sampling distribution.
+    - We can use this sampling distribution to run hypothesis tests for $\beta_0$, or obtain confidence intervals for $\beta_0$.
+    - R reports these automatically (in the row called "`(Intercept)`")
+    - These are almost never useful.
+
+# Other interval estimates
+
+- There are three other types of intervals that we are interested in:
+
+1. A confidence interval for the mean response at a given predictor level $E[Y_i|X_i]$.
+
+2. A prediction interval for a single observation at a given predictor level.
+
+3. A confidence band to capture the entire regression line.
+
+We will go through these three intervals in turn.
+
+## Confidence Interval for $E[Y_i|X_i]$
+
+- Recall $E[Y_i|X_i] = \beta_0 + \beta_1 X_i$
+
+- Let $\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$.
+
+- Since $\hat{\beta}_0$ and $\hat{\beta}_1$ are random (and having sampling distributions), that means that $\hat{Y}_i$ is random (and has a sampling distribution).
+
+    $$
+    \hat{Y}_i \sim N\left(\beta_0 + \beta_1 X_i, \sigma^2\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]\right)
+    $$
+
+- $\hat{Y}_i$ is an unbiased estimator of $\beta_0 + \beta_1 X_i$.
+
+- The estimated standard error is $s(\hat{Y}_i)$ where
+$$
+s^2(\hat{Y}_i) = \text{MSE}\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]
+$$
+
+- **Exercise**: What value of $X_i$ results in the smallest standard error?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    The smallest standard error occurs at $X_i = \bar{X}$. Since the second summand in the standard error is always positive, it is minimized when it is 0, which occurs when $X_i = \bar{X}$.
+    ```
+
+- From stat theory, we have that
+    $$
+    \frac{\hat{Y}_i - E[Y_i|X_i]}{s(\hat{Y}_i)} \sim t_{n-2}
+    $$
+
+- We can use this to obtain a confidence interval for $E[Y_i|X_i]$.
+    $$
+    \hat{Y}_i \pm \text{qt}(1 - \alpha / 2, n-2)s(\hat{Y}_i)
+    $$
+
+- Graphic of interpretation:
 
   ![](./03_figs/ci_mean.gif)\ 
   
-# Prediction Interval for $\hat{Y}_{i(new)}$ given $X_{i(new)}$
+- This confidence interval only applies when a *single* mean response is to be estimated.
+
+- These are called **pointwise confidence intervals** because they provide confidence intervals for the mean at a single $X_i$.
+
+- If you use `geom_smooth()` from `{ggplot2}`, the resulting confidence intervals are all pointwise.
+
+- **Exercise**: Write a paragraph on the strategy you would use to test $H_0: E[Y_i|X_i] = \mu$ for some prespecified $\mu$.
+
+### Implementation in R
+
+- Take the output of `lm()`
+    ```{r}
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    ```
+
+- Create a new data frame that contains the desired level(s) of $X_i$.
+
+    ```{r}
+    newdf <- data.frame(growth = c(1.2, 2.4))
+    ```
+
+- Use `predict()` with the `interval = "confidence"` argument to obtain confidence intervals.
+    ```{r}
+    predict(object = lmhibbs, newdata = newdf, interval = "confidence") %>%
+      cbind(newdf)
+    ```
+
+
+
+  
+## Prediction Interval for $\hat{Y}_{i(new)}$ given $X_{i(new)}$
 
   ![](./03_figs/pred_int.gif)\ 
 
-# Confidence Bands
+## Confidence Bands
 
   ![](./03_figs/cband.gif)\ 
+  
+## Comparing intervals
+
+```{r, echo = FALSE, fig.height=4}
+library(ggthemes)
+npoints <- 100
+newdf <- data.frame(growth = seq(min(hibbs$growth), max(hibbs$growth), length = npoints))
+
+sdest <- sigma(lmhibbs)
+ci_out <- predict(lmhibbs, newdata = newdf, interval = "confidence", se.fit = TRUE)
+pred_out <- predict(lmhibbs, newdata = newdf, interval = "prediction", se.fit = TRUE)
+
+fmult <- sqrt(2 * qf(p = 0.95, df1 = 2, df2 = nrow(hibbs) - 2))
+
+newdf$Fit <- ci_out$fit[, 1]
+data.frame(
+  growth   = c(newdf$growth, newdf$growth),
+  Bound      = c(rep("Lower", npoints), rep("Upper", npoints)),
+  Pointwise  = c(ci_out$fit[, 2], ci_out$fit[, 3]),
+  Bands      = c(newdf$Fit - fmult * ci_out$se.fit, newdf$Fit + fmult * ci_out$se.fit),
+  Prediction = c(pred_out$fit[, 2], pred_out$fit[, 3])
+  ) %>%
+  gather(key = "Type", value = "Value", Pointwise:Prediction) %>%
+  mutate(Group = paste0(Bound, Type),
+         Type = parse_factor(Type, levels = c("Pointwise", "Bands", "Prediction"))) ->
+  banddf
+
+ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
+  geom_point() +
+  geom_line(data = newdf, mapping = aes(x = growth, y = Fit), lty = 1, col = "black", lwd = 1, alpha = 1/2) +
+  geom_line(data = banddf, mapping = aes(x = growth, y = Value, group = Group, color = Type), lwd = 1) +
+  scale_color_colorblind() +
+  xlab("Growth") +
+  ylab("Vote")
+  
+```
+
 
 # ANOVA approach to hypothesis testing
 
