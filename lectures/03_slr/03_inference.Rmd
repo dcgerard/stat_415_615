@@ -341,7 +341,27 @@ klippy::klippy()
 
     > We estimate that incumbants have 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
     
-- **Exercise**: Find the 
+- **Exercise**: Make a plot of `qt(1 - alpha, 10)` from `alpha = 0.01` to `alpha = 0.1`. What does the the plot tell you about the width of confidence intervals as `alpha` increases?
+
+    ```{r, echo = FALSE, eval = FALSE}
+    alpha <- seq(from = 0.01, to = 0.1, length.out = 100)
+    u <- qt(1 - alpha, 10)
+    qplot(alpha, u, geom = "line")
+    ```
+    ```{block, eval = FALSE, echo = FALSE}
+    As $\alpha$ increases, the multiplier to the standard error decreases, making the width of the confidence intervals smaller. Since the confidence level is $1-\alpha$, this means that as as the confidence level increases, the width of the confidence interval increases.
+    
+    You need to have wider confidence intervals to capture the true parameter more often.
+    ```
+
+- **Exercise**: From the `mtcars` dataset, obtain the confidence interval for the slope parameter from a regression of `mpg` on `drat`.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    lm_mtcars <- lm(mpg ~ drat, data = mtcars)
+    tidy(lm_mtcars, conf.int = TRUE) %>%
+      filter(term == "drat") %>%
+      select(term, conf.low, conf.high)
+    ```
 
 # Best Practices and other comments
 
@@ -400,9 +420,9 @@ We will go through these three intervals in turn.
 - $\hat{Y}_i$ is an unbiased estimator of $\beta_0 + \beta_1 X_i$.
 
 - The estimated standard error is $s(\hat{Y}_i)$ where
-$$
-s^2(\hat{Y}_i) = \text{MSE}\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]
-$$
+    $$
+    s^2(\hat{Y}_i) = \text{MSE}\left[\frac{1}{n} + \frac{(X_i - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]
+    $$
 
 - **Exercise**: What value of $X_i$ results in the smallest standard error?
 
@@ -432,7 +452,7 @@ $$
 
 - **Exercise**: Write a paragraph on the strategy you would use to test $H_0: E[Y_i|X_i] = \mu$ for some prespecified $\mu$.
 
-### Implementation in R
+### Confidence interval for mean response in R
 
 - Take the output of `lm()`
     ```{r}
@@ -445,23 +465,159 @@ $$
     newdf <- data.frame(growth = c(1.2, 2.4))
     ```
 
-- Use `predict()` with the `interval = "confidence"` argument to obtain confidence intervals.
+- Use `predict()` with the `interval = "confidence"` argument to obtain confidence intervals. They are in the `lwr` and `upr` columns.
     ```{r}
     predict(object = lmhibbs, newdata = newdf, interval = "confidence") %>%
       cbind(newdf)
     ```
 
-
-
   
 ## Prediction Interval for $\hat{Y}_{i(new)}$ given $X_{i(new)}$
 
+- What if, instead of estimating the mean at a given $X_i$, we want to estimate the value of **a single observational/experimental unit** at $X_i$.
+
+- **Prediction**: Estimating the value of a single experimental/observational unit.
+
+- So "estimation" is reserved for parameters, and "prediction" is observed for unit values.
+
+- In linear regression, the predicted value at $X_i$ *is the same* as the estimated mean at $X_i$.
+
+    $$
+    \hat{Y}_{i(new)} = \hat{\beta}_0 + \hat{\beta}_1X_{i(new)}
+    $$
+
+- The difference between prediction and estimation for linear regression, then, is in intervals.
+
+- A $(1-\alpha)$ **prediction interval** captures $(1-\alpha)$ new values, over both repeated samples and repeated values.
+
+- It's easier to begin thinking about prediction intervals as if $\beta_0$, $\beta_1$, and $\sigma^2$ were known. Suppose we know these two values, then
+    $$
+    Y_{i(new)} \sim N(\beta_0 + \beta_1X_{i(new)}, \sigma^2),
+    $$
+    - So a prediction interval would be $\beta_0 + \beta_1X_{i(new)} \pm \text{qnorm}(1-\alpha/2)\sigma$. 
+    - E.g. for a 95\% prediction interval, we would add and subtract 2 standard deviations from $\beta_0 + \beta_1X_{i(new)}$.
+    
+- But $\beta_0$, $\beta_1$, and $\sigma^2$ are not known. So if we just added and subtracted the 2 MSE from the estimated regression line, we could make some big mistakes if our regression line estimate was way off.
+    ```{r, echo = FALSE}
+    library(ggthemes)
+    df <- data.frame(x = 1, xend = 1, y = 0.4, yend = 0.8)
+    dfline <- data.frame(x = c(0, 1.1, 0, 1.1),
+                         y = c(0, 1.1, 0.1, 0.65),
+                         Line = c("Truth", "Truth", "Estimated", "Estimated")) %>%
+      mutate(Line = parse_factor(Line, levels = c("Truth", "Estimated")))
+    
+    ggplot() +
+      geom_line(data = dfline, mapping = aes(x = x, y = y, color = Line), lwd = 2) +
+      geom_errorbar(data = df, mapping = aes(x = x, ymin = y, ymax = yend), width = 0.05, lwd = 2) +
+      theme_classic() +
+      theme(axis.text = element_blank(),
+            axis.title = element_blank(),
+            axis.ticks = element_blank()) +
+      scale_color_colorblind() +
+      annotate(geom = "point", x = 1, y = 1.1, color = "red", size = 3)
+    ```
+
+- Use the following as the prediction variance:
+    \begin{align}
+    \sigma^2(\text{pred}) &= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \text{var}(\epsilon_i)\\
+    &= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \sigma^2\\
+    \end{align}
+
+- We can estimate $\sigma^2$ with the MSE, and we can estimate $\text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i)$ with the standard error of the estimated mean response at $X_{i(new)}$, $s^2(\hat{Y}_i)$.
+    
+- Doing this, we obtain the following estimated prediction variance:
+    $$
+    s^2(\text{pred}) = s^2(\hat{Y}_i) + MSE.
+    $$
+
+- KEY IDEA: Variance of prediction = variance of estimated mean + error variance.
+    
+- The corresponding prediction interval is
+    $$
+    \hat{\beta}_0 + \hat{\beta}_1X_{i(new)} \pm \text{qt}(1 - \alpha/2, n-2)s^2(\text{pred})
+    $$
+
+- Graphic for interpretation: 
+
   ![](./03_figs/pred_int.gif)\ 
+  
+- **Exercise**: Which is bigger, the prediction interval or the confidence interval for the mean, at a given $X_i$? Why?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    The prediction interval. This is because the standard error of prediction is the MSE plus the standard error for the mean estimate, and the MSE $\geq 0$.
+    ```
+
+### Prediction Intervals in R.
+
+- The steps are the exact same as the confidence intervals for the mean, except we use the `interval = "prediction"` argument in `predict()`.
+
+    ```{r}
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    newdf <- data.frame(growth = c(1.2, 2.4))
+    predict(object = lmhibbs, newdata = newdf, interval = "prediction") %>%
+      cbind(newdf)
+    ```
 
 ## Confidence Bands
 
+- A $(1 - \alpha)$ confidence band is a procedure that produces a region that captures the **entire regression line** in $(1 - \alpha)$ of repeated samples.
+
+- We won't go into how this works, but the formula for such a band is
+    $$
+    \hat{\beta}_0 + \hat{\beta}_1X_i \pm Ws(\hat{Y}_i), \text{ where}
+    $$
+    - $W = \sqrt{2\text{qf}(1-\alpha, 2, n-2)}$,
+    - $s(\hat{Y}_i)$ is the standard error for the mean response at each $X_i$.
+    
+- Graphic for interpretation: 
+
   ![](./03_figs/cband.gif)\ 
   
+- There is no base R function that I can find that does this, but here is one if you want to use it:
+    ```{r}
+    #' Working-Hotelling bands for simple linear regression.
+    #' 
+    #' Only works for simple linear regression, not for multiple regression. 
+    #'
+    #' @param object An object of class "lm".
+    #' @param newdata A data frame containing the new data.
+    #' @param level The confidence level of the band.
+    #'
+    #' @author David Gerard
+    whbands <- function(object, newdata, level = 0.95) {
+      stopifnot(inherits(object, "lm"))
+      stopifnot(inherits(newdata, "data.frame"))
+      stopifnot(is.numeric(level), length(level) == 1)
+      pout <- stats::predict(object = object, newdata = newdf, se.fit = TRUE, interval = "none")
+      n <- nrow(stats::model.frame(object))
+      w <- sqrt(2 * stats::qf(p = level, df1 = 2, df2 = n - 2))
+      lwr <- pout$fit - w * pout$se.fit
+      upr <- pout$fit + w * pout$se.fit
+      pout$fit <- cbind(fit = pout$fit, lwr = lwr, upr = upr)
+      return(pout)
+    }
+    ```
+    
+- Applying this function to the Hibbs data
+
+    ```{r, fig.height = 4}
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    newdf <- data.frame(growth = seq(from = min(hibbs$growth), 
+                                     to = max(hibbs$growth), 
+                                     length.out = 100))
+    whfit <- whbands(object = lmhibbs, newdata = newdf)
+    whfit$fit %>%
+      cbind(newdf) ->
+      newdf
+    
+    ggplot() +
+      geom_point(data = hibbs, mapping = aes(x = growth, y = vote)) +
+      geom_line(data = newdf, mapping = aes(x = growth, y = lwr)) +
+      geom_line(data = newdf, mapping = aes(x = growth, y = upr))
+    ```
+    
+- "wh" standars for "Working-Hotelling".
+
 ## Comparing intervals
 
 ```{r, echo = FALSE, fig.height=4}
@@ -495,16 +651,14 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
   scale_color_colorblind() +
   xlab("Growth") +
   ylab("Vote")
-  
 ```
-
 
 # ANOVA approach to hypothesis testing
 
 - Our hypothesis test is a comparison between the two models:
     \begin{align}
-    Y_i = \beta_0 + \epsilon_i\\
-    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+    Y_i &= \beta_0 + \epsilon_i\\
+    Y_i &= \beta_0 + \beta_1 X_i + \epsilon_i
     \end{align}
     
 - We will call the first model the **reduced** model and the second model the **full** model. This is because the reduced model is a subset of the full model (you get the reduced from the full by setting $\beta_1 = 0$).
