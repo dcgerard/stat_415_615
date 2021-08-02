@@ -350,6 +350,13 @@ klippy::klippy()
     t_hibbs <- tidy(lmhibbs, conf.int = TRUE)
     select(t_hibbs, term, estimate, p.value, conf.low, conf.high)
     ```
+    
+- You can change the level using the `conf.level` argument. E.g. to calculate a 99\% confidence interval you would do
+
+    ```{r}
+    t_hibbs <- tidy(lmhibbs, conf.int = TRUE, conf.level = 0.99)
+    select(t_hibbs, term, estimate, p.value, conf.low, conf.high)
+    ```
 
 - A full interpretation might go something like this:
 
@@ -484,6 +491,14 @@ We will go through these three intervals in turn.
     predict(object = lmhibbs, newdata = newdf, interval = "confidence") %>%
       cbind(newdf)
     ```
+    
+- Change the level using the `level` argument.
+
+    ```{r}
+    predict(object = lmhibbs, newdata = newdf, interval = "confidence", level = 0.99) %>%
+      cbind(newdf)
+    ```
+
 
   
 ## Prediction Interval for $\hat{Y}_{i(new)}$ given $X_{i(new)}$
@@ -569,6 +584,13 @@ We will go through these three intervals in turn.
     lmhibbs <- lm(vote ~ growth, data = hibbs)
     newdf <- data.frame(growth = c(1.2, 2.4))
     predict(object = lmhibbs, newdata = newdf, interval = "prediction") %>%
+      cbind(newdf)
+    ```
+    
+- Change the level using the `level` argument.
+
+    ```{r}
+    predict(object = lmhibbs, newdata = newdf, interval = "prediction", level = 0.99) %>%
       cbind(newdf)
     ```
 
@@ -991,26 +1013,31 @@ Residuals    SSE  dfE
         qplot(x, y, data = df) +
           ggtitle(TeX(paste0("$R^2 = $", round(summary(lmtemp)$r.square, digits = 2))))
         ```
+        
+- You obtain the $R^2$ from the `glance()` function from the `{broom}` package.
+
+    ```{r}
+    glance(lmhibbs)
+    ```
 
 - Different R^2 values
-```{r, warning=FALSE, echo=FALSE, fig.height=3, fig.width=3}
-set.seed(1)
-x <- runif(100)
-sigseq <- seq(0, 0.75, length.out = 7)
-
-for (i in seq_along(sigseq)) {
-  y <- x + rnorm(length(x), sd = sigseq[[i]])
-  r2 <- summary(lm(y ~ x))$r.square
-  qplot(x = x, y = y) +
-    ggtitle(TeX(paste0("$R^2 = ", round(r2, digits = 2), "$"))) +
-    theme(axis.text = element_blank(),
-          axis.title = element_blank(),
-          axis.ticks = element_blank()) ->
-    pl
-  print(pl)
-}
-
-```
+    ```{r, warning=FALSE, echo=FALSE, fig.height=3, fig.width=3}
+    set.seed(1)
+    x <- runif(100)
+    sigseq <- seq(0, 0.75, length.out = 7)
+    
+    for (i in seq_along(sigseq)) {
+      y <- x + rnorm(length(x), sd = sigseq[[i]])
+      r2 <- summary(lm(y ~ x))$r.square
+      qplot(x = x, y = y) +
+        ggtitle(TeX(paste0("$R^2 = ", round(r2, digits = 2), "$"))) +
+        theme(axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank()) ->
+        pl
+      print(pl)
+    }
+    ```
 
 
 

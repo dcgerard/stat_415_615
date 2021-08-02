@@ -538,6 +538,14 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    46.2  8.41e-14    42.8      49.7 
 ## 2 growth          3.06 6.10e- 4     1.57      4.55</code></pre></li>
+<li><p>You can change the level using the <code>conf.level</code> argument. E.g. to calculate a 99% confidence interval you would do</p>
+<pre class="r"><code>t_hibbs &lt;- tidy(lmhibbs, conf.int = TRUE, conf.level = 0.99)
+select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    46.2  8.41e-14   41.4       51.1 
+## 2 growth          3.06 6.10e- 4    0.988      5.13</code></pre></li>
 <li><p>A full interpretation might go something like this:</p>
 <blockquote>
 <p>We estimate that incumbants have 3.1% higher vote-share in years which experience 1% more growth (95% confidence interval of 1.6% higher to 4.6% higher). We have strong evidence that this association is not due to chance alone (<span class="math inline">\(p = 0.00061\)</span>, <span class="math inline">\(n = 16\)</span>).</p>
@@ -628,6 +636,12 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 <pre><code>##     fit   lwr   upr growth
 ## 1 49.92 47.65 52.19    1.2
 ## 2 53.59 51.44 55.75    2.4</code></pre></li>
+<li><p>Change the level using the <code>level</code> argument.</p>
+<pre class="r"><code>predict(object = lmhibbs, newdata = newdf, interval = &quot;confidence&quot;, level = 0.99) %&gt;%
+  cbind(newdf)</code></pre>
+<pre><code>##     fit   lwr   upr growth
+## 1 49.92 46.77 53.07    1.2
+## 2 53.59 50.60 56.58    2.4</code></pre></li>
 </ul>
 </div>
 </div>
@@ -650,7 +664,7 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 <li>So a prediction interval would be <span class="math inline">\(\beta_0 + \beta_1X_{i(new)} \pm \text{qnorm}(1-\alpha/2)\sigma\)</span>.</li>
 <li>E.g. for a 95% prediction interval, we would add and subtract 2 standard deviations from <span class="math inline">\(\beta_0 + \beta_1X_{i(new)}\)</span>.</li>
 </ul></li>
-<li><p>But <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> are not known. So if we just added and subtracted the 2 MSE from the estimated regression line, we could make some big mistakes if our regression line estimate was way off. <img src="03_inference_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>But <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> are not known. So if we just added and subtracted the 2 MSE from the estimated regression line, we could make some big mistakes if our regression line estimate was way off. <img src="03_inference_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Use the following as the prediction variance: <span class="math display">\[\begin{align}
   \sigma^2(\text{pred}) &amp;= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \text{var}(\epsilon_i)\\
   &amp;= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \sigma^2\\
@@ -678,6 +692,12 @@ predict(object = lmhibbs, newdata = newdf, interval = &quot;prediction&quot;) %&
 <pre><code>##     fit   lwr   upr growth
 ## 1 49.92 41.54 58.31    1.2
 ## 2 53.59 45.24 61.95    2.4</code></pre></li>
+<li><p>Change the level using the <code>level</code> argument.</p>
+<pre class="r"><code>predict(object = lmhibbs, newdata = newdf, interval = &quot;prediction&quot;, level = 0.99) %&gt;%
+  cbind(newdf)</code></pre>
+<pre><code>##     fit   lwr   upr growth
+## 1 49.92 38.28 61.56    1.2
+## 2 53.59 42.00 65.19    2.4</code></pre></li>
 </ul>
 </div>
 </div>
@@ -730,13 +750,13 @@ ggplot() +
   geom_point(data = hibbs, mapping = aes(x = growth, y = vote)) +
   geom_line(data = newdf, mapping = aes(x = growth, y = lwr)) +
   geom_line(data = newdf, mapping = aes(x = growth, y = upr))</code></pre>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>“wh” stands for “Working-Hotelling”.</p></li>
 </ul>
 </div>
 <div id="comparing-intervals" class="section level2">
 <h2>Comparing intervals</h2>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="anova-approach-to-hypothesis-testing" class="section level1">
@@ -759,12 +779,12 @@ ggplot() +
 <p><span class="math display">\[
   SSE(R) = \sum_{i=1}^n(Y_i - \bar{Y})^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Sum of squares of full model</p>
 <p><span class="math display">\[
   SSE(F) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>NOTE: <span class="math inline">\(SSE(F)\)</span> will <em>always</em> be less than or equal to <span class="math inline">\(SSE(R)\)</span>.</p>
 <ul>
 <li>This is since <span class="math inline">\(SSE(R)\)</span> is a subset of <span class="math inline">\(SSE(F)\)</span>, and so if <span class="math inline">\(SSE(R)\)</span> is the smallest the residuals can get, then we can set <span class="math inline">\(\beta_1 = 0\)</span> in the full model to get <span class="math inline">\(SSE(F) = SSE(R)\)</span>.</li>
@@ -775,7 +795,7 @@ ggplot() +
 <li><p><span class="math inline">\(df_r = n - 1\)</span>: sample size of <span class="math inline">\(n\)</span> minus 1 for the single parameter we estimate in the reduced model.</p></li>
 <li><p><span class="math inline">\(df_f = n - 2\)</span>: sample size of <span class="math inline">\(n\)</span> minus 2 for the two parameters we estimate in the full model.</p></li>
 <li><p>If <span class="math inline">\(H_A\)</span> were true, then we would expect <span class="math inline">\(F^*\)</span> to be large, because this would increase the size of <span class="math inline">\(SSE(R) - SSE(F)\)</span>. So we <em>only</em> compare <span class="math inline">\(F^*\)</span> to the right tail of <span class="math inline">\(F(1, n-2)\)</span> distribution.</p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Let’s verify this result manually:</p>
 <pre class="r"><code>lmhibbs &lt;- lm(vote ~ growth, data = hibbs)
 aout &lt;- augment(lmhibbs)
@@ -802,17 +822,17 @@ f_star</code></pre>
 <p><span class="math display">\[
   SSE = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>The <span class="math inline">\(SSE(R)\)</span> is sometimes called the <span class="math inline">\(SSTO\)</span> (sum of squares total).</p>
 <p><span class="math display">\[
   SSTO = \sum_{i=1}^n(Y_i - \bar{Y})^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>The difference <span class="math inline">\(SSE(R) - SSE(F)\)</span> is sometimes called <span class="math inline">\(SSR\)</span> (sum of squares regression).</p>
 <p><span class="math display">\[
   SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>We have the result that <span class="math display">\[
   SSTO = SSR + SSE
   \]</span></p></li>
@@ -950,10 +970,17 @@ Anova(mod = lmhibbs)</code></pre>
 </ul></li>
 <li><p>Important notes:</p>
 <ul>
-<li><span class="math inline">\(R^2\)</span> tells you <em>nothing</em> about if the regression line is a good fit. <span class="math inline">\(R^2\)</span> might be very high but there might be a curved relationship. <img src="03_inference_files/figure-html/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></li>
-<li><span class="math inline">\(R^2\)</span> only tells you about the <em>linear</em> relationship, the <span class="math inline">\(R^2\)</span> could be 0 but the relationship is very strongly curved. <img src="03_inference_files/figure-html/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><span class="math inline">\(R^2\)</span> tells you <em>nothing</em> about if the regression line is a good fit. <span class="math inline">\(R^2\)</span> might be very high but there might be a curved relationship. <img src="03_inference_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><span class="math inline">\(R^2\)</span> only tells you about the <em>linear</em> relationship, the <span class="math inline">\(R^2\)</span> could be 0 but the relationship is very strongly curved. <img src="03_inference_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></li>
 </ul></li>
-<li><p>Different R^2 values <img src="03_inference_files/figure-html/unnamed-chunk-47-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-7.png" width="288" style="display: block; margin: auto;" /></p></li>
+<li><p>You obtain the <span class="math inline">\(R^2\)</span> from the <code>glance()</code> function from the <code>{broom}</code> package.</p>
+<pre class="r"><code>glance(lmhibbs)</code></pre>
+<pre><code>## # A tibble: 1 × 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.580         0.550  3.76      19.3 0.000610     1  -42.8  91.7  94.0
+## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
+<li><p>Different R^2 values <img src="03_inference_files/figure-html/unnamed-chunk-51-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-7.png" width="288" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 
