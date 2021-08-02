@@ -237,6 +237,6 @@ ipo %>%
 # Copier Maintenance
 copier <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%201%20Data%20Sets/CH01PR20.txt", col_names = FALSE)
 copier %>%
-  mutate(copiers = X1,
-         minutes = X2) %>%
+  rename(copiers = X2,
+         minutes = X1) %>%
   write_csv("./copiers.csv")
