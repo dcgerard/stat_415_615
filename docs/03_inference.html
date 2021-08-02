@@ -947,6 +947,19 @@ Anova(mod = lmhibbs)</code></pre>
 ## 1     15 472                          
 ## 2     14 198  1       274 19.3 0.00061</code></pre></li>
 <li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <code>df_R</code>, <code>df_E</code>, <code>df_{TO}</code>, <code>SSE</code>, <code>SSR</code>, <code>SSTO</code>.</p></li>
+<li><p>You can use <code>linearHypothesis()</code> to test for other values of <span class="math inline">\(\beta_1\)</span>. E.g. <span class="math inline">\(H_0: \beta_1 = 2\)</span> versus <span class="math inline">\(H_A: \beta_1 \neq 2\)</span>.</p>
+<pre class="r"><code>linearHypothesis(model = lmhibbs, hypothesis.matrix = &quot;growth = 2&quot;)</code></pre>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## growth = 2
+## 
+## Model 1: restricted model
+## Model 2: vote ~ growth
+## 
+##   Res.Df RSS Df Sum of Sq    F Pr(&gt;F)
+## 1     15 231                         
+## 2     14 198  1      32.9 2.32   0.15</code></pre></li>
 </ul>
 </div>
 </div>
@@ -970,8 +983,8 @@ Anova(mod = lmhibbs)</code></pre>
 </ul></li>
 <li><p>Important notes:</p>
 <ul>
-<li><span class="math inline">\(R^2\)</span> tells you <em>nothing</em> about if the regression line is a good fit. <span class="math inline">\(R^2\)</span> might be very high but there might be a curved relationship. <img src="03_inference_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></li>
-<li><span class="math inline">\(R^2\)</span> only tells you about the <em>linear</em> relationship, the <span class="math inline">\(R^2\)</span> could be 0 but the relationship is very strongly curved. <img src="03_inference_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><span class="math inline">\(R^2\)</span> tells you <em>nothing</em> about if the regression line is a good fit. <span class="math inline">\(R^2\)</span> might be very high but there might be a curved relationship. <img src="03_inference_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><span class="math inline">\(R^2\)</span> only tells you about the <em>linear</em> relationship, the <span class="math inline">\(R^2\)</span> could be 0 but the relationship is very strongly curved. <img src="03_inference_files/figure-html/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></li>
 </ul></li>
 <li><p>You obtain the <span class="math inline">\(R^2\)</span> from the <code>glance()</code> function from the <code>{broom}</code> package.</p>
 <pre class="r"><code>glance(lmhibbs)</code></pre>
@@ -980,7 +993,7 @@ Anova(mod = lmhibbs)</code></pre>
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.580         0.550  3.76      19.3 0.000610     1  -42.8  91.7  94.0
 ## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
-<li><p>Different R^2 values <img src="03_inference_files/figure-html/unnamed-chunk-51-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-51-7.png" width="288" style="display: block; margin: auto;" /></p></li>
+<li><p>Different R^2 values <img src="03_inference_files/figure-html/unnamed-chunk-52-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-7.png" width="288" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 

@@ -24,7 +24,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 
 You can read about the copiers dataset [here](https://dcgerard.github.io/stat_415_615/data.html#copiers), and download it from here: <https://dcgerard.github.io/stat_415_615/data/copiers.csv>
 
-1. Obtain the estimated regression function.
+1. Obtain the estimated regression function of a regression of minutes on number of copiers.
 
     ```{r, message=FALSE}
     library(tidyverse)
@@ -38,7 +38,7 @@ You can read about the copiers dataset [here](https://dcgerard.github.io/stat_41
     ```{block, eval = FALSE}
     The estimated regression line is
     $$
-    y = 0.25 + 0.06x
+    y = -0.6 + 15x
     $$
     ```
 
@@ -56,28 +56,154 @@ You can read about the copiers dataset [here](https://dcgerard.github.io/stat_41
 3. Interpret $\hat{\beta}_0$ in your estimated regression function. Does $\hat{\beta}_0$ provide any relevant information here?
 
     ```{block, eval = FALSE}
-    Seems be the "start up" time. That is, each service call probably takes a few minutes for the service person to settle down, and prepare for the job. This takes about half a minute.
+    The $y$-intercept o the regression function.
     ```
 
 4. Obtain a point estimate of the mean service time when $X=5$ copiers are serviced.
 
-5. Estimate the change in the mean service time when the number of copiers serviced increases by one. Use a 90% confidence interval. Interpret your confidence interval.
+    ```{r}
+    newdf <- data.frame(copiers = 5)
+    predict(object = lmcop, newdata = newdf)
+    ```
+    
+    ```{block, eval = FALSE}
+    74.6 minutes
+    ```
 
-6. Test whether or not there is a linear association between the number of copiers and the time of service. State your conclusion.
+5. Estimate the difference in the mean service time when servicing one more copier. Use a 90% confidence interval. Interpret your confidence interval.
 
-7. Are your results in parts (5) and (6) consistent? Explain.
+    ```{r}
+    tout <- tidy(lmcop, conf.int = TRUE, conf.level = 0.9)
+    tout
+    ```
 
-8. The manufacturer has suggested that the mean required time should not increase by more than 14 minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.
+    ```{block, eval = FALSE}
+    It takes about 15 minutes more on average for each copier served. The 95\% confidence interval is about 14.2 to 15.8. These are the "reasonable" values for the time added based on a procedure that captures the true parameter in 95\% of repeated samples.
+    ```
 
-9. Obtain a 90\% confidence interval for the mean service time on calls in which six copiers are serviced. Interpret your confidence interval.
+6. Adjust your confidence interval from part 5 to estimate the difference in mean service time when servicing two more copiers.
 
-10. Obtain a 90\% prediction interval for the service time on the next call in which six copiers are serviced. Is your prediction interval wider than the corresponding confidence interval in part (9)? Should it be?
+    ```{block, eval = FALSE}
+    We just need to multiply the estimate and confidence bounds by two.
+    ```
+    
+    ```{r}
+    tout %>%
+      select(term, estimate, conf.low, conf.high) %>%
+      filter(term == "copiers") %>%
+      mutate(estimate = 2 * estimate,
+             conf.low = 2 * conf.low,
+             conf.high = 2 * conf.high)
+    ```
+    
+    ```{block, eval = FALSE}
+    So we estimate that servicing two more copiers takes about 30 more minutes on average (95\% CI of 28.5 to 31.7 more minutes).
+    ```
 
-11. Management wished to estimate the expected service time *per copier* on calls in which six copiers are serviced. Obtain an appropriate 90\% confidence interval by converting th einterval obtained in part (a). Interpret the converted confidence interval.
+7. Test whether or not there is a linear association between the number of copiers and the time of service. State your conclusion.
 
-12. Use `augment()` from the `{broom}` package to obtain the residuals of the regression of service time on copier number.
+    ```{r}
+    tout %>%
+      select(term, p.value)
+    ```
+
+    ```{block, eval = FALSE}
+    We have strong evidence  of a linear association between number of copiers serviced and time of service ($p < 0.001$, $n = 45$).
+    ```
+
+8. Are your results in parts (6) and (7) consistent? Explain.
+
+    ```{block, eval = FALSE}
+    Yes. 0 is not covered by the 95\% confidence interval, so the $p$-value should be less than 0.05.
+    ```
+
+9. The manufacturer has suggested that the mean required time should not increase by more than 14 minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.
+
+    ```{r}
+    beta1_hat <- tout$estimate[[2]]
+    se_beta1 <- tout$std.error[[2]]
+    tstat <- (beta1_hat - 14) / se_beta1
+    n <- nrow(copiers)
+    pt(q = tstat, df = n - 2, lower.tail = FALSE)
+    ```
+    
+    ```{block, eval = FALSE}
+    $H_0: \beta_1 \leq 14$
+    $H_A: \beta_1 > 14$
+    
+    The $p$-value of this test is 0.0189, indicating evidence against the null hypothesis. So each additional copier is probably taking more than 14 minutes.
+    ```
+
+10. Obtain a 90\% confidence interval for the mean service time on calls in which six copiers are serviced. Interpret your confidence interval.
+
+    ```{r}
+    newdf <- data.frame(copiers = 6)
+    predict(object = lmcop, newdata = newdf, interval = "confidence", level = 0.9)
+    ```
+    
+    ```{block, eval = FALSE}
+    It takes between 87.2 and 92.0 minutes to service 6 copiers.
+    ```
+
+11. Obtain a 90\% prediction interval for the service time on the next call in which six copiers are serviced. Is your prediction interval wider than the corresponding confidence interval in part (10)? Should it be?
+
+    ```{r}
+    newdf <- data.frame(copiers = 6)
+    predict(object = lmcop, newdata = newdf, interval = "prediction", level = 0.9)
+    ```
+    
+    ```{block, eval = FALSE}
+    It probably will take between 74.5 and 104.8 minutes.
+    
+    It should be wider, because we are trying to capture a single point, rather than a mean of a many points.
+    ```
+
+12. Management wished to estimate the expected service time *per copier* on calls in which six copiers are serviced. Obtain an appropriate 90\% confidence interval by converting the interval obtained in part (10). Interpret the converted confidence interval.
+
+    ```{block, eval = FALSE}
+    Just divide the estimate and the bounds by 6.
+    
+    So it will take 89.63 / 6= 14.9 minutes per copier (95\% CI of 87.28 / 6 = 14.6 to  91.98 / 6 = 15.3 minutes per copier).
+    ```
+
+13. Use `augment()` from the `{broom}` package to obtain the residuals of the regression of service time on copier number.
+
+    ```{r}
+    aout <- augment(x = lmcop)
+    ```
 
 13. Calculate the SSTO, SSE, and SSR by hand. Use these to write out an ANOVA table.
 
+    ```{r}
+    SSTO <- sum((copiers$minutes - mean(copiers$minutes))^2)
+    SSE <- sum(aout$.resid^2)
+    SSR <- SSTO - SSE
+    SSR
+    SSE
+    SSTO
+    nrow(copiers)
+    ```
+
+    ```{block, eval = FALSE}
+            SS df
+    SSR  76960  1
+    SSE  3416  43
+    SSTO 80377 44
+    ```
+    
 14. Use the sums of squares from part 13 to conduct an F-test to determine whether or not there is a linear association between time spent and the number of copiers serviced. State your conclusions.
+
+    ```{r}
+    fstat <- (SSR / 1) / (SSE / 43)
+    fstat
+    pf(q = fstat, df1 = 1, df2 = 43, lower.tail = FALSE)
+    ```
+
+
+15. Verify parts (13) and (14) using the `Anova()` function from the `{car}` package.
+
+    ```{r}
+    library(car)
+    Anova(mod = lmcop)
+    ```
 
