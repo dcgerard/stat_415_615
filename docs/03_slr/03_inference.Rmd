@@ -968,6 +968,12 @@ Residuals    SSE  dfE
     1 $df_TO$ $SSTO$                          
     2  $df_E$  $SSE$  $df_R$     $SSR$ 19.3 0.00061
     ```
+    
+- You can use `linearHypothesis()` to test for other values of $\beta_1$. E.g. $H_0: \beta_1 = 2$ versus $H_A: \beta_1 \neq 2$.
+
+    ```{r}
+    linearHypothesis(model = lmhibbs, hypothesis.matrix = "growth = 2")
+    ```
 
 # Coefficient of Determination
 
