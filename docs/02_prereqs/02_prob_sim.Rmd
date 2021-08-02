@@ -154,7 +154,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     pbetween
     ```
     
-- A property of the normal distribution is that if $X \sim N(\mu, \sigma^2)$ and $Z - (X - \mu) / \sigma$, then $Z \sim N(0, 1)$.
+- A property of the normal distribution is that if $X \sim N(\mu, \sigma^2)$ and $Z = (X - \mu) / \sigma$, then $Z \sim N(0, 1)$.
 
 - **Exercise**: Use `rnorm()` and `qqplot()` to demonstrate this property. That is, simulate 1000 values of $X$ with some mean different than 0 and some variance different than 1. Then transform those $X$ values to $Z$. Then simulate some other variable $W$ from $N(0, 1)$. Use `qqplot()` to show that $W$ and $Z$ follow the same distribution.
 
@@ -226,10 +226,19 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
           mean(x)
         }) 
         ```
+    - for-loops: A standard way to iteratively apply code.
+        ```{r}
+        n <- 10
+        for (i in 1:n) {
+          ## code goes here, i increases by 1 each iteration
+          print(i)
+        }
+        ```
+    
         
-- Suppose your boss asks you if she should use the mean or the median. She has some trial data, but plans on collecting about 250 more values. She gives you this vector of observed values
+- Suppose your boss asks you if she should use the mean or the median. She has some trial data, but plans on collecting about 250 new values. She gives you this vector of observed values
     ```{r}
-    x <- c(1.31, 2.42, 1.76, 0.71, 9.07, 0.86, 2.78, 1.26, 2.79, 12.91)
+    x <- c(1.31, 2.42, 1.76, 0.71, 3.07, 0.86, 2.78, 1.26, 2.79, 12.91)
     ```
 
 - Your first thought is to generate from the normal distribution using the estimated mean and standard deviation, and then compare the median to the mean using some metric.
@@ -272,3 +281,56 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     qqnorm(x)
     qqline(x)
     ```
+
+- You decide to stress-test. What if that single right value is an outlier? Let's calculate the mean and standard deviation of the 9 values near 0.
+    ```{r}
+    xbar <- mean(x[x < 5])
+    s <- sd(x[x < 5])
+    ```
+    
+    And let's simulate from a distribution that is normal 90\% of the time and that outlying point 10\% of the time.
+    
+    ```{r}
+    outval <- max(x)
+    meanvec <- replicate(n = 1000, expr = {
+      outlier <- sample(x = c(TRUE, FALSE), size = sampsize, replace = TRUE, prob = c(0.1, 0.9))
+      xsim <- rep(NA, length.out = sampsize)
+      for (i in 1:sampsize) {
+        xsim[[i]] <- ifelse(outlier[[i]], outval, rnorm(n = 1, mean = xbar, sd = s))
+      }
+      mean(xsim)
+    })
+    
+    medvec <- replicate(n = 1000, expr = {
+      outlier <- sample(x = c(TRUE, FALSE), size = sampsize, replace = TRUE, prob = c(0.1, 0.9))
+      xsim <- rep(NA, length.out = sampsize)
+      for (i in 1:sampsize) {
+        xsim[[i]] <- ifelse(outlier[[i]], outval, rnorm(n = 1, mean = xbar, sd = s))
+      }
+      median(xsim)
+    })
+    ```
+
+- The median is looking really good now:
+    
+    ```{r}
+    xbar
+    mean(meanvec)
+    mean(medvec)
+    ```
+  
+    So you might state that the median is able to capture the center of the bulk of the observations, even in the presence of a large number of extreme values. This is at a reduced efficiency (if the normal model were correct) of about 30\%.
+    
+- This is an example of using simulation to study the robustness of an estimator to model misspecification. We wouldn't actually run this for evaluating the mean versus the median, but this type of technique becomes vital for more complicated models.
+
+- **Exercise**: About 48\% of US adults are men, and about 52\% of US adults are women. The heights of men are approximately normally distributed with mean 69.1 inches and standard deviation 2.9 inches. The heights of women are approximately normally distributed with mean 63.7 inches and standard deviation 2.7 inches. Simulate the heights of a random sample of 1000 adults and plot them.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    male <- sample(x = c(TRUE, FALSE), size = 1000, replace = TRUE, prob = c(0.48, 0.52))
+    height <- rep(NA, length.out = 1000)
+    for (i in 1:1000) {
+      height[[i]] <- ifelse(male[[i]], rnorm(1, 69.1, 2.9), rnorm(1, 63.7, 2.7))
+    }
+    qplot(height, fill = male, bins = 30)
+    ```
+

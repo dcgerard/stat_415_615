@@ -17,7 +17,13 @@ knitr::opts_chunk$set(echo       = TRUE,
                       fig.align  = "center")
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
-    
+
+### Copiers
+
+- [copiers.csv](./data/copiers.csv): Dataset from exercise 1.20 of [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
+    - `copiers`: The number of copiers serviced during a single call.
+    - `minutes`: The total number of minutes spend by the service person.
+
 ### County Demographic Information
 
 - [cdi.csv](./data/cdi.csv): Dataset C.2 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Demographic information on counties in 1990 and 1992. Variables include:

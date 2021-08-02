@@ -234,3 +234,9 @@ ipo %>%
          buyout = if_else(buyout == 0, "no", "yes")) %>%
   write_csv("./ipo.csv")
 
+# Copier Maintenance
+copier <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%201%20Data%20Sets/CH01PR20.txt", col_names = FALSE)
+copier %>%
+  mutate(copiers = X1,
+         minutes = X2) %>%
+  write_csv("./copiers.csv")

@@ -338,7 +338,7 @@ saveGIF(expr = {
 
 - Visualization:
 
-    ![](./ols.gif)
+    ![](./03_figs/ols.gif)
 
 - We can solve for the $\beta_0$ and $\beta_1$ that minimize this sum of squares.
 
