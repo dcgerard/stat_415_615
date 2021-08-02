@@ -7,12 +7,77 @@ output:
     toc: true
     toc_depth: 4
 urlcolor: "blue"
+params:
+  solutions: FALSE
 ---
 
 ```{r setup, include=FALSE}
 set.seed(1)
-knitr::opts_chunk$set(echo       = TRUE, 
+knitr::opts_chunk$set(echo = params$solutions, 
+                      eval = params$solutions, 
                       fig.align  = "center",
                       fig.height = 3)
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
+
+# Copier Maintenance
+
+You can read about the copiers dataset [here](https://dcgerard.github.io/stat_415_615/data.html#copiers), and download it from here: <https://dcgerard.github.io/stat_415_615/data/copiers.csv>
+
+1. Obtain the estimated regression function.
+
+    ```{r, message=FALSE}
+    library(tidyverse)
+    library(broom)
+    copiers <- read_csv("https://dcgerard.github.io/stat_415_615/data/copiers.csv")
+    lmcop <- lm(minutes ~ copiers, data = copiers)
+    tout <- tidy(lmcop)
+    tout
+    ```
+
+    ```{block, eval = FALSE}
+    The estimated regression line is
+    $$
+    y = 0.25 + 0.06x
+    $$
+    ```
+
+2. Plot the estimated regression function and the data. How well does the estimated regression function fit the data?
+
+    ```{r, message=FALSE}
+    qplot(x = copiers, y = minutes, data = copiers) +
+      geom_smooth(method = "lm", se = FALSE)
+    ```
+
+    ```{block, eval = FALSE}
+    It seems to fit very well.
+    ```
+
+3. Interpret $\hat{\beta}_0$ in your estimated regression function. Does $\hat{\beta}_0$ provide any relevant information here?
+
+    ```{block, eval = FALSE}
+    Seems be the "start up" time. That is, each service call probably takes a few minutes for the service person to settle down, and prepare for the job. This takes about half a minute.
+    ```
+
+4. Obtain a point estimate of the mean service time when $X=5$ copiers are serviced.
+
+5. Estimate the change in the mean service time when the number of copiers serviced increases by one. Use a 90% confidence interval. Interpret your confidence interval.
+
+6. Test whether or not there is a linear association between the number of copiers and the time of service. State your conclusion.
+
+7. Are your results in parts (5) and (6) consistent? Explain.
+
+8. The manufacturer has suggested that the mean required time should not increase by more than 14 minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.
+
+9. Obtain a 90\% confidence interval for the mean service time on calls in which six copiers are serviced. Interpret your confidence interval.
+
+10. Obtain a 90\% prediction interval for the service time on the next call in which six copiers are serviced. Is your prediction interval wider than the corresponding confidence interval in part (9)? Should it be?
+
+11. Management wished to estimate the expected service time *per copier* on calls in which six copiers are serviced. Obtain an appropriate 90\% confidence interval by converting th einterval obtained in part (a). Interpret the converted confidence interval.
+
+12. Use `augment()` from the `{broom}` package to obtain the residuals of the regression of service time on copier number.
+
+13. Calculate the SSTO, SSE, and SSR by hand. Use these to write out an ANOVA table.
+
+14. Use the sums of squares from part 13 to conduct an F-test to determine whether or not there is a linear association between time spent and the number of copiers serviced. State your conclusions.
+
