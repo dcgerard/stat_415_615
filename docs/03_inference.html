@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-30" />
+<meta name="date" content="2021-08-02" />
 
 <title>Simple Linear Regression: Inference</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-30</h4>
+<h4 class="date">2021-08-02</h4>
 
 </div>
 
@@ -301,9 +301,15 @@ $(document).ready(function () {
 <li><a href="#confidence-bands">Confidence Bands</a></li>
 <li><a href="#comparing-intervals">Comparing intervals</a></li>
 </ul></li>
-<li><a href="#anova-approach-to-hypothesis-testing">ANOVA approach to hypothesis testing</a></li>
+<li><a href="#anova-approach-to-hypothesis-testing">ANOVA approach to hypothesis testing</a>
+<ul>
+<li><a href="#anova-terminology">ANOVA terminology</a></li>
+<li><a href="#degrees-of-freedom">Degrees of freedom</a></li>
+<li><a href="#mean-squares">Mean Squares</a></li>
+<li><a href="#anova-table">ANOVA Table</a></li>
+<li><a href="#anova-implementation-in-r">ANOVA implementation in R</a></li>
+</ul></li>
 <li><a href="#coefficient-of-determination">Coefficient of Determination</a></li>
-<li><a href="#correlation-coefficient">Correlation Coefficient</a></li>
 </ul>
 </div>
 
@@ -318,7 +324,7 @@ $(document).ready(function () {
 <li>Sampling distributions of OLS estimates.</li>
 <li>Hypothesis testing for regression coefficients.</li>
 <li>Confidence intervals for regression coefficients.</li>
-<li>Regression line intervals: pointwise confidence, prediction, confidence bands</li>
+<li>Regression line intervals: point-wise confidence, prediction, confidence bands</li>
 <li><span class="math inline">\(F\)</span>-tests for regression models.</li>
 <li><span class="math inline">\(R\)</span> and <span class="math inline">\(R^2\)</span>.</li>
 </ul>
@@ -357,6 +363,7 @@ $(document).ready(function () {
 </ol></li>
 <li><p><strong>Exercise</strong>: What is wrong with the statement: “We test against the null of <span class="math inline">\(H_0: \hat{\beta}_1 = 0\)</span>.”</p></li>
 <li><p><strong>Exercise</strong>: What is wrong with the following interpretation of the <span class="math inline">\(p\)</span>-value: “The <span class="math inline">\(p\)</span>-value is the probability that the null hypothesis is true, so small <span class="math inline">\(p\)</span>-values suggest we reject the null hypothesis.”</p></li>
+<li><p><strong>Exercise</strong>: What is wrong with the following: “The <span class="math inline">\(p\)</span>-value is large, so we accept the null hypothesis”.</p></li>
 </ul>
 <div id="sampling-distribution" class="section level2">
 <h2>Sampling distribution</h2>
@@ -433,7 +440,7 @@ $(document).ready(function () {
 <p><span class="math display">\[
   p-\text{value} = 2*\text{pt}(-|t^*|, n-2).
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="implement-in-r" class="section level2">
@@ -477,6 +484,7 @@ lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
 <ul>
 <li>CORRECT: We used a procedure that would capture the true parameter in 95% of repeated samples.</li>
 <li>CORRECT: <em>Prior to sampling</em>, the probability of capturing the true parameter is 0.95.</li>
+<li>CORRECT: We reject the null that <span class="math inline">\(H_0: \beta_1 = \mu\)</span> at the 0.05 level if <span class="math inline">\(\mu\)</span> lies outside of the 95% confidence interval for <span class="math inline">\(\beta_1\)</span> (connection between confidence intervals and hypothesis tests).</li>
 <li>WRONG: After sampling, the probability of capturing the true parameter is 0.95.
 <ul>
 <li>Because after sampling the parameter is either in the interval or it’s not. We just don’t know which.</li>
@@ -498,7 +506,7 @@ qt(alpha / 2, n - 2)</code></pre>
 <li><p>Since <span class="math inline">\(t^* = \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \sim t_{n-2}\)</span>, we have that <span class="math display">\[
   Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Thus, we have <span class="math display">\[\begin{align}
   &amp;Pr\left(-u \leq \frac{\hat{\beta}_1 - \beta_1}{s(\hat{\beta}_1)} \leq u \right) = 1 - \alpha\\
   &amp;\Leftrightarrow Pr\left(-u s(\hat{\beta}_1) \leq \hat{\beta}_1 - \beta_1 \leq u s(\hat{\beta}_1) \right) = 1 - \alpha\\
@@ -506,12 +514,19 @@ qt(alpha / 2, n - 2)</code></pre>
   &amp;\Leftrightarrow Pr\left(\hat{\beta}_1 + u s(\hat{\beta}_1)\geq  \beta_1 \geq \hat{\beta}_1 - u s(\hat{\beta}_1) \right) = 1 - \alpha\\
   \end{align}\]</span></p></li>
 <li><p>Thus <span class="math inline">\(\hat{\beta}_1 \pm u s(\hat{\beta}_1)\)</span>, where <span class="math inline">\(u = \text{qt}(1 - \alpha/2, n-2)\)</span> is a <span class="math inline">\((1-\alpha)\)</span> confidence interval for <span class="math inline">\(\beta_1\)</span>.</p></li>
+<li><p>Intervals that we calculate in this class will always be of the form <span class="math display">\[
+  \text{estimate} \pm \text{multiplier} \times \text{standard error}
+  \]</span></p>
+<ul>
+<li>For exams, I want you to be able to take an estimate and a standard error and (i) tell me how to find the multiplier in R and (ii) use these three components to calculate a confidence interval. So, e.g., know that for simple linear regression we use <code>qt(p = 1 - alpha / 2, df = n - 2)</code>.</li>
+<li>Intervals can be calculate in more complicated ways.</li>
+</ul></li>
 <li><p>Again, it is the interval that is random (and varies across repeated samples), not the parameter.</p></li>
 </ul>
 <div id="implementation-in-r." class="section level2">
 <h2>Implementation in R.</h2>
 <ul>
-<li><p>R will return confidence intervals if you ask, so you typically do not need to do these calculations.</p></li>
+<li><p>R will return confidence intervals if you ask, so you typically do not need to do these calculations in practice.</p></li>
 <li><p>First, use <code>lm()</code> to fit the linear model.</p>
 <pre class="r"><code>hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
 lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
@@ -596,8 +611,8 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 <li><p>Graphic of interpretation:</p>
 <p><img src="03_figs/ci_mean.gif" /> </p></li>
 <li><p>This confidence interval only applies when a <em>single</em> mean response is to be estimated.</p></li>
-<li><p>These are called <strong>pointwise confidence intervals</strong> because they provide confidence intervals for the mean at a single <span class="math inline">\(X_i\)</span>.</p></li>
-<li><p>If you use <code>geom_smooth()</code> from <code>{ggplot2}</code>, the resulting confidence intervals are all pointwise.</p></li>
+<li><p>These are called <strong>point-wise confidence intervals</strong> because they provide confidence intervals for the mean at a single <span class="math inline">\(X_i\)</span>.</p></li>
+<li><p>If you use <code>geom_smooth()</code> from <code>{ggplot2}</code>, the resulting confidence intervals are all point-wise.</p></li>
 <li><p><strong>Exercise</strong>: Write a paragraph on the strategy you would use to test <span class="math inline">\(H_0: E[Y_i|X_i] = \mu\)</span> for some prespecified <span class="math inline">\(\mu\)</span>.</p></li>
 </ul>
 <div id="confidence-interval-for-mean-response-in-r" class="section level3">
@@ -628,14 +643,14 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
   \]</span></p></li>
 <li><p>The difference between prediction and estimation for linear regression, then, is in intervals.</p></li>
 <li><p>A <span class="math inline">\((1-\alpha)\)</span> <strong>prediction interval</strong> captures <span class="math inline">\((1-\alpha)\)</span> new values, over both repeated samples and repeated values.</p></li>
-<li><p>It’s easier to begin thinking about prediction intervals as if <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> were known. Suppose we know these two values, then <span class="math display">\[
+<li><p>It’s easier to begin thinking about prediction intervals as if <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> were known. Suppose we know these values, then <span class="math display">\[
   Y_{i(new)} \sim N(\beta_0 + \beta_1X_{i(new)}, \sigma^2),
   \]</span></p>
 <ul>
 <li>So a prediction interval would be <span class="math inline">\(\beta_0 + \beta_1X_{i(new)} \pm \text{qnorm}(1-\alpha/2)\sigma\)</span>.</li>
 <li>E.g. for a 95% prediction interval, we would add and subtract 2 standard deviations from <span class="math inline">\(\beta_0 + \beta_1X_{i(new)}\)</span>.</li>
 </ul></li>
-<li><p>But <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> are not known. So if we just added and subtracted the 2 MSE from the estimated regression line, we could make some big mistakes if our regression line estimate was way off. <img src="03_inference_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>But <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> are not known. So if we just added and subtracted the 2 MSE from the estimated regression line, we could make some big mistakes if our regression line estimate was way off. <img src="03_inference_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Use the following as the prediction variance: <span class="math display">\[\begin{align}
   \sigma^2(\text{pred}) &amp;= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \text{var}(\epsilon_i)\\
   &amp;= \text{var}(\hat{\beta}_0 + \hat{\beta}_1X_i) + \sigma^2\\
@@ -715,43 +730,231 @@ ggplot() +
   geom_point(data = hibbs, mapping = aes(x = growth, y = vote)) +
   geom_line(data = newdf, mapping = aes(x = growth, y = lwr)) +
   geom_line(data = newdf, mapping = aes(x = growth, y = upr))</code></pre>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>“wh” standars for “Working-Hotelling”.</p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>“wh” stands for “Working-Hotelling”.</p></li>
 </ul>
 </div>
 <div id="comparing-intervals" class="section level2">
 <h2>Comparing intervals</h2>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="anova-approach-to-hypothesis-testing" class="section level1">
 <h1>ANOVA approach to hypothesis testing</h1>
 <ul>
-<li><p>Our hypothesis test is a comparison between the two models: <span class="math display">\[\begin{align}
-  Y_i &amp;= \beta_0 + \epsilon_i\\
-  Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i
+<li><p>In this section, we will talk about a different strategy to testing <span class="math inline">\(H_0: \beta_1 = 0\)</span>.</p></li>
+<li><p>In simple linear regression, this results in the <em>exact same <span class="math inline">\(p\)</span>-value</em> as the test that uses the <span class="math inline">\(t\)</span>-statistic.</p></li>
+<li><p>However, this strategy is more applicable to general linear hypotheses that we’ll discuss in multiple linear regression.</p></li>
+<li><p>Testing <span class="math inline">\(H_0: \beta_1 = 0\)</span> is really a comparison between the two models: <span class="math display">\[\begin{align}
+  H_0: Y_i &amp;= \beta_0 + \epsilon_i\\
+  H_A: Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i
   \end{align}\]</span></p></li>
 <li><p>We will call the first model the <strong>reduced</strong> model and the second model the <strong>full</strong> model. This is because the reduced model is a subset of the full model (you get the reduced from the full by setting <span class="math inline">\(\beta_1 = 0\)</span>).</p></li>
+<li><p>Our strategy will be to compare the residuals under <span class="math inline">\(H_0\)</span> and <span class="math inline">\(H_A\)</span>. If <span class="math inline">\(H_A\)</span> were true, we would expect the those residuals to be much smaller than the residuals under <span class="math inline">\(H_0\)</span> (because the line fits a lot better).</p></li>
+<li><p>If <span class="math inline">\(H_0\)</span> were true, then we would expect the residuals under <span class="math inline">\(H_A\)</span> to only be a little bit smaller than those under <span class="math inline">\(H_0\)</span>.</p></li>
+<li><p>We fit <span class="math inline">\(H_A\)</span> by the method of least squares, obtaining the OLS estimates and the corresponding residuals.</p></li>
+<li><p>We fit <span class="math inline">\(H_0\)</span> also by least squares. It turns out that under <span class="math inline">\(H_0\)</span>, the OLS estimate is just <span class="math inline">\(\bar{Y}\)</span>.</p></li>
+<li><p>We measure how small the residuals are by the sum of squared residuals.</p></li>
 <li><p>Sum of squares of reduced model</p>
 <p><span class="math display">\[
   SSE(R) = \sum_{i=1}^n(Y_i - \bar{Y})^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Sum of squares of full model</p>
 <p><span class="math display">\[
   SSE(F) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
   \]</span></p>
-<p><img src="03_inference_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>NOTE: <span class="math inline">\(SSE(F)\)</span> will <em>always</em> be less than or equal to <span class="math inline">\(SSE(R)\)</span>.</p>
+<ul>
+<li>This is since <span class="math inline">\(SSE(R)\)</span> is a subset of <span class="math inline">\(SSE(F)\)</span>, and so if <span class="math inline">\(SSE(R)\)</span> is the smallest the residuals can get, then we can set <span class="math inline">\(\beta_1 = 0\)</span> in the full model to get <span class="math inline">\(SSE(F) = SSE(R)\)</span>.</li>
+</ul></li>
 <li><p>Under the null that the reduced model is true, we have that the following statistic has a sampling distribution that is <span class="math inline">\(F(1, n-2)\)</span> <span class="math display">\[
   F^* = \frac{[SSE(R) - SSE(F)]/(df_R - df_F)}{SSE(F)/df_F}
   \]</span></p></li>
+<li><p><span class="math inline">\(df_r = n - 1\)</span>: sample size of <span class="math inline">\(n\)</span> minus 1 for the single parameter we estimate in the reduced model.</p></li>
+<li><p><span class="math inline">\(df_f = n - 2\)</span>: sample size of <span class="math inline">\(n\)</span> minus 2 for the two parameters we estimate in the full model.</p></li>
+<li><p>If <span class="math inline">\(H_A\)</span> were true, then we would expect <span class="math inline">\(F^*\)</span> to be large, because this would increase the size of <span class="math inline">\(SSE(R) - SSE(F)\)</span>. So we <em>only</em> compare <span class="math inline">\(F^*\)</span> to the right tail of <span class="math inline">\(F(1, n-2)\)</span> distribution.</p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Let’s verify this result manually:</p>
+<pre class="r"><code>lmhibbs &lt;- lm(vote ~ growth, data = hibbs)
+aout &lt;- augment(lmhibbs)
+sse_full &lt;- sum(aout$.resid^2)
+ybar &lt;- mean(hibbs$vote)
+sse_reduced &lt;- sum((aout$vote - ybar)^2)
+n &lt;- nrow(hibbs)
+df_r &lt;- n - 1
+df_f &lt;- n - 2
+f_star &lt;- ((sse_reduced - sse_full) / (df_r - df_f)) / (sse_full / df_f)
+f_star</code></pre>
+<pre><code>## [1] 19.32</code></pre>
+<pre class="r"><code>pf(q = f_star, df1 = 1, df2 = n - 2, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 0.00061</code></pre></li>
+<li><p>This is the same as the <span class="math inline">\(p\)</span>-value from the output of <span class="math inline">\(tidy()\)</span>.</p>
+<pre class="r"><code>tidy(lmhibbs)$p.value[[2]]</code></pre>
+<pre><code>## [1] 0.00061</code></pre></li>
 </ul>
+<div id="anova-terminology" class="section level2">
+<h2>ANOVA terminology</h2>
+<ul>
+<li><p>Confusingly, statisticians have alternative terms for these sums of squares that you might see.</p></li>
+<li><p>The <span class="math inline">\(SSE(F)\)</span> is sometimes called the <span class="math inline">\(SSE\)</span> (sum of squares error).</p>
+<p><span class="math display">\[
+  SSE = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>The <span class="math inline">\(SSE(R)\)</span> is sometimes called the <span class="math inline">\(SSTO\)</span> (sum of squares total).</p>
+<p><span class="math display">\[
+  SSTO = \sum_{i=1}^n(Y_i - \bar{Y})^2
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>The difference <span class="math inline">\(SSE(R) - SSE(F)\)</span> is sometimes called <span class="math inline">\(SSR\)</span> (sum of squares regression).</p>
+<p><span class="math display">\[
+  SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2
+  \]</span></p>
+<p><img src="03_inference_files/figure-html/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>We have the result that <span class="math display">\[
+  SSTO = SSR + SSE
+  \]</span></p></li>
+</ul>
+</div>
+<div id="degrees-of-freedom" class="section level2">
+<h2>Degrees of freedom</h2>
+<ul>
+<li><p><strong>Degrees of freedom</strong> are how many units of independent information we have.</p>
+<ul>
+<li>You can consider it a measure of the variability of a sum of squares.</li>
+<li>Larger means more information (lower variability).</li>
+<li>Smaller means less information (higher variability).</li>
+</ul></li>
+<li><p><span class="math inline">\(SSTO\)</span> has <span class="math inline">\(n - 1\)</span> degrees of freedom, called <span class="math inline">\(df_{TO}\)</span> (<span class="math inline">\(n\)</span> observations minus 1 parameter that we estimate).</p></li>
+<li><p><span class="math inline">\(SSE\)</span> has <span class="math inline">\(n-2\)</span> degrees of freedom, called <span class="math inline">\(df_{E}\)</span> (<span class="math inline">\(n\)</span> observations minus 2 parameters that we estimate).</p></li>
+<li><p><span class="math inline">\(SSR\)</span> has <span class="math inline">\(1\)</span> degree of freedom, called <span class="math inline">\(df_{R}\)</span> (<span class="math inline">\(\hat{Y}\)</span> used 2 parameters, while we only used 1 parameter, so the difference is 1).</p></li>
+<li><p>It is always the case that <span class="math inline">\(df_{TO} = df_E + df_R\)</span>.</p></li>
+</ul>
+</div>
+<div id="mean-squares" class="section level2">
+<h2>Mean Squares</h2>
+<ul>
+<li><p>A sum of square divided by its degrees of freedom is called a <strong>mean square</strong>.</p></li>
+<li><p>The <strong>mean squared error</strong> is <span class="math display">\[
+MSE = SSE / df_E = SSE / (n-2)
+\]</span></p></li>
+<li><p>The <strong>mean square regression</strong> is <span class="math display">\[
+  MSR = SSR / df_R = SSR / 1
+  \]</span></p></li>
+<li><p>We can show that this is an equivalent definition of <span class="math inline">\(F^*\)</span>. <span class="math display">\[
+F^* = \frac{MSR}{MSE} = \frac{SSR / df_R}{SSE / df_E} = \frac{(SSTO - SSE) / (df_{TO} - df_{E})}{SSE / df_E}
+\]</span></p></li>
+</ul>
+</div>
+<div id="anova-table" class="section level2">
+<h2>ANOVA Table</h2>
+<ul>
+<li><p>Because you can (i) “partition” the total sum of squares into the regression sum of squares and the error sum of squares, and (ii) “partition” the total degrees of freedom into the error degrees of freedom and the regression degrees of freedom, some folks represent regression fits in terms of an ANOVA (analysis of variance) table</p></li>
+<li><p>It’s called “analysis of variance” because we look at the sum of squares and how they partition between different models.</p></li>
+<li><p>We often present the results of an ANOVA in a table, which can contain some or all of the following elements (usually some components are missing):</p>
+<table>
+<colgroup>
+<col width="10%" />
+<col width="40%" />
+<col width="17%" />
+<col width="4%" />
+<col width="26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">SS</th>
+<th align="center">df</th>
+<th align="center">MS</th>
+<th align="center"><span class="math inline">\(p\)</span>-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regression</td>
+<td align="center"><span class="math inline">\(SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2\)</span></td>
+<td align="center"><span class="math inline">\(df_R = p - 1\)</span></td>
+<td align="center">MSR</td>
+<td align="center">pf(<span class="math inline">\(F^*\)</span>, <span class="math inline">\(df_R\)</span>, <span class="math inline">\(df_E\)</span>, lower.tail = FALSE)</td>
+</tr>
+<tr class="even">
+<td>Error</td>
+<td align="center"><span class="math inline">\(SSE = \sum_{i=1}^n(Y_i - \hat{Y})^2\)</span></td>
+<td align="center"><span class="math inline">\(df_E = n - p\)</span></td>
+<td align="center">MSE</td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td align="center"><span class="math inline">\(SSTO = \sum_{i=1}^n(Y_i - \bar{Y})^2\)</span></td>
+<td align="center"><span class="math inline">\(df_{TO} = n - 1\)</span></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Here <span class="math inline">\(p\)</span> is the number of predictors (so <span class="math inline">\(p = 1\)</span> in the simple linear regression).</p></li>
+</ul>
+</div>
+<div id="anova-implementation-in-r" class="section level2">
+<h2>ANOVA implementation in R</h2>
+<ul>
+<li><p>To calculate the ANOVA table in R, use the <code>Anova()</code> function from the <code>{car}</code> package. You just pass the <code>lm</code> object to the <code>Anova()</code> function.</p>
+<pre class="r"><code>library(car)
+Anova(mod = lmhibbs)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: vote
+##           Sum Sq Df F value  Pr(&gt;F)
+## growth       274  1    19.3 0.00061
+## Residuals    198 14</code></pre></li>
+<li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <code>df_R</code>, <code>df_E</code>, <code>SSE</code>, <code>SSR</code>.</p></li>
+<li><p><strong>Exercise</strong>: Using the above ANOVA table, derive the MSE (the estimated variance).</p></li>
+<li><p>There exists an <code>anova()</code> function in R, and it produces the same results for simple linear regression, but it produces worse results for multiple linear regression.</p></li>
+<li><p>Use the <code>linearHypothesis()</code> function from the <code>{car}</code> package to run a general linear hypothesis.</p>
+<pre class="r"><code>linearHypothesis(model = lmhibbs, &quot;growth = 0&quot;)</code></pre>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## growth = 0
+## 
+## Model 1: restricted model
+## Model 2: vote ~ growth
+## 
+##   Res.Df RSS Df Sum of Sq    F  Pr(&gt;F)
+## 1     15 472                          
+## 2     14 198  1       274 19.3 0.00061</code></pre></li>
+<li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <code>df_R</code>, <code>df_E</code>, <code>df_{TO}</code>, <code>SSE</code>, <code>SSR</code>, <code>SSTO</code>.</p></li>
+</ul>
+</div>
 </div>
 <div id="coefficient-of-determination" class="section level1">
 <h1>Coefficient of Determination</h1>
-</div>
-<div id="correlation-coefficient" class="section level1">
-<h1>Correlation Coefficient</h1>
+<ul>
+<li><p><span class="math inline">\(\frac{1}{n-2}SSE\)</span> is the estimated variance under the linear regression model.</p></li>
+<li><p><span class="math inline">\(\frac{1}{n-1}SSTO\)</span> is the estimated variance under the model <span class="math inline">\(Y_i = \beta_0 + \epsilon_i\)</span> (no linear association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>).</p></li>
+<li><p>A common measure of the strength of the linear association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is the <strong>coefficient of determination</strong> <span class="math display">\[
+  R^2 = 1 - \frac{SSE}{SSTO}
+  \]</span></p></li>
+<li><p>If <span class="math inline">\(SSE\)</span> is much smaller than <span class="math inline">\(SSTO\)</span>, then the residuals in the linear model are <em>much</em> smaller than the residuals in the reduced model, and <span class="math inline">\(R^2\)</span> is close to 1.</p></li>
+<li><p>If <span class="math inline">\(SSE\)</span> is about the same as <span class="math inline">\(SSTO\)</span>, then then residuals in the linear model are about the same as the residuals in the reduced model, and <span class="math inline">\(R^2\)</span> is close to 0.</p></li>
+<li><p>You can interpret <span class="math inline">\(R^2\)</span> as the proportionate reduction of total variation associated with the use of the predictor variable <span class="math inline">\(X\)</span>.</p></li>
+<li><p>Properties:</p>
+<ul>
+<li><span class="math inline">\(0 \leq R^2 \leq 1\)</span></li>
+<li><span class="math inline">\(R^2\)</span> close to 0 <span class="math inline">\(\Rightarrow\)</span> weak <em>linear</em> association.</li>
+<li><span class="math inline">\(R^2\)</span> close to 1 <span class="math inline">\(\Rightarrow\)</span> strong <em>linear</em> association.</li>
+<li>For simple linear regression, it turns out that <span class="math inline">\(R^2\)</span> is the squared correlation coefficient, but <span class="math inline">\(R^2\)</span> is defined more generally to multiple linear regression while correlation is not as applicable.</li>
+</ul></li>
+<li><p>Important notes:</p>
+<ul>
+<li><span class="math inline">\(R^2\)</span> tells you <em>nothing</em> about if the regression line is a good fit. <span class="math inline">\(R^2\)</span> might be very high but there might be a curved relationship. <img src="03_inference_files/figure-html/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><span class="math inline">\(R^2\)</span> only tells you about the <em>linear</em> relationship, the <span class="math inline">\(R^2\)</span> could be 0 but the relationship is very strongly curved. <img src="03_inference_files/figure-html/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></li>
+</ul></li>
+<li><p>Different R^2 values <img src="03_inference_files/figure-html/unnamed-chunk-47-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-47-7.png" width="288" style="display: block; margin: auto;" /></p></li>
+</ul>
 </div>
 
 

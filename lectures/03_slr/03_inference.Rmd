@@ -27,7 +27,7 @@ klippy::klippy()
 - Sampling distributions of OLS estimates.
 - Hypothesis testing for regression coefficients.
 - Confidence intervals for regression coefficients.
-- Regression line intervals: pointwise confidence, prediction, confidence bands
+- Regression line intervals: point-wise confidence, prediction, confidence bands
 - $F$-tests for regression models.
 - $R$ and $R^2$.
 
@@ -70,6 +70,12 @@ klippy::klippy()
     $p$-values are not probability statements about hypotheses. They are probability statements of data *assuming the null hypothesis were true*. 
     
     Think about it this way: The above interpretation is making statements of $Pr(H_0|data)$, while $p$-values give statements about $Pr(data|H_0)$.
+    ```
+
+- **Exercise**: What is wrong with the following: "The $p$-value is large, so we accept the null hypothesis".
+
+    ```{block, eval = FALSE, echo = FALSE}
+    We never accept the null hypothesis. That is because to obtain the $p$-value, we first assume the null is true. The logic goes that if the $p$-value is small then we observed rare data if the null were true. But if the $p$-value is large, it is common under the null, but it could also be common under the alternative. So we don't have evidence one way or the other.
     ```
 
 
@@ -258,6 +264,7 @@ klippy::klippy()
       of repeated samples.
     - CORRECT: *Prior to sampling*, the probability of capturing the true
       parameter is 0.95.
+    - CORRECT: We reject the null that $H_0: \beta_1 = \mu$ at the 0.05 level if $\mu$ lies outside of the 95\% confidence interval for $\beta_1$ (connection between confidence intervals and hypothesis tests).
     - WRONG: After sampling, the probability of capturing the true parameter
       is 0.95. 
         - Because after sampling the parameter is either in the interval
@@ -318,11 +325,18 @@ klippy::klippy()
 
 - Thus $\hat{\beta}_1 \pm u s(\hat{\beta}_1)$, where $u = \text{qt}(1 - \alpha/2, n-2)$ is a $(1-\alpha)$ confidence interval for $\beta_1$.
 
+- Intervals that we calculate in this class will always be of the form
+    $$
+    \text{estimate} \pm \text{multiplier} \times \text{standard error}
+    $$
+    - For exams, I want you to be able to take an estimate and a standard error and (i) tell me how to find the multiplier in R and (ii) use these three components to calculate a confidence interval. So, e.g., know that for simple linear regression we use `qt(p = 1 - alpha / 2, df = n - 2)`.
+    - Intervals can be calculate in more complicated ways.
+
 - Again, it is the interval that is random (and varies across repeated samples), not the parameter.
 
 ## Implementation in R.
 
-- R will return confidence intervals if you ask, so you typically do not need to do these calculations.
+- R will return confidence intervals if you ask, so you typically do not need to do these calculations in practice.
 
 - First, use `lm()` to fit the linear model.
     ```{r, message=FALSE}
@@ -446,9 +460,9 @@ We will go through these three intervals in turn.
   
 - This confidence interval only applies when a *single* mean response is to be estimated.
 
-- These are called **pointwise confidence intervals** because they provide confidence intervals for the mean at a single $X_i$.
+- These are called **point-wise confidence intervals** because they provide confidence intervals for the mean at a single $X_i$.
 
-- If you use `geom_smooth()` from `{ggplot2}`, the resulting confidence intervals are all pointwise.
+- If you use `geom_smooth()` from `{ggplot2}`, the resulting confidence intervals are all point-wise.
 
 - **Exercise**: Write a paragraph on the strategy you would use to test $H_0: E[Y_i|X_i] = \mu$ for some prespecified $\mu$.
 
@@ -490,7 +504,7 @@ We will go through these three intervals in turn.
 
 - A $(1-\alpha)$ **prediction interval** captures $(1-\alpha)$ new values, over both repeated samples and repeated values.
 
-- It's easier to begin thinking about prediction intervals as if $\beta_0$, $\beta_1$, and $\sigma^2$ were known. Suppose we know these two values, then
+- It's easier to begin thinking about prediction intervals as if $\beta_0$, $\beta_1$, and $\sigma^2$ were known. Suppose we know these values, then
     $$
     Y_{i(new)} \sim N(\beta_0 + \beta_1X_{i(new)}, \sigma^2),
     $$
@@ -616,7 +630,7 @@ We will go through these three intervals in turn.
       geom_line(data = newdf, mapping = aes(x = growth, y = upr))
     ```
     
-- "wh" standars for "Working-Hotelling".
+- "wh" stands for "Working-Hotelling".
 
 ## Comparing intervals
 
@@ -655,13 +669,29 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
 
 # ANOVA approach to hypothesis testing
 
-- Our hypothesis test is a comparison between the two models:
+- In this section, we will talk about a different strategy to testing $H_0: \beta_1 = 0$.
+
+- In simple linear regression, this results in the *exact same $p$-value* as the test that uses the $t$-statistic. 
+
+- However, this strategy is more applicable to general linear hypotheses that we'll discuss in multiple linear regression.
+
+- Testing $H_0: \beta_1 = 0$ is really a comparison between the two models:
     \begin{align}
-    Y_i &= \beta_0 + \epsilon_i\\
-    Y_i &= \beta_0 + \beta_1 X_i + \epsilon_i
+    H_0: Y_i &= \beta_0 + \epsilon_i\\
+    H_A: Y_i &= \beta_0 + \beta_1 X_i + \epsilon_i
     \end{align}
-    
+
 - We will call the first model the **reduced** model and the second model the **full** model. This is because the reduced model is a subset of the full model (you get the reduced from the full by setting $\beta_1 = 0$).
+
+- Our strategy will be to compare the residuals under $H_0$ and $H_A$. If $H_A$ were true, we would expect the those residuals to be much smaller than the residuals under $H_0$ (because the line fits a lot better).
+
+- If $H_0$ were true, then we would expect the residuals under $H_A$ to only be a little bit smaller than those under $H_0$.
+
+- We fit $H_A$ by the method of least squares, obtaining the OLS estimates and the corresponding residuals.
+
+- We fit $H_0$ also by least squares. It turns out that under $H_0$, the OLS estimate is just $\bar{Y}$.
+
+- We measure how small the residuals are by the sum of squared residuals.
 
 - Sum of squares of reduced model
 
@@ -709,11 +739,278 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
       geom_segment(aes(x = growth, xend = growth, y = vote, yend = yhat))
     ```
 
+- NOTE: $SSE(F)$ will *always* be less than or equal to $SSE(R)$. 
+    - This is since $SSE(R)$ is a subset of $SSE(F)$, and so if $SSE(R)$ is the smallest the residuals can get, then we can set $\beta_1 = 0$ in the full model to get $SSE(F) = SSE(R)$.
+
 - Under the null that the reduced model is true, we have that the following statistic has a sampling distribution that is $F(1, n-2)$
     $$
     F^* = \frac{[SSE(R) - SSE(F)]/(df_R - df_F)}{SSE(F)/df_F}
     $$
+- $df_r = n - 1$: sample size of $n$ minus 1 for the single parameter we estimate in the reduced model.
+
+- $df_f = n - 2$: sample size of $n$ minus 2 for the two parameters we estimate in the full model.
+    
+- If $H_A$ were true, then we would expect $F^*$ to be large, because this would increase the size of $SSE(R) - SSE(F)$. So we *only* compare $F^*$ to the right tail of $F(1, n-2)$ distribution.
+
+    ```{r, echo = FALSE}
+    library(latex2exp)
+    tdat <- tibble(x = seq(from = 0, to = 3, length.out = 500)) %>%
+      mutate(y = df(x = x, df1 = 1, df2 = 10))
+    ggplot() +
+      geom_line(data = tdat, mapping = aes(x = x, y = y)) +
+      geom_ribbon(data = filter(tdat, x > 0.7), mapping = aes(x = x, ymin = 0, max = y), fill = "blue") +
+      geom_vline(xintercept = 0.7, lty = 2, col = 2) +
+      xlab(TeX("$F^*$")) +
+      ylab(TeX("df($F^*$, 1, n-2)"))
+    ```
+
+- Let's verify this result manually:
+    ```{r}
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    aout <- augment(lmhibbs)
+    sse_full <- sum(aout$.resid^2)
+    ybar <- mean(hibbs$vote)
+    sse_reduced <- sum((aout$vote - ybar)^2)
+    n <- nrow(hibbs)
+    df_r <- n - 1
+    df_f <- n - 2
+    f_star <- ((sse_reduced - sse_full) / (df_r - df_f)) / (sse_full / df_f)
+    f_star
+    pf(q = f_star, df1 = 1, df2 = n - 2, lower.tail = FALSE)
+    ```
+
+- This is the same as the $p$-value from the output of $tidy()$.
+    ```{r}
+    tidy(lmhibbs)$p.value[[2]]
+    ```
+
+
+## ANOVA terminology
+
+- Confusingly, statisticians have alternative terms for these sums of squares that you might see.
+
+    ```{r, echo = FALSE, message = FALSE}
+    library(tidyverse)
+    library(broom)
+    
+    hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
+    lmout <- lm(vote ~ growth, data = hibbs)
+    tout <- tidy(lmout)
+    beta0 <- tout$estimate[[1]]
+    beta1 <- tout$estimate[[2]]
+    
+    hibbs %>%
+      mutate(yhat = beta0 + beta1 * growth,
+             ybar = mean(vote)) ->
+      hibbs
+    ```
+
+- The $SSE(F)$ is sometimes called the $SSE$ (sum of squares error).
+
+    $$
+    SSE = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
+    $$
+
+    ```{r, echo = FALSE}
+    ggplot(data = hibbs) +
+      geom_point(aes(x = growth, y = vote)) +
+      geom_line(aes(x = growth, y = yhat), lwd = 2, col = "blue", alpha = 1/3) +
+      xlab("Growth") +
+      ylab("Vote") +
+      geom_segment(aes(x = growth, xend = growth, y = vote, yend = yhat))
+    ```
+
+- The $SSE(R)$ is sometimes called the $SSTO$ (sum of squares total).
+
+    $$
+    SSTO = \sum_{i=1}^n(Y_i - \bar{Y})^2
+    $$
+    
+    ```{r, echo = FALSE}
+    ggplot(data = hibbs) +
+      geom_point(aes(x = growth, y = vote)) +
+      geom_line(aes(x = growth, y = ybar), lwd = 2, col = "blue", alpha = 1/3) +
+      xlab("Growth") +
+      ylab("Vote") +
+      geom_segment(aes(x = growth, xend = growth, y = vote, yend = ybar))
+    ```
+
+- The difference $SSE(R) - SSE(F)$ is sometimes called $SSR$ (sum of squares regression).
+
+    $$
+    SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2
+    $$
+
+    ```{r, echo = FALSE}
+    ggplot(data = hibbs) +
+      geom_point(aes(x = growth, y = vote)) +
+      geom_line(aes(x = growth, y = yhat), lwd = 2, col = "blue", alpha = 1/3) +
+      xlab("Growth") +
+      ylab("Vote") +
+      geom_line(aes(x = growth, y = ybar), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_segment(aes(x = growth, xend = growth, y = ybar, yend = yhat))
+    ```
+
+- We have the result that
+    $$
+    SSTO = SSR + SSE
+    $$
+
+## Degrees of freedom
+
+- **Degrees of freedom** are how many units of independent information we have.
+  - You can consider it a measure of the variability of a sum of squares.
+  - Larger means more information (lower variability).
+  - Smaller means less information (higher variability).
+  
+- $SSTO$ has $n - 1$ degrees of freedom, called $df_{TO}$ ($n$ observations minus 1 parameter that we estimate).
+
+- $SSE$ has $n-2$ degrees of freedom, called $df_{E}$ ($n$ observations minus 2 parameters that we estimate).
+
+- $SSR$ has $1$ degree of freedom, called $df_{R}$ ($\hat{Y}$ used 2 parameters, while we only used 1 parameter, so the difference is 1).
+
+- It is always the case that $df_{TO} = df_E + df_R$.
+
+## Mean Squares
+
+- A sum of square divided by its degrees of freedom is called a **mean square**.
+
+- The **mean squared error** is
+$$
+MSE = SSE / df_E = SSE / (n-2)
+$$
+
+- The **mean square regression** is 
+    $$
+    MSR = SSR / df_R = SSR / 1
+    $$
+    
+- We can show that this is an equivalent definition of $F^*$.
+$$
+F^* = \frac{MSR}{MSE} = \frac{SSR / df_R}{SSE / df_E} = \frac{(SSTO - SSE) / (df_{TO} - df_{E})}{SSE / df_E}
+$$
+
+## ANOVA Table
+
+- Because you can (i) "partition" the total sum of squares into the regression sum of squares and the error sum of squares, and (ii) "partition" the total degrees of freedom into the error degrees of freedom and the regression degrees of freedom, some folks represent regression fits in terms of an ANOVA (analysis of variance) table
+
+- It's called "analysis of variance" because we look at the sum of squares and how they partition between different models.
+
+- We often present the results of an ANOVA in a table, which can contain some or all of the following elements (usually some components are missing):
+
+    |            | SS                                          | df                | MS  | $p$-value                   |
+    |------------|:-------------------------------------------:|:-----------------:|:---:|:---------------------------:|
+    | Regression | $SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2$ | $df_R = p - 1$    | MSR | pf($F^*$, $df_R$, $df_E$, lower.tail = FALSE) |
+    | Error      | $SSE = \sum_{i=1}^n(Y_i - \hat{Y})^2$       | $df_E = n - p$    | MSE |                             |
+    | Total      | $SSTO = \sum_{i=1}^n(Y_i - \bar{Y})^2$      | $df_{TO} = n - 1$ |     |                             |
+    
+- Here $p$ is the number of predictors (so $p = 1$ in the simple linear regression).
+
+## ANOVA implementation in R
+
+- To calculate the ANOVA table in R, use the `Anova()` function from the `{car}` package. You just pass the `lm` object to the `Anova()` function.
+    ```{r, message = FALSE}
+    library(car)
+    Anova(mod = lmhibbs)
+    ```
+
+- **Exercise**: From the output of `linearHypothesis()`, label each of the following (which can be found in the above table): `df_R`, `df_E`, `SSE`, `SSR`.
+
+```{block, eval = FALSE, echo = FALSE}
+          Sum Sq Df F value  Pr(>F)
+growth       SSR  dfR  19.3 0.00061
+Residuals    SSE  dfE 
+```
+
+- **Exercise**: Using the above ANOVA table, derive the MSE (the estimated variance).
+
+    ```{block, eval = FALSE, echo = FALSE}
+    198 / 14 = 14.14
+    
+    So the estimated standard deviation is 3.76, which is what we obtained from `glance()`.
+    ```
+
+- There exists an `anova()` function in R, and it produces the same results for simple linear regression, but it produces worse results for multiple linear regression.
+
+- Use the `linearHypothesis()` function from the `{car}` package to run a general linear hypothesis.
+
+    ```{r, message = FALSE}
+    linearHypothesis(model = lmhibbs, "growth = 0")
+    ```
+
+- **Exercise**: From the output of `linearHypothesis()`, label each of the following (which can be found in the above table): `df_R`, `df_E`, `df_{TO}`, `SSE`, `SSR`, `SSTO`.
+    ```{block, eval = FALSE, echo = FALSE}
+    It's a weird format, but we have
+    
+       Res.Df    RSS      Df Sum of Sq    F  Pr(>F)
+    1 $df_TO$ $SSTO$                          
+    2  $df_E$  $SSE$  $df_R$     $SSR$ 19.3 0.00061
+    ```
 
 # Coefficient of Determination
 
-# Correlation Coefficient
+- $\frac{1}{n-2}SSE$ is the estimated variance under the linear regression model.
+
+- $\frac{1}{n-1}SSTO$ is the estimated variance under the model $Y_i = \beta_0 + \epsilon_i$ (no linear association between $X$ and $Y$).
+
+- A common measure of the strength of the linear association between $X$ and $Y$ is the **coefficient of determination**
+    $$
+    R^2 = 1 - \frac{SSE}{SSTO}
+    $$
+
+- If $SSE$ is much smaller than $SSTO$, then the residuals in the linear model are *much* smaller than the residuals in the reduced model, and $R^2$ is close to 1.
+
+- If $SSE$ is about the same as $SSTO$, then then residuals in the linear model are about the same as the residuals in the reduced model, and $R^2$ is close to 0.
+
+- You can interpret $R^2$ as the proportionate reduction of total variation associated with the use of the predictor variable $X$.
+
+- Properties:
+    - $0 \leq R^2 \leq 1$
+    - $R^2$ close to 0 $\Rightarrow$ weak *linear* association.
+    - $R^2$ close to 1 $\Rightarrow$ strong *linear* association.
+    - For simple linear regression, it turns out that $R^2$ is the squared correlation coefficient, but $R^2$ is defined more generally to multiple linear regression while correlation is not as applicable.
+    
+- Important notes:
+    - $R^2$ tells you *nothing* about if the regression line is a good fit. $R^2$ might be very high but there might be a curved relationship.
+        ```{r, echo = FALSE}
+        set.seed(1)
+        df <- data.frame(x = runif(10, 0, 1))
+        df$y <- (df$x-0.3)^2
+        lmtemp <- lm(y ~ x, data = df)
+        
+        qplot(x, y, data = df) +
+          ggtitle(TeX(paste0("$R^2 = $", round(summary(lmtemp)$r.square, digits = 2))))
+        ```
+    - $R^2$ only tells you about the *linear* relationship, the $R^2$ could be 0 but the relationship is very strongly curved.
+        ```{r, echo = FALSE}
+        set.seed(2)
+        df <- data.frame(x = runif(10, 0, 1))
+        df$y <- (df$x-0.5)^2
+        lmtemp <- lm(y ~ x, data = df)
+        
+        qplot(x, y, data = df) +
+          ggtitle(TeX(paste0("$R^2 = $", round(summary(lmtemp)$r.square, digits = 2))))
+        ```
+
+- Different R^2 values
+```{r, warning=FALSE, echo=FALSE, fig.height=3, fig.width=3}
+set.seed(1)
+x <- runif(100)
+sigseq <- seq(0, 0.75, length.out = 7)
+
+for (i in seq_along(sigseq)) {
+  y <- x + rnorm(length(x), sd = sigseq[[i]])
+  r2 <- summary(lm(y ~ x))$r.square
+  qplot(x = x, y = y) +
+    ggtitle(TeX(paste0("$R^2 = ", round(r2, digits = 2), "$"))) +
+    theme(axis.text = element_blank(),
+          axis.title = element_blank(),
+          axis.ticks = element_blank()) ->
+    pl
+  print(pl)
+}
+
+```
+
+
+
