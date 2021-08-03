@@ -33,7 +33,7 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [The Model](./03_ols.html). Chapter 1 of KNNL.
   - [Inference](./03_inference.html). Chapter 2 of KNNL.
   - [Infernence Lab](./03_inference_lab.html).
-  - Assumptions/Diagnostics. Chapter 3 of KNNL.
+  - [Diagnostics and Remedial Measures](./03_diagnostics.html). Chapter 3 of KNNL.
 - 04 Linear algebra
   - [Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
   - Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.
