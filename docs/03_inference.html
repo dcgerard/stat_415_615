@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-02" />
+<meta name="date" content="2021-08-03" />
 
 <title>Simple Linear Regression: Inference</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-02</h4>
+<h4 class="date">2021-08-03</h4>
 
 </div>
 
@@ -346,7 +346,7 @@ $(document).ready(function () {
 <li><span class="math inline">\(H_A: \beta_1 \neq 0\)</span>.
 <ul>
 <li><span class="math inline">\(Y_i\)</span> and <span class="math inline">\(X_i\)</span> are <em>linearly</em> associated.</li>
-<li>We can get better guesses by of <span class="math inline">\(Y_i\)</span> by knowing <span class="math inline">\(X_i\)</span> than if we did not know <span class="math inline">\(X_i\)</span>.</li>
+<li>We can get better guesses of <span class="math inline">\(Y_i\)</span> by knowing <span class="math inline">\(X_i\)</span> than if we did not know <span class="math inline">\(X_i\)</span>.</li>
 </ul></li>
 </ul></li>
 <li><p>Overview of the strategy of hypothesis testing:</p>
@@ -355,7 +355,7 @@ $(document).ready(function () {
 <li>We obtain a test statistic whose large/small values will provide support against the null.</li>
 <li>We compare the observed test-statistic to the distribution of hypothetical test statistics we would have observed <em>if the null were true</em>.
 <ul>
-<li>This distribution is called the <strong>sampling distribution</strong> of the test statistic.</li>
+<li>This distribution is called the <strong>null sampling distribution</strong> of the test statistic.</li>
 </ul></li>
 <li>We obtain the <strong><span class="math inline">\(p\)</span>-value</strong>: The probability of seeing a data as extreme or more extreme than what we saw <em>if the null were true</em>.</li>
 <li>If the <span class="math inline">\(p\)</span>-value is small, then our data would be very rare if the null were true, so we claim the null is not true.</li>
@@ -849,7 +849,7 @@ f_star</code></pre>
 </ul></li>
 <li><p><span class="math inline">\(SSTO\)</span> has <span class="math inline">\(n - 1\)</span> degrees of freedom, called <span class="math inline">\(df_{TO}\)</span> (<span class="math inline">\(n\)</span> observations minus 1 parameter that we estimate).</p></li>
 <li><p><span class="math inline">\(SSE\)</span> has <span class="math inline">\(n-2\)</span> degrees of freedom, called <span class="math inline">\(df_{E}\)</span> (<span class="math inline">\(n\)</span> observations minus 2 parameters that we estimate).</p></li>
-<li><p><span class="math inline">\(SSR\)</span> has <span class="math inline">\(1\)</span> degree of freedom, called <span class="math inline">\(df_{R}\)</span> (<span class="math inline">\(\hat{Y}\)</span> used 2 parameters, while we only used 1 parameter, so the difference is 1).</p></li>
+<li><p><span class="math inline">\(SSR\)</span> has <span class="math inline">\(1\)</span> degree of freedom, called <span class="math inline">\(df_{R}\)</span> (<span class="math inline">\(\hat{Y}\)</span> used 2 parameters, while <span class="math inline">\(\bar{Y}\)</span> only used 1 parameter, so the difference is 1).</p></li>
 <li><p>It is always the case that <span class="math inline">\(df_{TO} = df_E + df_R\)</span>.</p></li>
 </ul>
 </div>

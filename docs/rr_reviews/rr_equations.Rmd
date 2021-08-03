@@ -1,0 +1,49 @@
+---
+title: "Equation Review"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+set.seed(1)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Summary
+
+Here is a list of the equations I want you to have memorized at the top of your head.
+
+# List
+
+- Mean: $\bar{Y} = \frac{1}{n}\sum_{i=1}^n$
+- SLR Model: $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$, $E[\epsilon_i] = 0$, $var(\epsilon_i) = \sigma^2$, $cor(\epsilon_i, \epsilon_j) = 0$ for $i\neq j$.
+- Normal SLR Model: $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$, $\epsilon \overset{iid}{\sim} N(0, \sigma^2)$.
+- OLS Objective: $\sum_{i=1}^n\left[Y_i - (\beta_0 + \beta_1X_i)\right]^2
+- SLR OLS estimates: $\hat{\beta}_0 = \bar{Y} - \hat{\beta}_1\bar{X}$, $\hat{\beta}_1 = cor(X, Y)\frac{sd(Y)}{sd(X)}$.
+- Residuals $e_i = Y_i - \hat{Y}_i$.
+- Properties of fitted regression line: (i) mean of residuals is 0, (ii) mean of observed values equals mean of fitted values, (iii) residuals are uncorrelated with predictors, (iv) residuals are uncorrelated with *fitted* values, and (v) regression line always goes through mean $(\bar{X}, \bar{Y})$.
+- MSE: $MSE = \frac{1}{n-p}\sum_{i=1}^n\left[Y_i - \hat{Y}_i\right]^2$.
+- $t$-statistic: $t^* = \frac{\hat{\beta}_1}{s(\hat{\beta}_1)}$, which follows a $t_{n-p}$ distribution numder the null that $\beta_1 = 0$.
+- Get two-sided $p$-value manually via $2 * pt(q = -abs(t^*), df = n - p)$.
+- Confidence interval = estimate $\pm$ multiplier $\times$ standard error
+    - Typically, multiplier = $qt(1 - \alpha/2, df)$, tell me what $\alpha$ and $df = n-p$ should be.
+    - In prediction interval, $s^2(pred) = s^2(\hat{Y}_i) + MSE$.
+- $SSE = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2$, with $df_E = n - p$
+- $SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y}_i)^2$, with $df_R = n - p$ 
+- $SSTO = \sum_{i=1}^n(Y_i - \bar{Y}_i)^2$, with $df_{TO} = n-1$
+- $SSTO = SSE + SSR$
+- $F^* = \frac{SSR/df_R}{SSE/df_E}$, which follows an $F(df_R, df_E)$ distribution under the null model of $Y_i = \beta_0 + \epsilon_i$.
+- $R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}$
+

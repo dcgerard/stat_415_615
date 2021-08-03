@@ -45,7 +45,7 @@ klippy::klippy()
         - $E[Y_i|X_i] = \beta_0$ no matter the value of $X_i$. So $X_i$ doesn't tell us anything about $Y_i$ (in the context of linear relationships).
     - $H_A: \beta_1 \neq 0$.
         - $Y_i$ and $X_i$ are *linearly* associated.
-        - We can get better guesses by of $Y_i$ by knowing $X_i$ than if we did not know $X_i$.
+        - We can get better guesses of $Y_i$ by knowing $X_i$ than if we did not know $X_i$.
         
 - Overview of the strategy of hypothesis testing:
 
@@ -53,7 +53,7 @@ klippy::klippy()
     
     1. We obtain a test statistic whose large/small values will provide support against the null.
     2. We compare the observed test-statistic to the distribution of hypothetical test statistics we would have observed *if the null were true*. 
-        - This distribution is called the **sampling distribution** of the test statistic.
+        - This distribution is called the **null sampling distribution** of the test statistic.
     3. We obtain the **$p$-value**: The probability of seeing a data as extreme or more extreme than what we saw *if the null were true*.
     4. If the $p$-value is small, then our data would be very rare if the null were true, so we claim the null is not true.
     5. If the $p$-value is large, then our data would be common if the null were true. But it could also be common if the null were false, so we make no claims.
@@ -889,13 +889,13 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
 
 - $SSE$ has $n-2$ degrees of freedom, called $df_{E}$ ($n$ observations minus 2 parameters that we estimate).
 
-- $SSR$ has $1$ degree of freedom, called $df_{R}$ ($\hat{Y}$ used 2 parameters, while we only used 1 parameter, so the difference is 1).
+- $SSR$ has $1$ degree of freedom, called $df_{R}$ ($\hat{Y}$ used 2 parameters, while $\bar{Y}$ only used 1 parameter, so the difference is 1).
 
 - It is always the case that $df_{TO} = df_E + df_R$.
 
 ## Mean Squares
 
-- A sum of square divided by its degrees of freedom is called a **mean square**.
+- A sum of squares divided by its degrees of freedom is called a **mean square**.
 
 - The **mean squared error** is
 $$

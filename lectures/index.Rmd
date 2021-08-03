@@ -47,3 +47,5 @@ University by [David Gerard](https://dcgerard.github.io/).
   - Power
   - Sample size calculation
 - 07 Missing data
+- Review Sheets
+  - [Equations](./rr_equations.html).

@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-08-03" />
 
-<title>Regression</title>
+<title>Equation Review</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -34,6 +34,10 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -263,71 +267,51 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression</h1>
+<h1 class="title toc-ignore">Equation Review</h1>
 <h4 class="author">David Gerard</h4>
 <h4 class="date">2021-08-03</h4>
 
 </div>
 
-
-<div id="synopsis" class="section level1">
-<h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
-</div>
-<div id="administrative" class="section level1">
-<h1>Administrative</h1>
+<div id="TOC">
 <ul>
-<li><a href="./syllabus.html">Syllabus</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#list">List</a></li>
 </ul>
 </div>
-<div id="lectures" class="section level1">
-<h1>Lectures</h1>
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Here is a list of the equations I want you to have memorized at the top of your head.</p>
+</div>
+<div id="list" class="section level1">
+<h1>List</h1>
 <ul>
-<li>00 Motivation
+<li>Mean: <span class="math inline">\(\bar{Y} = \frac{1}{n}\sum_{i=1}^n\)</span></li>
+<li>SLR Model: <span class="math inline">\(Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\)</span>, <span class="math inline">\(E[\epsilon_i] = 0\)</span>, <span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span>, <span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for <span class="math inline">\(i\neq j\)</span>.</li>
+<li>Normal SLR Model: <span class="math inline">\(Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\)</span>, <span class="math inline">\(\epsilon \overset{iid}{\sim} N(0, \sigma^2)\)</span>.</li>
+<li>OLS Objective: $_{i=1}<sup>n</sup>2</li>
+<li>SLR OLS estimates: <span class="math inline">\(\hat{\beta}_0 = \bar{Y} - \hat{\beta}_1\bar{X}\)</span>, <span class="math inline">\(\hat{\beta}_1 = cor(X, Y)\frac{sd(Y)}{sd(X)}\)</span>.</li>
+<li>Residuals <span class="math inline">\(e_i = Y_i - \hat{Y}_i\)</span>.</li>
+<li>Properties of fitted regression line: (i) mean of residuals is 0, (ii) mean of observed values equals mean of fitted values, (iii) residuals are uncorrelated with predictors, (iv) residuals are uncorrelated with <em>fitted</em> values, and (v) regression line always goes through mean <span class="math inline">\((\bar{X}, \bar{Y})\)</span>.</li>
+<li>MSE: <span class="math inline">\(MSE = \frac{1}{n-p}\sum_{i=1}^n\left[Y_i - \hat{Y}_i\right]^2\)</span>.</li>
+<li><span class="math inline">\(t\)</span>-statistic: <span class="math inline">\(t^* = \frac{\hat{\beta}_1}{s(\hat{\beta}_1)}\)</span>, which follows a <span class="math inline">\(t_{n-p}\)</span> distribution numder the null that <span class="math inline">\(\beta_1 = 0\)</span>.</li>
+<li>Get two-sided <span class="math inline">\(p\)</span>-value manually via <span class="math inline">\(2 * pt(q = -abs(t^*), df = n - p)\)</span>.</li>
+<li>Confidence interval = estimate <span class="math inline">\(\pm\)</span> multiplier <span class="math inline">\(\times\)</span> standard error
 <ul>
-<li><a href="./00_motivation.html">Linear Regression Overview</a>.</li>
+<li>Typically, multiplier = <span class="math inline">\(qt(1 - \alpha/2, df)\)</span>, tell me what <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(df = n-p\)</span> should be.</li>
+<li>In prediction interval, <span class="math inline">\(s^2(pred) = s^2(\hat{Y}_i) + MSE\)</span>.</li>
 </ul></li>
-<li>01 Crash Course in R
-<ul>
-<li><a href="./01_r_intro.html">R introduction</a>.</li>
-<li><a href="01_r_markdown.html">R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">R graphics with <code>qplot()</code></a>.</li>
-</ul></li>
-<li>02 Review
-<ul>
-<li><a href="./02_math_prereq.html">Mathematical prerequisites</a>.</li>
-<li><a href="./02_prob_sim.html">Probability and simulation</a>.</li>
-</ul></li>
-<li>03 Simple linear regression
-<ul>
-<li><a href="./03_ols.html">The Model</a>. Chapter 1 of KNNL.</li>
-<li><a href="./03_inference.html">Inference</a>. Chapter 2 of KNNL.</li>
-<li><a href="./03_inference_lab.html">Infernence Lab</a>.</li>
-<li>Assumptions/Diagnostics. Chapter 3 of KNNL.</li>
-</ul></li>
-<li>04 Linear algebra
-<ul>
-<li><a href="./04_linear_algebra.html">Linear algebra basics</a>. Chapter 5 of KNNL.</li>
-<li>Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.</li>
-</ul></li>
-<li>05 Multiple linear regression
-<ul>
-<li>Model/Interpretation (including interactions, indicators)</li>
-<li>Estimation</li>
-<li>Hypothesis Testing</li>
-<li>Assumptions</li>
-<li>Transformations</li>
-</ul></li>
-<li>06 Design
-<ul>
-<li>Power</li>
-<li>Sample size calculation</li>
-</ul></li>
-<li>07 Missing data</li>
-<li>Review Sheets
-<ul>
-<li><a href="./rr_equations.html">Equations</a>.</li>
-</ul></li>
+<li><span class="math inline">\(SSE = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2\)</span>, with <span class="math inline">\(df_E = n - p\)</span></li>
+<li><span class="math inline">\(SSR = \sum_{i=1}^n(\hat{Y}_i - \bar{Y}_i)^2\)</span>, with <span class="math inline">\(df_R = n - p\)</span></li>
+<li><span class="math inline">\(SSTO = \sum_{i=1}^n(Y_i - \bar{Y}_i)^2\)</span>, with <span class="math inline">\(df_{TO} = n-1\)</span></li>
+<li><span class="math inline">\(SSTO = SSE + SSR\)</span></li>
+<li><span class="math inline">\(F^* = \frac{SSR/df_R}{SSE/df_E}\)</span>, which follows an <span class="math inline">\(F(df_R, df_E)\)</span> distribution under the null model of <span class="math inline">\(Y_i = \beta_0 + \epsilon_i\)</span>.</li>
+<li><span class="math inline">\(R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}\)</span></li>
 </ul>
 </div>
 
