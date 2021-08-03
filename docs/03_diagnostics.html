@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2021-08-03" />
+
+<title>Diagnostics and Remedial Measures</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2021-08-03</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#learning-objectives">Learning Objectives</a></li>
+<li><a href="#recall-assumptions-in-decreasing-order-of-importance">Recall: Assumptions in Decreasing Order of Importance</a></li>
+<li><a href="#problems-when-violated">Problems when Violated</a>
+<ul>
+<li><a href="#assessment-tools-scatterplots-and-residual-plots">Assessment Tools: Scatterplots and Residual Plots</a></li>
+</ul></li>
+<li><a href="#dataset-1-gold-standard">Dataset 1: Gold Standard</a>
+<ul>
+<li><a href="#dataset-1-scatterplot">Dataset 1: Scatterplot</a></li>
+<li><a href="#dataset-1-residual-plot">Dataset 1: Residual Plot</a></li>
+<li><a href="#dataset-1-summary">Dataset 1: Summary</a></li>
+</ul></li>
+<li><a href="#dataset-2-curved-monotone-relationship-equal-variances">Dataset 2: Curved Monotone Relationship, Equal Variances</a>
+<ul>
+<li><a href="#dataset-2-scatterplot">Dataset 2: Scatterplot</a></li>
+<li><a href="#dataset-2-residual-plot">Dataset 2: Residual Plot</a></li>
+<li><a href="#dataset-2-summary">Dataset 2: Summary</a></li>
+<li><a href="#dataset-2-transformed-x-scatterplot">Dataset 2: Transformed <span class="math inline">\(x\)</span> Scatterplot</a></li>
+<li><a href="#dataset-2-transformed-x-residual-plot">Dataset 2: Transformed <span class="math inline">\(x\)</span> Residual Plot</a></li>
+</ul></li>
+<li><a href="#dataset-3-curved-non-monotone-relationship-equal-variances">Dataset 3: Curved Non-monotone Relationship, Equal Variances</a>
+<ul>
+<li><a href="#dataset-3-scatterplot">Dataset 3: Scatterplot</a></li>
+<li><a href="#dataset-3-residual-plot">Dataset 3: Residual Plot</a></li>
+<li><a href="#dataset-3-summary">Dataset 3: Summary</a></li>
+<li><a href="#dataset-3-solution">Dataset 3: Solution</a></li>
+<li><a href="#dataset-3-fitting-ey_i-beta_0-beta_1-x_i-beta_2-x_i2">Dataset 3: Fitting <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2\)</span></a></li>
+<li><a href="#dataset-3-solution-1-residuals">Dataset 3: Solution 1 Residuals</a></li>
+<li><a href="#dataset-3-peak-estimation">Dataset 3: Peak estimation</a></li>
+</ul></li>
+<li><a href="#dataset-4-curved-monotone-relationship-variance-increases-with-y">Dataset 4: Curved Monotone Relationship, Variance Increases with <span class="math inline">\(Y\)</span></a>
+<ul>
+<li><a href="#dataset-4-scatterplot">Dataset 4: Scatterplot</a></li>
+<li><a href="#dataset-4-residual-plot">Dataset 4: Residual Plot</a></li>
+<li><a href="#dataset-4-summary">Dataset 4: Summary</a></li>
+<li><a href="#dataset-4-solution">Dataset 4: Solution</a></li>
+<li><a href="#dataset-4-solution-1">Dataset 4: Solution</a></li>
+</ul></li>
+<li><a href="#dataset-5-linear-relationship-equal-variances-skewed-distribution">Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution</a>
+<ul>
+<li><a href="#dataset-5-scatterplot">Dataset 5: Scatterplot</a></li>
+<li><a href="#dataset-5-residual-plot">Dataset 5: Residual Plot</a></li>
+<li><a href="#dataset-5-summary">Dataset 5: Summary</a></li>
+<li><a href="#dataset-5-solution">Dataset 5: Solution</a></li>
+</ul></li>
+<li><a href="#dataset-6-linear-relationship-unequal-variances">Dataset 6: Linear Relationship, Unequal Variances</a>
+<ul>
+<li><a href="#dataset-6-scatterplot">Dataset 6: Scatterplot</a></li>
+<li><a href="#dataset-6-residual-plot">Dataset 6: Residual Plot</a></li>
+<li><a href="#dataset-6-summary">Dataset 6: Summary</a></li>
+<li><a href="#dataset-6-solution">Dataset 6: Solution</a></li>
+<li><a href="#compare-new-with-old">Compare new with old</a></li>
+<li><a href="#intuition-of-sandwich-estimator-of-variance">Intuition of Sandwich Estimator of Variance</a></li>
+<li><a href="#notes-on-sandwich">Notes on Sandwich</a></li>
+</ul></li>
+<li><a href="#dataset-7-outlying-observations">Dataset 7: Outlying observations</a>
+<ul>
+<li><a href="#dataset-7-residual-plot">Dataset 7: Residual Plot</a></li>
+<li><a href="#dataset-7-solution">Dataset 7: Solution</a></li>
+</ul></li>
+<li><a href="#sequence-plots-of-residuals-to-check-independence">Sequence plots of residuals to check independence</a></li>
+<li><a href="#quantile-quantile-plots-of-residuals-to-check-normality">Quantile-Quantile plots of residuals to check normality</a></li>
+<li><a href="#residual-plots-against-omitted-predictors">Residual plots against omitted predictors</a></li>
+<li><a href="#f-test-for-lack-of-fit"><span class="math inline">\(F\)</span>-test for lack of fit</a></li>
+<li><a href="#lowess-curves">LOWESS curves</a></li>
+</ul>
+</div>
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
+<ul>
+<li>Chapter 3 of KNNL (skip Sections 3.4–3.6 and the Box-Cox transformation).</li>
+<li>Interpreting residuals plots.</li>
+<li>Diagnosing violations in the assumptions of the simple linear model.</li>
+<li>Suggesting solutions to remedy the violations.</li>
+</ul>
+</div>
+<div id="recall-assumptions-in-decreasing-order-of-importance" class="section level1">
+<h1>Recall: Assumptions in Decreasing Order of Importance</h1>
+<ol style="list-style-type: decimal">
+<li><p><strong>Linearity</strong> - Does the relationship look like a straight line?</p></li>
+<li><p><strong>Independence</strong> - knowledge of the value of one observation does not give you any information on the value of another.</p></li>
+<li><p><strong>Equal Variance</strong> - The spread is the same for every value of <span class="math inline">\(x\)</span></p></li>
+<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations because of the CLT, or if you are doing prediction intervals).</p></li>
+</ol>
+</div>
+<div id="problems-when-violated" class="section level1">
+<h1>Problems when Violated</h1>
+<ol style="list-style-type: decimal">
+<li><p><strong>Linearity</strong> - Linear regression line does not pick up actual relationship</p></li>
+<li><p><strong>Independence</strong> - Linear regression line is unbiased, but standard errors are off.</p></li>
+<li><p><strong>Equal Variance</strong> - Linear regression line is unbiased, but standard errors are off.</p></li>
+<li><p><strong>Normality</strong> - Unstable results if outliers are present and sample size is small.</p></li>
+</ol>
+<div id="assessment-tools-scatterplots-and-residual-plots" class="section level2">
+<h2>Assessment Tools: Scatterplots and Residual Plots</h2>
+<ul>
+<li><p>Make a scatterplot of the explanatory variable (<span class="math inline">\(x\)</span>-axis) vs the response (<span class="math inline">\(y\)</span>-axis) to check for non-linearity, equal variance, and normality violations.</p></li>
+<li><p>Residuals (<span class="math inline">\(y\)</span>-axis) vs fitted values (<span class="math inline">\(x\)</span>-axis) is sometimes more clear because the signal is removed.</p></li>
+<li><p>You should get used to residual plots, because they are necessary when we start doing multiple linear regression</p>
+<ul>
+<li><span class="math inline">\(x\)</span> versus <span class="math inline">\(y\)</span> does not work well as a diagnostic device when you have many <span class="math inline">\(x\)</span>’s.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="dataset-1-gold-standard" class="section level1">
+<h1>Dataset 1: Gold Standard</h1>
+<div id="dataset-1-scatterplot" class="section level2">
+<h2>Dataset 1: Scatterplot</h2>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+x &lt;- runif(100, -3, 3)
+y &lt;- x + rnorm(100)
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-1-residual-plot" class="section level2">
+<h2>Dataset 1: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-1-summary" class="section level2">
+<h2>Dataset 1: Summary</h2>
+<ul>
+<li><p>Means are straight lines</p></li>
+<li><p>Residuals seem to be centered at 0 for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Everything looks perfect</p></li>
+</ul>
+</div>
+</div>
+<div id="dataset-2-curved-monotone-relationship-equal-variances" class="section level1">
+<h1>Dataset 2: Curved Monotone Relationship, Equal Variances</h1>
+<div id="dataset-2-scatterplot" class="section level2">
+<h2>Dataset 2: Scatterplot</h2>
+<pre class="r"><code>x &lt;- runif(100, 0, 6)
+x &lt;- x - min(x) + 0.5
+y &lt;- log(x) * 20 + rnorm(100, sd = 4)
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-2-residual-plot" class="section level2">
+<h2>Dataset 2: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-2-summary" class="section level2">
+<h2>Dataset 2: Summary</h2>
+<ul>
+<li><p>Curved (but always increasing <em>or</em> always decreasing) relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
+<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Residual plot has a parabolic shape.</p></li>
+<li><p>These indicate a <span class="math inline">\(\log\)</span> transformation of <span class="math inline">\(x\)</span> could help.</p></li>
+<li><p>Why not <span class="math inline">\(\log(y)\)</span>? Because taking transforming <span class="math inline">\(y\)</span> can change the variance, and we already have constant variance, so we do not want to mess with that.</p>
+<ul>
+<li>Recall, random variation occurs in the <span class="math inline">\(y\)</span> direction, not the <span class="math inline">\(x\)</span> direction.</li>
+</ul></li>
+</ul>
+</div>
+<div id="dataset-2-transformed-x-scatterplot" class="section level2">
+<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Scatterplot</h2>
+<pre class="r"><code>df &lt;- mutate(df, x_log = log(x))
+qplot(x = x_log, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-2-transformed-x-residual-plot" class="section level2">
+<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x_log, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="dataset-3-curved-non-monotone-relationship-equal-variances" class="section level1">
+<h1>Dataset 3: Curved Non-monotone Relationship, Equal Variances</h1>
+<div id="dataset-3-scatterplot" class="section level2">
+<h2>Dataset 3: Scatterplot</h2>
+<pre class="r"><code>x &lt;- runif(100, -3, 3)
+y &lt;- -x^2 + rnorm(100)
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-3-residual-plot" class="section level2">
+<h2>Dataset 3: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-3-summary" class="section level2">
+<h2>Dataset 3: Summary</h2>
+<ul>
+<li><p>Curved relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
+<li><p>Sometimes the relationship is increasing, sometimes it is decreasing.</p></li>
+<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Residual plot has a parabolic form.</p></li>
+</ul>
+</div>
+<div id="dataset-3-solution" class="section level2">
+<h2>Dataset 3: Solution</h2>
+<ul>
+<li><p>Fit model:</p>
+<p><span class="math display">\[
+  E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2
+  \]</span></p></li>
+<li><p>A more complicated solution (which we will not cover) would be to fit model <span class="math display">\[
+  Y_i = 
+  \begin{cases}
+  \beta_0 + \beta_1 X_i &amp; \text{ if } X_i &lt; C\\
+  \beta_0^* + \beta_1^* X_i &amp; \text{ if } X_i &gt; C\\
+  \end{cases}
+  \]</span></p></li>
+</ul>
+</div>
+<div id="dataset-3-fitting-ey_i-beta_0-beta_1-x_i-beta_2-x_i2" class="section level2">
+<h2>Dataset 3: Fitting <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2\)</span></h2>
+<pre class="r"><code>df &lt;- mutate(df, x2 = x^2) ## create x^2 first
+quad_lm &lt;- lm(y ~ x2 + x, data = df) ## lm of x^2 + x
+aout &lt;- augment(quad_lm)
+qplot(x = x, y = y, data = aout) +
+  geom_line(mapping = aes(x = x, y = .fitted), col = &quot;blue&quot;, lwd = 1)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-3-solution-1-residuals" class="section level2">
+<h2>Dataset 3: Solution 1 Residuals</h2>
+<pre class="r"><code>qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-3-peak-estimation" class="section level2">
+<h2>Dataset 3: Peak estimation</h2>
+<ul>
+<li><p>Recall that <span class="math inline">\(y = \beta_0 + \beta_1x + \beta_2x^2\)</span> is the equation of a parabola.</p></li>
+<li><p>The estimated parabola is <span class="math display">\[
+  y = 0.108 - 0.0524x - 1.03x^2
+  \]</span></p></li>
+<li><p>We can get these coefficient estimates by running</p>
+<pre class="r"><code>tidy(quad_lm)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   -0.211    0.152      -1.39 1.68e- 1
+## 2 x2            -0.952    0.0402    -23.7  4.46e-42
+## 3 x              0.106    0.0626      1.70 9.25e- 2</code></pre></li>
+<li><p>The negative coefficient for <span class="math inline">\(x^2\)</span> indicates that the parabola has a maximum, which we can recall occurs at <span class="math display">\[
+  x = -\frac{\beta_1}{2\beta_2} = -\frac{-0.05237}{2 \times -1.02588} = -0.02552
+  \]</span> So we could say that the trend increases to about 0, then decreases after 0.</p></li>
+</ul>
+</div>
+</div>
+<div id="dataset-4-curved-monotone-relationship-variance-increases-with-y" class="section level1">
+<h1>Dataset 4: Curved Monotone Relationship, Variance Increases with <span class="math inline">\(Y\)</span></h1>
+<div id="dataset-4-scatterplot" class="section level2">
+<h2>Dataset 4: Scatterplot</h2>
+<pre class="r"><code>x &lt;- runif(100, 0, 2)
+y &lt;- exp(x + rnorm(100, sd = 1/2))
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-4-residual-plot" class="section level2">
+<h2>Dataset 4: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-4-summary" class="section level2">
+<h2>Dataset 4: Summary</h2>
+<ul>
+<li><p>Curved relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
+<li><p>Variance looks like it increases as <span class="math inline">\(y\)</span> increases</p></li>
+<li><p>Residual plot has a parabolic form.</p></li>
+<li><p>Residual plot variance looks larger to the right and smaller to the left.</p></li>
+</ul>
+</div>
+<div id="dataset-4-solution" class="section level2">
+<h2>Dataset 4: Solution</h2>
+<ul>
+<li><p>Take a log-transformation of <span class="math inline">\(y\)</span>.</p>
+<pre class="r"><code>df &lt;- mutate(df, y_log = log(y))
+qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="dataset-4-solution-1" class="section level2">
+<h2>Dataset 4: Solution</h2>
+<pre class="r"><code>lmout &lt;- lm(y_log ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="dataset-5-linear-relationship-equal-variances-skewed-distribution" class="section level1">
+<h1>Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution</h1>
+<div id="dataset-5-scatterplot" class="section level2">
+<h2>Dataset 5: Scatterplot</h2>
+<pre class="r"><code>x &lt;- runif(200)
+y &lt;- 15 * x + rexp(200, 0.2)
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x, y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-5-residual-plot" class="section level2">
+<h2>Dataset 5: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-5-summary" class="section level2">
+<h2>Dataset 5: Summary</h2>
+<ul>
+<li><p>Straight line relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
+<li><p>Variances about equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Skew for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Residual plots show skew.</p></li>
+</ul>
+</div>
+<div id="dataset-5-solution" class="section level2">
+<h2>Dataset 5: Solution</h2>
+<ul>
+<li><p>Do nothing, but report skew (usually ok to do)</p></li>
+<li><p>Be fancy, fit quantile regression:</p></li>
+</ul>
+<p><span class="math display">\[
+Median(Y_i) = \beta_0 + \beta_1 X_i
+\]</span></p>
+<ul>
+<li>Be fancy, run a bootstrap (maybe we’ll talk about this later).</li>
+</ul>
+</div>
+</div>
+<div id="dataset-6-linear-relationship-unequal-variances" class="section level1">
+<h1>Dataset 6: Linear Relationship, Unequal Variances</h1>
+<div id="dataset-6-scatterplot" class="section level2">
+<h2>Dataset 6: Scatterplot</h2>
+<pre class="r"><code>x &lt;- runif(100)
+y &lt;- x + rnorm(100, sd = (x + 0.3)^2 / 2)
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-6-residual-plot" class="section level2">
+<h2>Dataset 6: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dataset-6-summary" class="section level2">
+<h2>Dataset 6: Summary</h2>
+<ul>
+<li><p>Linear relationshp between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
+<li><p>Variance is different for different values of <span class="math inline">\(x\)</span>.</p></li>
+<li><p>Residual plots really good at showing this.</p></li>
+</ul>
+</div>
+<div id="dataset-6-solution" class="section level2">
+<h2>Dataset 6: Solution</h2>
+<ul>
+<li><p>You can try logging both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, sometimes that works. But that won’t work here. Be careful about negative values.</p>
+<pre class="r"><code>df &lt;- mutate(df, y_log = log(y + 0.5),
+             x_log = log(x))
+qplot(x = x_log, y = y_log, data = df)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>The modern solution is to use <strong>sandwich</strong> estimates of the standard errors.</p>
+<pre class="r"><code>library(lmtest)
+library(sandwich)
+cout &lt;- coeftest(x = lmout, vcov. = vcovHC(x = lmout))
+tidy(cout)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic      p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 (Intercept)  -0.0218    0.0592    -0.368 0.713       
+## 2 x             1.00      0.170      5.90  0.0000000530</code></pre></li>
+</ul>
+</div>
+<div id="compare-new-with-old" class="section level2">
+<h2>Compare new with old</h2>
+<pre class="r"><code>tidy(cout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   term        estimate std.error statistic      p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)  -0.0218    0.0592    -0.368 0.713          -0.139    0.0956
+## 2 x             1.00      0.170      5.90  0.0000000530    0.666    1.34</code></pre>
+<pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)  -0.0218    0.0785    -0.277 7.82e- 1   -0.178     0.134
+## 2 x             1.00      0.141      7.11  1.94e-10    0.724     1.28</code></pre>
+</div>
+<div id="intuition-of-sandwich-estimator-of-variance" class="section level2">
+<h2>Intuition of Sandwich Estimator of Variance</h2>
+<ul>
+<li><p>Simplified Model: <span class="math inline">\(Y_i = \beta_1 x_i\)</span> (so zero intercept)</p></li>
+<li><p>Using Calculus: <span class="math inline">\(\hat{\beta}_1 = \frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^2}\)</span></p></li>
+</ul>
+<p>So <span class="math display">\[\begin{align*}
+Var(\hat{\beta}_1) &amp;= Var\left(\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^2}\right)\\
+&amp;=\frac{\sum_{i = 1}^n x_i^2 Var(y_i|x_i)}{\left(\sum_{i = 1}^n x_i^2\right)^2}
+\end{align*}\]</span></p>
+<ul>
+<li><p>Usual Method: Estimate <span class="math inline">\(Var(y_i|x_i)\)</span> with <span class="math inline">\(s_p^2\)</span></p>
+<ul>
+<li>Assumes variance estimate is same for all <span class="math inline">\(i\)</span></li>
+</ul></li>
+<li><p>Sandwich Method: Estimate <span class="math inline">\(Var(y_i|x_i)\)</span> with <span class="math inline">\((y_i - \hat{\beta}_1x_i)^2\)</span></p>
+<ul>
+<li>Allows variance estimate to differ at each <span class="math inline">\(i\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="notes-on-sandwich" class="section level2">
+<h2>Notes on Sandwich</h2>
+<ul>
+<li><p>They result in accurate standard errors of the coefficient estimates as long as</p>
+<ol style="list-style-type: decimal">
+<li><p>The linearity assumption is satisfied.</p></li>
+<li><p>Independence is satisfied</p></li>
+<li><p>You have a large enough sample size.</p></li>
+</ol></li>
+<li><p>You cannot use them for prediction intervals</p></li>
+<li><p>We will talk more about the sandwich estimator later.</p></li>
+</ul>
+</div>
+</div>
+<div id="dataset-7-outlying-observations" class="section level1">
+<h1>Dataset 7: Outlying observations</h1>
+<pre class="r"><code>x &lt;- runif(100, -3, 3)
+y &lt;- x + rnorm(100)
+x[[100]] &lt;- 2.6
+y[[100]] &lt;- 10
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="dataset-7-residual-plot" class="section level2">
+<h2>Dataset 7: Residual Plot</h2>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li>So we see one observation very high in residual plot compared to the other points around that area.</li>
+</ul>
+</div>
+<div id="dataset-7-solution" class="section level2">
+<h2>Dataset 7: Solution</h2>
+<ul>
+<li>It’s generally a bad idea to discard outlying observations unless you know that this is a processing error or a calculation mistake.</li>
+</ul>
+</div>
+</div>
+<div id="sequence-plots-of-residuals-to-check-independence" class="section level1">
+<h1>Sequence plots of residuals to check independence</h1>
+</div>
+<div id="quantile-quantile-plots-of-residuals-to-check-normality" class="section level1">
+<h1>Quantile-Quantile plots of residuals to check normality</h1>
+</div>
+<div id="residual-plots-against-omitted-predictors" class="section level1">
+<h1>Residual plots against omitted predictors</h1>
+</div>
+<div id="f-test-for-lack-of-fit" class="section level1">
+<h1><span class="math inline">\(F\)</span>-test for lack of fit</h1>
+</div>
+<div id="lowess-curves" class="section level1">
+<h1>LOWESS curves</h1>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
