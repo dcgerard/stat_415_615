@@ -100,7 +100,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
     ```
     
-    ```{block, eval = FALSE}
+    ```{block, eval = FALSE, echo = FALSE}
     This plot still looks good. Remember, we have no distributional assumptions on the predictors. We are just looking as spread along columns of the predictors.
     ```
 
@@ -140,6 +140,28 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - Why not $\log(y)$? Because taking transforming $y$ can change the variance, and we already have constant variance, so we do not want to mess with that.
     - Recall, random variation occurs in the $y$ direction, not the $x$ direction.
+    
+- **Exercise**: Consider the following data:
+    ```{r}
+    df <- tribble(~x, ~y,
+                  1, 1, 
+                  1, 2, 
+                  2, 1, 
+                  2, 5,
+                  3, 1,
+                  3, 20)
+    ```
+    Plot $x$ versus $y$. Then log-transform $x$ and plot $\log(x)$ versus $y$. Then try log-transforming $y$ and plotting $x$ versus $\log(y)$. Discuss how variation changes (vertically or horizontally) when we log $x$ versus logging $y$.
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    qplot(x = x, y = y, data = df)
+    qplot(x = log(x), y = y, data = df)
+    qplot(x = x, y = log(y), data = df)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Logging $x$ changes the variation in $x$. Logging $y$ changes the variation in $y$.
+    ```
 
 ## Dataset 2: Transformed $x$ Scatterplot
 
@@ -211,7 +233,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 ```{r, echo = TRUE}
 df <- mutate(df, x2 = x^2) ## create x^2 first
-quad_lm <- lm(y ~ x2 + x, data = df) ## lm of x^2 + x
+quad_lm <- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout <- augment(quad_lm)
 qplot(x = x, y = y, data = aout) +
   geom_line(mapping = aes(x = x, y = .fitted), col = "blue", lwd = 1)
@@ -224,13 +246,18 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 ```
 
 ## Dataset 3: Peak estimation
+```{r}
+ttemp <- tidy(quad_lm)
+beta0 <- ttemp$estimate[[1]]
+beta1 <- ttemp$estimate[[2]]
+beta2 <- ttemp$estimate[[3]]
+```
+
 
 - Recall that $y = \beta_0 + \beta_1x + \beta_2x^2$ is the equation of a parabola.
 
-- The estimated parabola is
-    $$
-    y = 0.108 - 0.0524x - 1.03x^2
-    $$
+- The estimated parabola is $y = `r beta0` + `r beta1` x + `r beta2` x^2$
+    
 
 - We can get these coefficient estimates by running
     ```{r}
@@ -239,7 +266,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - The negative coefficient for $x^2$ indicates that the parabola has a maximum, which we can recall occurs at
     $$
-    x = -\frac{\beta_1}{2\beta_2} = -\frac{-0.05237}{2 \times -1.02588} = -0.02552
+    x = -\frac{\beta_1}{2\beta_2} = -\frac{`r beta1`}{2 \times `r beta2`} = `r -beta1 / (2 * beta2)`
     $$
     So we could say that the trend increases to about 0, then decreases after 0.
 
@@ -293,6 +320,22 @@ lmout <- lm(y_log ~ x, data = df)
 aout <- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 ```
+
+- **Exercise**: What if you see something like this? Do you think logging $y$ will help?
+    ```{r, echo = FALSE}
+    x <- runif(100, 0, 2)
+    y <- exp(-x + rnorm(100, sd = 1/2))
+    df <- data.frame(x = x, y = y)
+    qplot(x = x, y = y, data = df)
+    ```
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Yes. What's important is that we have increasing variance at higher $y$ and that it is curved. You can try it out!
+    ```
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    qplot(x = x, y = log(y), data = df)
+    ```
 
 # Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution
 
@@ -821,3 +864,17 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - Lack-of-fit $F$-test tests the assumption of linearity.
 - Needs multiple observations at different predictor values (but some values can have only one observation).
 - Small $p$-values indicate lack-of-fit (so linearity is not a valid assumption).
+
+# Other transformations
+
+- The book suggests other transformations (square root, Box-Cox).
+
+- Square root on the response will compress values more mildly than the log.
+
+- The Box-Cox transformation on the response is really a set of transformations that includes the log and the square root as special cases.
+
+- $1/X$ and $exp(X)$ and $exp(-X)$ and $\sqrt{X}$ could all help improve linearity.
+
+- If your goal is *prediction*, then have at it.
+
+- But if your goal is inference, then you lose all interpretability by using transformations other than $log()$. So think carefully before trying other transformations.
