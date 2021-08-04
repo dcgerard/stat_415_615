@@ -21,21 +21,24 @@ University by [David Gerard](https://dcgerard.github.io/).
 # Lectures
 
 - 00 Motivation
-  - [Linear Regression Overview](./00_motivation.html).
+  - [Lecture 00-1: Linear Regression Overview](./00_motivation.html).
 - 01 Crash Course in R
-  - [R introduction](./01_r_intro.html).
-  - [R markdown introduction](01_r_markdown.html).
-  - [R graphics with `qplot()`](./01_qplot.html).
+  - [Lecture 01-1: R introduction](./01_r_intro.html).
+  - [Lecture 01-2:  R markdown introduction](01_r_markdown.html).
+  - [Lecture 01-3: R graphics with `qplot()`](./01_qplot.html).
 - 02 Review
-  - [Mathematical prerequisites](./02_math_prereq.html).
-  - [Probability and simulation](./02_prob_sim.html).
+  - [Lecture 02-1: Mathematical prerequisites](./02_math_prereq.html).
+  - [Lecture 02-2: Probability and simulation](./02_prob_sim.html).
 - 03 Simple linear regression
-  - [The Model](./03_ols.html). Chapter 1 of KNNL.
-  - [Inference](./03_inference.html). Chapter 2 of KNNL.
-  - [Infernence Lab](./03_inference_lab.html).
-  - [Diagnostics and Remedial Measures](./03_diagnostics.html). Chapter 3 of KNNL.
+  - [Lecture 03-1: The Model](./03_ols.html). 
+      - Chapter 1 of KNNL.
+  - [Lecture 03-2: Inference](./03_inference.html). 
+      - Chapter 2 of KNNL.
+  - [Lecture 03-3: Diagnostics and Remedial Measures](./03_diagnostics.html). 
+      - Chapter 3 of KNNL.
+  - [Lab 03-1: Inference Lab](./03_inference_lab.html).
 - 04 Linear algebra
-  - [Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
+  - [Lecture 04-1: Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
   - Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.
 - 05 Multiple linear regression
   - Model/Interpretation (including interactions, indicators)
