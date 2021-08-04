@@ -347,6 +347,8 @@ $(document).ready(function () {
 <li><a href="#f-test-for-lack-of-fit"><span class="math inline">\(F\)</span>-test for lack of fit</a>
 <ul>
 <li><a href="#lack-of-fit-test-in-r">Lack-of-fit Test in R</a></li>
+<li><a href="#math-notation">Math notation</a></li>
+<li><a href="#lack-of-fit-test-summary">Lack-of-fit test Summary</a></li>
 </ul></li>
 </ul>
 </div>
@@ -968,6 +970,27 @@ df_f &lt;- nrow(bank) - 6
 f_star &lt;- ((sse_r - sse_f) / (df_r - df_f)) / (sse_f / df_f)
 pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
 <pre><code>## [1] 0.005594</code></pre></li>
+</ul>
+</div>
+<div id="math-notation" class="section level2">
+<h2>Math notation</h2>
+<ul>
+<li><p>We will change notation. Let <span class="math inline">\(Y_{ij}\)</span> be the <span class="math inline">\(j\)</span>th individual in group <span class="math inline">\(i\)</span>. Let <span class="math inline">\(X_i\)</span> be the level of group <span class="math inline">\(i\)</span>.</p></li>
+<li><p>You might recognize the above “saturated” model as a one-way ANOVA model <span class="math display">\[
+  Y_{ij} \sim N(\mu_i, \sigma^2)
+  \]</span></p></li>
+<li><p>We compare the ANOVA model to the “reduced” linear regression model. <span class="math display">\[
+  Y_{ij} \sim N(\beta_0 + \beta_1X_i, \sigma^2)
+  \]</span> where <span class="math inline">\(X_i\)</span> is the level of group <span class="math inline">\(i\)</span>.</p></li>
+<li><p>This makes it more clear that the regression model is a reduced version of the ANOVA model.</p></li>
+</ul>
+</div>
+<div id="lack-of-fit-test-summary" class="section level2">
+<h2>Lack-of-fit test Summary</h2>
+<ul>
+<li>Lack-of-fit <span class="math inline">\(F\)</span>-test tests the assumption of linearity.</li>
+<li>Needs multiple observations at different predictor values (but some values can have only one observation).</li>
+<li>Small <span class="math inline">\(p\)</span>-values indicate lack-of-fit (so linearity is not a valid assumption).</li>
 </ul>
 </div>
 </div>

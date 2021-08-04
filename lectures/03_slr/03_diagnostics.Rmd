@@ -799,3 +799,25 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)
     ```
 
+## Math notation
+
+- We will change notation. Let $Y_{ij}$ be the $j$th individual in group $i$. Let $X_i$ be the level of group $i$.
+
+- You might recognize the above "saturated" model as a one-way ANOVA model
+    $$
+    Y_{ij} \sim N(\mu_i, \sigma^2)
+    $$
+
+- We compare the ANOVA model to the "reduced" linear regression model.
+    $$
+    Y_{ij} \sim N(\beta_0 + \beta_1X_i, \sigma^2)
+    $$
+    where $X_i$ is the level of group $i$.
+    
+- This makes it more clear that the regression model is a reduced version of the ANOVA model.
+
+## Lack-of-fit test Summary
+
+- Lack-of-fit $F$-test tests the assumption of linearity.
+- Needs multiple observations at different predictor values (but some values can have only one observation).
+- Small $p$-values indicate lack-of-fit (so linearity is not a valid assumption).
