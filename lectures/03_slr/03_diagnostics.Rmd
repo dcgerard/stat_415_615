@@ -52,7 +52,7 @@ klippy::klippy()
 
 - Make a scatterplot of the explanatory variable ($x$-axis) vs the response ($y$-axis) to check for non-linearity, equal variance, and normality violations.
 
-- Residuals ($y$-axis) vs fitted values ($x$-axis) is sometimes more clear because the signal is removed.
+- Residuals ($y$-axis) vs fitted values ($x$-axis) is often more clear because the signal is removed.
 
 - You should get used to residual plots, because they are necessary when we start doing multiple linear regression 
     - $x$ versus $y$ does not work well as a diagnostic device when you have many $x$'s.
@@ -91,6 +91,18 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - Variance looks equal for all $x$
 
 - Everything looks perfect
+
+- **Exercise**: Describe any issues with this plot.
+    ```{r, echo = FALSE, message = FALSE}
+    x <- c(runif(30, -3, -2), rep(0, 10), runif(30, 2, 3))
+    y <- x + rnorm(length(x))
+    df <- data.frame(x = x, y = y)
+    qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+    ```
+    
+    ```{block, eval = FALSE}
+    This plot still looks good. Remember, we have no distributional assumptions on the predictors. We are just looking as spread along columns of the predictors.
+    ```
 
 # Dataset 2: Curved Monotone Relationship, Equal Variances
 
@@ -316,7 +328,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 ## Dataset 5: Solution
 
-- Do nothing, but report skew (usually ok to do)
+- Do nothing, but report skew (usually OK to do)
 
 - Be fancy, fit quantile regression:
 
@@ -350,9 +362,9 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)
 
 ## Dataset 6: Summary
 
-- Linear relationshp between $x$ and $y$.
+- Linear relationship between $x$ and $y$.
 
-- Variance is different for different values of $x$.
+- Variance is different for different values of $x$. This is called **heteroscedasticity**.
 
 - Residual plots really good at showing this.
 
@@ -366,21 +378,23 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)
     ```
 
 
-- The modern solution is to use **sandwich** estimates of the standard errors.
+- The book will suggest weighted least squares (with weights inverse to the variance).
+
+- But the modern solution is to use **sandwich** estimates of the standard errors.
 
     ```{r, echo = TRUE, message = FALSE}
     library(lmtest)
     library(sandwich)
     cout <- coeftest(x = lmout, vcov. = vcovHC(x = lmout))
-    tidy(cout)
+    tidy(cout, conf.int = TRUE)
     ```
+    
+- `vcovHC()` stands for "Heteroscedastic-consistent variance/covariance".
 
-## Compare new with old
-
-```{r, echo = TRUE}
-tidy(cout, conf.int = TRUE)
-tidy(lmout, conf.int = TRUE)
-```
+- Compare to old standard errors
+    ```{r}
+    tidy(lmout, conf.int = TRUE)
+    ```
 
 
 ## Intuition of Sandwich Estimator of Variance
@@ -395,7 +409,7 @@ Var(\hat{\beta}_1) &= Var\left(\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^
 &=\frac{\sum_{i = 1}^n x_i^2 Var(y_i|x_i)}{\left(\sum_{i = 1}^n x_i^2\right)^2}
 \end{align*}\pause
 
-- Usual Method: Estimate $Var(y_i|x_i)$ with $s_p^2$ 
+- Usual Method: Estimate $Var(y_i|x_i) = \sigma^2$ with the MSE. 
 
     - Assumes variance estimate is same for all $i$
 
@@ -445,15 +459,343 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - It's generally a bad idea to discard outlying observations unless you know that this is a processing error or a calculation mistake.
 
-# Sequence plots of residuals to check independence
+- Generally the procedure to dealing with outliers is:
+  1. Detect influential points.
+  2. Verify that the outliers are not caused by numerical errors.
+  3. Fit the model both with and without the outliers. If the results do not change, report both results.
+  4. If the results change, try fitting a robust approach.
+
+- Some robust approaches are described in Section 11.3 of KNNL. One possible approach is quantile regression, which assumes the model
+    $$
+    Median(Y_i) = \beta_0 + \beta_1X_i
+    $$
+
+    ```{r, message = FALSE}
+    library(quantreg)
+    rqout <- rq(y ~ x, data = df)
+    t_rq <- tidy(rqout, conf.int = TRUE)
+    t_rq
+    ```
+    
+- We have a large sample size, so the results do not change much.
+
+    ```{r}
+    tidy(lmout, conf.int = TRUE)
+    ```
+
+- Chapter 10 contains more details on evaluating the influence of outliers.
+
+# Dataset 8: Sequence plots of residuals to check independence
+
+- Sometimes, the residuals can exhibit **autocorrelation** where residuals close to each other in time (or a sequence) are more similar than those further away.
+
+    ```{r}
+    x <- sort(runif(100, -3, 3))
+    epsilon <- rep(NA_real_, length.out = length(x))
+    epsilon[[1]] <- 0
+    rho <- 0.9
+    for (i in 2:length(epsilon)) {
+      epsilon[[i]] <- 0.85 * epsilon[[i-1]] + rnorm(1)
+    }
+    y <- x + epsilon
+    df <- data.frame(x = x, y = y)
+    ```
+    
+    ```{r, message = FALSE}
+    qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+    ```
+
+    ```{r}
+    lmout <- lm(y ~ x, data = df)
+    aout <- augment(lmout)
+    aout <- mutate(aout, index = row_number())
+    qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)
+    ```
+    
+- This is a specific issue with the **independence** assumption.
+
+- The OLS fit is still unbiased, but the standard errors will be too small (because we have less information than we think).
+
+## Dataset 8: Solution
+
+- This is discussed in detail in Chapter 12 of KNNL.
+
+- You should first check if including omitted variables helps remove autocorrelation.
+    - E.g. plotting annual sales versus average price over time, if you are missing population size, then adjacent years probably have more similar errors.
+
+- You can try to estimate autocorrelation directly (Section 12.4 of KNNL).
+
+- You can also adjust the OLS standard errors using a similar approach to sandwich estimation. This is called the "Newey-West HAC" (Heteroskedasticity- and autocorrelation-consistent) estimate of the standard error.
+
+    ```{r, echo = TRUE, message = FALSE}
+    library(lmtest)
+    library(sandwich)
+    cout <- coeftest(x = lmout, vcov. = vcovHAC(x = lmout))
+    tidy(cout, conf.int = TRUE)
+    ```
+    
+    - Notice we used `vcovHAC()` instead of `vcovHC()`.
+
+- Compare to original standard errors
+    ```{r}
+    tidy(lmout, conf.int = TRUE)
+    ```
+
+- You should have large sample sizes for accurate inference ($n\geq 100$) for estimating the autocorrelation or adjusting the standard errors.
 
 # Quantile-Quantile plots of residuals to check normality
 
+- Plot sample quantile of residual against theoretical quantile of normal distribution.
+
+- **Quantile**: The $q$th quantile of a variable is the value at with $q$ proportion of the observations fall.
+
+- Sample 0.25-quantile
+
+    ```{r, echo = FALSE, warning = FALSE}
+    data.frame(x = rnorm(1000)) %>%
+      mutate(islow = x < quantile(x = x, probs = 0.25)) ->
+      df
+    x25 <- quantile(df$x, probs = 0.25)
+    ggplot(df, aes(x = x, fill = islow)) +
+      geom_histogram(bins = 25, color = "black") +
+      scale_fill_manual(values = c("white", "blue")) +
+      geom_vline(xintercept = x25, lty = 2, col = 2, lwd = 2) +
+      theme(legend.position = "none") +
+      xlim(-3, 3)
+    ```
+
+- Theoretical 0.25-quantile
+
+    ```{r, echo = FALSE}
+    data.frame(x = seq(-3, 3, length.out = 500)) %>%
+      mutate(y = dnorm(x)) ->
+      df
+    sdf <- filter(df, x < qnorm(0.25))
+    ggplot() +
+      geom_line(data = df, mapping = aes(x = x, y = y)) +
+      geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
+      geom_vline(xintercept = qnorm(0.25), lty = 2, col = 2, lwd = 2)
+    ```
+    
+- If the residuals were approximately normal, then we would expect the 0.25 quantile of the data to be about the 0.25 quantile of the normal, the 0.7 quantile of the data to be about the 0.7 quantile of the normal, etc.
+
+- We can graphically compare the quantiles by making a scatterplot of the sample quantiles to the theoretical quantiles. This is called a **QQ-plot** (for quantile-quantile).
+  
+- We usually place the theoretical quantiles on the $x$-axis and the sample quantiles on the $y$-axis.
+
+- Constructing a QQ-plot
+
+  ![](./03_figs/qqplot.gif)\ 
+  
+- QQ-plots Can show us deviations from normality
+  
+  ![](./03_figs/bad_qqplot.gif)\ 
+  
+- QQ-plot indicating right skew.
+    ```{r, echo = FALSE}
+    x <- rexp(100)
+    qplot(sample = x, geom = "qq") +
+      geom_qq_line() +
+      xlab("Theoretical") +
+      ylab("Sample")
+    ```
+
+- QQ-plot indicating left skew.
+    ```{r, echo = FALSE}
+    x <- -rexp(100)
+    qplot(sample = x, geom = "qq") +
+      geom_qq_line() +
+      xlab("Theoretical") +
+      ylab("Sample")
+    ```
+- QQ-plot indicating heavy tails.
+    ```{r, echo = FALSE}
+    x <- -rt(100, 1)
+    qplot(sample = x, geom = "qq") +
+      geom_qq_line() +
+      xlab("Theoretical") +
+      ylab("Sample")
+    ```
+    
+- QQ-plot indicating light tails.
+    ```{r, echo = FALSE}
+    x <- -runif(100)
+    qplot(sample = x, geom = "qq") +
+      geom_qq_line() +
+      xlab("Theoretical") +
+      ylab("Sample")
+    ```
+
+  
+## QQ-plots in R
+
+- We can evaluate the normality assumption from the bread and peace example.
+
+    ```{r, message = FALSE}
+    hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
+    lmhibbs <- lm(vote ~ growth, data = hibbs)
+    ```
+
+- Use `augment()` from the `{broom}` package to obtain the residuals. Then use the `geom = "qq"` argument in the `qplot()` function. Make sure you specify `sample = .resid`, *not* `x = .resid`.
+
+    ```{r}
+    aout <- augment(lmhibbs)
+    qplot(sample = .resid, data = aout, geom = "qq") +
+      geom_qq_line()
+    ```
+    
+- There is a small deviation, but it's not too bad.
+
+## Final notes about normality
+
+- Only worry about normality if you see extreme outliers or other extreme deviations from normality (or if you want prediction intervals).
+
+- Check for normality **last**. Violations of linearity could make it seem like normality is violated.
+
 # Residual plots against omitted predictors
+
+- If you have predictors that you did not use in the model, it is always a good idea to make plots of the residuals against those omitted predictors.
+
+- Consider the Palmer Penguins Data.
+    ```{r, message = FALSE, warning = FALSE}
+    library(palmerpenguins)
+    data("penguins")
+    glimpse(penguins)
+    lmpen <- lm(body_mass_g ~ bill_length_mm, data = penguins)
+    aout <- augment(lmpen)
+    penguins %>%
+      mutate(.rownames = as.character(row_number())) %>%
+      left_join(aout) %>%
+      qplot(x = species, y  = .resid, data = ., geom = "boxplot")
+    ```
+    
+- Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.
 
 # $F$-test for lack of fit
 
-# LOWESS curves
+- In many cases, you have repeat observations at the same value of the predictors. If you design a study, it is a good idea to include repeats at the same predictor levels.
+
+- If so, then it is possible to run a **lack-of-fit** test:
+    - $H_0: E[Y_i] = \beta_0 + \beta_1 X_i$
+    - $H_A: E[Y_i] \neq \beta_0 + \beta_1 X_i$
+    
+- Rejecting this test indicates that the linear model is not a good fit.
+
+- Failing to reject this test tells us that at least we do not have evidence that the linear model is a bad fit.
+
+- We will consider this example in the context of a experiment run on 11 branches of a bank. Each branch offered a set gift size ($X$) to open a new account. The branches then measured the number of new accounts opened ($Y$).
+    ```{r}
+    bank <- tibble::tribble(~gift, ~accounts,
+                            125, 160,
+                            100, 112,
+                            200, 124,
+                             75,  28,
+                            150, 152,
+                            175, 156,
+                             75,  42,
+                            175, 124,
+                            125, 150,
+                            200, 104,
+                            100, 136
+                            )
+    ```
+    
+    There are 6 values of gift size, with all but one value having two units.
+
+- The basic idea of the lack-of-fit test is to compare the residuals under the regression model (the reduced model) to the residuals under a "saturated" model where each level of $X$ is allowed to have its own mean.
 
 
+- Reduced Model: SSE(R)
+    ```{r, echo = FALSE}
+    lm_r <- lm(accounts ~ gift, data = bank)
+    aout <- augment(lm_r)
+    ggplot(data = aout) +
+      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, lwd = 2) +
+      geom_point(aes(x = gift, y = accounts)) +
+      geom_line(aes(x = gift, y = .fitted), color = "blue", lwd = 2) +
+      xlab("Gift Size") +
+      ylab("Number of Accounts")
+    ```
+
+- Full Model: SSE(F)
+    ```{r, echo = FALSE}
+    bank %>%
+      mutate(gift = as.factor(gift)) %>%
+      lm(accounts ~ gift, data = .) ->
+      lm_f
+    aout <- augment(lm_f)
+    
+    aout %>%
+      mutate(gift = as.numeric(as.character(gift))) ->
+      aout
+    
+    aout %>%
+      select(gift, .fitted) %>%
+      distinct() %>%
+      mutate(gift = as.numeric(as.character(gift)),
+             gl = gift - 3,
+             gu = gift + 3) ->
+      gmean
+    
+    
+    ggplot(data = aout) +
+      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, lwd = 2) +
+      geom_segment(data = gmean, aes(x = gl, xend = gu, y = .fitted, yend = .fitted), color = "blue", lwd = 2) +
+      geom_point(aes(x = gift, y = accounts)) +
+      xlab("Gift Size") +
+      ylab("Number of Accounts")
+    ```
+
+- There are 11 observations.
+
+- In the reduced model, there are two parameter ($y$-intercept and slope), so $df_R = 11 - 2 = 9$.
+
+- In the full model, there are six parameters (one for each mean to estimate), so $df_F = 11 - 6 = 5$.
+
+- Use the $F$-statistic
+    $$
+    F^* = \frac{[SSE(R) - SSE(F)] / (df_R - df_F)}{SSE(F) / df_F}
+    $$
+    
+- Under the reduced model, we have
+    $$
+    F^* \sim F(df_R - df_F, df_F)
+    $$
+
+    So we can compare it to this distribution to obtain a $p$-value.
+    
+## Lack-of-fit Test in R
+
+- First, fit both the reduced and full models.
+
+- The reduced model we've seen before.
+    ```{r}
+    lm_r <- lm(accounts ~ gift, data = bank)
+    ```
+
+- The full model is fit automatically if you convert `gift` to a factor variable. We'll talk about the specifics of how this works when we get to indicator variables in multiple linear regression.
+
+    ```{r}
+    df_full <- mutate(bank, gift_factor = as.factor(gift))
+    lm_f <- lm(accounts ~ gift_factor, data = df_full)
+    ```
+
+- Then use the `anova()` function to compare these two models.
+
+    ```{r}
+    anova(lm_r, lm_f)
+    ```
+
+- We can verify this $p$-value by calculating the $F$-statistic manually.
+
+    ```{r}
+    resid_r <- augment(lm_r)$.resid
+    resid_f <- augment(lm_f)$.resid
+    sse_r <- sum(resid_r^2)
+    sse_f <- sum(resid_f^2)
+    df_r <- nrow(bank) - 2
+    df_f <- nrow(bank) - 6
+    f_star <- ((sse_r - sse_f) / (df_r - df_f)) / (sse_f / df_f)
+    pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)
+    ```
 

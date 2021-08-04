@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-03" />
+<meta name="date" content="2021-08-04" />
 
 <title>Diagnostics and Remedial Measures</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-03</h4>
+<h4 class="date">2021-08-04</h4>
 
 </div>
 
@@ -326,7 +326,6 @@ $(document).ready(function () {
 <li><a href="#dataset-6-residual-plot">Dataset 6: Residual Plot</a></li>
 <li><a href="#dataset-6-summary">Dataset 6: Summary</a></li>
 <li><a href="#dataset-6-solution">Dataset 6: Solution</a></li>
-<li><a href="#compare-new-with-old">Compare new with old</a></li>
 <li><a href="#intuition-of-sandwich-estimator-of-variance">Intuition of Sandwich Estimator of Variance</a></li>
 <li><a href="#notes-on-sandwich">Notes on Sandwich</a></li>
 </ul></li>
@@ -335,11 +334,20 @@ $(document).ready(function () {
 <li><a href="#dataset-7-residual-plot">Dataset 7: Residual Plot</a></li>
 <li><a href="#dataset-7-solution">Dataset 7: Solution</a></li>
 </ul></li>
-<li><a href="#sequence-plots-of-residuals-to-check-independence">Sequence plots of residuals to check independence</a></li>
-<li><a href="#quantile-quantile-plots-of-residuals-to-check-normality">Quantile-Quantile plots of residuals to check normality</a></li>
+<li><a href="#dataset-8-sequence-plots-of-residuals-to-check-independence">Dataset 8: Sequence plots of residuals to check independence</a>
+<ul>
+<li><a href="#dataset-8-solution">Dataset 8: Solution</a></li>
+</ul></li>
+<li><a href="#quantile-quantile-plots-of-residuals-to-check-normality">Quantile-Quantile plots of residuals to check normality</a>
+<ul>
+<li><a href="#qq-plots-in-r">QQ-plots in R</a></li>
+<li><a href="#final-notes-about-normality">Final notes about normality</a></li>
+</ul></li>
 <li><a href="#residual-plots-against-omitted-predictors">Residual plots against omitted predictors</a></li>
-<li><a href="#f-test-for-lack-of-fit"><span class="math inline">\(F\)</span>-test for lack of fit</a></li>
-<li><a href="#lowess-curves">LOWESS curves</a></li>
+<li><a href="#f-test-for-lack-of-fit"><span class="math inline">\(F\)</span>-test for lack of fit</a>
+<ul>
+<li><a href="#lack-of-fit-test-in-r">Lack-of-fit Test in R</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -377,7 +385,7 @@ $(document).ready(function () {
 <h2>Assessment Tools: Scatterplots and Residual Plots</h2>
 <ul>
 <li><p>Make a scatterplot of the explanatory variable (<span class="math inline">\(x\)</span>-axis) vs the response (<span class="math inline">\(y\)</span>-axis) to check for non-linearity, equal variance, and normality violations.</p></li>
-<li><p>Residuals (<span class="math inline">\(y\)</span>-axis) vs fitted values (<span class="math inline">\(x\)</span>-axis) is sometimes more clear because the signal is removed.</p></li>
+<li><p>Residuals (<span class="math inline">\(y\)</span>-axis) vs fitted values (<span class="math inline">\(x\)</span>-axis) is often more clear because the signal is removed.</p></li>
 <li><p>You should get used to residual plots, because they are necessary when we start doing multiple linear regression</p>
 <ul>
 <li><span class="math inline">\(x\)</span> versus <span class="math inline">\(y\)</span> does not work well as a diagnostic device when you have many <span class="math inline">\(x\)</span>’s.</li>
@@ -411,6 +419,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <li><p>Residuals seem to be centered at 0 for all <span class="math inline">\(x\)</span></p></li>
 <li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
 <li><p>Everything looks perfect</p></li>
+<li><p><strong>Exercise</strong>: Describe any issues with this plot. <img src="03_diagnostics_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This plot still looks good. Remember, we have no distributional assumptions on the predictors. We are just looking as spread along columns of the predictors.</p></li>
 </ul>
 </div>
 </div>
@@ -423,14 +433,14 @@ x &lt;- x - min(x) + 0.5
 y &lt;- log(x) * 20 + rnorm(100, sd = 4)
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-residual-plot" class="section level2">
 <h2>Dataset 2: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-summary" class="section level2">
 <h2>Dataset 2: Summary</h2>
@@ -449,14 +459,14 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Scatterplot</h2>
 <pre class="r"><code>df &lt;- mutate(df, x_log = log(x))
 qplot(x = x_log, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-transformed-x-residual-plot" class="section level2">
 <h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x_log, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="dataset-3-curved-non-monotone-relationship-equal-variances" class="section level1">
@@ -467,14 +477,14 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 y &lt;- -x^2 + rnorm(100)
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-residual-plot" class="section level2">
 <h2>Dataset 3: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-summary" class="section level2">
 <h2>Dataset 3: Summary</h2>
@@ -508,12 +518,12 @@ quad_lm &lt;- lm(y ~ x2 + x, data = df) ## lm of x^2 + x
 aout &lt;- augment(quad_lm)
 qplot(x = x, y = y, data = aout) +
   geom_line(mapping = aes(x = x, y = .fitted), col = &quot;blue&quot;, lwd = 1)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-solution-1-residuals" class="section level2">
 <h2>Dataset 3: Solution 1 Residuals</h2>
 <pre class="r"><code>qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-peak-estimation" class="section level2">
 <h2>Dataset 3: Peak estimation</h2>
@@ -527,9 +537,9 @@ qplot(x = x, y = y, data = aout) +
 <pre><code>## # A tibble: 3 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)   -0.211    0.152      -1.39 1.68e- 1
-## 2 x2            -0.952    0.0402    -23.7  4.46e-42
-## 3 x              0.106    0.0626      1.70 9.25e- 2</code></pre></li>
+## 1 (Intercept)   0.276     0.168      1.64  1.04e- 1
+## 2 x2           -1.08      0.0361   -30.0   8.09e-51
+## 3 x            -0.0248    0.0572    -0.434 6.65e- 1</code></pre></li>
 <li><p>The negative coefficient for <span class="math inline">\(x^2\)</span> indicates that the parabola has a maximum, which we can recall occurs at <span class="math display">\[
   x = -\frac{\beta_1}{2\beta_2} = -\frac{-0.05237}{2 \times -1.02588} = -0.02552
   \]</span> So we could say that the trend increases to about 0, then decreases after 0.</p></li>
@@ -544,14 +554,14 @@ qplot(x = x, y = y, data = aout) +
 y &lt;- exp(x + rnorm(100, sd = 1/2))
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-4-residual-plot" class="section level2">
 <h2>Dataset 4: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-4-summary" class="section level2">
 <h2>Dataset 4: Summary</h2>
@@ -568,7 +578,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <li><p>Take a log-transformation of <span class="math inline">\(y\)</span>.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y))
 qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="dataset-4-solution-1" class="section level2">
@@ -576,7 +586,7 @@ qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = F
 <pre class="r"><code>lmout &lt;- lm(y_log ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="dataset-5-linear-relationship-equal-variances-skewed-distribution" class="section level1">
@@ -587,14 +597,14 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 y &lt;- 15 * x + rexp(200, 0.2)
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x, y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-5-residual-plot" class="section level2">
 <h2>Dataset 5: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-5-summary" class="section level2">
 <h2>Dataset 5: Summary</h2>
@@ -608,7 +618,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-5-solution" class="section level2">
 <h2>Dataset 5: Solution</h2>
 <ul>
-<li><p>Do nothing, but report skew (usually ok to do)</p></li>
+<li><p>Do nothing, but report skew (usually OK to do)</p></li>
 <li><p>Be fancy, fit quantile regression:</p></li>
 </ul>
 <p><span class="math display">\[
@@ -627,20 +637,20 @@ Median(Y_i) = \beta_0 + \beta_1 X_i
 y &lt;- x + rnorm(100, sd = (x + 0.3)^2 / 2)
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-6-residual-plot" class="section level2">
 <h2>Dataset 6: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-6-summary" class="section level2">
 <h2>Dataset 6: Summary</h2>
 <ul>
-<li><p>Linear relationshp between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
-<li><p>Variance is different for different values of <span class="math inline">\(x\)</span>.</p></li>
+<li><p>Linear relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
+<li><p>Variance is different for different values of <span class="math inline">\(x\)</span>. This is called <strong>heteroscedasticity</strong>.</p></li>
 <li><p>Residual plots really good at showing this.</p></li>
 </ul>
 </div>
@@ -649,35 +659,31 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)</code>
 <ul>
 <li><p>You can try logging both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, sometimes that works. But that won’t work here. Be careful about negative values.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y + 0.5),
-             x_log = log(x))
-qplot(x = x_log, y = y_log, data = df)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>The modern solution is to use <strong>sandwich</strong> estimates of the standard errors.</p>
+             x_log = log(x))</code></pre>
+<pre><code>## Warning in log(y + 0.5): NaNs produced</code></pre>
+<pre class="r"><code>qplot(x = x_log, y = y_log, data = df)</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>The book will suggest weighted least squares (with weights inverse to the variance).</p></li>
+<li><p>But the modern solution is to use <strong>sandwich</strong> estimates of the standard errors.</p>
 <pre class="r"><code>library(lmtest)
 library(sandwich)
 cout &lt;- coeftest(x = lmout, vcov. = vcovHC(x = lmout))
-tidy(cout)</code></pre>
-<pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic      p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-## 1 (Intercept)  -0.0218    0.0592    -0.368 0.713       
-## 2 x             1.00      0.170      5.90  0.0000000530</code></pre></li>
-</ul>
-</div>
-<div id="compare-new-with-old" class="section level2">
-<h2>Compare new with old</h2>
-<pre class="r"><code>tidy(cout, conf.int = TRUE)</code></pre>
+tidy(cout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
-##   term        estimate std.error statistic      p.value conf.low conf.high
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  -0.0218    0.0592    -0.368 0.713          -0.139    0.0956
-## 2 x             1.00      0.170      5.90  0.0000000530    0.666    1.34</code></pre>
+##   term        estimate std.error statistic     p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   0.0241    0.0430     0.560 0.577        -0.0613     0.109
+## 2 x             0.864     0.157      5.52  0.000000279   0.554      1.18</code></pre></li>
+<li><p><code>vcovHC()</code> stands for “Heteroscedastic-consistent variance/covariance”.</p></li>
+<li><p>Compare to old standard errors</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic  p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)  -0.0218    0.0785    -0.277 7.82e- 1   -0.178     0.134
-## 2 x             1.00      0.141      7.11  1.94e-10    0.724     1.28</code></pre>
+## 1 (Intercept)   0.0241    0.0687     0.351 7.26e- 1   -0.112     0.160
+## 2 x             0.864     0.128      6.76  9.84e-10    0.611     1.12</code></pre></li>
+</ul>
 </div>
 <div id="intuition-of-sandwich-estimator-of-variance" class="section level2">
 <h2>Intuition of Sandwich Estimator of Variance</h2>
@@ -690,7 +696,7 @@ Var(\hat{\beta}_1) &amp;= Var\left(\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n 
 &amp;=\frac{\sum_{i = 1}^n x_i^2 Var(y_i|x_i)}{\left(\sum_{i = 1}^n x_i^2\right)^2}
 \end{align*}\]</span></p>
 <ul>
-<li><p>Usual Method: Estimate <span class="math inline">\(Var(y_i|x_i)\)</span> with <span class="math inline">\(s_p^2\)</span></p>
+<li><p>Usual Method: Estimate <span class="math inline">\(Var(y_i|x_i) = \sigma^2\)</span> with the MSE.</p>
 <ul>
 <li>Assumes variance estimate is same for all <span class="math inline">\(i\)</span></li>
 </ul></li>
@@ -722,13 +728,13 @@ x[[100]] &lt;- 2.6
 y[[100]] &lt;- 10
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="dataset-7-residual-plot" class="section level2">
 <h2>Dataset 7: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li>So we see one observation very high in residual plot compared to the other points around that area.</li>
 </ul>
@@ -736,24 +742,234 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-7-solution" class="section level2">
 <h2>Dataset 7: Solution</h2>
 <ul>
-<li>It’s generally a bad idea to discard outlying observations unless you know that this is a processing error or a calculation mistake.</li>
+<li><p>It’s generally a bad idea to discard outlying observations unless you know that this is a processing error or a calculation mistake.</p></li>
+<li><p>Generally the procedure to dealing with outliers is:</p>
+<ol style="list-style-type: decimal">
+<li>Detect influential points.</li>
+<li>Verify that the outliers are not caused by numerical errors.</li>
+<li>Fit the model both with and without the outliers. If the results do not change, report both results.</li>
+<li>If the results change, try fitting a robust approach.</li>
+</ol></li>
+<li><p>Some robust approaches are described in Section 11.3 of KNNL. One possible approach is quantile regression, which assumes the model <span class="math display">\[
+  Median(Y_i) = \beta_0 + \beta_1X_i
+  \]</span></p>
+<pre class="r"><code>library(quantreg)
+rqout &lt;- rq(y ~ x, data = df)
+t_rq &lt;- tidy(rqout, conf.int = TRUE)
+t_rq</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate conf.low conf.high   tau
+##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1 (Intercept)   0.0777   -0.213     0.246   0.5
+## 2 x             1.03      0.817     1.20    0.5</code></pre></li>
+<li><p>We have a large sample size, so the results do not change much.</p>
+<pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   0.0869    0.121      0.720 4.73e- 1   -0.153     0.326
+## 2 x             1.05      0.0671    15.6   2.33e-28    0.916     1.18</code></pre></li>
+<li><p>Chapter 10 contains more details on evaluating the influence of outliers.</p></li>
 </ul>
 </div>
 </div>
-<div id="sequence-plots-of-residuals-to-check-independence" class="section level1">
-<h1>Sequence plots of residuals to check independence</h1>
+<div id="dataset-8-sequence-plots-of-residuals-to-check-independence" class="section level1">
+<h1>Dataset 8: Sequence plots of residuals to check independence</h1>
+<ul>
+<li><p>Sometimes, the residuals can exhibit <strong>autocorrelation</strong> where residuals close to each other in time (or a sequence) are more similar than those further away.</p>
+<pre class="r"><code>x &lt;- sort(runif(100, -3, 3))
+epsilon &lt;- rep(NA_real_, length.out = length(x))
+epsilon[[1]] &lt;- 0
+rho &lt;- 0.9
+for (i in 2:length(epsilon)) {
+  epsilon[[i]] &lt;- 0.85 * epsilon[[i-1]] + rnorm(1)
+}
+y &lt;- x + epsilon
+df &lt;- data.frame(x = x, y = y)</code></pre>
+<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
+aout &lt;- augment(lmout)
+aout &lt;- mutate(aout, index = row_number())
+qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>This is a specific issue with the <strong>independence</strong> assumption.</p></li>
+<li><p>The OLS fit is still unbiased, but the standard errors will be too small (because we have less information than we think).</p></li>
+</ul>
+<div id="dataset-8-solution" class="section level2">
+<h2>Dataset 8: Solution</h2>
+<ul>
+<li><p>This is discussed in detail in Chapter 12 of KNNL.</p></li>
+<li><p>You should first check if including omitted variables helps remove autocorrelation.</p>
+<ul>
+<li>E.g. plotting annual sales versus average price over time, if you are missing population size, then adjacent years probably have more similar errors.</li>
+</ul></li>
+<li><p>You can try to estimate autocorrelation directly (Section 12.4 of KNNL).</p></li>
+<li><p>You can also adjust the OLS standard errors using a similar approach to sandwich estimation. This is called the “Newey-West HAC” (Heteroskedasticity- and autocorrelation-consistent) estimate of the standard error.</p>
+<pre class="r"><code>library(lmtest)
+library(sandwich)
+cout &lt;- coeftest(x = lmout, vcov. = vcovHAC(x = lmout))
+tidy(cout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   term        estimate std.error statistic    p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   -0.329     0.412    -0.799 0.426        -1.15      0.488
+## 2 x              0.743     0.150     4.96  0.00000299    0.446     1.04</code></pre>
+<ul>
+<li>Notice we used <code>vcovHAC()</code> instead of <code>vcovHC()</code>.</li>
+</ul></li>
+<li><p>Compare to original standard errors</p>
+<pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   -0.329    0.165      -1.99 4.90e- 2   -0.657  -0.00147
+## 2 x              0.743    0.0935      7.95 3.19e-12    0.558   0.929</code></pre></li>
+<li><p>You should have large sample sizes for accurate inference (<span class="math inline">\(n\geq 100\)</span>) for estimating the autocorrelation or adjusting the standard errors.</p></li>
+</ul>
+</div>
 </div>
 <div id="quantile-quantile-plots-of-residuals-to-check-normality" class="section level1">
 <h1>Quantile-Quantile plots of residuals to check normality</h1>
+<ul>
+<li><p>Plot sample quantile of residual against theoretical quantile of normal distribution.</p></li>
+<li><p><strong>Quantile</strong>: The <span class="math inline">\(q\)</span>th quantile of a variable is the value at with <span class="math inline">\(q\)</span> proportion of the observations fall.</p></li>
+<li><p>Sample 0.25-quantile</p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Theoretical 0.25-quantile</p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>If the residuals were approximately normal, then we would expect the 0.25 quantile of the data to be about the 0.25 quantile of the normal, the 0.7 quantile of the data to be about the 0.7 quantile of the normal, etc.</p></li>
+<li><p>We can graphically compare the quantiles by making a scatterplot of the sample quantiles to the theoretical quantiles. This is called a <strong>QQ-plot</strong> (for quantile-quantile).</p></li>
+<li><p>We usually place the theoretical quantiles on the <span class="math inline">\(x\)</span>-axis and the sample quantiles on the <span class="math inline">\(y\)</span>-axis.</p></li>
+<li><p>Constructing a QQ-plot</p>
+<p><img src="03_figs/qqplot.gif" /> </p></li>
+<li><p>QQ-plots Can show us deviations from normality</p>
+<p><img src="03_figs/bad_qqplot.gif" /> </p></li>
+<li><p>QQ-plot indicating right skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating left skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating heavy tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating light tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+<div id="qq-plots-in-r" class="section level2">
+<h2>QQ-plots in R</h2>
+<ul>
+<li><p>We can evaluate the normality assumption from the bread and peace example.</p>
+<pre class="r"><code>hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
+lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
+<li><p>Use <code>augment()</code> from the <code>{broom}</code> package to obtain the residuals. Then use the <code>geom = "qq"</code> argument in the <code>qplot()</code> function. Make sure you specify <code>sample = .resid</code>, <em>not</em> <code>x = .resid</code>.</p>
+<pre class="r"><code>aout &lt;- augment(lmhibbs)
+qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
+  geom_qq_line()</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>There is a small deviation, but it’s not too bad.</p></li>
+</ul>
+</div>
+<div id="final-notes-about-normality" class="section level2">
+<h2>Final notes about normality</h2>
+<ul>
+<li><p>Only worry about normality if you see extreme outliers or other extreme deviations from normality (or if you want prediction intervals).</p></li>
+<li><p>Check for normality <strong>last</strong>. Violations of linearity could make it seem like normality is violated.</p></li>
+</ul>
+</div>
 </div>
 <div id="residual-plots-against-omitted-predictors" class="section level1">
 <h1>Residual plots against omitted predictors</h1>
+<ul>
+<li><p>If you have predictors that you did not use in the model, it is always a good idea to make plots of the residuals against those omitted predictors.</p></li>
+<li><p>Consider the Palmer Penguins Data.</p>
+<pre class="r"><code>library(palmerpenguins)
+data(&quot;penguins&quot;)
+glimpse(penguins)</code></pre>
+<pre><code>## Rows: 344
+## Columns: 8
+## $ species           &lt;fct&gt; Adelie, Adelie, Adelie, Adelie, Adelie, Adelie, Adel…
+## $ island            &lt;fct&gt; Torgersen, Torgersen, Torgersen, Torgersen, Torgerse…
+## $ bill_length_mm    &lt;dbl&gt; 39.1, 39.5, 40.3, NA, 36.7, 39.3, 38.9, 39.2, 34.1, …
+## $ bill_depth_mm     &lt;dbl&gt; 18.7, 17.4, 18.0, NA, 19.3, 20.6, 17.8, 19.6, 18.1, …
+## $ flipper_length_mm &lt;int&gt; 181, 186, 195, NA, 193, 190, 181, 195, 193, 190, 186…
+## $ body_mass_g       &lt;int&gt; 3750, 3800, 3250, NA, 3450, 3650, 3625, 4675, 3475, …
+## $ sex               &lt;fct&gt; male, female, female, NA, female, male, female, male…
+## $ year              &lt;int&gt; 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007…</code></pre>
+<pre class="r"><code>lmpen &lt;- lm(body_mass_g ~ bill_length_mm, data = penguins)
+aout &lt;- augment(lmpen)
+penguins %&gt;%
+  mutate(.rownames = as.character(row_number())) %&gt;%
+  left_join(aout) %&gt;%
+  qplot(x = species, y  = .resid, data = ., geom = &quot;boxplot&quot;)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.</p></li>
+</ul>
 </div>
 <div id="f-test-for-lack-of-fit" class="section level1">
 <h1><span class="math inline">\(F\)</span>-test for lack of fit</h1>
+<ul>
+<li><p>In many cases, you have repeat observations at the same value of the predictors. If you design a study, it is a good idea to include repeats at the same predictor levels.</p></li>
+<li><p>If so, then it is possible to run a <strong>lack-of-fit</strong> test:</p>
+<ul>
+<li><span class="math inline">\(H_0: E[Y_i] = \beta_0 + \beta_1 X_i\)</span></li>
+<li><span class="math inline">\(H_A: E[Y_i] \neq \beta_0 + \beta_1 X_i\)</span></li>
+</ul></li>
+<li><p>Rejecting this test indicates that the linear model is not a good fit.</p></li>
+<li><p>Failing to reject this test tells us that at least we do not have evidence that the linear model is a bad fit.</p></li>
+<li><p>We will consider this example in the context of a experiment run on 11 branches of a bank. Each branch offered a set gift size (<span class="math inline">\(X\)</span>) to open a new account. The branches then measured the number of new accounts opened (<span class="math inline">\(Y\)</span>).</p>
+<pre class="r"><code>bank &lt;- tibble::tribble(~gift, ~accounts,
+                        125, 160,
+                        100, 112,
+                        200, 124,
+                         75,  28,
+                        150, 152,
+                        175, 156,
+                         75,  42,
+                        175, 124,
+                        125, 150,
+                        200, 104,
+                        100, 136
+                        )</code></pre>
+<p>There are 6 values of gift size, with all but one value having two units.</p></li>
+<li><p>The basic idea of the lack-of-fit test is to compare the residuals under the regression model (the reduced model) to the residuals under a “saturated” model where each level of <span class="math inline">\(X\)</span> is allowed to have its own mean.</p></li>
+<li><p>Reduced Model: SSE(R) <img src="03_diagnostics_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Full Model: SSE(F) <img src="03_diagnostics_files/figure-html/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>There are 11 observations.</p></li>
+<li><p>In the reduced model, there are two parameter (<span class="math inline">\(y\)</span>-intercept and slope), so <span class="math inline">\(df_R = 11 - 2 = 9\)</span>.</p></li>
+<li><p>In the full model, there are six parameters (one for each mean to estimate), so <span class="math inline">\(df_F = 11 - 6 = 5\)</span>.</p></li>
+<li><p>Use the <span class="math inline">\(F\)</span>-statistic <span class="math display">\[
+  F^* = \frac{[SSE(R) - SSE(F)] / (df_R - df_F)}{SSE(F) / df_F}
+  \]</span></p></li>
+<li><p>Under the reduced model, we have <span class="math display">\[
+  F^* \sim F(df_R - df_F, df_F)
+  \]</span></p>
+<p>So we can compare it to this distribution to obtain a <span class="math inline">\(p\)</span>-value.</p></li>
+</ul>
+<div id="lack-of-fit-test-in-r" class="section level2">
+<h2>Lack-of-fit Test in R</h2>
+<ul>
+<li><p>First, fit both the reduced and full models.</p></li>
+<li><p>The reduced model we’ve seen before.</p>
+<pre class="r"><code>lm_r &lt;- lm(accounts ~ gift, data = bank)</code></pre></li>
+<li><p>The full model is fit automatically if you convert <code>gift</code> to a factor variable. We’ll talk about the specifics of how this works when we get to indicator variables in multiple linear regression.</p>
+<pre class="r"><code>df_full &lt;- mutate(bank, gift_factor = as.factor(gift))
+lm_f &lt;- lm(accounts ~ gift_factor, data = df_full)</code></pre></li>
+<li><p>Then use the <code>anova()</code> function to compare these two models.</p>
+<pre class="r"><code>anova(lm_r, lm_f)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: accounts ~ gift
+## Model 2: accounts ~ gift_factor
+##   Res.Df   RSS Df Sum of Sq    F Pr(&gt;F)
+## 1      9 14742                         
+## 2      5  1148  4     13594 14.8 0.0056</code></pre></li>
+<li><p>We can verify this <span class="math inline">\(p\)</span>-value by calculating the <span class="math inline">\(F\)</span>-statistic manually.</p>
+<pre class="r"><code>resid_r &lt;- augment(lm_r)$.resid
+resid_f &lt;- augment(lm_f)$.resid
+sse_r &lt;- sum(resid_r^2)
+sse_f &lt;- sum(resid_f^2)
+df_r &lt;- nrow(bank) - 2
+df_f &lt;- nrow(bank) - 6
+f_star &lt;- ((sse_r - sse_f) / (df_r - df_f)) / (sse_f / df_f)
+pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 0.005594</code></pre></li>
+</ul>
 </div>
-<div id="lowess-curves" class="section level1">
-<h1>LOWESS curves</h1>
 </div>
 
 
