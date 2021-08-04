@@ -143,20 +143,20 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     
 - **Exercise**: Consider the following data:
     ```{r}
-    df <- tribble(~x, ~y,
-                  1, 1, 
-                  1, 2, 
-                  2, 1, 
-                  2, 5,
-                  3, 1,
-                  3, 20)
+    dftoy <- tribble(~x, ~y,
+                     1, 1, 
+                     1, 2, 
+                     2, 1, 
+                     2, 5,
+                     3, 1,
+                     3, 20)
     ```
     Plot $x$ versus $y$. Then log-transform $x$ and plot $\log(x)$ versus $y$. Then try log-transforming $y$ and plotting $x$ versus $\log(y)$. Discuss how variation changes (vertically or horizontally) when we log $x$ versus logging $y$.
     
     ```{r, echo = FALSE, eval = FALSE}
-    qplot(x = x, y = y, data = df)
-    qplot(x = log(x), y = y, data = df)
-    qplot(x = x, y = log(y), data = df)
+    qplot(x = x, y = y, data = dftoy)
+    qplot(x = log(x), y = y, data = dftoy)
+    qplot(x = x, y = log(y), data = dftoy)
     ```
     
     ```{block, eval = FALSE, echo = FALSE}

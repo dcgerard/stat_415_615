@@ -456,13 +456,13 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <li>Recall, random variation occurs in the <span class="math inline">\(y\)</span> direction, not the <span class="math inline">\(x\)</span> direction.</li>
 </ul></li>
 <li><p><strong>Exercise</strong>: Consider the following data:</p>
-<pre class="r"><code>df &lt;- tribble(~x, ~y,
-              1, 1, 
-              1, 2, 
-              2, 1, 
-              2, 5,
-              3, 1,
-              3, 20)</code></pre>
+<pre class="r"><code>dftoy &lt;- tribble(~x, ~y,
+                 1, 1, 
+                 1, 2, 
+                 2, 1, 
+                 2, 5,
+                 3, 1,
+                 3, 20)</code></pre>
 <p>Plot <span class="math inline">\(x\)</span> versus <span class="math inline">\(y\)</span>. Then log-transform <span class="math inline">\(x\)</span> and plot <span class="math inline">\(\log(x)\)</span> versus <span class="math inline">\(y\)</span>. Then try log-transforming <span class="math inline">\(y\)</span> and plotting <span class="math inline">\(x\)</span> versus <span class="math inline">\(\log(y)\)</span>. Discuss how variation changes (vertically or horizontally) when we log <span class="math inline">\(x\)</span> versus logging <span class="math inline">\(y\)</span>.</p></li>
 </ul>
 </div>
