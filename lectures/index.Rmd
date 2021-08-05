@@ -36,6 +36,7 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 2 of KNNL.
   - [Lecture 03-3: Diagnostics and Remedial Measures](./03_diagnostics.html). 
       - Chapter 3 of KNNL.
+  - [Lecture 03-4: SLR Case Study](./03_slr_case.html).
   - [Lab 03-1: Inference Lab](./03_inference_lab.html).
 - 04 Linear algebra
   - [Lecture 04-1: Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
