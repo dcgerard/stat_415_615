@@ -369,7 +369,7 @@ div.tocify {
 <li><p><strong>Linearity</strong> - Does the relationship look like a straight line?</p></li>
 <li><p><strong>Independence</strong> - knowledge of the value of one observation does not give you any information on the value of another.</p></li>
 <li><p><strong>Equal Variance</strong> - The spread is the same for every value of <span class="math inline">\(x\)</span></p></li>
-<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations because of the CLT, or if you are doing prediction intervals).</p></li>
+<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations, or if you are doing prediction intervals).</p></li>
 </ol>
 </div>
 <div id="problems-when-violated" class="section level1">
@@ -782,6 +782,17 @@ t_rq</code></pre>
 ## 1 (Intercept)   -0.136    0.115      -1.18 2.39e- 1   -0.365    0.0922
 ## 2 x              1.08     0.0657     16.4  8.48e-30    0.945    1.21</code></pre></li>
 <li><p>Chapter 10 contains more details on evaluating the influence of outliers.</p></li>
+<li><p><strong>Exercise</strong>: Consider the following data:</p>
+<pre class="r"><code>dftoy &lt;- tribble(~x, ~y,
+                 2, 16,
+                 4, 23,
+                 5, 27, 
+                 6, 29,
+                 7, 32,
+                 8, 35,
+                 9, 37,
+                 12, 54)</code></pre>
+<p>Make a scatterplot of <code>y</code> on <code>x</code>, then make a residual versus fits plot for a regression of <code>y</code> on <code>x</code>. Does the residual plot suggest that outliers are the issue, or is it decieving you into thinking something else is the issue?</p></li>
 </ul>
 </div>
 </div>
@@ -799,12 +810,12 @@ for (i in 2:length(epsilon)) {
 y &lt;- x + epsilon
 df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 aout &lt;- mutate(aout, index = row_number())
 qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>This is a specific issue with the <strong>independence</strong> assumption.</p></li>
 <li><p>The OLS fit is still unbiased, but the standard errors will be too small (because we have less information than we think).</p></li>
 </ul>
@@ -844,23 +855,28 @@ tidy(cout, conf.int = TRUE)</code></pre>
 <div id="quantile-quantile-plots-of-residuals-to-check-normality" class="section level1">
 <h1>Quantile-Quantile plots of residuals to check normality</h1>
 <ul>
-<li><p>Plot sample quantile of residual against theoretical quantile of normal distribution.</p></li>
+<li><p>To check the normality of the residuals, plot the sample quantiles of the residuals against the theoretical quantiles of the normal distribution.</p></li>
 <li><p><strong>Quantile</strong>: The <span class="math inline">\(q\)</span>th quantile of a variable is the value at with <span class="math inline">\(q\)</span> proportion of the observations fall.</p></li>
 <li><p>Sample 0.25-quantile</p>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Theoretical 0.25-quantile</p>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>If the residuals were approximately normal, then we would expect the 0.25 quantile of the data to be about the 0.25 quantile of the normal, the 0.7 quantile of the data to be about the 0.7 quantile of the normal, etc.</p></li>
 <li><p>We can graphically compare the quantiles by making a scatterplot of the sample quantiles to the theoretical quantiles. This is called a <strong>QQ-plot</strong> (for quantile-quantile).</p></li>
 <li><p>We usually place the theoretical quantiles on the <span class="math inline">\(x\)</span>-axis and the sample quantiles on the <span class="math inline">\(y\)</span>-axis.</p></li>
 <li><p>Constructing a QQ-plot</p>
 <p><img src="03_figs/qqplot.gif" /> </p></li>
+<li><p><strong>Exercise</strong>: The simplest definition of the <span class="math inline">\(p\)</span>th sample quantile is the minimum value <span class="math inline">\(q\)</span> in the sample such that <em>at least</em> <span class="math inline">\(p\)</span> proportion of the observations are at or below <span class="math inline">\(q\)</span>. In mathematical notation <span class="math display">\[
+  Q(p) = \min\left(q \in \{X_1,X_2,\ldots,X_n\}: p\leq \frac{1}{n}\#\{X_i:X_i &lt; q\}\right)
+  \]</span> In R, this corresponds to the <code>type = 1</code> argument from the quantile function. Try running this code and try understanding this definition:</p>
+<pre class="r"><code>quantile(x = c(4, 9, 13, 22, 37), probs = c(0.19999, 0.2, 0.20001, 0.39999, 0.4, 0.40001), type = 1)</code></pre>
+<p>Which quantiles do you think we would use when constructing a QQ-plot?</p></li>
 <li><p>QQ-plots Can show us deviations from normality</p>
 <p><img src="03_figs/bad_qqplot.gif" /> </p></li>
-<li><p>QQ-plot indicating right skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating left skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating heavy tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating light tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-53-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating right skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating left skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating heavy tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating light tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="qq-plots-in-r" class="section level2">
 <h2>QQ-plots in R</h2>
@@ -872,7 +888,7 @@ lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
 <pre class="r"><code>aout &lt;- augment(lmhibbs)
 qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
   geom_qq_line()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-60-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There is a small deviation, but it’s not too bad.</p></li>
 </ul>
 </div>
@@ -908,7 +924,7 @@ penguins %&gt;%
   mutate(.rownames = as.character(row_number())) %&gt;%
   left_join(aout) %&gt;%
   qplot(x = species, y  = .resid, data = ., geom = &quot;boxplot&quot;)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.</p></li>
 </ul>
 </div>
@@ -939,8 +955,8 @@ penguins %&gt;%
                         )</code></pre>
 <p>There are 6 values of gift size, with all but one value having two units.</p></li>
 <li><p>The basic idea of the lack-of-fit test is to compare the residuals under the regression model (the reduced model) to the residuals under a “saturated” model where each level of <span class="math inline">\(X\)</span> is allowed to have its own mean.</p></li>
-<li><p>Reduced Model: SSE(R) <img src="03_diagnostics_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Full Model: SSE(F) <img src="03_diagnostics_files/figure-html/unnamed-chunk-59-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Reduced Model: SSE(R) <img src="03_diagnostics_files/figure-html/unnamed-chunk-63-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Full Model: SSE(F) <img src="03_diagnostics_files/figure-html/unnamed-chunk-64-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There are 11 observations.</p></li>
 <li><p>In the reduced model, there are two parameter (<span class="math inline">\(y\)</span>-intercept and slope), so <span class="math inline">\(df_R = 11 - 2 = 9\)</span>.</p></li>
 <li><p>In the full model, there are six parameters (one for each mean to estimate), so <span class="math inline">\(df_F = 11 - 6 = 5\)</span>.</p></li>
@@ -1012,7 +1028,24 @@ pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
 <li><p>The Box-Cox transformation on the response is really a set of transformations that includes the log and the square root as special cases.</p></li>
 <li><p><span class="math inline">\(1/X\)</span> and <span class="math inline">\(exp(X)\)</span> and <span class="math inline">\(exp(-X)\)</span> and <span class="math inline">\(\sqrt{X}\)</span> could all help improve linearity.</p></li>
 <li><p>If your goal is <em>prediction</em>, then have at it.</p></li>
-<li><p>But if your goal is inference, then you lose all interpretability by using transformations other than <span class="math inline">\(log()\)</span>. So think carefully before trying other transformations.</p></li>
+<li><p>But if your goal is inference, then you lose all interpretability by using transformations other than <span class="math inline">\(\log()\)</span>. So think carefully before trying other transformations.</p></li>
+</ul>
+</div>
+<div id="smoothers" class="section level1">
+<h1>Smoothers</h1>
+<ul>
+<li><p>Use non-parametric approaches to curve fitting for exploration purposes. When you have a ton of values, or if the trend is weak relative to the variance, it is sometimes easier to see a trend if you plot an estimate of the curve.</p></li>
+<li><p>Lowess works by estimating the mean <span class="math inline">\(Y\)</span> value at a given point <span class="math inline">\(X\)</span> by fitting a regression to points near <span class="math inline">\(X\)</span>, weighting the objective function proportionally to how far away values are from <span class="math inline">\(X\)</span>. E.g. <span class="math display">\[
+  \sum_{i: X_i \text{ is near } X} w_i[Y_i - (\beta_0 + \beta_1 X_i)]^2,
+  \]</span> where <span class="math inline">\(w_i\)</span> is larger for values closer to <span class="math inline">\(X\)</span>. For each <span class="math inline">\(X\)</span> where you want to make a prediction, it obtains an estimate <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> and estimates the mean value by <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1 X\)</span>.</p>
+<ul>
+<li>This is not exactly what happens, but gives you an idea of how it works.</li>
+</ul></li>
+<li><p>In practice, you don’t need to know any of this. Just add <code>geom_smooth(se = FALSE)</code> after you make a scatterplot.</p>
+<pre class="r"><code>qplot(x = growth, y = vote, data = hibbs) +
+  geom_smooth(se = FALSE)</code></pre>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-69-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Be careful not to over-interpret these.</strong> E.g., don’t say that the above is evidence for a leveling off between 1 and 2, then increasing again. Lowess does not provide inference. It can only generate questions.</p></li>
 </ul>
 </div>
 

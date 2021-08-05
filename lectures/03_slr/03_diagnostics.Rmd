@@ -37,7 +37,7 @@ klippy::klippy()
 
 3. **Equal Variance** - The spread is the same for every value of $x$
 
-4. **Normality** - The distribution isn't too skewed and there aren't any too extreme points. (only an issue if you have outliers and a small number of observations because of the CLT, or if you are doing prediction intervals).
+4. **Normality** - The distribution isn't too skewed and there aren't any too extreme points. (only an issue if you have outliers and a small number of observations, or if you are doing prediction intervals).
 
 # Problems when Violated
 
@@ -529,6 +529,30 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - Chapter 10 contains more details on evaluating the influence of outliers.
 
+- **Exercise**: Consider the following data:
+    ```{r}
+    dftoy <- tribble(~x, ~y,
+                     2, 16,
+                     4, 23,
+                     5, 27, 
+                     6, 29,
+                     7, 32,
+                     8, 35,
+                     9, 37,
+                     12, 54)
+    ```
+    Make a scatterplot of `y` on `x`, then make a residual versus fits plot for a regression of `y` on `x`. Does the residual plot suggest that outliers are the issue, or is it decieving you into thinking something else is the issue?
+    ```{r, eval = FALSE, echo = FALSE}
+    qplot(x = x, y = y, data = dftoy)
+    lmtoy <- lm(y ~ x, data = dftoy)
+    atoy <- augment(lmtoy)
+    qplot(x = .fitted, y = .resid, data = atoy) +
+      geom_hline(yintercept = 0)
+    ```
+    ```{block, echo = FALSE, eval = FALSE}
+    The outlier is clearly the issue, but the residual plot makes it seem like there is a non-linearity issue. This is because for outliers that are very influential, they can make it seem like there are other issues.
+    ```
+
 # Dataset 8: Sequence plots of residuals to check independence
 
 - Sometimes, the residuals can exhibit **autocorrelation** where residuals close to each other in time (or a sequence) are more similar than those further away.
@@ -589,7 +613,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 # Quantile-Quantile plots of residuals to check normality
 
-- Plot sample quantile of residual against theoretical quantile of normal distribution.
+- To check the normality of the residuals, plot the sample quantiles of the residuals against the theoretical quantiles of the normal distribution.
 
 - **Quantile**: The $q$th quantile of a variable is the value at with $q$ proportion of the observations fall.
 
@@ -630,7 +654,22 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - Constructing a QQ-plot
 
   ![](./03_figs/qqplot.gif)\ 
-  
+
+- **Exercise**: The simplest definition of the $p$th sample quantile is the minimum value $q$ in the sample such that *at least* $p$ proportion of the observations are at or below $q$. In mathematical notation
+    $$
+    Q(p) = \min\left(q \in \{X_1,X_2,\ldots,X_n\}: p\leq \frac{1}{n}\#\{X_i:X_i < q\}\right)
+    $$
+    In R, this corresponds to the `type = 1` argument from the quantile function. Try running this code and try understanding this definition:
+    ```{r, eval = FALSE}
+    quantile(x = c(4, 9, 13, 22, 37), probs = c(0.19999, 0.2, 0.20001, 0.39999, 0.4, 0.40001), type = 1)
+    ```
+    Which quantiles do you think we would use when constructing a QQ-plot?
+    ```{block, eval = FALSE, echo = FALSE}
+    The quantile function jumps at k/n where k = 1,2,...,n. It stays at the ceiling value until it reaches that value.
+    
+    Since we only really observe 5 different quantile values, we should be interested in those jump points. k/n where k = 1,2,...,n.
+    ```
+    
 - QQ-plots Can show us deviations from normality
   
   ![](./03_figs/bad_qqplot.gif)\ 
@@ -878,4 +917,26 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - If your goal is *prediction*, then have at it.
 
-- But if your goal is inference, then you lose all interpretability by using transformations other than $log()$. So think carefully before trying other transformations.
+- But if your goal is inference, then you lose all interpretability by using transformations other than $\log()$. So think carefully before trying other transformations.
+
+# Smoothers
+
+- Use non-parametric approaches to curve fitting for exploration purposes. When you have a ton of values, or if the trend is weak relative to the variance, it is sometimes easier to see a trend if you plot an estimate of the curve.
+
+- Lowess works by estimating the mean $Y$ value at a given point $X$ by fitting a regression to points near $X$, weighting the objective function proportionally to how far away values are from $X$. E.g.
+    $$
+    \sum_{i: X_i \text{ is near } X} w_i[Y_i - (\beta_0 + \beta_1 X_i)]^2,
+    $$
+    where $w_i$ is larger for values closer to $X$. For each $X$ where you want to make a prediction, it obtains an estimate $\hat{\beta}_0$ and $\hat{\beta}_1$ and estimates the mean value by $\hat{\beta}_0 + \hat{\beta}_1 X$.
+    
+    - This is not exactly what happens, but gives you an idea of how it works.
+
+- In practice, you don't need to know any of this. Just add `geom_smooth(se = FALSE)` after you make a scatterplot.
+
+    ```{r, message = FALSE}
+    qplot(x = growth, y = vote, data = hibbs) +
+      geom_smooth(se = FALSE)
+    ```
+
+- **Be careful not to over-interpret these.** E.g., don't say that the above is evidence for a leveling off between 1 and 2, then increasing again. Lowess does not provide inference. It can only generate questions.
+
