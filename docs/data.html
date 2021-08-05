@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-02" />
+<meta name="date" content="2021-08-05" />
 
 <title>Data</title>
 
@@ -31,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -242,6 +245,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -249,6 +315,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -287,34 +363,13 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-02</h4>
+<h4 class="date">2021-08-05</h4>
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#copiers">Copiers</a></li>
-<li><a href="#county-demographic-information">County Demographic Information</a></li>
-<li><a href="#dc-covid-tests">DC COVID Tests</a></li>
-<li><a href="#disease-outbreak">Disease Outbreak</a></li>
-<li><a href="#heating-equipment">Heating Equipment</a></li>
-<li><a href="#hibbs-bread-and-peace">Hibb’s Bread and Peace</a></li>
-<li><a href="#ipo">IPO</a></li>
-<li><a href="#ischemic-heart-disease">Ischemic Heart Disease</a></li>
-<li><a href="#kleibers-law">Kleiber’s law</a></li>
-<li><a href="#market-share">Market Share</a></li>
-<li><a href="#mile-times">Mile Times</a></li>
-<li><a href="#prostate-cancer">Prostate Cancer</a></li>
-<li><a href="#real-estate-sales">Real Estate Sales</a></li>
-<li><a href="#study-on-the-efficacy-of-nosocomial-infection-control-senic">Study on the Efficacy of Nosocomial Infection Control (SENIC)</a></li>
-<li><a href="#university-admissions">University Admissions</a></li>
-<li><a href="#website-developer">Website Developer</a></li>
-<li><a href="#references">References</a></li>
-</ul>
-</div>
 
-<div id="copiers" class="section level3">
-<h3>Copiers</h3>
+<div id="copiers" class="section level1">
+<h1>Copiers</h1>
 <ul>
 <li><a href="./data/copiers.csv">copiers.csv</a>: Dataset from exercise 1.20 of <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
 <ul>
@@ -323,8 +378,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="county-demographic-information" class="section level3">
-<h3>County Demographic Information</h3>
+<div id="county-demographic-information" class="section level1">
+<h1>County Demographic Information</h1>
 <ul>
 <li><a href="./data/cdi.csv">cdi.csv</a>: Dataset C.2 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Demographic information on counties in 1990 and 1992. Variables include:
 <ul>
@@ -348,8 +403,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="dc-covid-tests" class="section level3">
-<h3>DC COVID Tests</h3>
+<div id="dc-covid-tests" class="section level1">
+<h1>DC COVID Tests</h1>
 <ul>
 <li><a href="./data/dccovid.csv">dccovid.csv</a>: Test data taken (and cleaned) from the <a href="https://coronavirus.dc.gov/data">COVID-19 surveillance website</a> run by the DC government. These data were downloaded on 2021-07-21. Variables include:
 <ul>
@@ -362,8 +417,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="disease-outbreak" class="section level3">
-<h3>Disease Outbreak</h3>
+<div id="disease-outbreak" class="section level1">
+<h1>Disease Outbreak</h1>
 <ul>
 <li><a href="./data/disease.csv">disease.csv</a>: Dataset C.10 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
 <ul>
@@ -376,8 +431,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="heating-equipment" class="section level3">
-<h3>Heating Equipment</h3>
+<div id="heating-equipment" class="section level1">
+<h1>Heating Equipment</h1>
 <ul>
 <li><a href="./data/heating.csv">heating.csv</a>: Dataset C.8 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
 <ul>
@@ -393,8 +448,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="hibbs-bread-and-peace" class="section level3">
-<h3>Hibb’s Bread and Peace</h3>
+<div id="hibbs-bread-and-peace" class="section level1">
+<h1>Hibb’s Bread and Peace</h1>
 <ul>
 <li><a href="./data/hibbs.csv">hibbs.csv</a>: Data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> based on the “bread and peace” model of <span class="citation">Hibbs (2000)</span> which predicts incumbent party’s share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
 <ul>
@@ -406,8 +461,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="ipo" class="section level3">
-<h3>IPO</h3>
+<div id="ipo" class="section level1">
+<h1>IPO</h1>
 <ul>
 <li><a href="./data/ipo.csv">ipo.csv</a>: Dataset C.11 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
 <ul>
@@ -419,8 +474,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="ischemic-heart-disease" class="section level3">
-<h3>Ischemic Heart Disease</h3>
+<div id="ischemic-heart-disease" class="section level1">
+<h1>Ischemic Heart Disease</h1>
 <ul>
 <li><a href="./data/ischemic.csv">ischemic.csv</a>: Dataset C.9 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
 <ul>
@@ -437,8 +492,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="kleibers-law" class="section level3">
-<h3>Kleiber’s law</h3>
+<div id="kleibers-law" class="section level1">
+<h1>Kleiber’s law</h1>
 <ul>
 <li><a href="./data/kleiber.csv">kleiber.csv</a>: <a href="https://en.wikipedia.org/wiki/Kleiber%27s_law">Kleiber’s law</a> states that animals’ metabolic rates follow a power law to their masses. Data are from <span class="citation">Savage et al. (2004)</span>, where they collected data on mammals to study this power law. Variables include
 <ul>
@@ -450,8 +505,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="market-share" class="section level3">
-<h3>Market Share</h3>
+<div id="market-share" class="section level1">
+<h1>Market Share</h1>
 <ul>
 <li><a href="./data/market.csv">market.csv</a>: Dataset C.3 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
 <ul>
@@ -466,8 +521,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="mile-times" class="section level3">
-<h3>Mile Times</h3>
+<div id="mile-times" class="section level1">
+<h1>Mile Times</h1>
 <ul>
 <li><a href="./data/mile.csv">mile.csv</a>: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a>. Variables include
 <ul>
@@ -476,8 +531,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="prostate-cancer" class="section level3">
-<h3>Prostate Cancer</h3>
+<div id="prostate-cancer" class="section level1">
+<h1>Prostate Cancer</h1>
 <ul>
 <li><a href="./data/prostate.csv">prostate.csv</a>: Dataset C.5 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
 <ul>
@@ -493,8 +548,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="real-estate-sales" class="section level3">
-<h3>Real Estate Sales</h3>
+<div id="real-estate-sales" class="section level1">
+<h1>Real Estate Sales</h1>
 <ul>
 <li><a href="./data/estate.csv">estate.csv</a>: Dataset C.7 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
 <ul>
@@ -513,8 +568,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="study-on-the-efficacy-of-nosocomial-infection-control-senic" class="section level3">
-<h3>Study on the Efficacy of Nosocomial Infection Control (SENIC)</h3>
+<div id="study-on-the-efficacy-of-nosocomial-infection-control-senic" class="section level1">
+<h1>Study on the Efficacy of Nosocomial Infection Control (SENIC)</h1>
 <ul>
 <li><a href="./data/senic.csv">senic.csv</a>: Dataset C.1 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
 <ul>
@@ -533,8 +588,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="university-admissions" class="section level3">
-<h3>University Admissions</h3>
+<div id="university-admissions" class="section level1">
+<h1>University Admissions</h1>
 <ul>
 <li><a href="./data/university.csv">university.csv</a>: Dataset C.4 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
 <ul>
@@ -546,8 +601,8 @@ $(document).ready(function () {
 </ul></li>
 </ul>
 </div>
-<div id="website-developer" class="section level3">
-<h3>Website Developer</h3>
+<div id="website-developer" class="section level1">
+<h1>Website Developer</h1>
 <ul>
 <li><a href="./data/website.csv">website.csv</a>: Dataset C.6 from <a href="http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html">KNNL</a>. A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
 <ul>
@@ -576,6 +631,8 @@ Savage, V. M., J. F. Gillooly, W. H. Woodruff, G. B. West, A. P. Allen, B. J. En
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -608,6 +665,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-04" />
+<meta name="date" content="2021-08-05" />
 
 <title>Diagnostics and Remedial Measures</title>
 
@@ -31,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -224,6 +227,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -231,6 +297,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -269,90 +345,10 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-04</h4>
+<h4 class="date">2021-08-05</h4>
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#learning-objectives">Learning Objectives</a></li>
-<li><a href="#recall-assumptions-in-decreasing-order-of-importance">Recall: Assumptions in Decreasing Order of Importance</a></li>
-<li><a href="#problems-when-violated">Problems when Violated</a>
-<ul>
-<li><a href="#assessment-tools-scatterplots-and-residual-plots">Assessment Tools: Scatterplots and Residual Plots</a></li>
-</ul></li>
-<li><a href="#dataset-1-gold-standard">Dataset 1: Gold Standard</a>
-<ul>
-<li><a href="#dataset-1-scatterplot">Dataset 1: Scatterplot</a></li>
-<li><a href="#dataset-1-residual-plot">Dataset 1: Residual Plot</a></li>
-<li><a href="#dataset-1-summary">Dataset 1: Summary</a></li>
-</ul></li>
-<li><a href="#dataset-2-curved-monotone-relationship-equal-variances">Dataset 2: Curved Monotone Relationship, Equal Variances</a>
-<ul>
-<li><a href="#dataset-2-scatterplot">Dataset 2: Scatterplot</a></li>
-<li><a href="#dataset-2-residual-plot">Dataset 2: Residual Plot</a></li>
-<li><a href="#dataset-2-summary">Dataset 2: Summary</a></li>
-<li><a href="#dataset-2-transformed-x-scatterplot">Dataset 2: Transformed <span class="math inline">\(x\)</span> Scatterplot</a></li>
-<li><a href="#dataset-2-transformed-x-residual-plot">Dataset 2: Transformed <span class="math inline">\(x\)</span> Residual Plot</a></li>
-</ul></li>
-<li><a href="#dataset-3-curved-non-monotone-relationship-equal-variances">Dataset 3: Curved Non-monotone Relationship, Equal Variances</a>
-<ul>
-<li><a href="#dataset-3-scatterplot">Dataset 3: Scatterplot</a></li>
-<li><a href="#dataset-3-residual-plot">Dataset 3: Residual Plot</a></li>
-<li><a href="#dataset-3-summary">Dataset 3: Summary</a></li>
-<li><a href="#dataset-3-solution">Dataset 3: Solution</a></li>
-<li><a href="#dataset-3-fitting-ey_i-beta_0-beta_1-x_i-beta_2-x_i2">Dataset 3: Fitting <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2\)</span></a></li>
-<li><a href="#dataset-3-solution-1-residuals">Dataset 3: Solution 1 Residuals</a></li>
-<li><a href="#dataset-3-peak-estimation">Dataset 3: Peak estimation</a></li>
-</ul></li>
-<li><a href="#dataset-4-curved-monotone-relationship-variance-increases-with-y">Dataset 4: Curved Monotone Relationship, Variance Increases with <span class="math inline">\(Y\)</span></a>
-<ul>
-<li><a href="#dataset-4-scatterplot">Dataset 4: Scatterplot</a></li>
-<li><a href="#dataset-4-residual-plot">Dataset 4: Residual Plot</a></li>
-<li><a href="#dataset-4-summary">Dataset 4: Summary</a></li>
-<li><a href="#dataset-4-solution">Dataset 4: Solution</a></li>
-<li><a href="#dataset-4-solution-1">Dataset 4: Solution</a></li>
-</ul></li>
-<li><a href="#dataset-5-linear-relationship-equal-variances-skewed-distribution">Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution</a>
-<ul>
-<li><a href="#dataset-5-scatterplot">Dataset 5: Scatterplot</a></li>
-<li><a href="#dataset-5-residual-plot">Dataset 5: Residual Plot</a></li>
-<li><a href="#dataset-5-summary">Dataset 5: Summary</a></li>
-<li><a href="#dataset-5-solution">Dataset 5: Solution</a></li>
-</ul></li>
-<li><a href="#dataset-6-linear-relationship-unequal-variances">Dataset 6: Linear Relationship, Unequal Variances</a>
-<ul>
-<li><a href="#dataset-6-scatterplot">Dataset 6: Scatterplot</a></li>
-<li><a href="#dataset-6-residual-plot">Dataset 6: Residual Plot</a></li>
-<li><a href="#dataset-6-summary">Dataset 6: Summary</a></li>
-<li><a href="#dataset-6-solution">Dataset 6: Solution</a></li>
-<li><a href="#intuition-of-sandwich-estimator-of-variance">Intuition of Sandwich Estimator of Variance</a></li>
-<li><a href="#notes-on-sandwich">Notes on Sandwich</a></li>
-</ul></li>
-<li><a href="#dataset-7-outlying-observations">Dataset 7: Outlying observations</a>
-<ul>
-<li><a href="#dataset-7-residual-plot">Dataset 7: Residual Plot</a></li>
-<li><a href="#dataset-7-solution">Dataset 7: Solution</a></li>
-</ul></li>
-<li><a href="#dataset-8-sequence-plots-of-residuals-to-check-independence">Dataset 8: Sequence plots of residuals to check independence</a>
-<ul>
-<li><a href="#dataset-8-solution">Dataset 8: Solution</a></li>
-</ul></li>
-<li><a href="#quantile-quantile-plots-of-residuals-to-check-normality">Quantile-Quantile plots of residuals to check normality</a>
-<ul>
-<li><a href="#qq-plots-in-r">QQ-plots in R</a></li>
-<li><a href="#final-notes-about-normality">Final notes about normality</a></li>
-</ul></li>
-<li><a href="#residual-plots-against-omitted-predictors">Residual plots against omitted predictors</a></li>
-<li><a href="#f-test-for-lack-of-fit"><span class="math inline">\(F\)</span>-test for lack of fit</a>
-<ul>
-<li><a href="#lack-of-fit-test-in-r">Lack-of-fit Test in R</a></li>
-<li><a href="#math-notation">Math notation</a></li>
-<li><a href="#lack-of-fit-test-summary">Lack-of-fit test Summary</a></li>
-</ul></li>
-<li><a href="#other-transformations">Other transformations</a></li>
-</ul>
-</div>
 
 <script>
   addClassKlippyTo("pre.r, pre.markdown");
@@ -1022,6 +1018,8 @@ pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -1054,6 +1052,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

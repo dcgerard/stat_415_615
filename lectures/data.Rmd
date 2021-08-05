@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_depth: 4
+    toc_float: true
 urlcolor: "blue"
 bibliography: "data.bib"
 ---
@@ -18,13 +19,13 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
 
-### Copiers
+# Copiers
 
 - [copiers.csv](./data/copiers.csv): Dataset from exercise 1.20 of [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
     - `copiers`: The number of copiers serviced during a single call.
     - `minutes`: The total number of minutes spend by the service person.
 
-### County Demographic Information
+# County Demographic Information
 
 - [cdi.csv](./data/cdi.csv): Dataset C.2 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Demographic information on counties in 1990 and 1992. Variables include:
     - `id`: Identification number of the county.
@@ -45,7 +46,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `total_income`: Total person income (millions of dollars).
     - `region`:  Geographic region, Northeast (`"NE"`), North-central (`"NC"`), South (`"S"`), or West (`"W"`).
     
-### DC COVID Tests
+# DC COVID Tests
 
 - [dccovid.csv](./data/dccovid.csv): Test data taken (and cleaned) from the [COVID-19 surveillance website](https://coronavirus.dc.gov/data) run by the DC government. These data were downloaded on 2021-07-21. Variables include:
     - `day`: The day of the measurements.
@@ -55,7 +56,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `tested`: Total overall number of tests.
     - `positives`: Total number of positive test results.
     
-### Disease Outbreak
+# Disease Outbreak
 
 - [disease.csv](./data/disease.csv): Dataset C.10 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
     - `id`: Identification number.
@@ -65,7 +66,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `disease`: Disease status indicator. `1` = with disease, `0` = without disease.
     - `savings`: Savings account status indicator. `1` = has savings account, `0` = does not have savings account.
     
-### Heating Equipment
+# Heating Equipment
 
 - [heating.csv](./data/heating.csv): Dataset C.8 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
     - `id`: Month identification number.
@@ -78,7 +79,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `tempdev`: Difference between average temperature for the month and 30-year average for that month.
     - `date`: YYYY-MM-01, indicating year and month of data.
     
-### Hibb's Bread and Peace
+# Hibb's Bread and Peace
 
 - [hibbs.csv](./data/hibbs.csv): Data from Chapter 7 of [ROS](https://avehtari.github.io/ROS-Examples/) based on the "bread and peace" model of @hibbs2000bread which predicts incumbent party's share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
     - `year`: Year of the election.
@@ -87,7 +88,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `inc_party_candidate`: The candidate of the incumbant party.
     - `other_candidate`: The candidate of the other party.
     
-### IPO
+# IPO
 
 - [ipo.csv](./data/ipo.csv): Dataset C.11 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
     - `id`: Identification number.
@@ -96,7 +97,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `shares`: Total number of shares offered.
     - `buyout`: Prsence or absence of leveraged buyout. Either `"yes"` or `"no"`.
     
-### Ischemic Heart Disease
+# Ischemic Heart Disease
 
 - [ischemic.csv](./data/ischemic.csv): Dataset C.9 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
     - `id`: Identification number.
@@ -110,7 +111,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `comorbidities`: Number of other diseases that the subscriber had during period.
     - `duration`: Number of days of duration of treatment condition.
     
-### Kleiber's law
+# Kleiber's law
 
 - [kleiber.csv](./data/kleiber.csv): [Kleiber's law](https://en.wikipedia.org/wiki/Kleiber%27s_law) states that animals' metabolic rates follow a power law to their masses. Data are from @savage2004predominance, where they collected data on mammals to study this power law. Variables include
     - `order`: The [order](https://en.wikipedia.org/wiki/Order_(biology)) of the species.
@@ -119,7 +120,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `mass`: The average mass (in grams) of the species.
     - `bmr`: The average basal metabolic rate (in watts) of the species.
     
-### Market Share
+# Market Share
 
 - [market.csv](./data/market.csv): Dataset C.3 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
     - `num`: Month number (1--36)
@@ -131,13 +132,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `month`: Month.
     - `year`: Year.
     
-### Mile Times
+# Mile Times
 
 - [mile.csv](./data/mile.csv): World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of [ROS](https://avehtari.github.io/ROS-Examples/). Variables include
     - `year`: The date (in years) of the new world record.
     - `seconds`: The new world record (in seconds).
     
-### Prostate Cancer
+# Prostate Cancer
 
 - [prostate.csv](./data/prostate.csv): Dataset C.5 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
     - `id`: Identification number of the patient.
@@ -150,7 +151,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `capsular`: Degree of cpsular penetration (cm)
     - `gleason`: Pathologically determined grade of disease using total score of two patters (summed scores were either 6, 7, or 8, with higher scores indicating worse prognosis).
     
-### Real Estate Sales
+# Real Estate Sales
 
 - [estate.csv](./data/estate.csv): Dataset C.7 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
     - `price`: Sales price of residence (in dollars)
@@ -166,7 +167,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `lot`: Lot size (in square feet)
     - `highway`: `"yes"` = highway adjacent, `"no"` = highway not adjacent.
  
-### Study on the Efficacy of Nosocomial Infection Control (SENIC)
+# Study on the Efficacy of Nosocomial Infection Control (SENIC)
 
 - [senic.csv](./data/senic.csv): Dataset C.1 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
     - `id`: Hospital identification number.
@@ -182,7 +183,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `nurses`: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).
     - `facilities`: Percent of 35 potential facilities and services that are provided by the hospital.
 
-### University Admissions
+# University Admissions
 
 - [university.csv](./data/university.csv): Dataset C.4 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
     - `id`: The student identification number.
@@ -191,7 +192,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `act`: ACT entrance examination score.
     - `year`: Calendar year that the freshman entered university.
 
-### Website Developer
+# Website Developer
 - [website.csv](./data/website.csv): Dataset C.6 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
     - `id`: Identification number for row.
     - `number`: Number of websites completed and delivered to customers during the quarter.

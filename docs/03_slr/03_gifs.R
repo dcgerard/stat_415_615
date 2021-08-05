@@ -301,6 +301,130 @@ saveGIF(expr = {
 }, movie.name = "ci_interp.gif", interval = 0.5, ani.width = 750)
 
 
+## Construct a QQ-plot
+set.seed(1)
+library(tidyverse)
+library(animation)
+library(ggthemes)
+library(patchwork)
 
+data.frame(x = rnorm(1000)) %>%
+  filter(x < 3, x > -3) ->
+  edf
+data.frame(x = seq(-3, 3, length.out = 500)) %>%
+  mutate(y = dnorm(x)) ->
+  tdf
 
+qvec <- seq(0.05, 0.95, by = 0.05)
+
+quantile_df <- data.frame(theoretical = qnorm(p = qvec), sample = quantile(x = edf$x, probs = qvec), quantile = qvec)
+
+plist <- list()
+for (i in seq_along(qvec)) {
+    xq <- quantile(edf$x, probs = qvec[[i]])
+    edf %>%
+      mutate(islow = x < xq) %>%
+      ggplot(aes(x = x, fill = islow)) +
+      geom_histogram(bins = 25, color = "black") +
+      scale_fill_manual(values = c("white", "blue")) +
+      geom_vline(xintercept = xq, lty = 2, col = 2, lwd = 2) +
+      theme_bw() +
+      theme(legend.position = "none",
+            title = element_text(size = 25)) +
+      xlim(-3, 3) +
+      ggtitle(paste0("Sample ", qvec[[i]], "th Quantile")) ->
+      pl1
+
+    sdf <- filter(tdf, x < qnorm(qvec[[i]]))
+    ggplot() +
+      geom_line(data = tdf, mapping = aes(x = x, y = y)) +
+      geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
+      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, lwd = 2) +
+      theme_bw() +
+      theme(title = element_text(size = 25)) +
+      ggtitle(paste0("Theoretical ", qvec[[i]], "th Quantile")) ->
+      pl2
+
+    quantile_df %>%
+      mutate(isnow = quantile == qvec[[i]]) %>%
+      ggplot(mapping = aes(x = theoretical, y = sample, color = isnow)) +
+      geom_point(size = 7) +
+      scale_color_colorblind() +
+      theme_bw() +
+      theme(legend.position = "none",
+            title = element_text(size = 25)) +
+      ggtitle("QQ-plot") +
+      xlab("Theoretical Quantile") +
+      ylab("Sample Quantile") ->
+      pl3
+
+    plist[[i]] <- pl1 + pl2 + pl3
+}
+
+saveGIF(expr = {
+  for (i in seq_along(plist)) {
+    print(plist[[i]])
+  }
+}, movie.name = "qqplot.gif", interval = 0.5, ani.width = 1500)
+
+## Bad qq
+
+data.frame(x = rgamma(1000, shape = 2.5, rate = 2.5) - 3) %>%
+  filter(x < 3, x > -3) ->
+  edf
+data.frame(x = seq(-3, 3, length.out = 500)) %>%
+  mutate(y = dnorm(x)) ->
+  tdf
+
+qvec <- seq(0.05, 0.95, by = 0.05)
+
+quantile_df <- data.frame(theoretical = qnorm(p = qvec), sample = quantile(x = edf$x, probs = qvec), quantile = qvec)
+
+plist <- list()
+for (i in seq_along(qvec)) {
+    xq <- quantile(edf$x, probs = qvec[[i]])
+    edf %>%
+      mutate(islow = x < xq) %>%
+      ggplot(aes(x = x, fill = islow)) +
+      geom_histogram(bins = 25, color = "black") +
+      scale_fill_manual(values = c("white", "blue")) +
+      geom_vline(xintercept = xq, lty = 2, col = 2, lwd = 2) +
+      theme_bw() +
+      theme(legend.position = "none",
+            title = element_text(size = 25)) +
+      xlim(-3, 3) +
+      ggtitle(paste0("Sample ", qvec[[i]], "th Quantile")) ->
+      pl1
+
+    sdf <- filter(tdf, x < qnorm(qvec[[i]]))
+    ggplot() +
+      geom_line(data = tdf, mapping = aes(x = x, y = y)) +
+      geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
+      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, lwd = 2) +
+      theme_bw() +
+      theme(title = element_text(size = 25)) +
+      ggtitle(paste0("Theoretical ", qvec[[i]], "th Quantile")) ->
+      pl2
+
+    quantile_df %>%
+      mutate(isnow = quantile == qvec[[i]]) %>%
+      ggplot(mapping = aes(x = theoretical, y = sample, color = isnow)) +
+      geom_point(size = 7) +
+      scale_color_colorblind() +
+      theme_bw() +
+      theme(legend.position = "none",
+            title = element_text(size = 25)) +
+      ggtitle("QQ-plot") +
+      xlab("Theoretical Quantile") +
+      ylab("Sample Quantile") ->
+      pl3
+
+    plist[[i]] <- pl1 + pl2 + pl3
+}
+
+saveGIF(expr = {
+  for (i in seq_along(plist)) {
+    print(plist[[i]])
+  }
+}, movie.name = "bad_qqplot.gif", interval = 0.5, ani.width = 1500)
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-07-26" />
+<meta name="date" content="2021-08-05" />
 
 <title>Motivation</title>
 
@@ -31,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -230,6 +233,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -237,6 +303,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -275,26 +351,10 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Motivation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-07-26</h4>
+<h4 class="date">2021-08-05</h4>
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#learning-objectives">Learning Objectives</a></li>
-<li><a href="#what-is-simple-linear-regression">What is simple linear regression?</a></li>
-<li><a href="#what-is-multiple-linear-regression">What is multiple linear regression?</a></li>
-<li><a href="#steps-of-a-regression-analysis">Steps of a Regression Analysis</a></li>
-<li><a href="#what-can-you-use-it-for">What can you use it for?</a></li>
-<li><a href="#generality">Generality</a>
-<ul>
-<li><a href="#one-sample-t-test">One sample <span class="math inline">\(t\)</span>-test</a></li>
-<li><a href="#two-sample-t-test">Two-sample <span class="math inline">\(t\)</span>-test</a></li>
-<li><a href="#one-way-anova">One-way ANOVA</a></li>
-<li><a href="#many-other-connections">Many other connections</a></li>
-</ul></li>
-</ul>
-</div>
 
 <div id="learning-objectives" class="section level1">
 <h1>Learning Objectives</h1>
@@ -337,11 +397,11 @@ $(document).ready(function () {
 <li><p>So a plane can be interpreted as a line when you fix all predictors but one.</p></li>
 </ul></li>
 <li><p>Have a cloud of points:</p>
-<div id="htmlwidget-49beecfb3339a84291de" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-49beecfb3339a84291de">{"x":{"visdat":{"48cf467f0e83":["function () ","plotlyVisDat"],"48cf62a1b0d4":["function () ","data"]},"cur_data":"48cf62a1b0d4","attrs":{"48cf62a1b0d4":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
+<div id="htmlwidget-5226d0bbdbf9a982ad84" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5226d0bbdbf9a982ad84">{"x":{"visdat":{"117b74b6b87d1":["function () ","plotlyVisDat"],"117b7d4c28b9":["function () ","data"]},"cur_data":"117b7d4c28b9","attrs":{"117b7d4c28b9":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
 <li><p>Fit plane to cloud of points:</p>
-<div id="htmlwidget-762abfacf490d824e4c3" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-762abfacf490d824e4c3">{"x":{"visdat":{"48cf467f0e83":["function () ","plotlyVisDat"],"48cf62a1b0d4":["function () ","data"],"48cf2ed6aa1f":["function () ","data"]},"cur_data":"48cf2ed6aa1f","attrs":{"48cf62a1b0d4":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true},"48cf2ed6aa1f":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null},{"colorbar":{"title":"mpg<br />mpg","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93],"y":[1.513,1.513,1.513,1.513,1.513,2.49075,2.49075,2.49075,2.49075,2.49075,3.4685,3.4685,3.4685,3.4685,3.4685,4.44625,4.44625,4.44625,4.44625,4.44625,5.424,5.424,5.424,5.424,5.424],"z":[27.0351319598431,27.8176831872508,28.6002344146584,29.3827856420661,30.1653368694737,22.3586610681407,23.1412122955484,23.923763522956,24.7063147503637,25.4888659777713,17.6821901764383,18.4647414038459,19.2472926312536,20.0298438586612,20.8123950860689,13.0057192847359,13.7882705121435,14.5708217395512,15.3533729669588,16.1359241943665,8.32924839303343,9.11179962044108,9.89435084784873,10.6769020752564,11.459453302664],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
+<div id="htmlwidget-8deb86e32756a31d5bb6" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8deb86e32756a31d5bb6">{"x":{"visdat":{"117b74b6b87d1":["function () ","plotlyVisDat"],"117b7d4c28b9":["function () ","data"],"117b76ebdb270":["function () ","data"]},"cur_data":"117b76ebdb270","attrs":{"117b7d4c28b9":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true},"117b76ebdb270":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null},{"colorbar":{"title":"mpg<br />mpg","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93],"y":[1.513,1.513,1.513,1.513,1.513,2.49075,2.49075,2.49075,2.49075,2.49075,3.4685,3.4685,3.4685,3.4685,3.4685,4.44625,4.44625,4.44625,4.44625,4.44625,5.424,5.424,5.424,5.424,5.424],"z":[27.0351319598431,27.8176831872508,28.6002344146584,29.3827856420661,30.1653368694737,22.3586610681407,23.1412122955484,23.923763522956,24.7063147503637,25.4888659777713,17.6821901764383,18.4647414038459,19.2472926312536,20.0298438586612,20.8123950860689,13.0057192847359,13.7882705121435,14.5708217395512,15.3533729669588,16.1359241943664,8.32924839303343,9.11179962044108,9.89435084784872,10.6769020752564,11.459453302664],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
 <li><p>Infer slopes from fitted plane.</p></li>
 <li><p>Inference:</p>
 <ol style="list-style-type: lower-alpha">
@@ -362,8 +422,8 @@ $(document).ready(function () {
 <li><p>We typically need to transform the data or try out a few models.</p></li>
 <li><p>Steps:</p></li>
 </ul>
-<div id="htmlwidget-a12bdba1b04af4c2197d" style="width:672px;height:672px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a12bdba1b04af4c2197d">{"x":{"diagram":"digraph flowchart {\n  node [fontname = arial, shape = rectangle]\n  tab1 [label = \"START\"]\n  tab2 [label = \"Exploratory\nData Analysis\"]\n  tab3 [label = \"Develop one\nor more tentative\nregression models\"]\n  tab4 [label = \"Is\none or more of\nthe regression models\nsuitable for the data\nat hand?\"]\n  tab5 [label = \"Revise regression\nmodels and/or\ndevelop new ones\"]\n  tab6 [label = \"Identify most\nsuitable model\"]\n  tab7 [label = \"Make inferences\none basis of\nregression model\"]\n  tab8 [label = \"STOP\"]\n  taby [label = \"YES\"]\n  tabn [label = \"NO\"]\n  \n  tab1 -> tab2 -> tab3 -> tab4 -> taby -> tab6 -> tab7 -> tab8;\n  tab4 -> tabn -> tab5 -> tab3;\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-631d18064439c1fb03ef" style="width:672px;height:672px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-631d18064439c1fb03ef">{"x":{"diagram":"digraph flowchart {\n  node [fontname = arial, shape = rectangle]\n  tab1 [label = \"START\"]\n  tab2 [label = \"Exploratory\nData Analysis\"]\n  tab3 [label = \"Develop one\nor more tentative\nregression models\"]\n  tab4 [label = \"Is\none or more of\nthe regression models\nsuitable for the data\nat hand?\"]\n  tab5 [label = \"Revise regression\nmodels and/or\ndevelop new ones\"]\n  tab6 [label = \"Identify most\nsuitable model\"]\n  tab7 [label = \"Make inferences\none basis of\nregression model\"]\n  tab8 [label = \"STOP\"]\n  taby [label = \"YES\"]\n  tabn [label = \"NO\"]\n  \n  tab1 -> tab2 -> tab3 -> tab4 -> taby -> tab6 -> tab7 -> tab8;\n  tab4 -> tabn -> tab5 -> tab3;\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="what-can-you-use-it-for" class="section level1">
 <h1>What can you use it for?</h1>
@@ -439,7 +499,7 @@ mtcars %&gt;%
   mutate(mpg = mtcars$mpg) -&gt;
   lmdat
 head(lmdat)</code></pre>
-<pre><code>## # A tibble: 6 x 4
+<pre><code>## # A tibble: 6 × 4
 ##   `(Intercept)` gear4 gear5   mpg
 ##           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1             1     1     0  21  
@@ -481,6 +541,8 @@ summary(lmout)</code></pre>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -513,6 +575,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
