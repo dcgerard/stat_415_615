@@ -919,6 +919,10 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - But if your goal is inference, then you lose all interpretability by using transformations other than $\log()$. So think carefully before trying other transformations.
 
+# Back Transforming
+
+- After you make a transformation, you often want to back transform predictions, estimates, etc.
+
 # Smoothers
 
 - Use non-parametric approaches to curve fitting for exploration purposes. When you have a ton of values, or if the trend is weak relative to the variance, it is sometimes easier to see a trend if you plot an estimate of the curve.
