@@ -12,6 +12,7 @@ urlcolor: "blue"
 
 ```{r setup, include=FALSE}
 library(latex2exp)
+library(broom)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center")
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
@@ -543,4 +544,45 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
     `1.5^-0.3556 = 0.8657`, so a mortality rate that is 13\% lower.
     ```
         
+## Logging just the predictor variable
+
+- Sometimes, the relationship is of the form
+    $$
+    y = \beta_0 + \beta_1 \log(x)
+    $$
+
+- You intrepret $\beta_1$ with the following:
+    - When you double $x$, you add $\beta_1\log(2)$ to $y$.
+    - When you multiply $x$ by 10, you add $\beta_1\log(10)$ to $y$.
+    - When you multiply $x$ by 1.1 (10\% increase), you add $\beta_1\log(1.1)$ to $y$.
+    - Choose a multiplier that makes sense for the range of your data. E.g. if it is never the case that one value is 10 times larger than another, don't use that as the interpretation.
+    
+- This follows from
+    \begin{align}
+    y_{old} &= \beta_0 + \beta_1\log(x)\\
+    y_{new} &=  \beta_0 + \beta_1\log(2x)\\
+            &=  \beta_0 + \beta_1[\log(x) + \log(2)]\\
+            &=  \beta_0 + \beta_1\log(x) + \beta_1\log(2)\\
+            &= y_{old} + \beta_1\log(2).
+    \end{align}
  
+```{r, echo = FALSE}
+data("mtcars")
+mtcars <- mutate(mtcars, log_wt = log(wt))
+lm_mt <- lm(mpg ~ log_wt, data = mtcars)
+tout <- tidy(lm_mt)
+beta0 <- tout$estimate[[1]]
+beta1 <- tout$estimate[[2]]
+```
+ 
+ 
+ - Example: From the `mtcars` dataset, it was determined that the relationship between `mpg` and `wt` was well approximated by the curve $y = `r beta0` + `r beta1`\log(x)$.
+    ```{r}
+    df <- data.frame(x = seq(min(mtcars$wt), max(mtcars$wt), length.out = 100))
+    df$y <- beta0 + beta1 * log(df$x)
+    ggplot() +
+      geom_point(data = mtcars, mapping = aes(x = wt, y = mpg)) +
+      geom_line(data = df, mapping = aes(x = x, y = y))
+    ```
+
+- So cars that are 50\% heavier tend to have $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon.

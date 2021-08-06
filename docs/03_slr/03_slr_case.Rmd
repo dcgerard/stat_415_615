@@ -61,7 +61,7 @@ klippy::klippy()
     ```
     
 - The two variables are
-    - `act`: A measure of the plutonium activity, measured in [picocuries](https://en.wikipedia.org/wiki/Curie_(unit)) (one trillianth of a curie) per gram.
+    - `act`: A measure of the plutonium activity, measured in [picocuries](https://en.wikipedia.org/wiki/Curie_(unit)) (one trillionth of a curie) per gram.
     - `alpha`: The intensity of alpha particle strikes in counts per second.
     
 - **The first thing you should always do is plot your data**.

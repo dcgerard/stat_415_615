@@ -919,6 +919,112 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - But if your goal is inference, then you lose all interpretability by using transformations other than $\log()$. So think carefully before trying other transformations.
 
+# Back Transforming
+
+- After you make a transformation, you often want to back transform predictions, estimates, etc.
+
+- The steps for this are:
+    1. Make estimates, confidence intervals, and prediction intervals on the transformed scale that you used to fit the linear model.
+    2. Apply the same transformation to confidence bounds as you do to estimates to interpret (see the [Math Prerequisites](./02_math_prereq.html) lecture).
+    3. Apply the inverse transformation you applied to $Y$ to predictions and  prediction bounds to get back to the original scale.
+    
+## Logging $X$ but not logging $Y$
+
+- From the `mtcars` dataset:
+    ```{r}
+    data("mtcars")
+    qplot(x = log(wt), y = mpg, data = mtcars)
+    mtcars <- mutate(mtcars, log_wt = log(wt))
+    lm_mt <- lm(mpg ~ log_wt, data = mtcars)
+    tidy(lm_mt, conf.int = TRUE)
+    ```
+
+- Interpretation: Cars that are 50\% heavier tend to have $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon.
+
+- Confidence interval: $-20.2 \times \log(1.5) = -8.2$ to $-14.0 \times \log(1.5) = -5.7$. Notice that we applied the same transformation on the bounds as we did on the estimate.
+
+- Prediction interval
+    ```{r}
+    newdf <- data.frame(wt = 3)
+    newdf <- mutate(newdf, log_wt = log(wt))
+    predict(object = lm_mt, newdata = newdf, interval = "prediction")
+    ```
+
+    - Prediction interval at a weight of 3000 lbs: 20.49 mpg (14.95 mpg to 26.02 mpg). Notice that I did not transform these since they are already on the proper scale.
+
+## Not logging $X$ but logging $Y$
+
+- The early growth of [COVID-19 in DC](https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests) looked exponential:
+    ```{r, message = FALSE}
+    dc <- read_csv("https://dcgerard.github.io/stat_415_615/data/dccovid.csv")
+    dc <- select(dc, day, positives)
+    dc <- filter(dc, day <= "2020-04-01", day >= "2020-03-11") 
+    qplot(x = day, y = log(positives), data = dc)
+    ```
+
+    ```{r}
+    dc <- mutate(dc, log_positives = log(positives), day_num = as.numeric(day - day[[1]]))
+    lm_cov <- lm(log_positives ~ day_num, data = dc)
+    tidy(lm_cov, conf.int = TRUE)
+    ```
+
+- Each day saw about $\exp(0.218) = 1.24$ times as many COVID cases (about 24\% more).
+
+- Confidence interval: $\exp(0.2049) = 1.23$ to $\exp(0.2311) = 1.26$ times as many. Notice that I applied the same transformation to the bounds as I did to the estimator.
+
+- **Exercise**: How many more COVID cases did we see every two days? Provide a 95\% confidence interval with your estimate.
+    ```{block, eval = FALSE, echo = FALSE}
+    $\exp(2 * 0.218) = 1.547$
+    
+    $\exp(2 * 0.2049) = 1.507$
+    
+    $\exp(2 * 0.2311) = 1.588$
+    
+    So we estimate about 55\% more covid cases, with 95\% confidence interval of about 51\% more to 59\% more.
+    ```
+
+
+- Prediction interval:
+
+    ```{r}
+    newdf <- data.frame(day_num = 10)
+    predict(object = lm_cov, newdata = newdf, interval = "prediction")
+    ```
+
+    - We predict that about 10 days in, there were about $\exp(4.364) = 78.6$ COVID cases, with prediction interval $\exp(3.965) = 52.7$ to $\exp(4.763) = 117.1$ COVID cases. Notice that I applied the same transformation to my estimate as I did to the bounds of the prediction interval.
+
+
+## Logging $X$ and logging $Y$
+
+- Wine and mortality follow a power-law decline.
+    ```{r}
+    library(Sleuth3)
+    data("ex0823")
+    wine <- ex0823
+    qplot(x = log(Wine), y = log(Mortality), data = wine)
+    ```
+
+- Fit linear model
+    ```{r}
+    wine <- mutate(wine, log_wine = log(Wine),
+                   log_mort = log(Mortality))
+    lm_wine <- lm(log_mort ~ log_wine, data = wine)
+    tidy(lm_wine, conf.int = TRUE)
+    ```
+
+- Countries that drink twice as much wine per capita tend to have ($2^{-0.3556} = 0.78$) 22\% fewer deaths per 1000 individuals.
+
+- Confidence interval: $2^{-0.4678} = 0.7231$ to $2^{-0.2434} = 0.8448$, so anywhere from 16\% fewer deaths per 1000 individuals, to 28\% fewer deaths per 1000 individuals. Notice that I applied the same transformation to the bounds of the confidence interval as I did to the estimate.
+
+- Prediction interval:
+    ```{r}
+    newdf <- data.frame(Wine = 20)
+    newdf <- mutate(newdf, log_wine = log(Wine))
+    predict(object = lm_wine, newdata = newdf, interval = "prediction")
+    ```
+
+    - So countries that drink 20 liters per person per year tend to have mortality rates of about $\exp(1.49) = 4.4$ deaths per 1000 individuals. With a prediction interval of $\exp(0.984) = 2.7$ to $\exp(1.997) = 7.4$ deaths per 1000 individuals.
+
 # Smoothers
 
 - Use non-parametric approaches to curve fitting for exploration purposes. When you have a ton of values, or if the trend is weak relative to the variance, it is sometimes easier to see a trend if you plot an estimate of the curve.

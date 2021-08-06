@@ -24,6 +24,7 @@ klippy::klippy()
 
 - Introduce/review basic linear algebra.
 - Sections 5.1--5.7 of KNNL
+- Chapters 2 and 3 of [Linear Algebra for Data Science with examples in R](https://shainarace.github.io/LinearAlgebra/)
 
 # Vectors and Matrices
 

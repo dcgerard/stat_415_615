@@ -589,6 +589,22 @@ saveGIF(expr = {
     aout <- augment(x = lmout)
     glimpse(aout)
     ```
+    
+# Alternative means to obtain fitted values and residuals in R.
+
+- If `augment()` does not work, there are base R methods to obtain residuals and fitted values.
+
+- You can get the residuals via `residuals()`
+
+    ```{r}
+    residuals(object = lmout)
+    ```
+
+- You can get the fitted values via `fitted()`.
+
+    ```{r}
+    fitted(object = lmout)
+    ```
 
 # Properties of Fitted Regression Line
 

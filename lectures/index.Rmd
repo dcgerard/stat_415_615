@@ -38,6 +38,7 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 3 of KNNL.
   - [Lecture 03-4: SLR Case Study](./03_slr_case.html).
   - [Lab 03-1: Inference Lab](./03_inference_lab.html).
+  - [Lab 03-2: Diagnostics Lab](./03_diagnostics_lab.html).
 - 04 Linear algebra
   - [Lecture 04-1: Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
   - Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.

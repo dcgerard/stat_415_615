@@ -45,5 +45,10 @@ Here is a list of the equations I want you to have memorized at the top of your 
 - $SSTO = \sum_{i=1}^n(Y_i - \bar{Y}_i)^2$, with $df_{TO} = n-1$
 - $SSTO = SSE + SSR$
 - $F^* = \frac{SSR/df_R}{SSE/df_E}$, which follows an $F(df_R, df_E)$ distribution under the null model of $Y_i = \beta_0 + \epsilon_i$.
+- $F^* = \frac{[SSE(R) - SSE(F)]/[df_R - df_F]]}{SSE(F)/df_F}$
 - $R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}$
+- If relationship is $y = \beta_0 + \beta_1x$, then add one to $x$ means add $\beta_1$ to $y$.
+- If relationship is $y = \beta_0 + \beta_1 \log(x)$, then double $x$ means add $\beta_1\log(2)$ to $y$.
+- If relationship is $\log(y) = \beta_0 + \beta_1 x$, then add one to $x$ means multiply $y$ by $\exp(\beta_1)$.
+- If relationship is $\log(y) = \beta_0 + \beta_1 \log(x)$, then double $x$ means multiply $y$ by $2^{\beta_1}$.
 
