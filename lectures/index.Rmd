@@ -54,3 +54,7 @@ University by [David Gerard](https://dcgerard.github.io/).
 - 07 Missing data
 - Review Sheets
   - [Equations](./rr_equations.html).
+
+# Final Project
+
+- [Final Project Description](./pp_description.html).

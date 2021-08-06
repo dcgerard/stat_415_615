@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_depth: 4
+    toc_float: true
 urlcolor: "blue"
 ---
 
@@ -60,10 +61,10 @@ We will use the R computing language to complete assignments. R is free and may 
   - In class, closed notes, closed book.
   - Focuses on the second half of material, but indirectly cumulative.
 - Final Project: 25%
-  - Status update 1: 5%
-  - Status update 2: 5%
-  - Final Report: 10%
-  - Final Presentation: 5%
+  - Project Proposal: 5%
+  - Status update: 5%
+  - Final Report: 5%
+  - Final Presentation: 10%
   
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
@@ -98,7 +99,7 @@ Individual assignments will not be curved. However, at the discretion of the ins
     
 # Important Dates
 
-- 10/12/2021--10/13/2021: Tentative dates for midterm exams.
+- 10/12/2021--10/13/2021: Tentative dates for midterm exam.
 - 11/23/2021: Tuesday classes cancelled; Friday classes meet.
 - 11/24/2021: Wednesday classes cancelled; Thanksgiving holiday.
 - 12/13/2021--12/18/2021: Final exam week (final exam times TBD).

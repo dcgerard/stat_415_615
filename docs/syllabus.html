@@ -30,6 +30,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -219,6 +222,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -226,6 +292,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -264,52 +340,10 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">STAT 415/615 Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">Updated: 2021-07-21</h4>
+<h4 class="date">Updated: 2021-08-06</h4>
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#overview-of-topics-and-course-objectives">Overview of Topics and Course Objectives</a></li>
-<li><a href="#course-websites">Course Websites</a></li>
-<li><a href="#textbooks">Textbooks</a></li>
-<li><a href="#computing-and-software">Computing and Software</a></li>
-<li><a href="#assignments-and-grading">Assignments and Grading</a></li>
-<li><a href="#list-of-topics">List of Topics</a></li>
-<li><a href="#important-dates">Important Dates</a></li>
-<li><a href="#course-learning-outcomes">Course Learning Outcomes</a></li>
-<li><a href="#late-work-policy">Late Work Policy</a></li>
-<li><a href="#incomplete-policy">Incomplete Policy</a></li>
-<li><a href="#sharing-course-content">Sharing Course Content:</a></li>
-<li><a href="#academic-integrity-code">Academic Integrity Code</a></li>
-<li><a href="#university-wide-policies">University-wide Policies</a>
-<ul>
-<li><a href="#defining-and-reporting-discrimination-and-non-title-ix-sexual-misconduct-policy">Defining and Reporting Discrimination and Non-Title IX Sexual Misconduct Policy</a></li>
-<li><a href="#defining-and-reporting-title-ix-sexual-harassment-policy">Defining and Reporting Title IX Sexual Harassment Policy</a></li>
-<li><a href="#emergency-preparedness">Emergency Preparedness</a></li>
-<li><a href="#student-code-of-conduct">Student Code of Conduct</a></li>
-<li><a href="#religious-observances">Religious Observances</a></li>
-<li><a href="#use-of-student-work">Use of Student Work</a></li>
-</ul></li>
-<li><a href="#academic-support-services">Academic Support Services</a>
-<ul>
-<li><a href="#academic-success-coaching">Academic Success Coaching</a></li>
-<li><a href="#international-student-scholar-services">International Student &amp; Scholar Services</a></li>
-<li><a href="#mathematics-and-statistics-tutoring-lab">Mathematics and Statistics Tutoring Lab</a></li>
-<li><a href="#writing-center">Writing Center</a></li>
-</ul></li>
-<li><a href="#student-support-services">Student Support Services</a>
-<ul>
-<li><a href="#center-for-diversity-inclusion-cdi">Center for Diversity &amp; Inclusion (CDI)</a></li>
-<li><a href="#counseling-center">Counseling Center</a></li>
-<li><a href="#dean-of-students-office">Dean of Students Office</a></li>
-<li><a href="#food-and-housing-insecurity-statement">Food and Housing Insecurity Statement</a></li>
-<li><a href="#office-of-advocacy-services-for-interpersonal-and-sexual-violence">Office of Advocacy Services for Interpersonal and Sexual Violence</a></li>
-<li><a href="#respect-for-diversity">Respect for Diversity</a></li>
-<li><a href="#students-with-disabilities">Students with Disabilities</a></li>
-</ul></li>
-</ul>
-</div>
 
 <ul>
 <li><strong>Time</strong>: Tuesdays or Wednesdays, 5:30 PM to 8:00 PM</li>
@@ -358,10 +392,10 @@ $(document).ready(function () {
 </ul></li>
 <li>Final Project: 25%
 <ul>
-<li>Status update 1: 5%</li>
-<li>Status update 2: 5%</li>
-<li>Final Report: 10%</li>
-<li>Final Presentation: 5%</li>
+<li>Project Proposal: 5%</li>
+<li>Status update: 5%</li>
+<li>Final Report: 5%</li>
+<li>Final Presentation: 10%</li>
 </ul></li>
 </ul>
 <p>Usual grade cutoffs will be used:</p>
@@ -464,7 +498,7 @@ $(document).ready(function () {
 <div id="important-dates" class="section level1">
 <h1>Important Dates</h1>
 <ul>
-<li>10/12/2021–10/13/2021: Tentative dates for midterm exams.</li>
+<li>10/12/2021–10/13/2021: Tentative dates for midterm exam.</li>
 <li>11/23/2021: Tuesday classes cancelled; Friday classes meet.</li>
 <li>11/24/2021: Wednesday classes cancelled; Thanksgiving holiday.</li>
 <li>12/13/2021–12/18/2021: Final exam week (final exam times TBD).</li>
@@ -604,6 +638,8 @@ $(document).ready(function () {
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -636,6 +672,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
