@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-03" />
+<meta name="date" content="2021-08-06" />
 
 <title>Equation Review</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Equation Review</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-03</h4>
+<h4 class="date">2021-08-06</h4>
 
 </div>
 
@@ -311,7 +311,12 @@ $(document).ready(function () {
 <li><span class="math inline">\(SSTO = \sum_{i=1}^n(Y_i - \bar{Y}_i)^2\)</span>, with <span class="math inline">\(df_{TO} = n-1\)</span></li>
 <li><span class="math inline">\(SSTO = SSE + SSR\)</span></li>
 <li><span class="math inline">\(F^* = \frac{SSR/df_R}{SSE/df_E}\)</span>, which follows an <span class="math inline">\(F(df_R, df_E)\)</span> distribution under the null model of <span class="math inline">\(Y_i = \beta_0 + \epsilon_i\)</span>.</li>
+<li><span class="math inline">\(F^* = \frac{[SSE(R) - SSE(F)]/[df_R - df_F]]}{SSE(F)/df_F}\)</span></li>
 <li><span class="math inline">\(R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}\)</span></li>
+<li>If relationship is <span class="math inline">\(y = \beta_0 + \beta_1x\)</span>, then add one to <span class="math inline">\(x\)</span> means add <span class="math inline">\(\beta_1\)</span> to <span class="math inline">\(y\)</span>.</li>
+<li>If relationship is <span class="math inline">\(y = \beta_0 + \beta_1 \log(x)\)</span>, then double <span class="math inline">\(x\)</span> means add <span class="math inline">\(\beta_1\log(2)\)</span> to <span class="math inline">\(y\)</span>.</li>
+<li>If relationship is <span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span>, then add one to <span class="math inline">\(x\)</span> means multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(\exp(\beta_1)\)</span>.</li>
+<li>If relationship is <span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span>, then double <span class="math inline">\(x\)</span> means multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(2^{\beta_1}\)</span>.</li>
 </ul>
 </div>
 
