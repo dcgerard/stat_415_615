@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-06" />
+<meta name="date" content="2021-08-09" />
 
 <title>Diagnostics Lab</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -265,12 +265,61 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Diagnostics Lab</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-06</h4>
+<h4 class="date">2021-08-09</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#plastic-hardness">Plastic Hardness</a></li>
+<li><a href="#conceptual-exercises">Conceptual Exercises</a></li>
+<li><a href="#prostate-cancer">Prostate Cancer</a></li>
+</ul>
+</div>
 
-
+<div id="plastic-hardness" class="section level1">
+<h1>Plastic Hardness</h1>
+<p>Sixteen batches of plastic were made and from each batch one test item was molded. Each test item was randomly assigned to one of the four predetermined time levels, and the hardness was measured after the assigned elapsed time. The results are shown below with variables</p>
+<ul>
+<li><code>time</code>: Elapsed time in hours</li>
+<li><code>hardness</code>: Hardness in Brinell units.</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+plastic &lt;- tribble(~hardness, ~time,
+                   199, 16,
+                   205, 16,
+                   196, 16,
+                   200, 16,
+                   218, 24,
+                   220, 24,
+                   215, 24,
+                   223, 24,
+                   237, 32,
+                   234, 32,
+                   235, 32,
+                   230, 32,
+                   250, 40,
+                   248, 40,
+                   253, 40,
+                   246, 40)</code></pre>
+<ol style="list-style-type: decimal">
+<li><p>Make a residuals versus fits plot. Do you see any issues with the linear regression model?</p></li>
+<li><p>Is an F-test lack-of-fit appropriate here? If so, un and F-test lack of fit and state your conclusions.</p></li>
+<li><p>Make a normal probability plot. How does the normality assumption look?</p></li>
+</ol>
+</div>
+<div id="conceptual-exercises" class="section level1">
+<h1>Conceptual Exercises</h1>
+<ol style="list-style-type: decimal">
+<li>Suppose we reject the <span class="math inline">\(F\)</span>-test lack-of-fit. Does that indicate what regression function is appropriate? How would you proceed?</li>
+</ol>
+</div>
+<div id="prostate-cancer" class="section level1">
+<h1>Prostate Cancer</h1>
+<p>Refer to the <a href="https://dcgerard.github.io/stat_415_615/data.html#Prostate_Cancer">Prostate Cancer</a> dataset that you can download here: <a href="https://dcgerard.github.io/stat_415_615/data/prostate.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/prostate.csv</a></p>
+<p>Build a regression model to predict PSA as a function of cancer volume. The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. Include remedial measures where necessary. Use the final model to predict the PSA for an individual with a cancer volume of 20 cc.</p>
+</div>
 
 
 

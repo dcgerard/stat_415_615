@@ -19,3 +19,169 @@ knitr::opts_chunk$set(echo = params$solutions,
                       fig.height = 3)
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
+
+
+# Plastic Hardness
+
+Sixteen batches of plastic were made and from each batch one test item was molded. Each test item was randomly assigned to one of the four predetermined time levels, and the hardness was measured after the assigned elapsed time. The results are shown below with variables
+
+- `time`: Elapsed time in hours
+- `hardness`: Hardness in Brinell units.
+
+```{r, message = FALSE, echo = TRUE}
+library(tidyverse)
+library(broom)
+plastic <- tribble(~hardness, ~time,
+                   199, 16,
+                   205, 16,
+                   196, 16,
+                   200, 16,
+                   218, 24,
+                   220, 24,
+                   215, 24,
+                   223, 24,
+                   237, 32,
+                   234, 32,
+                   235, 32,
+                   230, 32,
+                   250, 40,
+                   248, 40,
+                   253, 40,
+                   246, 40)
+```
+
+1. Make a residuals versus fits plot. Do you see any issues with the linear regression model?
+
+    ```{r}
+    lmout <- lm(hardness ~ time, data = plastic)
+    aout <- augment(lmout)
+    qplot(x = .fitted, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    ```
+
+    ```{block, eval = FALSE}
+    The constant variance assumption looks OK, but it also looks like it might be curvilinear, but it is hard to be sure.
+    ```
+
+2. Is an F-test lack-of-fit appropriate here? If so, un and F-test lack of fit and state your conclusions.
+
+    ```{block, eval = FALSE}
+    Yes, we have replications at multiple $X$ values.
+    ```
+    
+    ```{r}
+    lm_full <- lm(hardness ~ as.factor(time), data = plastic)
+    anova(lmout, lm_full)
+    ```
+    
+    ```{block, eval = FALSE}
+    So even though in part 1 we thought we saw a curved relationship, the $F$-test says that we don't have any evidence that the linear model in inadequate. This is why statistics exists, because humans easily see patterns when it could just be noise.
+    ```
+    
+3. Make a normal probability plot. How does the normality assumption look?
+
+    ```{r}
+    qplot(sample = .resid, data = aout) +
+      geom_qq_line()
+    ```
+
+    ```{block, eval = FALSE}
+    It looks fine.
+    ```
+    
+# Conceptual Exercises
+
+1. Suppose we reject the $F$-test lack-of-fit. Does that indicate what regression function is appropriate? How would you proceed?
+
+    ```{block, eval = FALSE}
+    No. It just says that the linear model is insufficient. In real life, I would look at how bad the linear fit is via the residuals, and if it's not too bad (e.g. rejection was caused by a large sample size) then I would still proceed with the linear model. This is because most relationships are not actually linear and large sample sizes could pick that up.
+    
+    If the relationship is very non-linear, I would explore transformations. If no transformation seemed to work, then I would try to maybe fit a spline for that covariate (depending on if that covariate was the one of interest).
+    ```
+
+# Prostate Cancer
+
+Refer to the [Prostate Cancer](https://dcgerard.github.io/stat_415_615/data.html#Prostate_Cancer) dataset that you can download here: <https://dcgerard.github.io/stat_415_615/data/prostate.csv>
+
+Build a regression model to predict PSA as a function of cancer volume. The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. Include remedial measures where necessary. Use the final model to predict the PSA for an individual with a cancer volume of 20 cc.
+
+```{r, message = FALSE}
+prostate <- read_csv("https://dcgerard.github.io/stat_415_615/data/prostate.csv")
+qplot(x = volume, y = psa, data = prostate)
+```
+
+```{block, eval = FALSE}
+It looks like we'll need to take some logs (curved relationship, increasing variance). But let's look at the residual plot just so that you get used to that (because you cannot just do $x$ versus $y$ scaterplots in multiple regression). I'll try to stick to just using the residual plots from now on to mimick multiple regression.
+```
+
+
+```{r}
+lm_1 <- lm(psa ~ volume, data = prostate)
+a_1 <- augment(lm_1)
+qplot(x = .fitted, y = .resid, data = a_1) +
+  geom_hline(yintercept = 0)
+```
+
+```{r}
+prostate <- mutate(prostate,
+                   log_psa = log(psa),
+                   log_vol = log(volume))
+```
+
+```{block, eval = FALSE}
+First, let's log `psa` since we have unequal variances.
+```
+
+```{r}
+lm_2 <- lm(log_psa ~ volume, data = prostate)
+a_2 <- augment(lm_2)
+qplot(x = .fitted, y = .resid, data = a_2) +
+  geom_hline(yintercept = 0)
+```
+
+
+```{block, eval = FALSE}
+This fixed the equal variance assumption, but it still looks curved. Let's log volume as well.
+```
+
+```{r}
+lm_3 <- lm(log_psa ~ log_vol, data = prostate)
+a_3 <- augment(lm_3)
+qplot(x = .fitted, y = .resid, data = a_3) +
+  geom_hline(yintercept = 0)
+```
+
+```{block, eval = FALSE}
+This looks perfect. Equal variance, linearity, no obvious trends.
+
+Let's look at normality.
+```
+
+```{r}
+qplot(sample = .resid, data = a_3, geom = "qq") +
+  geom_qq_line()
+```
+
+```{block, eval = FALSE}
+Nothing to worry about, so we can employ prediction intervals.
+
+Let's calculate coefficients, predictions, and come up with a conclusion.
+```
+
+
+```{r}
+newdf <- data.frame(volume = 20)
+newdf <- mutate(newdf, log_vol = log(volume))
+predict(object = lm_3, newdata = newdf, interval = "prediction")
+tidy(lm_3, conf.int = TRUE)
+```
+
+```{block, eval = FALSE}
+**REPORT**
+
+We estimate a power-law growth between PSA and Volume ($p < 0.001$, $n = 97$), with an estimated relationship of $\text{psa} = 4.5 \times \text{Volume}^{0.72}$. What this means is that cancers that are twice the volume tend to have a PSA's about 64\% larger (since $2^{0.72} = 1.645$), with a 95\% confidence interval of around 50\% to 81\% larger.
+
+For an individual with cancer volume of 20 cc, we predict that their PSA level would be about 38.9 mg/ml (since $e^{3.661}$ = 38.9), with a likely range of 7.9 mg/ml to 190.4 mg/ml.
+```
+
+
