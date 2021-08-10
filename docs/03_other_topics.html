@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2021-08-10" />
+
+<title>Other Topics in SLR</title>
+
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Other Topics in SLR</h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2021-08-10</h4>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
+<ul>
+<li><p>Chapter 4 of KNNL (skip 4.4).</p></li>
+<li><p>Simultaneous Inference</p></li>
+<li><p>Measurement Error</p></li>
+<li><p>Inverse Prediction</p></li>
+<li><p>The following are three issues that you should be aware of. So you should be able to determine that these are issues based on a study design. But you can Google solutions if you ever come across them.</p></li>
+</ul>
+</div>
+<div id="simultaneous-inference" class="section level1">
+<h1>Simultaneous Inference</h1>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<ul>
+<li><p>Suppose we run <span class="math inline">\(p\)</span> hypotheses, each rejecting the null when <span class="math inline">\(p &lt; 0.05\)</span>.</p></li>
+<li><p>If all of the null’s are true, what is the probability that we would reject at least one null?</p></li>
+<li><p>If these hypotheses are all independent, then we have <span class="math display">\[\begin{align}
+  Pr(\text{at least one reject }|\text{ all null}) &amp;= 1 - Pr(\text{no reject }|\text{ all null})\\
+  &amp;=1 - 0.95^p
+  \end{align}\]</span></p></li>
+<li><p>That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>. So we would be almost gauranteed to have a false positive (falsely rejecting the null) somewhere.</p></li>
+<li><p>Similarly, suppose we construct 100 prediction intervals for 100 new values. What is the probability that at least one prediction interval does not cover the new observation’s value? Assuming independence, it is the same calculation <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>.</p></li>
+<li><p>So we are not really controlling for what we thought we were controlling.</p></li>
+<li><p>Coming up with new measures to control, or adjust testing procedures to account for multiple tests, is called <strong>simultaneous inference</strong>.</p></li>
+</ul>
+</div>
+<div id="bonferonni-correction" class="section level2">
+<h2>Bonferonni Correction</h2>
+<ul>
+<li><p>One solution is to come up with <em>adjusted</em> <span class="math inline">\(p\)</span>-values.</p></li>
+<li><p>Given a family of hypothesis tests, the <strong>adjusted <span class="math inline">\(p\)</span>-value</strong> of a test is less than <span class="math inline">\(\alpha\)</span> if and only if the probability of at least one Type I error (among all tests) is at most <span class="math inline">\(\alpha\)</span>.</p></li>
+<li><p>That is, if you reject when the adjusted <span class="math inline">\(p\)</span>-value is less than <span class="math inline">\(\alpha\)</span>, then the probability (prior to sampling) of any test producing a Type I error is less than <span class="math inline">\(\alpha\)</span>.</p></li>
+<li><p>The most basic way to obtain adjusted <span class="math inline">\(p\)</span>-values is the Bonferonni procedure where you <strong>multiply the <span class="math inline">\(p\)</span>-value by the number of tests</strong>.</p></li>
+<li><p>Why does this work? Suppose we have <span class="math inline">\(m\)</span> tests, of which <span class="math inline">\(m_0\)</span> are actually null. The family-wise error rate of such a procedure is</p>
+<p><span class="math display">\[\begin{align}
+  &amp;Pr(\text{Type I error among the }m_0\text{ tests})\\
+  &amp;= Pr(mp_1 \leq \alpha \text{ or } mp_2\leq\alpha \text{ or } \cdots \text{ or } mp_{m_0}\leq \alpha)\\
+  &amp;= Pr(p_1 \leq \alpha/m \text{ or } p_2\leq\alpha/m \text{ or } \cdots \text{ or } p_{m_0}\leq \alpha/m)\\
+  &amp;\leq Pr(p_1 \leq \alpha/m) + Pr(p_2 \leq \alpha/m) + \cdots + Pr(p_{m_0} \leq \alpha/m)\\
+  &amp;= \alpha/m + \alpha / m + \cdots + \alpha / m~(m_0 \text{summations})\\
+  &amp;= m_0\alpha/m\\
+  &amp;\leq m\alpha/m\\
+  &amp;= \alpha.
+  \end{align}\]</span></p></li>
+<li><p>The first inequality follows from Bonferonni’s inequality</p>
+<p><img src="03_figs/bonferroni.png" style="width:70.0%" /> </p></li>
+<li><p>The Bonferonni confidence interval correction:</p>
+<ul>
+<li>Recall: confidence intervals of the form estimate <span class="math inline">\(\pm\)</span> multiplier <span class="math inline">\(\times\)</span> standard error.</li>
+<li>Before, we used the multiplier <code>qt(1 - alpha / 2, df)</code> most often (typically <code>alpha = 0.05</code>).</li>
+<li>The Bonferonni procedure uses <code>qt(1 - alpha / (2m), df)</code>, where <code>m</code> is the number of tests.</li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Prove that family-wise coverage probability of the above procedure for confidence intervals is at least 0.95. (It’s easier to start with just two intervals).</p></li>
+<li><p>There are more sophisticated methods that work better to construct simultaneous confidence intervals, or run multiple hypothesis tests.</p></li>
+<li><p>In R, to obtain adjusted <span class="math inline">\(p\)</span>-values, just use the <code>p.adjust()</code> function, inserting your vector of <span class="math inline">\(p\)</span>-values. The default is a better option than Bonferonni.</p>
+<pre class="r"><code>p.adjust(p = c(0.1, 0.2, 0.01, 0.05))</code></pre>
+<pre><code>## [1] 0.20 0.20 0.04 0.15</code></pre>
+<pre class="r"><code>p.adjust(p = c(0.1, 0.2, 0.01, 0.05), method = &quot;bonferroni&quot;) ## not as good</code></pre>
+<pre><code>## [1] 0.40 0.80 0.04 0.20</code></pre></li>
+<li><p><strong>Exercise</strong>: At a plumbing supplies company, a consultant studied the relationship between number of work units performed (<code>work</code>), and the total variable labor cost in warehouses during a test period (<code>cost</code>). The data are presented below. Provide prediction intervals for new warehouses that perform 50, 100, and 150 work units, using a procedure with a family-wise coverage probability of at least 0.9.</p>
+<pre class="r"><code>library(tidyverse)
+plumb &lt;- tribble(~work, ~cost,
+                 20, 114,
+                 196, 921,
+                 115, 560,
+                 50, 245,
+                 122, 575,
+                 100, 475,
+                 33, 138,
+                 154, 727,
+                 80, 375,
+                 147, 670,
+                 182, 828,
+                 160, 762)</code></pre></li>
+</ul>
+</div>
+</div>
+<div id="measurement-error" class="section level1">
+<h1>Measurement Error</h1>
+<div id="graphical-motivation" class="section level2">
+<h2>Graphical motivation</h2>
+<ul>
+<li><p>Sometimes, we are interested in the relationship between two variables, but we only observe noisy versions of those variables.</p></li>
+<li><p>Examples:</p>
+<ul>
+<li>Suppose a researcher was interested in studying the association between corn yield (<span class="math inline">\(Y\)</span>) and soil nitrogen level (<span class="math inline">\(X\)</span>). There are two possible sources of errors when measuring nitrogen level. First, a small soil sample is only taken at a single location on a large plot, so this small sample is a noisy estimate of mean nitrogen level on the whole plot. Second, the chemical assay to measure nitrogen level is not 100% accurate.</li>
+<li>A research problem I come across often is studying the association between some biological trait (<span class="math inline">\(Y\)</span>) and the dosage of an allele at a locus (<span class="math inline">\(X\)</span>). These dosages are estimated from read-counts from sequencing assays, and so are not perfectly accurate.</li>
+</ul></li>
+<li><p>Suppose there is a strong underlying relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. <img src="03_other_topics_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="measurement-error-for-x-attenuation" class="section level2">
+<h2>Measurement error for <span class="math inline">\(X\)</span>, attenuation</h2>
+<ul>
+<li><p>Let’s add noise in the <span class="math inline">\(x\)</span> direction.</p>
+<p><img src="03_other_topics_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><span class="math inline">\(\hat{\beta}_1\)</span> is now much smaller.</p>
+<p><img src="03_other_topics_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Why does this happen? Suppose the <em>true</em> underlying relationship is <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i, ~\epsilon_i \overset{iid}{\sim} N(0, \sigma^2)\\
+  X_i^* &amp;= X_i + \delta_i,~\delta_i \overset{iid}{\sim} N(0, \tau^2)
+  \end{align}\]</span></p>
+<p>However, we only observe <span class="math inline">\(X_i^*\)</span>, <em>not</em> <span class="math inline">\(X_i = X_i^* - \delta_i\)</span>. So, converting the true model in terms of <span class="math inline">\(X_i^*\)</span>, we have <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i\\
+      &amp;= \beta_0 + \beta_1 (X_i^* - \delta) + \epsilon_i\\
+      &amp;= \beta_0 + \beta_1 X_i^* - \beta_1\delta + \epsilon_i\\
+      &amp;= \beta_0 + \beta_1 X_i^* + \epsilon^*.
+  \end{align}\]</span></p>
+<p>Thus, if we fit the model <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i^*\)</span>, then our error term is <span class="math inline">\(\epsilon^* = -\beta_1\delta + \epsilon_i\)</span>.</p>
+<p>Since <span class="math inline">\(\epsilon^*\)</span> and <span class="math inline">\(X^*\)</span> both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>. In fact, they are negatively correlated</p>
+<p><span class="math display">\[\begin{align}
+  cov(X^*, \epsilon^*) &amp;= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
+  &amp;= -\beta_1 cov(\delta_i, \delta_i)\\
+  &amp;= -\beta_1 var(\delta_i)\\
+  &amp;= -\beta_1\tau^2.
+  \end{align}\]</span></p>
+<p>So, if <span class="math inline">\(\beta_1\)</span> is positive, there is a negative correlation between <span class="math inline">\(X^*\)</span> and <span class="math inline">\(\epsilon^*\)</span>. What this means is that larger values of <span class="math inline">\(X_i^*\)</span> (larger than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more negative error terms, while smaller values of <span class="math inline">\(X_i^*\)</span> (smaller than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more positive error terms. So this correlation smooshes the line toward horizontal.</p></li>
+<li><p><strong>Exercise</strong>: A researcher was setting up an experiment to test the efficacy of some antibiotic. They then <em>randomly</em> assigned petri dishes to obtain different concentrations (<span class="math inline">\(X\)</span>) of this antibiotic, and then measured the density of bacteria in each petri dish. Why is this <em>not</em> an example of measurement error, even though the antibiotic concentrations were randomly assigned.</p></li>
+</ul>
+</div>
+<div id="measurement-error-for-y-nbd" class="section level2">
+<h2>Measurement error for <span class="math inline">\(Y\)</span>, nbd</h2>
+<ul>
+<li><p>Adding noise to <span class="math inline">\(y\)</span> changes the estimated <span class="math inline">\(\sigma^2\)</span>, <strong>not</strong> the estimated <span class="math inline">\(\beta_1\)</span> (on average).</p>
+<p><img src="03_other_topics_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_other_topics_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Mathematically, what is going on is: <span class="math display">\[\begin{align}
+  Y_i^* &amp;= Y_i + \delta_i\\
+  Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i\\
+  \Rightarrow Y_i^* - \delta_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i\\
+  \Rightarrow Y_i^* &amp;= \beta_0 + \beta_1 X_i + \delta_i + \epsilon_i\\
+  \Rightarrow Y_i^* &amp;= \beta_0 + \beta_1 X_i + \epsilon_i^*\\
+  \end{align}\]</span></p>
+<p>The reason why this is OK, is that <span class="math inline">\(\epsilon_i^*\)</span> is not correlated with the observed predictor variables, unlike the previous section.</p></li>
+</ul>
+</div>
+<div id="berkson-model-set-x-nbd-even-if-x-is-noisy" class="section level2">
+<h2>Berkson model: set <span class="math inline">\(X^*\)</span>, nbd even if <span class="math inline">\(X\)</span> is noisy</h2>
+<ul>
+<li><p>To add even more confusion here, suppose that we precisely set <span class="math inline">\(X^*\)</span>, but the true value of <span class="math inline">\(X\)</span> might vary from this precisely set value. Then everything turns out to be OK.</p></li>
+<li><p>Examples:</p>
+<ul>
+<li>You set the temperature on an experiment, but the temperature might vary from your setting.</li>
+<li>You set the pressure according to a gauge, but the pressure might vary from this.</li>
+</ul></li>
+<li><p><em>Previously</em>, we had <span class="math display">\[
+  X_i^* = X_i + \delta_i
+  \]</span> <em>Now</em>, we have <span class="math display">\[
+  X_i = X_i^* + \delta_i
+  \]</span> This new situation is called a <strong>Berkson Model</strong> and does not pose issues to OLS.</p></li>
+<li><p>Why? As before, what we have is a modified model <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1 X_i^* + \epsilon_i^*.
+  \end{align}\]</span> However, because the <span class="math inline">\(X_i^*\)</span>’s were fixed by us, they are constants and so must be uncorrelated with the <span class="math inline">\(\epsilon_i\)</span>’s.</p></li>
+<li><p>Graphical demonstration <img src="03_other_topics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="03_other_topics_files/figure-html/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Each of the following describes a possible predictor. State whether using that predictor would be an example of a Berkson model versus a “classical error” model.</p>
+<ol style="list-style-type: decimal">
+<li><p>You want to create the world’s best brownies. So you are doing an experiment on how much sugar to add. You use a scale to measure out set weights of sugar. But you know that your scale is old and not too accurate.</p></li>
+<li><p>For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogenous pH throughout the brownie.</p></li>
+<li><p>You choose to vary the temperature of your oven for each batch, but you know your oven is a little fidgety.</p></li>
+<li><p>You measure density of the resulting brownies by pushing with your finger and rating density on a scale of 1 to 10.</p></li>
+<li><p>You set up a panel to taste test your brownies. One question asks how frequently the individual eats brownies, but you worry about memory issues.</p></li>
+</ol></li>
+<li><p>What gets you into trouble is when <span class="math inline">\(X_i^*\)</span> is caused by <span class="math inline">\(X_i\)</span>. When <span class="math inline">\(X_i\)</span> is caused by <span class="math inline">\(X_i^*\)</span>, then we have a Berkson model and no issues. But having <span class="math inline">\(X_i\)</span> be caused by <span class="math inline">\(X_i^*\)</span> does not necessarily imply that we are doing a set experiment.</p></li>
+<li><p>One example that is Berkson but not a controlled experiment:</p>
+<ul>
+<li>You are interested in studying the effects of dust exposure on lung disease. You have a group of miners from different mines, but you measure dust within their mines, not the actual level of dust the miners were exposed to. This is Berkson because the dust in the mine causes the dust exposure in the miner, so the accurate model is <span class="math inline">\(X_i = X_i^* + \delta_i\)</span>.</li>
+</ul></li>
+</ul>
+</div>
+<div id="measurement-error-conclusions" class="section level2">
+<h2>Measurement error conclusions:</h2>
+<ul>
+<li>To conclude:
+<ul>
+<li>If your measurements of <span class="math inline">\(y\)</span> are noisy, this is not a problem since that noise gets picked up by the <span class="math inline">\(\epsilon_i\)</span>’s.</li>
+<li>If your measurements of <span class="math inline">\(x\)</span> are noisy and you did not precisely set them, then your regression coefficient estimate of the slope will be “attenuated” toward zero.</li>
+<li>If your measurements of <span class="math inline">\(x\)</span> are noisy, but you did precisely set them, then you can proceed with OLS as usual.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="inverse-prediction" class="section level1">
+<h1>Inverse Prediction</h1>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
