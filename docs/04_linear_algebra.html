@@ -277,6 +277,7 @@ $(document).ready(function () {
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
 <li><a href="#vectors-and-matrices">Vectors and Matrices</a></li>
+<li><a href="#linear-algebra-and-simple-linear-regression">Linear Algebra and Simple Linear Regression</a></li>
 </ul>
 </div>
 
@@ -405,15 +406,21 @@ $(document).ready(function () {
   \end{array}
   \right)
   \end{align}\]</span> Calculate <span class="math inline">\(\mathbf{X}^T\mathbf{Y}\)</span>.</p></li>
+<li><p>Note that matrix multiplication is generally <em>not</em> commutative. That is <span class="math display">\[
+  \mathbf{A}\mathbf{B} \neq \mathbf{B}\mathbf{A}
+  \]</span> Indeed, even if <span class="math inline">\(\mathbf{A}\mathbf{B}\)</span> exists does not mean that <span class="math inline">\(\mathbf{B}\mathbf{A}\)</span> exists. E.g. Suppose <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(2 \times 3\)</span> and <span class="math inline">\(\mathbf{B}\)</span> is <span class="math inline">\(3 \times 4\)</span>.</p></li>
 <li><p>The <strong>identity matrix</strong> is the diagonal matrix with 1’s in the diagonal. It is the matrix analogue to the number 1. For example, the <span class="math inline">\(3 \times 3\)</span> diagonal matrix is</p>
 <p><span class="math display">\[
-  \left(
+  \mathbf{I}_3 = \left(
   \begin{array}{ccc}
   1 &amp; 0 &amp; 0 \\
   0 &amp; 1 &amp; 0 \\
   0 &amp; 0 &amp; 1
   \end{array}
   \right)
+  \]</span></p></li>
+<li><p>For any matrix <span class="math inline">\(\mathbf{A}\)</span> of dimension <span class="math inline">\(n \times p\)</span>, we have <span class="math display">\[
+  \mathbf{I}_n\mathbf{A} = \mathbf{A}\mathbf{I}_p = \mathbf{A}
   \]</span></p></li>
 <li><p><strong>Exercise</strong>: Verify that <span class="math display">\[
   \left(
@@ -435,6 +442,83 @@ $(document).ready(function () {
   c &amp; d
   \end{array}
   \right)
+  \]</span></p></li>
+<li><p>The <span class="math inline">\(n\)</span>-vector of all <span class="math inline">\(1\)</span>’s is usually denoted <span class="math inline">\(\mathbf{1}_n\)</span> <span class="math display">\[
+  \mathbf{1}_n = 
+  \left(
+  \begin{array}{c}
+  1 \\
+  1 \\
+  \vdots\\
+  1
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>The <span class="math inline">\(n\times p\)</span> matrix of all <span class="math inline">\(1\)</span>’s is usually denoted <span class="math inline">\(\mathbf{J}_{n\times p}\)</span>. <span class="math display">\[
+  \mathbf{J}_{n\times p} = 
+  \left(
+  \begin{array}{ccc}
+  1 &amp; \cdots &amp; 1\\
+  \vdots &amp; \ddots &amp; \vdots\\
+  1 &amp; \cdots &amp; 1
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>The <span class="math inline">\(n\)</span>-vector of all <span class="math inline">\(0\)</span>’s is usually denoted <span class="math inline">\(\mathbf{0}_n\)</span>. <span class="math display">\[
+  \mathbf{0}_n = 
+  \left(
+  \begin{array}{c}
+  0 \\
+  0 \\
+  \vdots\\
+  0
+  \end{array}
+  \right)
+  \]</span></p></li>
+</ul>
+</div>
+<div id="linear-algebra-and-simple-linear-regression" class="section level1">
+<h1>Linear Algebra and Simple Linear Regression</h1>
+<ul>
+<li><p>We can represent the simple linear regression model by arranging values in matrices.</p></li>
+<li><p>Let <span class="math display">\[\begin{align}
+  \mathbf{y} &amp;= 
+  \left(
+  \begin{array}{c}
+  Y_1\\
+  Y_2\\
+  \vdots\\
+  Y_n
+  \end{array}
+  \right),\\
+  \mathbf{X} &amp;= 
+  \left(
+  \begin{array}{cc}
+  1 &amp; X_1\\
+  1 &amp; X_2\\
+  \vdots &amp; \vdots\\
+  1 &amp; X_n
+  \end{array}
+  \right),\\
+  \mathbf{\beta} &amp;= 
+  \left(
+  \begin{array}{c}
+  \beta_0\\
+  \beta_1
+  \end{array}
+  \right),\\
+  \mathbf{\epsilon} &amp;= 
+  \left(
+  \begin{array}{c}
+  \epsilon_1\\
+  \epsilon_2\\
+  \vdots\\
+  \epsilon_n
+  \end{array}
+  \right)
+  \end{align}\]</span></p></li>
+<li><p>Then we can represent the simple linear regression model in terms of these matrices <span class="math display">\[
+  \mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}
   \]</span></p></li>
 </ul>
 </div>

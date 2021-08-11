@@ -175,17 +175,27 @@ $$
     \end{align}
     ```
 
-
+- Note that matrix multiplication is generally *not* commutative. That is
+    $$
+    \mathbf{A}\mathbf{B} \neq \mathbf{B}\mathbf{A}
+    $$
+    Indeed, even if $\mathbf{A}\mathbf{B}$ exists does not mean that $\mathbf{B}\mathbf{A}$ exists. E.g. Suppose $\mathbf{A}$ is $2 \times 3$ and $\mathbf{B}$ is $3 \times 4$.
+    
 - The **identity matrix** is the diagonal matrix with 1's in the diagonal. It is the matrix analogue to the number 1. For example, the $3 \times 3$ diagonal matrix is
 
     $$
-    \left(
+    \mathbf{I}_3 = \left(
     \begin{array}{ccc}
     1 & 0 & 0 \\
     0 & 1 & 0 \\
     0 & 0 & 1
     \end{array}
     \right)
+    $$
+    
+- For any matrix $\mathbf{A}$ of dimension $n \times p$, we have
+    $$
+    \mathbf{I}_n\mathbf{A} = \mathbf{A}\mathbf{I}_p = \mathbf{A}
     $$
     
 - **Exercise**: Verify that
@@ -210,3 +220,89 @@ $$
     \end{array}
     \right)
     $$
+    
+- The $n$-vector of all $1$'s is usually denoted $\mathbf{1}_n$
+    $$
+    \mathbf{1}_n = 
+    \left(
+    \begin{array}{c}
+    1 \\
+    1 \\
+    \vdots\\
+    1
+    \end{array}
+    \right)
+    $$
+
+- The $n\times p$ matrix of all $1$'s is usually denoted $\mathbf{J}_{n\times p}$.
+    $$
+    \mathbf{J}_{n\times p} = 
+    \left(
+    \begin{array}{ccc}
+    1 & \cdots & 1\\
+    \vdots & \ddots & \vdots\\
+    1 & \cdots & 1
+    \end{array}
+    \right)
+    $$
+    
+- The $n$-vector of all $0$'s is usually denoted $\mathbf{0}_n$.
+    $$
+    \mathbf{0}_n = 
+    \left(
+    \begin{array}{c}
+    0 \\
+    0 \\
+    \vdots\\
+    0
+    \end{array}
+    \right)
+    $$
+
+# Linear Algebra and Simple Linear Regression
+
+- We can represent the simple linear regression model by arranging values in matrices.
+
+- Let
+    \begin{align}
+    \mathbf{y} &= 
+    \left(
+    \begin{array}{c}
+    Y_1\\
+    Y_2\\
+    \vdots\\
+    Y_n
+    \end{array}
+    \right),\\
+    \mathbf{X} &= 
+    \left(
+    \begin{array}{cc}
+    1 & X_1\\
+    1 & X_2\\
+    \vdots & \vdots\\
+    1 & X_n
+    \end{array}
+    \right),\\
+    \mathbf{\beta} &= 
+    \left(
+    \begin{array}{c}
+    \beta_0\\
+    \beta_1
+    \end{array}
+    \right),\\
+    \mathbf{\epsilon} &= 
+    \left(
+    \begin{array}{c}
+    \epsilon_1\\
+    \epsilon_2\\
+    \vdots\\
+    \epsilon_n
+    \end{array}
+    \right)
+    \end{align}
+
+- Then we can represent the simple linear regression model in terms of these matrices
+    $$
+    \mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}
+    $$
+
