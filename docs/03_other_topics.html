@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-10" />
+<meta name="date" content="2021-08-11" />
 
 <title>Other Topics in SLR</title>
 
@@ -65,6 +65,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 
 
@@ -345,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Other Topics in SLR</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-10</h4>
+<h4 class="date">2021-08-11</h4>
 
 </div>
 
@@ -375,7 +397,8 @@ div.tocify {
   Pr(\text{at least one reject }|\text{ all null}) &amp;= 1 - Pr(\text{no reject }|\text{ all null})\\
   &amp;=1 - 0.95^p
   \end{align}\]</span></p></li>
-<li><p>That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.</p></li>
+<li><p>That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.</p>
+<p><img src="https://imgs.xkcd.com/comics/significant.png" /> </p></li>
 <li><p>Similarly, suppose we construct 100 prediction intervals for 100 new values. What is the probability that at least one prediction interval does not cover the new observation’s value? Assuming independence, it is the same calculation <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>.</p></li>
 <li><p>So we are not really controlling for what we thought we were controlling.</p></li>
 <li><p>Coming up with new measures to control, or adjust testing procedures to account for multiple tests, is called <strong>simultaneous inference</strong>.</p></li>
@@ -403,12 +426,12 @@ div.tocify {
 <p><img src="03_figs/bonferroni.png" style="width:70.0%" /> </p></li>
 <li><p>The Bonferonni confidence interval correction:</p>
 <ul>
-<li>Recall: confidence intervals of the form estimate <span class="math inline">\(\pm\)</span> multiplier <span class="math inline">\(\times\)</span> standard error.</li>
+<li>Recall: confidence intervals of the form: estimate <span class="math inline">\(\pm\)</span> multiplier <span class="math inline">\(\times\)</span> standard error.</li>
 <li>Before, we used the multiplier <code>qt(1 - alpha / 2, df)</code> most often (typically <code>alpha = 0.05</code>).</li>
 <li>The Bonferonni procedure uses <code>qt(1 - alpha / (2m), df)</code>, where <code>m</code> is the number of tests.</li>
 </ul></li>
 <li><p><strong>Exercise</strong>: Prove that family-wise coverage probability of the above procedure for confidence intervals is at least 0.95. (It’s easier to start with just two intervals).</p></li>
-<li><p>There are more sophisticated methods that work better to construct simultaneous confidence intervals, or run multiple hypothesis tests.</p></li>
+<li><p>There are more sophisticated methods that work better to construct simultaneous confidence intervals, or run multiple hypothesis tests. You can Google these.</p></li>
 <li><p>In R, to obtain adjusted <span class="math inline">\(p\)</span>-values, just use the <code>p.adjust()</code> function, inserting your vector of <span class="math inline">\(p\)</span>-values. The default is a better option than Bonferonni.</p>
 <pre class="r"><code>p.adjust(p = c(0.1, 0.2, 0.01, 0.05))</code></pre>
 <pre><code>## [1] 0.20 0.20 0.04 0.15</code></pre>
@@ -461,18 +484,18 @@ plumb &lt;- tribble(~work, ~cost,
   Y_i &amp;= \beta_0 + \beta_1 X_i + \epsilon_i\\
       &amp;= \beta_0 + \beta_1 (X_i^* - \delta) + \epsilon_i\\
       &amp;= \beta_0 + \beta_1 X_i^* - \beta_1\delta + \epsilon_i\\
-      &amp;= \beta_0 + \beta_1 X_i^* + \epsilon^*.
+      &amp;= \beta_0 + \beta_1 X_i^* + \epsilon^*_i.
   \end{align}\]</span></p>
-<p>Thus, if we fit the model <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i^*\)</span>, then our error term is <span class="math inline">\(\epsilon^* = -\beta_1\delta + \epsilon_i\)</span>.</p>
-<p>Since <span class="math inline">\(\epsilon^*\)</span> and <span class="math inline">\(X^*\)</span> both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>.</p>
+<p>Thus, if we fit the model <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i^*\)</span>, then our error term is <span class="math inline">\(\epsilon^*_i = -\beta_1\delta_i + \epsilon_i\)</span>.</p>
+<p>Since <span class="math inline">\(\epsilon^*\)</span>_i (<span class="math inline">\(=-\beta_1\delta_i + \epsilon_i\)</span>) and <span class="math inline">\(X^*\)</span> (<span class="math inline">\(=X_i + \delta_i\)</span>) both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>.</p>
 <p><span class="math display">\[\begin{align}
   cov(X^*, \epsilon^*) &amp;= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
   &amp;= -\beta_1 cov(\delta_i, \delta_i)\\
   &amp;= -\beta_1 var(\delta_i)\\
   &amp;= -\beta_1\tau^2.
   \end{align}\]</span></p>
-<p>So, if <span class="math inline">\(\beta_1\)</span> is positive, there is a negative correlation between <span class="math inline">\(X^*\)</span> and <span class="math inline">\(\epsilon^*\)</span>. What this means is that larger values of <span class="math inline">\(X_i^*\)</span> (larger than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more negative error terms, while smaller values of <span class="math inline">\(X_i^*\)</span> (smaller than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more positive error terms. So this correlation smooshes the line toward horizontal.</p></li>
-<li><p><strong>Exercise</strong>: A researcher was setting up an experiment to test the efficacy of some antibiotic. They then <em>randomly</em> assigned petri dishes to obtain different concentrations (<span class="math inline">\(X\)</span>) of this antibiotic, and then measured the density of bacteria in each petri dish. Why is this <em>not</em> an example of measurement error, even though the antibiotic concentrations were randomly assigned.</p></li>
+<p>So, if <span class="math inline">\(\beta_1\)</span> is positive, there is a negative correlation between <span class="math inline">\(X^*_i\)</span> and <span class="math inline">\(\epsilon^*_i\)</span>. What this means is that larger values of <span class="math inline">\(X_i^*\)</span> (larger than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more negative error terms, while smaller values of <span class="math inline">\(X_i^*\)</span> (smaller than <span class="math inline">\(\bar{X}^*\)</span>) tend to have more positive error terms. So this correlation smooshes the line toward horizontal.</p></li>
+<li><p><strong>Exercise</strong>: A researcher was setting up an experiment to test the efficacy of some antibiotic. They then <em>randomly</em> assigned petri dishes to obtain different concentrations (<span class="math inline">\(X\)</span>) of this antibiotic, and then measured the density of bacteria in each petri dish. Why is this <em>not</em> an example of measurement error, even though the antibiotic concentrations were randomly assigned?</p></li>
 </ul>
 </div>
 <div id="measurement-error-for-y-nbd" class="section level2">
@@ -488,7 +511,7 @@ plumb &lt;- tribble(~work, ~cost,
   \Rightarrow Y_i^* &amp;= \beta_0 + \beta_1 X_i + \delta_i + \epsilon_i\\
   \Rightarrow Y_i^* &amp;= \beta_0 + \beta_1 X_i + \epsilon_i^*\\
   \end{align}\]</span></p>
-<p>The reason why this is OK, is that <span class="math inline">\(\epsilon_i^*\)</span> is not correlated with the observed predictor variables, unlike the previous section.</p></li>
+<p>The reason why this is OK, is that <span class="math inline">\(\epsilon_i^*\)</span> is not correlated with the observed predictor variables, unlike the previous section, so it does <em>not</em> smoosh the line toward horizontal.</p></li>
 </ul>
 </div>
 <div id="berkson-model-set-x-nbd-even-if-x-is-noisy" class="section level2">
@@ -507,20 +530,20 @@ plumb &lt;- tribble(~work, ~cost,
   \]</span> This new situation is called a <strong>Berkson Model</strong> and does not pose issues to OLS.</p></li>
 <li><p>Why? As before, what we have is a modified model <span class="math display">\[\begin{align}
   Y_i &amp;= \beta_0 + \beta_1 X_i^* + \epsilon_i^*.
-  \end{align}\]</span> However, because the <span class="math inline">\(X_i^*\)</span>’s were fixed by us, they are constants and so must be uncorrelated with the <span class="math inline">\(\epsilon_i\)</span>’s.</p></li>
+  \end{align}\]</span> However, because the <span class="math inline">\(X_i^*\)</span>’s were fixed by us, they are constants and so must be uncorrelated with the <span class="math inline">\(\epsilon_i^*\)</span>’s.</p></li>
 <li><p>Graphical demonstration <img src="03_other_topics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="03_other_topics_files/figure-html/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: Each of the following describes a possible predictor. State whether using that predictor would be an example of a Berkson model versus a “classical error” model.</p>
 <ol style="list-style-type: decimal">
-<li><p>You want to create the world’s best brownies. So you are doing an experiment on how much sugar to add. You use a scale to measure out set weights of sugar. But you know that your scale is old and not too accurate.</p></li>
+<li><p>You want to create the world’s best brownies. So you are doing an experiment on how much sugar to add. You use a scale to measure out known pre-set weights of sugar. But you know that your scale is old and not too accurate.</p></li>
 <li><p>For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogeneous pH throughout the brownie.</p></li>
 <li><p>You choose to vary the temperature of your oven for each batch, but you know your oven is a little fidgety.</p></li>
-<li><p>You measure density of the resulting brownies by pushing with your finger and rating density on a scale of 1 to 10.</p></li>
-<li><p>You set up a panel to taste test your brownies. One question asks how frequently the individual eats brownies, but you worry about memory issues.</p></li>
+<li><p>You measure the density of the resulting brownies by pushing each with your finger and rating the density on a scale of 1 to 10.</p></li>
+<li><p>You set up a panel to taste test your brownies. To control for brownie savviness, one question asks how frequently the individual eats brownies, but you worry about memory issues.</p></li>
 </ol></li>
-<li><p>What gets you into trouble is when <span class="math inline">\(X_i^*\)</span> is caused by <span class="math inline">\(X_i\)</span>. When <span class="math inline">\(X_i\)</span> is caused by <span class="math inline">\(X_i^*\)</span>, then we have a Berkson model and no issues. But having <span class="math inline">\(X_i\)</span> be caused by <span class="math inline">\(X_i^*\)</span> does not necessarily imply that we are doing a set experiment.</p></li>
+<li><p>NOTE: What gets you into trouble is when <span class="math inline">\(X_i^*\)</span> is caused by <span class="math inline">\(X_i\)</span>. When <span class="math inline">\(X_i\)</span> is caused by <span class="math inline">\(X_i^*\)</span>, then we have a Berkson model and no issues. But having <span class="math inline">\(X_i\)</span> be caused by <span class="math inline">\(X_i^*\)</span> does not necessarily imply that we are doing an experiment.</p></li>
 <li><p>One example that is Berkson but not a controlled experiment:</p>
 <ul>
-<li>You are interested in studying the effects of dust exposure on lung disease. You have a group of miners from different mines, but you measure dust within their mines, not the actual level of dust the miners were exposed to. This is Berkson because the dust in the mine causes the dust exposure in the miner, so the accurate model is <span class="math inline">\(X_i = X_i^* + \delta_i\)</span>.</li>
+<li>You are interested in studying the effects of dust exposure on lung disease. You have a group of miners from different mines, but you measure dust within their mines, not the actual level of dust the miners were exposed to. This is Berkson because the dust in the mine causes the dust exposure in the miner, so the proper model is <span class="math inline">\(X_i = X_i^* + \delta_i\)</span>.</li>
 </ul></li>
 </ul>
 </div>
@@ -533,6 +556,17 @@ plumb &lt;- tribble(~work, ~cost,
 <li>If your measurements of <span class="math inline">\(x\)</span> are noisy and you did not precisely set them, then your regression coefficient estimate of the slope will be “attenuated” toward zero.</li>
 <li>If your measurements of <span class="math inline">\(x\)</span> are noisy, but you did precisely set them, then you can proceed with OLS as usual.</li>
 </ul></li>
+</ul>
+</div>
+<div id="final-comments" class="section level2">
+<h2>Final comments</h2>
+<ul>
+<li><p>Measurement error does not effect hypothesis testing as long as you are testing <span class="math inline">\(H_0: \beta_1 = 0\)</span>. If you are testing for a different value of <span class="math inline">\(\beta_1\)</span>, then it will bias your <span class="math inline">\(p\)</span>-values low.</p>
+<ul>
+<li>Why? If <span class="math inline">\(\beta_1\)</span> actually is 0, then measurement error cannot attenuate estimates of <span class="math inline">\(\beta_1\)</span> closer to 0, because they are already unbiased at 0.</li>
+</ul></li>
+<li><p>So measurement error is important for <em>estimation</em>, not <em>hypothesis testing</em> (usually).</p></li>
+<li><p>You fix the effects of measurement error by having prior knowledge on the measurement error variance (<span class="math inline">\(\tau^2\)</span>), typically by having repeat observations at a given <span class="math inline">\(X_i\)</span> (e.g. <span class="math inline">\(X_{i1}^* = X_i + \delta_{i1}\)</span>, <span class="math inline">\(X_{i2}^* = X_{i} + \delta_{i2}\)</span>, <span class="math inline">\(\ldots\)</span>). See <span class="citation">Carroll et al. (2006)</span> for details.</p></li>
 </ul>
 </div>
 </div>
@@ -577,7 +611,7 @@ glimpse(steer)</code></pre>
 <!--     ``` -->
 <!-- - The 95\% prediction interval for $X_{i(new)}$ is -->
 <!--     $$ -->
-<!--     \hat{X}_{i(new)} \pm pt(1 - \alpha / 2, n - 2)s(\text{pred}X) -->
+<!--     \hat{X}_{i(new)} \pm qt(1 - \alpha / 2, n - 2)s(\text{pred}X) -->
 <!--     $$ -->
 <ul>
 <li><p>To obtain a 95% prediction interval, you plot the 95% prediction bands, draw a horizontal line at the desired <span class="math inline">\(Y_{i(new)}\)</span>, then find the values of <span class="math inline">\(X\)</span> that cross those prediction bands.</p>
@@ -585,10 +619,10 @@ glimpse(steer)</code></pre>
 <li><p>You interpret the prediction interval still in terms of variability in <span class="math inline">\(Y\)</span> (not <span class="math inline">\(X\)</span>). We basically find a region of <span class="math inline">\(X\)</span> values where <span class="math inline">\(Y_{i(new)}\)</span> would be included in the prediction interval. <span class="math inline">\(X\)</span> values outside of this region would not have <span class="math inline">\(Y_{i(new)}\)</span> in the prediction interval.</p></li>
 <li><p>Why not just regress <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>?</p>
 <ol style="list-style-type: decimal">
-<li><span class="math inline">\(Y\)</span> is noisy and <span class="math inline">\(X\)</span> is precise (see measurement error).</li>
+<li><span class="math inline">\(Y\)</span> is noisy and <span class="math inline">\(X\)</span> is precise (see measurement error section above).</li>
 <li>We believe that <span class="math inline">\(X\)</span> might cause <span class="math inline">\(Y\)</span> (should “time” ever be a response variable for anything?)</li>
 </ol></li>
-<li><p>Use the <code>{investr}</code> to do inverse regression in R. (I logged the <code>Time</code> variable to correct for issues in the fit of the linear model).</p>
+<li><p>Use the the <code>calibrate()</code> function from the <code>{investr}</code> to do inverse regression in R. (I logged the <code>Time</code> variable to correct for issues in the fit of the linear model).</p>
 <pre class="r"><code>library(investr)
 steer &lt;- mutate(steer, log_Time = log(Time))
 ## always plot data first
@@ -596,7 +630,10 @@ qplot(x = log_Time, y = pH, data = steer) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_other_topics_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lmout &lt;- lm(pH ~ log_Time, data = steer)
-cout &lt;- calibrate(object = lmout, y0 = 6)</code></pre>
+cout &lt;- calibrate(object = lmout, y0 = 6)
+cout</code></pre>
+<pre><code>## estimate    lower    upper 
+##    1.355    1.081    1.634</code></pre>
 <p>These are the predictions of <code>log(Time)</code>. To predict <code>Time</code>, we just exponentiate these values.</p>
 <pre class="r"><code>exp(cout$estimate)</code></pre>
 <pre><code>## [1] 3.879</code></pre>
@@ -614,6 +651,14 @@ glimpse(crystal)</code></pre>
 ## $ weight &lt;dbl&gt; 0.08, 1.12, 4.43, 4.98, 4.92, 7.18, 5.57, 8.40, 8.81, 10.81, 11…</code></pre>
 <p>How long does it take a crystal to reach 10 g?</p></li>
 </ul>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-carroll2006measurement" class="csl-entry">
+Carroll, Raymond J, David Ruppert, Leonard A Stefanski, and Ciprian M Crainiceanu. 2006. <em>Measurement Error in Nonlinear Models: A Modern Perspective</em>. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/9781420010138">https://doi.org/10.1201/9781420010138</a>.
+</div>
+</div>
 </div>
 
 
