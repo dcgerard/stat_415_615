@@ -104,17 +104,47 @@ klippy::klippy()
     \right)
     $$
     
+- You can multiply a matrix by a scalar, where you multiply each element of that matrix by that scalar.
+$$
+2\mathbf{A} = 2
+\left(
+\begin{array}{cc}
+-1 & 4\\
+11 & -4\\
+2 & 8
+\end{array}
+\right)
+= 
+\left(
+\begin{array}{cc}
+2 \times -1 & 2 \times 4\\
+2 \times 11 & 2 \times -4\\
+2 \times 2 & 2 \times8
+\end{array}
+\right) 
+=
+\left(
+\begin{array}{cc}
+-2 & 8\\
+22 & -8\\
+4 & 16
+\end{array}
+\right)
+$$
+
+    
 - You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix. The rules for matrix multiplication are kinda weird (but they are justified if you ever take linear algebra). In effect, you multiply the *row* of the left matrix with the *column* of the right matrix, and add up the resulting multiplied numbers:
 
-    ![](./matmult.gif)\ 
+    ![](./04_figs/matmult.gif)\ 
+    
+- An awesome visualization from [Shaina Race](https://github.com/shainarace) does a better job of illustrating this:
 
-- The **identity matrix** is the diagonal matrix with 1's in the diagonal. It is the matrix analogue to the number 1. For example, the $3 \times 3$ diagonal matrix is
+    ![](./04_figs/multlincombanim.gif)\ 
+    
+- The special case of a matrix multiplied by a vector is below (also from Shaina Race):
 
-```{r}
-
-```
-
-
+    ![](./04_figs/animmatrixvectormult.gif)\ 
+    
 - **Exercise**: Let
     \begin{align}
     \mathbf{X} &= 
@@ -144,4 +174,39 @@ klippy::klippy()
     \right)
     \end{align}
     ```
+
+
+- The **identity matrix** is the diagonal matrix with 1's in the diagonal. It is the matrix analogue to the number 1. For example, the $3 \times 3$ diagonal matrix is
+
+    $$
+    \left(
+    \begin{array}{ccc}
+    1 & 0 & 0 \\
+    0 & 1 & 0 \\
+    0 & 0 & 1
+    \end{array}
+    \right)
+    $$
     
+- **Exercise**: Verify that
+    $$
+    \left(
+    \begin{array}{cc}
+    1 & 0 \\
+    0 & 1
+    \end{array}
+    \right)
+    \left(
+    \begin{array}{cc}
+    a & b \\
+    c & d
+    \end{array}
+    \right)
+    =
+    \left(
+    \begin{array}{cc}
+    a & b \\
+    c & d
+    \end{array}
+    \right)
+    $$

@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-06" />
+<meta name="date" content="2021-08-11" />
 
 <title>Linear Algebra</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Linear Algebra</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-06</h4>
+<h4 class="date">2021-08-11</h4>
 
 </div>
 
@@ -357,9 +357,38 @@ $(document).ready(function () {
   \end{array}
   \right)
   \]</span></p></li>
+<li><p>You can multiply a matrix by a scalar, where you multiply each element of that matrix by that scalar. <span class="math display">\[
+2\mathbf{A} = 2
+\left(
+\begin{array}{cc}
+-1 &amp; 4\\
+11 &amp; -4\\
+2 &amp; 8
+\end{array}
+\right)
+= 
+\left(
+\begin{array}{cc}
+2 \times -1 &amp; 2 \times 4\\
+2 \times 11 &amp; 2 \times -4\\
+2 \times 2 &amp; 2 \times8
+\end{array}
+\right) 
+=
+\left(
+\begin{array}{cc}
+-2 &amp; 8\\
+22 &amp; -8\\
+4 &amp; 16
+\end{array}
+\right)
+\]</span></p></li>
 <li><p>You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix. The rules for matrix multiplication are kinda weird (but they are justified if you ever take linear algebra). In effect, you multiply the <em>row</em> of the left matrix with the <em>column</em> of the right matrix, and add up the resulting multiplied numbers:</p>
-<p><img src="matmult.gif" /> </p></li>
-<li><p>The <strong>identity matrix</strong> is the diagonal matrix with 1’s in the diagonal. It is the matrix analogue to the number 1. For example, the <span class="math inline">\(3 \times 3\)</span> diagonal matrix is</p></li>
+<p><img src="04_figs/matmult.gif" /> </p></li>
+<li><p>An awesome visualization from <a href="https://github.com/shainarace">Shaina Race</a> does a better job of illustrating this:</p>
+<p><img src="04_figs/multlincombanim.gif" /> </p></li>
+<li><p>The special case of a matrix multiplied by a vector is below (also from Shaina Race):</p>
+<p><img src="04_figs/animmatrixvectormult.gif" /> </p></li>
 <li><p><strong>Exercise</strong>: Let <span class="math display">\[\begin{align}
   \mathbf{X} &amp;= 
   \left(
@@ -376,6 +405,37 @@ $(document).ready(function () {
   \end{array}
   \right)
   \end{align}\]</span> Calculate <span class="math inline">\(\mathbf{X}^T\mathbf{Y}\)</span>.</p></li>
+<li><p>The <strong>identity matrix</strong> is the diagonal matrix with 1’s in the diagonal. It is the matrix analogue to the number 1. For example, the <span class="math inline">\(3 \times 3\)</span> diagonal matrix is</p>
+<p><span class="math display">\[
+  \left(
+  \begin{array}{ccc}
+  1 &amp; 0 &amp; 0 \\
+  0 &amp; 1 &amp; 0 \\
+  0 &amp; 0 &amp; 1
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p><strong>Exercise</strong>: Verify that <span class="math display">\[
+  \left(
+  \begin{array}{cc}
+  1 &amp; 0 \\
+  0 &amp; 1
+  \end{array}
+  \right)
+  \left(
+  \begin{array}{cc}
+  a &amp; b \\
+  c &amp; d
+  \end{array}
+  \right)
+  =
+  \left(
+  \begin{array}{cc}
+  a &amp; b \\
+  c &amp; d
+  \end{array}
+  \right)
+  \]</span></p></li>
 </ul>
 </div>
 
