@@ -375,7 +375,7 @@ div.tocify {
   Pr(\text{at least one reject }|\text{ all null}) &amp;= 1 - Pr(\text{no reject }|\text{ all null})\\
   &amp;=1 - 0.95^p
   \end{align}\]</span></p></li>
-<li><p>That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>. So we would be almost gauranteed to have a false positive (falsely rejecting the null) somewhere.</p></li>
+<li><p>That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.</p></li>
 <li><p>Similarly, suppose we construct 100 prediction intervals for 100 new values. What is the probability that at least one prediction interval does not cover the new observation’s value? Assuming independence, it is the same calculation <span class="math inline">\(1 - 0.95^{100} = 0.9941\)</span>.</p></li>
 <li><p>So we are not really controlling for what we thought we were controlling.</p></li>
 <li><p>Coming up with new measures to control, or adjust testing procedures to account for multiple tests, is called <strong>simultaneous inference</strong>.</p></li>
@@ -464,7 +464,7 @@ plumb &lt;- tribble(~work, ~cost,
       &amp;= \beta_0 + \beta_1 X_i^* + \epsilon^*.
   \end{align}\]</span></p>
 <p>Thus, if we fit the model <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i^*\)</span>, then our error term is <span class="math inline">\(\epsilon^* = -\beta_1\delta + \epsilon_i\)</span>.</p>
-<p>Since <span class="math inline">\(\epsilon^*\)</span> and <span class="math inline">\(X^*\)</span> both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>. In fact, they are negatively correlated</p>
+<p>Since <span class="math inline">\(\epsilon^*\)</span> and <span class="math inline">\(X^*\)</span> both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>.</p>
 <p><span class="math display">\[\begin{align}
   cov(X^*, \epsilon^*) &amp;= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
   &amp;= -\beta_1 cov(\delta_i, \delta_i)\\
@@ -512,7 +512,7 @@ plumb &lt;- tribble(~work, ~cost,
 <li><p><strong>Exercise</strong>: Each of the following describes a possible predictor. State whether using that predictor would be an example of a Berkson model versus a “classical error” model.</p>
 <ol style="list-style-type: decimal">
 <li><p>You want to create the world’s best brownies. So you are doing an experiment on how much sugar to add. You use a scale to measure out set weights of sugar. But you know that your scale is old and not too accurate.</p></li>
-<li><p>For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogenous pH throughout the brownie.</p></li>
+<li><p>For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogeneous pH throughout the brownie.</p></li>
 <li><p>You choose to vary the temperature of your oven for each batch, but you know your oven is a little fidgety.</p></li>
 <li><p>You measure density of the resulting brownies by pushing with your finger and rating density on a scale of 1 to 10.</p></li>
 <li><p>You set up a panel to taste test your brownies. One question asks how frequently the individual eats brownies, but you worry about memory issues.</p></li>
@@ -538,6 +538,82 @@ plumb &lt;- tribble(~work, ~cost,
 </div>
 <div id="inverse-prediction" class="section level1">
 <h1>Inverse Prediction</h1>
+<ul>
+<li><p>Sometimes you do a regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span>, but want to predict the value of <span class="math inline">\(X\)</span> that results in a given value of <span class="math inline">\(Y\)</span>. This is called <strong>inverse prediction</strong> or, sometimes, <strong>calibration</strong>.</p>
+<ul>
+<li>i.e. predict <span class="math inline">\(X\)</span> from <span class="math inline">\(Y\)</span>.</li>
+</ul></li>
+<li><p>Examples:</p>
+<ol style="list-style-type: decimal">
+<li>You have a regression model for how much a drug (<span class="math inline">\(X\)</span>) will decrease cholesterol (<span class="math inline">\(Y\)</span>). You have a new patient that you want to reduce cholesterol by a certain amount (<span class="math inline">\(Y_{i(new)}\)</span>). How much drug should you give them (<span class="math inline">\(X_{i(new))}\)</span>?</li>
+<li>You have a model for pH of a steer carcass over time. A carcass pH should be about 6 (<span class="math inline">\(Y_{i(new)}\)</span>) before freezing. How long should you wait (<span class="math inline">\(X_{i(new)}\)</span>)?</li>
+</ol></li>
+<li><p>This second example comes from the Sleuth 3 package.</p>
+<pre class="r"><code>library(Sleuth3)
+data(&quot;case0702&quot;)
+steer &lt;- case0702
+glimpse(steer)</code></pre>
+<pre><code>## Rows: 10
+## Columns: 2
+## $ Time &lt;int&gt; 1, 1, 2, 2, 4, 4, 6, 6, 8, 8
+## $ pH   &lt;dbl&gt; 7.02, 6.93, 6.42, 6.51, 6.07, 5.99, 5.59, 5.80, 5.51, 5.36</code></pre></li>
+<li><p>We still have the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+  \]</span></p></li>
+<li><p>If we have the estimated regression line <span class="math display">\[
+  y = \hat{\beta}_0 + \hat{\beta_1}x
+  \]</span></p></li>
+<li><p>Then the predicted value of <span class="math inline">\(X_{i(new)}\)</span> is <span class="math display">\[
+  \hat{X}_{i(new)} = \frac{Y_{i(new)} - \hat{\beta}_0}{\hat{\beta}_1}
+  \]</span></p></li>
+</ul>
+<!-- - The prediction standard error is $s(\text{pred} X)$ where -->
+<!--     $$ -->
+<!--     s^2(\text{pred} X) = \frac{MSE}{\hat{\beta}_1^2}\left[1 + \frac{1}{n} + \frac{(\hat{X}_{i(new)} - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]  -->
+<!--     $$ -->
+<!-- - **Exercise**: What happens to the standard error as $\hat{\beta}_1$ gets closer to 0? -->
+<!--     ```{block, eval = FALSE, echo = FALSE} -->
+<!--     It increases. -->
+<!--     ``` -->
+<!-- - The 95\% prediction interval for $X_{i(new)}$ is -->
+<!--     $$ -->
+<!--     \hat{X}_{i(new)} \pm pt(1 - \alpha / 2, n - 2)s(\text{pred}X) -->
+<!--     $$ -->
+<ul>
+<li><p>To obtain a 95% prediction interval, you plot the 95% prediction bands, draw a horizontal line at the desired <span class="math inline">\(Y_{i(new)}\)</span>, then find the values of <span class="math inline">\(X\)</span> that cross those prediction bands.</p>
+<p><img src="03_figs/inverse_pred.png" /> </p></li>
+<li><p>You interpret the prediction interval still in terms of variability in <span class="math inline">\(Y\)</span> (not <span class="math inline">\(X\)</span>). We basically find a region of <span class="math inline">\(X\)</span> values where <span class="math inline">\(Y_{i(new)}\)</span> would be included in the prediction interval. <span class="math inline">\(X\)</span> values outside of this region would not have <span class="math inline">\(Y_{i(new)}\)</span> in the prediction interval.</p></li>
+<li><p>Why not just regress <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>?</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(Y\)</span> is noisy and <span class="math inline">\(X\)</span> is precise (see measurement error).</li>
+<li>We believe that <span class="math inline">\(X\)</span> might cause <span class="math inline">\(Y\)</span> (should “time” ever be a response variable for anything?)</li>
+</ol></li>
+<li><p>Use the <code>{investr}</code> to do inverse regression in R. (I logged the <code>Time</code> variable to correct for issues in the fit of the linear model).</p>
+<pre class="r"><code>library(investr)
+steer &lt;- mutate(steer, log_Time = log(Time))
+## always plot data first
+qplot(x = log_Time, y = pH, data = steer) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<p><img src="03_other_topics_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lmout &lt;- lm(pH ~ log_Time, data = steer)
+cout &lt;- calibrate(object = lmout, y0 = 6)</code></pre>
+<p>These are the predictions of <code>log(Time)</code>. To predict <code>Time</code>, we just exponentiate these values.</p>
+<pre class="r"><code>exp(cout$estimate)</code></pre>
+<pre><code>## [1] 3.879</code></pre>
+<pre class="r"><code>exp(cout$lower)</code></pre>
+<pre><code>## [1] 2.948</code></pre>
+<pre class="r"><code>exp(cout$upper)</code></pre>
+<pre><code>## [1] 5.124</code></pre>
+<p>So we predict that it takes anywhere from 2.9 to 5.1 hours to reach a pH of 6.</p></li>
+<li><p><strong>Exercise</strong>: the <code>crystal</code> data from the <code>{investr}</code> package measures the time (<code>time</code>) it takes to grow crystals to a final weight (<code>weight</code>) in grams. You can load it in R via</p>
+<pre class="r"><code>data(&quot;crystal&quot;)
+glimpse(crystal)</code></pre>
+<pre><code>## Rows: 14
+## Columns: 2
+## $ time   &lt;dbl&gt; 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28
+## $ weight &lt;dbl&gt; 0.08, 1.12, 4.43, 4.98, 4.92, 7.18, 5.57, 8.40, 8.81, 10.81, 11…</code></pre>
+<p>How long does it take a crystal to reach 10 g?</p></li>
+</ul>
 </div>
 
 

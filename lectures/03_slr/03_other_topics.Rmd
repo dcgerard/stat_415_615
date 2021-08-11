@@ -45,7 +45,7 @@ klippy::klippy()
     &=1 - 0.95^p
     \end{align}
     
-- That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is $1 - 0.95^{100} = 0.9941$. So we would be almost gauranteed to have a false positive (falsely rejecting the null) somewhere.
+- That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is $1 - 0.95^{100} = 0.9941$. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.
 
 - Similarly, suppose we construct 100 prediction intervals for 100 new values. What is the probability that at least one prediction interval does not cover the new observation's value? Assuming independence, it is the same calculation $1 - 0.95^{100} = 0.9941$.
 
@@ -203,7 +203,8 @@ klippy::klippy()
       xlab("Noisy x") +
       ylab("y") +
       ggtitle(TeX(paste0("$\\hat{\\beta}_1$ = ", round(beta1, digits = 3)))) +
-      geom_smooth(method = "lm", se = FALSE)
+      geom_smooth(method = "lm", se = FALSE) +
+      geom_smooth(mapping = aes(x = x, y = y), method = "lm", se = FALSE, color = 2, lty = 2)
     ```
 
 - Why does this happen? Suppose the *true* underlying relationship is
@@ -222,7 +223,7 @@ klippy::klippy()
     
     Thus, if we fit the model $E[Y_i] = \beta_0 + \beta_1 X_i^*$, then our error term is $\epsilon^* = -\beta_1\delta + \epsilon_i$.
     
-    Since $\epsilon^*$ and $X^*$ both depend on the value of $\delta_i$, they are *correlated*. In fact, they are negatively correlated
+    Since $\epsilon^*$ and $X^*$ both depend on the value of $\delta_i$, they are *correlated*.
     
     \begin{align}
     cov(X^*, \epsilon^*) &= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
@@ -328,7 +329,8 @@ klippy::klippy()
       geom_point(mapping = aes(x = x_star, y = y), color = 2, alpha = 1/3) +
       xlim(xmin, xmax) +
       geom_smooth(method = "lm", se = FALSE) +
-      ggtitle(TeX(paste0("$\\hat{\\beta}_1 = $", round(beta1, digits = 3))))
+      ggtitle(TeX(paste0("$\\hat{\\beta}_1 = $", round(beta1, digits = 3)))) +
+      geom_segment(mapping = aes(x = x_star, xend = x, y = y, yend = y), alpha = 1/4)
     ```
 
 - **Exercise**: Each of the following describes a possible predictor. State whether using that predictor would be an example of a Berkson model versus a "classical error" model.
@@ -336,7 +338,7 @@ klippy::klippy()
     ```{block, eval = FALSE, echo = FALSE}
     Berkson
     ```
-    2. For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogenous pH throughout the brownie.
+    2. For each batch of brownies, you extract a small crumb at a randomly located position in the batch and send it in for pH analysis. The pH for the sample is accurate, but you worry that you are not getting the average pH of the brownie due to heterogeneous pH throughout the brownie.
     ```{block, eval = FALSE, echo = FALSE}
     Not Berkson
     ```
@@ -353,7 +355,6 @@ klippy::klippy()
     Not Berkson
     ```
     
-
 - What gets you into trouble is when $X_i^*$ is caused by $X_i$. When $X_i$ is caused by $X_i^*$, then we have a Berkson model and no issues. But having $X_i$ be caused by $X_i^*$ does not necessarily imply that we are doing a set experiment.
 
 - One example that is Berkson but not a controlled experiment:
@@ -367,3 +368,99 @@ klippy::klippy()
     - If your measurements of $x$ are noisy, but you did precisely set them, then you can proceed with OLS as usual.
 
 # Inverse Prediction
+
+- Sometimes you do a regression of $Y$ on $X$, but want to predict the value of $X$ that results in a given value of $Y$. This is called **inverse prediction** or, sometimes, **calibration**.
+    - i.e. predict $X$ from $Y$.
+
+- Examples:
+    1. You have a regression model for how much a drug ($X$) will decrease cholesterol ($Y$). You have a new patient that you want to reduce cholesterol by a certain amount ($Y_{i(new)}$). How much drug should you give them ($X_{i(new))}$?
+    2. You have a model for pH of a steer carcass over time. A carcass pH should be about 6 ($Y_{i(new)}$) before freezing. How long should you wait ($X_{i(new)}$)?
+    
+- This second example comes from the Sleuth 3 package.
+
+    ```{r}
+    library(Sleuth3)
+    data("case0702")
+    steer <- case0702
+    glimpse(steer)
+    ```
+
+- We still have the model
+    $$
+    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+    $$
+
+- If we have the estimated regression line
+    $$
+    y = \hat{\beta}_0 + \hat{\beta_1}x
+    $$
+- Then the predicted value of $X_{i(new)}$ is
+    $$
+    \hat{X}_{i(new)} = \frac{Y_{i(new)} - \hat{\beta}_0}{\hat{\beta}_1}
+    $$
+
+<!-- - The prediction standard error is $s(\text{pred} X)$ where -->
+<!--     $$ -->
+<!--     s^2(\text{pred} X) = \frac{MSE}{\hat{\beta}_1^2}\left[1 + \frac{1}{n} + \frac{(\hat{X}_{i(new)} - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right]  -->
+<!--     $$ -->
+<!-- - **Exercise**: What happens to the standard error as $\hat{\beta}_1$ gets closer to 0? -->
+<!--     ```{block, eval = FALSE, echo = FALSE} -->
+<!--     It increases. -->
+<!--     ``` -->
+
+<!-- - The 95\% prediction interval for $X_{i(new)}$ is -->
+<!--     $$ -->
+<!--     \hat{X}_{i(new)} \pm pt(1 - \alpha / 2, n - 2)s(\text{pred}X) -->
+<!--     $$ -->
+    
+- To obtain a 95\% prediction interval, you plot the 95\% prediction bands, draw a horizontal line at the desired $Y_{i(new)}$, then find the values of $X$ that cross those prediction bands.
+
+    ![](./03_figs/inverse_pred.png)\ 
+
+- You interpret the prediction interval still in terms of variability in $Y$ (not $X$). We basically find a region of $X$ values where $Y_{i(new)}$ would be included in the prediction interval. $X$ values outside of this region would not have $Y_{i(new)}$ in the prediction interval.
+    
+- Why not just regress $X$ on $Y$?
+    1. $Y$ is noisy and $X$ is precise (see measurement error).
+    2. We believe that $X$ might cause $Y$ (should "time" ever be a response variable for anything?)
+
+- Use the `{investr}` to do inverse regression in R. (I logged the `Time` variable to correct for issues in the fit of the linear model).
+    ```{r, message = FALSE}
+    library(investr)
+    steer <- mutate(steer, log_Time = log(Time))
+    ## always plot data first
+    qplot(x = log_Time, y = pH, data = steer) +
+      geom_smooth(method = "lm", se = FALSE)
+    lmout <- lm(pH ~ log_Time, data = steer)
+    cout <- calibrate(object = lmout, y0 = 6)
+    ```
+    
+    These are the predictions of `log(Time)`. To predict `Time`, we just exponentiate these values.
+    
+    ```{r}
+    exp(cout$estimate)
+    exp(cout$lower)
+    exp(cout$upper)
+    ```
+    
+    So we predict that it takes anywhere from 2.9 to 5.1 hours to reach a pH of 6.
+    
+- **Exercise**: the `crystal` data from the `{investr}` package measures the time (`time`) it takes to grow crystals to a final weight (`weight`) in grams. You can load it in R via
+    ```{r}
+    data("crystal")
+    glimpse(crystal)
+    ```
+
+    How long does it take a crystal to reach 10 g?
+
+    ```{r, eval = FALSE, echo = FALSE, message=FALSE}
+    ## always plot data first.
+    qplot(x = time, y = weight, data = crystal) +
+      geom_smooth(method = "lm", se = FALSE)
+    lmc <- lm(weight ~ time, data = crystal)
+    calibrate(object = lmc, y0 = 10)
+    ```
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Anywhere from 15.1 hours to 24.9 hours.
+    ```
+

@@ -428,3 +428,26 @@ saveGIF(expr = {
   }
 }, movie.name = "bad_qqplot.gif", interval = 0.5, ani.width = 1500)
 
+
+## Prediction interval
+library(tidyverse)
+library(Sleuth3)
+data("case0702")
+case0702 %>%
+  mutate(logtime = log(Time)) ->
+  case0702
+lmc <- lm(pH ~ logtime, data = case0702)
+dfpred <- tibble(logtime = seq(0, log(8), length.out = 200))
+predict(object = lmc, newdata = dfpred, interval = "prediction") %>%
+  cbind(dfpred) ->
+  dfpred
+
+ggplot() +
+  geom_point(data = case0702, mapping = aes(x = logtime, y = pH)) +
+  geom_smooth(data = case0702, mapping = aes(x = logtime, y = pH), method = "lm", se = FALSE) +
+  geom_line(data = dfpred, mapping = aes(x = logtime, y = lwr), lty = 2) +
+  geom_line(data = dfpred, mapping = aes(x = logtime, y = upr), lty = 2) +
+  geom_hline(yintercept = 6) +
+  xlab("log(Time)") ->
+  pl
+ggsave(filename = "./03_figs/inverse_pred.pdf", plot = pl, family = "Times")
