@@ -109,6 +109,14 @@ klippy::klippy()
     p.adjust(p = c(0.1, 0.2, 0.01, 0.05), method = "bonferroni") ## not as good
     ```
 
+- When you write up an interpretation, say something like:
+
+    > We have evidence against the null (Bonferonni corrected $p$-value of <insert $p$-value>).
+    
+    - This $p$-value is interpreted as a procedure that controls the family-wise error rate at a particular level (if you reject when the $p$-value is below that particular level).
+
+    - Usual traps of $p$-value interpretations hold (probability of data given hypothesis, not probability of hypothesis given data, etc...).
+
 - **Exercise**: At a plumbing supplies company, a consultant studied the relationship between number of work units performed (`work`), and the total variable labor cost in warehouses during a test period (`cost`). The data are presented below. Provide prediction intervals for new warehouses that perform 50, 100, and 150 work units, using a procedure with a family-wise coverage probability of at least 0.9.
 
     ```{r, message = FALSE}
@@ -376,6 +384,11 @@ klippy::klippy()
     - Why? If $\beta_1$ actually is 0, then measurement error cannot attenuate estimates of $\beta_1$ closer to 0, because they are already unbiased at 0.
     
 - So measurement error is important for *estimation*, not *hypothesis testing* (usually).
+
+- If the measurement error is really small relative to the scale of the $X$ variable, you don't have to worry about this bias so much.
+    - "small" means $\frac{\tau^2}{var(X) + \tau^2} < 0.05$ (ratio of measurement error variance to variance of the true $X_i$'s plus the measurement error variance).
+    
+- This section assumed that the measurement error had mean 0 (so negative and positive error cancel out). You run into much worse trouble if the measurement error is biased in one direction or the other.
 
 - You fix the effects of measurement error by having prior knowledge on the measurement error variance ($\tau^2$), typically by having repeat observations at a given $X_i$ (e.g. $X_{i1}^* = X_i + \delta_{i1}$, $X_{i2}^* = X_{i} + \delta_{i2}$, $\ldots$). See @carroll2006measurement for details.
 

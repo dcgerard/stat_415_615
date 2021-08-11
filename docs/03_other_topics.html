@@ -437,6 +437,14 @@ div.tocify {
 <pre><code>## [1] 0.20 0.20 0.04 0.15</code></pre>
 <pre class="r"><code>p.adjust(p = c(0.1, 0.2, 0.01, 0.05), method = &quot;bonferroni&quot;) ## not as good</code></pre>
 <pre><code>## [1] 0.40 0.80 0.04 0.20</code></pre></li>
+<li><p>When you write up an interpretation, say something like:</p>
+<blockquote>
+<p>We have evidence against the null (Bonferonni corrected <span class="math inline">\(p\)</span>-value of &lt;insert <span class="math inline">\(p\)</span>-value&gt;).</p>
+</blockquote>
+<ul>
+<li><p>This <span class="math inline">\(p\)</span>-value is interpreted as a procedure that controls the family-wise error rate at a particular level (if you reject when the <span class="math inline">\(p\)</span>-value is below that particular level).</p></li>
+<li><p>Usual traps of <span class="math inline">\(p\)</span>-value interpretations hold (probability of data given hypothesis, not probability of hypothesis given data, etc…).</p></li>
+</ul></li>
 <li><p><strong>Exercise</strong>: At a plumbing supplies company, a consultant studied the relationship between number of work units performed (<code>work</code>), and the total variable labor cost in warehouses during a test period (<code>cost</code>). The data are presented below. Provide prediction intervals for new warehouses that perform 50, 100, and 150 work units, using a procedure with a family-wise coverage probability of at least 0.9.</p>
 <pre class="r"><code>library(tidyverse)
 plumb &lt;- tribble(~work, ~cost,
@@ -566,6 +574,11 @@ plumb &lt;- tribble(~work, ~cost,
 <li>Why? If <span class="math inline">\(\beta_1\)</span> actually is 0, then measurement error cannot attenuate estimates of <span class="math inline">\(\beta_1\)</span> closer to 0, because they are already unbiased at 0.</li>
 </ul></li>
 <li><p>So measurement error is important for <em>estimation</em>, not <em>hypothesis testing</em> (usually).</p></li>
+<li><p>If the measurement error is really small relative to the scale of the <span class="math inline">\(X\)</span> variable, you don’t have to worry about this bias so much.</p>
+<ul>
+<li>“small” means <span class="math inline">\(\frac{\tau^2}{var(X) + \tau^2} &lt; 0.05\)</span> (ratio of measurement error variance to variance of the true <span class="math inline">\(X_i\)</span>’s plus the measurement error variance).</li>
+</ul></li>
+<li><p>This section assumed that the measurement error had mean 0 (so negative and positive error cancel out). You run into much worse trouble if the measurement error is biased in one direction or the other.</p></li>
 <li><p>You fix the effects of measurement error by having prior knowledge on the measurement error variance (<span class="math inline">\(\tau^2\)</span>), typically by having repeat observations at a given <span class="math inline">\(X_i\)</span> (e.g. <span class="math inline">\(X_{i1}^* = X_i + \delta_{i1}\)</span>, <span class="math inline">\(X_{i2}^* = X_{i} + \delta_{i2}\)</span>, <span class="math inline">\(\ldots\)</span>). See <span class="citation">Carroll et al. (2006)</span> for details.</p></li>
 </ul>
 </div>
