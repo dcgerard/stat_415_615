@@ -164,7 +164,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     sigma <- 2
     X <- rnorm(n = 1000, mean = mu, sd = sigma)
     Z <- (X - mu) / sigma
-    W <- rnorm(100)
+    W <- rnorm(1000)
     qqplot(Z, W)
     abline(0, 1)
     

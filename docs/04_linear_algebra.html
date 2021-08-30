@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-11" />
+<meta name="date" content="2021-08-30" />
 
 <title>Linear Algebra</title>
 
@@ -269,15 +269,26 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Linear Algebra</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-11</h4>
+<h4 class="date">2021-08-30</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#learning-objectives">Learning Objectives</a></li>
-<li><a href="#vectors-and-matrices">Vectors and Matrices</a></li>
-<li><a href="#linear-algebra-and-simple-linear-regression">Linear Algebra and Simple Linear Regression</a></li>
+<li><a href="#vectors-and-matrices">Vectors and Matrices</a>
+<ul>
+<li><a href="#matrix-inverse">Matrix Inverse</a></li>
+<li><a href="#matrix-rank">Matrix Rank</a></li>
+<li><a href="#basic-results-for-matrices">Basic Results for Matrices</a></li>
+</ul></li>
+<li><a href="#linear-algebra-and-simple-linear-regression">Linear Algebra and Simple Linear Regression</a>
+<ul>
+<li><a href="#model-representation">Model Representation</a></li>
+<li><a href="#some-standard-matrix-multiplications">Some standard matrix multiplications</a></li>
+<li><a href="#estimates-representation">Estimates Representation</a></li>
+</ul></li>
+<li><a href="#linear-algebra-in-r">Linear Algebra in R</a></li>
 </ul>
 </div>
 
@@ -307,7 +318,26 @@ $(document).ready(function () {
   \end{array}
   \right)
   \]</span></p></li>
-<li><p>In the above vector, the first element is 10, the second is 3, and the third is 5.</p></li>
+<li><p>In the above vector, the first element is 10, the second is 3, and the third is 5. Or, using subscripts to denote indices, we have <span class="math display">\[
+  x_1 = 10,~x_2 = 3, \text{ and } x_3 = 5.
+  \]</span></p></li>
+<li><p>Vectors are ordered, so <span class="math display">\[
+  \left(
+  \begin{array}{c}
+  10\\
+  3\\
+  5
+  \end{array}
+  \right)
+  \neq
+  \left(
+  \begin{array}{c}
+  3\\
+  10\\
+  5
+  \end{array}
+  \right).
+  \]</span></p></li>
 <li><p>I will generally use bold, lower-case letters to represent vectors.</p></li>
 <li><p>A <strong>matrix</strong> is a rectangular array of numbers.</p>
 <p><span class="math display">\[
@@ -321,7 +351,9 @@ $(document).ready(function () {
   \right)
   \]</span></p></li>
 <li><p>The <strong>dimension</strong> of a matrix is the number of rows and columns of that matrix. So the dimension of the above matrix is <span class="math inline">\(3\times 2\)</span> since it has three rows and two columns.</p></li>
-<li><p>We index elements by the rows first, then the columns second. For example, in the above matrix, the <span class="math inline">\((1, 1)\)</span>th element is -1, the <span class="math inline">\((1, 2)\)</span>th element is 4, the <span class="math inline">\((2, 1)\)</span>th element is 11, the <span class="math inline">\((2,2)\)</span>th element is -4, the <span class="math inline">\((3, 1)\)</span>th element is 2, and the <span class="math inline">\((3,2)\)</span>th element is 8.</p></li>
+<li><p>We index elements by the rows first, then the columns second. For example, in the above matrix, the <span class="math inline">\((1, 1)\)</span>th element is -1, the <span class="math inline">\((1, 2)\)</span>th element is 4, the <span class="math inline">\((2, 1)\)</span>th element is 11, the <span class="math inline">\((2,2)\)</span>th element is -4, the <span class="math inline">\((3, 1)\)</span>th element is 2, and the <span class="math inline">\((3,2)\)</span>th element is 8. Or, using subscripts as indices we have <span class="math display">\[
+  a_{11} = -1,~a_{12} = 4,~a_{21}=11,~a_{22}=-4,~a_{31} = 2,\text{ and } a_{32}=8.
+  \]</span></p></li>
 <li><p>I will generally use bold, upper-case letters to represent matrices.</p></li>
 <li><p>A vector is just a matrix with one column.</p></li>
 <li><p>The <strong>transpose</strong> of a matrix/vector swaps the row and column indices.</p>
@@ -334,8 +366,11 @@ $(document).ready(function () {
   4 &amp; -4 &amp; 8
   \end{array}
   \right)
-  \end{align}\]</span></p></li>
-<li><p>You can add two matrices together as long as they have the same dimensions. You just sum up the values element-wise:</p>
+  \end{align}\]</span></p>
+<ul>
+<li>First column of <span class="math inline">\(\mathbf{A}\)</span> is the first row of <span class="math inline">\(\mathbf{A}^T\)</span>, second column of <span class="math inline">\(\mathbf{A}\)</span> is the second row of <span class="math inline">\(\mathbf{A}^T\)</span>.</li>
+</ul></li>
+<li><p>You can add two matrices together <em>as long as they have the same dimensions</em>. You just sum up the values element-wise:</p>
 <p><span class="math display">\[
   \left(
   \begin{array}{cc}
@@ -359,31 +394,31 @@ $(document).ready(function () {
   \right)
   \]</span></p></li>
 <li><p>You can multiply a matrix by a scalar, where you multiply each element of that matrix by that scalar. <span class="math display">\[
-2\mathbf{A} = 2
-\left(
-\begin{array}{cc}
--1 &amp; 4\\
-11 &amp; -4\\
-2 &amp; 8
-\end{array}
-\right)
-= 
-\left(
-\begin{array}{cc}
-2 \times -1 &amp; 2 \times 4\\
-2 \times 11 &amp; 2 \times -4\\
-2 \times 2 &amp; 2 \times8
-\end{array}
-\right) 
-=
-\left(
-\begin{array}{cc}
--2 &amp; 8\\
-22 &amp; -8\\
-4 &amp; 16
-\end{array}
-\right)
-\]</span></p></li>
+  2\mathbf{A} = 2
+  \left(
+  \begin{array}{cc}
+  -1 &amp; 4\\
+  11 &amp; -4\\
+  2 &amp; 8
+  \end{array}
+  \right)
+  = 
+  \left(
+  \begin{array}{cc}
+  2 \times -1 &amp; 2 \times 4\\
+  2 \times 11 &amp; 2 \times -4\\
+  2 \times 2 &amp; 2 \times8
+  \end{array}
+  \right) 
+  =
+  \left(
+  \begin{array}{cc}
+  -2 &amp; 8\\
+  22 &amp; -8\\
+  4 &amp; 16
+  \end{array}
+  \right)
+  \]</span></p></li>
 <li><p>You can multiply two matrices together as long as the left matrix has the same number of columns as the number or rows of the right matrix. The rules for matrix multiplication are kinda weird (but they are justified if you ever take linear algebra). In effect, you multiply the <em>row</em> of the left matrix with the <em>column</em> of the right matrix, and add up the resulting multiplied numbers:</p>
 <p><img src="04_figs/matmult.gif" /> </p></li>
 <li><p>An awesome visualization from <a href="https://github.com/shainarace">Shaina Race</a> does a better job of illustrating this:</p>
@@ -442,6 +477,19 @@ $(document).ready(function () {
   c &amp; d
   \end{array}
   \right)
+  \left(
+  \begin{array}{cc}
+  1 &amp; 0 \\
+  0 &amp; 1
+  \end{array}
+  \right)
+  =
+  \left(
+  \begin{array}{cc}
+  a &amp; b \\
+  c &amp; d
+  \end{array}
+  \right)
   \]</span></p></li>
 <li><p>The <span class="math inline">\(n\)</span>-vector of all <span class="math inline">\(1\)</span>’s is usually denoted <span class="math inline">\(\mathbf{1}_n\)</span> <span class="math display">\[
   \mathbf{1}_n = 
@@ -476,9 +524,128 @@ $(document).ready(function () {
   \right)
   \]</span></p></li>
 </ul>
+<div id="matrix-inverse" class="section level2">
+<h2>Matrix Inverse</h2>
+<ul>
+<li><p>The inverse of a scalar is its reciprocal. E.g. the inverse of 5 is <span class="math inline">\(\frac{1}{5}\)</span>. A number multiplied by its inverse is 1 <span class="math display">\[
+  5 \times \frac{1}{5} = 1
+  \]</span></p></li>
+<li><p>There is a concept of an inverse in linear algebra as well.</p></li>
+<li><p>Only square matrices (the number of rows equals the number of columns) may have inverses.</p></li>
+<li><p>Not all square matrices have an inverse.</p></li>
+<li><p>When a square matrix has an inverse, it is unique.</p></li>
+<li><p>If <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(r \times r\)</span> square matrix, then we denote the inverse of <span class="math inline">\(\mathbf{A}\)</span> as <span class="math inline">\(\mathbf{A}^{-1}\)</span>. It is the unique <span class="math inline">\(r \times r\)</span> matrix such that <span class="math display">\[
+  \mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}_r
+  \]</span></p></li>
+<li><p><strong>Example</strong>: The inverse of <span class="math display">\[
+  \mathbf{A} = 
+  \left(
+  \begin{array}{cc}
+  2 &amp; 4\\
+  3 &amp; 1
+  \end{array}
+  \right)
+  \]</span> is <span class="math display">\[
+  \mathbf{A}^{-1} = 
+  \left(
+  \begin{array}{cc}
+  -0.1 &amp; 0.4\\
+  0.3 &amp; -0.2
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>The formula for an inverse matrix is complicated, and not something you need to know for regression (just use a computer).</p></li>
+<li><p>Inverse matrices allow us to solve systems of equations. Suppose we have <span class="math display">\[
+  \mathbf{A}\mathbf{Y} = \mathbf{C}
+  \]</span> and we want to solve for <span class="math inline">\(\mathbf{Y}\)</span>. Then we can <em>pre</em>multiply (multiply on the left) both the left and right equations by <span class="math inline">\(\mathbf{A}^{-1}\)</span> to obtain <span class="math display">\[\begin{align}
+  \mathbf{A}^{-1}\mathbf{A}\mathbf{Y} &amp;= \mathbf{A}^{-1}\mathbf{C}\\
+  \Rightarrow \mathbf{I}\mathbf{Y} &amp;= \mathbf{A}^{-1}\mathbf{C}\\
+  \Rightarrow \mathbf{Y} &amp;= \mathbf{A}^{-1}\mathbf{C}.
+  \end{align}\]</span></p></li>
+</ul>
+</div>
+<div id="matrix-rank" class="section level2">
+<h2>Matrix Rank</h2>
+<ul>
+<li><p>The matrix inverse does not exist if there is redundant information between the columns in the matrix.</p></li>
+<li><p>Formally, vectors <span class="math inline">\(\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_p\)</span> are <strong>linearly dependent</strong> if there exist scalars <span class="math inline">\(k_1, k_2,\ldots, k_p\)</span> such that <span class="math display">\[
+  k_1\mathbf{a}_1 + k_2\mathbf{a}_2 + \cdots k_p \mathbf{a}_p = \mathbf{0}
+  \]</span></p></li>
+<li><p>I.e., you can write one vector in terms of the other vectors.</p></li>
+<li><p><strong>Example</strong>: Let <span class="math display">\[\begin{align}
+  \mathbf{a}_1 &amp;= 
+  \left(
+  \begin{array}{c}
+  1\\
+  2\\
+  3
+  \end{array}
+  \right)\\
+  \mathbf{a}_2 &amp;= 
+  \left(
+  \begin{array}{c}
+  -1\\
+  3\\
+  2
+  \end{array}
+  \right)\\
+  \mathbf{a}_3 &amp;= 
+  \left(
+  \begin{array}{c}
+  -3\\
+  -1\\
+  -4
+  \end{array}
+  \right)
+  \end{align}\]</span> Then <span class="math inline">\(2\mathbf{a}_1 - \mathbf{a}_2 + \mathbf{a}_3 = \mathbf{0}_3\)</span>.</p></li>
+<li><p>Vectors are <strong>linearly independent</strong> if there do not exist such constants (so each vector provides some new information).</p></li>
+<li><p>The <strong>rank</strong> of the matrix is the maximum number of linearly independent columns in the matrix. (we treat each column as a vector).</p></li>
+<li><p><strong>Example</strong>: The rank of the following matrix is 2: <span class="math display">\[
+  \mathbf{A} = 
+  \left(
+  \begin{array}{ccc}
+  1 &amp; -1 &amp; -3\\
+  2 &amp; 3 &amp; -1\\
+  3 &amp; 2 &amp; -4 
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>The inverse of an <span class="math inline">\(r \times r\)</span> square matrix <span class="math inline">\(\mathbf{A}\)</span> exists if and only if the rank of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(r\)</span>.</p></li>
+<li><p>The maximum possible rank of an <span class="math inline">\(n \times p\)</span> matrix is <span class="math inline">\(\min(n, p)\)</span>.</p></li>
+<li><p>If <span class="math inline">\(\mathbf{C} = \mathbf{A}\mathbf{B}\)</span>, then the rank of <span class="math inline">\(\mathbf{C}\)</span> is less than or equal to <span class="math inline">\(\min(\text{rank }\mathbf{A}, \text{rank }\mathbf{B})\)</span>.</p></li>
+<li><p>This will show up when we put the covariates in an <span class="math inline">\(n \times p\)</span> (<span class="math inline">\(n\)</span> individuals and <span class="math inline">\(p\)</span> variables) matrix <span class="math inline">\(\mathbf{X}\)</span> and need to calculate the inverse of <span class="math inline">\(\mathbf{X}^T\mathbf{X}\)</span>, which is only possible if <span class="math inline">\(n \geq p\)</span>.</p></li>
+</ul>
+</div>
+<div id="basic-results-for-matrices" class="section level2">
+<h2>Basic Results for Matrices</h2>
+<ul>
+<li><span class="math inline">\(\mathbf{A} + \mathbf{B} = \mathbf{B} + \mathbf{A}\)</span></li>
+<li><span class="math inline">\((\mathbf{A} + \mathbf{B}) + \mathbf{C} = \mathbf{A} + (\mathbf{B} + \mathbf{C})\)</span></li>
+<li><span class="math inline">\((\mathbf{A}\mathbf{B})\mathbf{C} = \mathbf{A}(\mathbf{B}\mathbf{C})\)</span></li>
+<li><span class="math inline">\(\mathbf{C}(\mathbf{A} + \mathbf{B}) = \mathbf{C}\mathbf{A} + \mathbf{C}\mathbf{B}\)</span></li>
+<li><span class="math inline">\(k(\mathbf{A} + \mathbf{B}) = k\mathbf{A} + k\mathbf{B}\)</span></li>
+<li><span class="math inline">\((\mathbf{A}^T)^T = \mathbf{A}\)</span></li>
+<li><span class="math inline">\((\mathbf{A} + \mathbf{B})^T = \mathbf{A}^T + \mathbf{B}^T\)</span></li>
+<li><span class="math inline">\((\mathbf{A}\mathbf{B})^T = \mathbf{B}^T\mathbf{A}^T\)</span></li>
+<li><span class="math inline">\((\mathbf{A}\mathbf{B}\mathbf{C})^T = \mathbf{C}^T\mathbf{B}^T\mathbf{A}^T\)</span></li>
+<li><span class="math inline">\((\mathbf{A}\mathbf{B})^{-1} = \mathbf{B}^{-1}\mathbf{A}^{-1}\)</span></li>
+<li><span class="math inline">\((\mathbf{A}\mathbf{B}\mathbf{C})^{-1} = \mathbf{C}^{-1}\mathbf{B}^{-1}\mathbf{A}^{-1}\)</span></li>
+<li><span class="math inline">\((\mathbf{A}^{-1})^{-1} = \mathbf{A}\)</span></li>
+<li><span class="math inline">\((\mathbf{A}^T)^{-1} = (\mathbf{A}^{-1})^T\)</span></li>
+</ul>
+</div>
 </div>
 <div id="linear-algebra-and-simple-linear-regression" class="section level1">
 <h1>Linear Algebra and Simple Linear Regression</h1>
+<ul>
+<li>Why am I torturing you with this?
+<ul>
+<li>Linear algebra allows us to concisely represent linear regression models/estimates/procedures in terms of matrices and vectors.</li>
+<li>Without linear algebra, such representations in multiple linear regression would be verbose, to say the least.</li>
+</ul></li>
+</ul>
+<div id="model-representation" class="section level2">
+<h2>Model Representation</h2>
 <ul>
 <li><p>We can represent the simple linear regression model by arranging values in matrices.</p></li>
 <li><p>Let <span class="math display">\[\begin{align}
@@ -520,6 +687,170 @@ $(document).ready(function () {
 <li><p>Then we can represent the simple linear regression model in terms of these matrices <span class="math display">\[
   \mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}
   \]</span></p></li>
+<li><p>Using expectation notation, we can say that <span class="math display">\[
+  E[\mathbf{y}] = 
+  \left(
+  \begin{array}{c}
+  E[Y_1]\\
+  E[Y_2]\\
+  \vdots\\
+  E[Y_n]
+  \end{array}
+  \right)
+  = \mathbf{X}\mathbf{\beta}
+  \]</span></p></li>
+<li><p>The column of <span class="math inline">\(1\)</span>’s in <span class="math inline">\(\mathbf{X}\)</span> can be seen of defining a variable <span class="math inline">\(X_0 = 1\)</span> and then having <span class="math display">\[
+  Y_i = \beta_0 X_0 + \beta_1 X_i + \epsilon_i
+  \]</span></p></li>
+</ul>
+</div>
+<div id="some-standard-matrix-multiplications" class="section level2">
+<h2>Some standard matrix multiplications</h2>
+<p><span class="math display">\[
+\mathbf{Y}^T\mathbf{Y} = \sum_{i=1}^nY_i^2
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{X}^T\mathbf{X} = 
+\left(
+\begin{array}{cc}
+n &amp; \sum_{i=1}^nX_i\\
+\sum_{i=1}^nX_i &amp; \sum_{i=1}^nX_i^2
+\end{array}
+\right)
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{X}^T\mathbf{Y} = 
+\left(
+\begin{array}{c}
+\sum_{i=1}^n Y_i\\
+\sum_{i=1}^n X_iY_i\\
+\end{array}
+\right)
+\]</span></p>
+</div>
+<div id="estimates-representation" class="section level2">
+<h2>Estimates Representation</h2>
+<ul>
+<li><p>You can show that the estimated regression coefficients are <span class="math display">\[
+  \hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+  \]</span></p></li>
+<li><p>The fitted values are then <span class="math display">\[
+  \hat{\mathbf{Y}} = \mathbf{X}\hat{\mathbf{\beta}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+  \]</span></p></li>
+<li><p>The matrix <span class="math display">\[
+  \mathbf{H} = \mathbf{X}\hat{\mathbf{\beta}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
+  \]</span> transforms <span class="math inline">\(\mathbf{Y}\)</span> to <span class="math inline">\(\hat{\mathbf{Y}}\)</span> through premultiplication, and so is often called the <strong>hat matrix</strong>.</p></li>
+<li><p>The hat matrix plays an important part in diagnostics (Chapter 10).</p></li>
+<li><p><strong>Exercise</strong>: Prove that the hat matrix is <strong>idempotent</strong>. That is <span class="math display">\[
+  \mathbf{H}\mathbf{H} = \mathbf{H}
+  \]</span></p></li>
+<li><p>The residuals are <span class="math display">\[
+  \mathbf{e} = \mathbf{Y} - \hat{\mathbf{Y}} = \mathbf{Y} - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y} = (\mathbf{I}_n - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T)\mathbf{Y} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
+  \]</span></p></li>
+</ul>
+</div>
+</div>
+<div id="linear-algebra-in-r" class="section level1">
+<h1>Linear Algebra in R</h1>
+<ul>
+<li><p>You create matrices with the <code>matrix()</code> function.</p>
+<pre class="r"><code>A &lt;- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
+A</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    4
+## [2,]    2    5
+## [3,]    3    6</code></pre></li>
+<li><p>Notice that the first column is populated first, then the second column, etc…</p></li>
+<li><p>You can add/subtract/multiply/divide using a scalar with basic arithmetic operations.</p>
+<pre class="r"><code>2 + A</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    3    6
+## [2,]    4    7
+## [3,]    5    8</code></pre>
+<pre class="r"><code>2 - A</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1   -2
+## [2,]    0   -3
+## [3,]   -1   -4</code></pre>
+<pre class="r"><code>A - 2</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   -1    2
+## [2,]    0    3
+## [3,]    1    4</code></pre>
+<pre class="r"><code>2 * A</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    2    8
+## [2,]    4   10
+## [3,]    6   12</code></pre>
+<pre class="r"><code>A / 2</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]  0.5  2.0
+## [2,]  1.0  2.5
+## [3,]  1.5  3.0</code></pre>
+<pre class="r"><code>2 / A</code></pre>
+<pre><code>##        [,1]   [,2]
+## [1,] 2.0000 0.5000
+## [2,] 1.0000 0.4000
+## [3,] 0.6667 0.3333</code></pre></li>
+<li><p>Matrices can be element-wise added/sabtracted/multiplied/divided using <code>+</code>/<code>-</code>/<code>*</code>/<code>/</code> as long as these matrices are the same dimension.</p>
+<pre class="r"><code>B &lt;- matrix(c(7, 8, 9, 10, 11, 12), nrow = 3, ncol = 2)
+B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    7   10
+## [2,]    8   11
+## [3,]    9   12</code></pre>
+<pre class="r"><code>A + B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    8   14
+## [2,]   10   16
+## [3,]   12   18</code></pre>
+<pre class="r"><code>A - B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   -6   -6
+## [2,]   -6   -6
+## [3,]   -6   -6</code></pre>
+<pre class="r"><code>A * B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    7   40
+## [2,]   16   55
+## [3,]   27   72</code></pre>
+<pre class="r"><code>A / B</code></pre>
+<pre><code>##        [,1]   [,2]
+## [1,] 0.1429 0.4000
+## [2,] 0.2500 0.4545
+## [3,] 0.3333 0.5000</code></pre></li>
+<li><p>Matrix multiplication is performed using <code>%*%</code>. The number of columns of the left matrix must equal the number of rows of the right matrix.</p>
+<pre class="r"><code>C &lt;- matrix(c(-1, 2, 1, 3), nrow = 2, ncol = 2)
+C</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   -1    1
+## [2,]    2    3</code></pre>
+<pre class="r"><code>A %*% C</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    7   13
+## [2,]    8   17
+## [3,]    9   21</code></pre></li>
+<li><p>The transpose of a matrix is calculated using <code>t()</code>.</p>
+<pre class="r"><code>t(A)</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    2    3
+## [2,]    4    5    6</code></pre></li>
+<li><p>The inverse of a matrix is calculated using <code>solve()</code> (remember, has to be a square matrix).</p>
+<pre class="r"><code>solve(C)</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,] -0.6  0.2
+## [2,]  0.4  0.2</code></pre></li>
+<li><p>You can create the identity matrix using <code>diag()</code></p>
+<pre class="r"><code>diag(x = 3)</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    1    0
+## [3,]    0    0    1</code></pre></li>
+<li><p>You can create a matrix of <code>1</code>’s by just giving <code>matrix()</code> the number 1.</p>
+<pre class="r"><code>matrix(1, nrow = 2, ncol = 3)</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    1    1
+## [2,]    1    1    1</code></pre></li>
 </ul>
 </div>
 

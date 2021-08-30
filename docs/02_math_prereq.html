@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-06" />
+<meta name="date" content="2021-08-30" />
 
 <title>Math Prerequisites</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-06</h4>
+<h4 class="date">2021-08-30</h4>
 
 </div>
 
@@ -535,7 +535,7 @@ exp(3) </code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Exponential decline:</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p><span class="math inline">\(\beta_0\)</span> is the value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p></li>
+<li><p><span class="math inline">\(e^{\beta_0}\)</span> is the value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p></li>
 <li><p><span class="math inline">\(\beta_1\)</span> determines the rate of growth or decline.</p></li>
 <li><p>A 1-unit difference in <span class="math inline">\(x\)</span> corresponds to a multiplicative factor of <span class="math inline">\(e^{\beta_1}\)</span> in <span class="math inline">\(y\)</span>. (you multiply the old <span class="math inline">\(y\)</span> value by <span class="math inline">\(e^{\beta_1}\)</span> to figure out the new <span class="math inline">\(y\)</span> value when you have an <span class="math inline">\(x\)</span> value that is 1 larger).</p></li>
 <li><p>This follows from: <span class="math display">\[\begin{align}
@@ -597,7 +597,7 @@ qplot(x = year, y = pop, data = dcpop)</code></pre>
 <ul>
 <li><p>Tradition.</p></li>
 <li><p>For small values of <span class="math inline">\(\beta_1\)</span> (say, <span class="math inline">\(-0.1 \leq \beta_1 \leq 0.1\)</span>), we can interpret <span class="math inline">\(\beta_1\)</span> as the proportion change for a 1 unit difference in <span class="math inline">\(x\)</span>.</p></li>
-<li><p>This is because for small <span class="math inline">\(\beta_1\)</span>, we have <span class="math inline">\(\beta_1 \approx e^{\beta_1}\)</span>.</p></li>
+<li><p>This is because for small <span class="math inline">\(\beta_1\)</span>, we have <span class="math inline">\(e^{\beta_1} \approx 1 + \beta_1\)</span>.</p></li>
 </ul>
 <table>
 <thead>
@@ -667,7 +667,7 @@ qplot(x = year, y = pop, data = dcpop)</code></pre>
 </table>
 <ul>
 <li><p>In many real world applications, <span class="math inline">\(\beta_1\)</span> is typically small.</p></li>
-<li><p>This relationship does not hold with other bases. E.g. <span class="math inline">\(10^{0.02} = 1.0471 \not\approx 1.02\)</span>.</p></li>
+<li><p>This relationship does not hold with other bases. E.g. <span class="math inline">\(10^{0.02} = 1.0471 \not\approx 1 + 0.02\)</span>.</p></li>
 <li><p><strong>Example</strong>: From the DC population example above, we had <span class="math inline">\(\beta_1 = 0.0299\)</span> and <span class="math inline">\(e^{\beta_1} = 1.0303\)</span>. So, a 3% increase in population each year, and you can get that either from <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(e^{\beta_1}\)</span>.</p></li>
 </ul>
 </div>
