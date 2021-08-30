@@ -26,6 +26,7 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [Lecture 01-1: R introduction](./01_r_intro.html).
   - [Lecture 01-2:  R markdown introduction](01_r_markdown.html).
   - [Lecture 01-3: R graphics with `qplot()`](./01_qplot.html).
+  - [Lab 01-1: R Lab](./01_r_lab.html).
 - 02 Review
   - [Lecture 02-1: Mathematical prerequisites](./02_math_prereq.html).
   - [Lecture 02-2: Probability and simulation](./02_prob_sim.html).

@@ -1,0 +1,89 @@
+---
+title: "R Lab"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+urlcolor: "blue"
+params:
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+set.seed(1)
+knitr::opts_chunk$set(echo = params$solutions, 
+                      eval = params$solutions, 
+                      fig.align  = "center",
+                      fig.height = 3)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+# County Demographic Information (CDI)
+
+You can read about the CDI dataset [here](https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information), and download it from here: <https://dcgerard.github.io/stat_415_615/data/cdi.csv>
+
+Complete this lab by writing solutions in an R markdown document, knitting to word or PDF.
+
+1. Load the CDI dataset into R, saving the data frame in a variable called `cdi`.
+
+    ```{r}
+    library(tidyverse)
+    cdi <- read_csv("https://dcgerard.github.io/stat_415_615/data/cdi.csv")
+    ```
+
+2. Use a function that provides a rough glimpse at these data.
+
+    ```{r}
+    glimpse(cdi)
+    ```
+
+3. Calculate the mean and standard deviation of the population of the counties.
+
+    ```{r}
+    mean(cdi$pop)
+    sd(cdi$pop)
+    ```
+
+4. Convert the `pop` variable to be in units of 100,000 individuals (so 1 corresponds to 100,000, 2 corresponds to 200,000, etc).
+
+    ```{r}
+    cdi <- mutate(cdi, pop = pop / 100000)
+    ```
+
+5. Use an appropriate plot to explore the association between population and number of physicians.
+
+    ```{r}
+    qplot(data = cdi, x = pop, y = physicians, geom = "point")
+    ```
+
+6. Use an appropriate plot to explore the association between region and population.
+
+    ```{r}
+    qplot(data = cdi, x = region, y = pop, geom = "boxplot")
+    ```
+
+7. Use an appropriate plot to explore the association between population and number of physicians in each region.
+
+    ```{r}
+    qplot(data = cdi, x = pop, y = physicians, facets = . ~ region)
+    ```
+
+8. Create four datasets, one for each region.
+
+    ```{r}
+    cdi_nc <- filter(cdi, region == "NC")
+    cdi_ne <- filter(cdi, region == "NE")
+    cdi_s <- filter(cdi, region == "S")
+    cdi_w <- filter(cdi, region == "W")
+    ```
+
+9. Reproduce the following using markdown:
+
+    1. It was the best of times, 
+    2. it was the worst of times, 
+    - **it was the age of wisdom**, 
+    - *it was the age of foolishness,* 
+    - [it was the epoch of belief](https://www.youtube.com/watch?v=dQw4w9WgXcQ) ...
+

@@ -300,6 +300,20 @@ this categorization).
 
 - For other file formats, you need to use other functions, such as `read_tsv()`, `read_table()`, `read_fwf()`, etc. I will try to make sure `read_csv()` works for all datasets in this course.
 
+- I will typicaly post course datasets at <https://dcgerard.github.io/stat_415_615/data.html>. You can load those data into R by pasting their URL's into `read_csv()`.
+
+    ```{r}
+    copiers <- read_csv("https://dcgerard.github.io/stat_415_615/data/copiers.csv")
+    head(copiers)
+    ```
+    
+- **Exercise**: Load in the County Demographic Information data into R and print out the first six rows.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    cdi <- read_csv("https://dcgerard.github.io/stat_415_615/data/cdi.csv")
+    head(cdi)
+    ```
+
 ## Basic Data Frame Manipulations
 
 - You will need to know just a few data frame manipulations, which we will perform using the `{dplyr}` package.

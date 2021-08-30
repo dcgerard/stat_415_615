@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-08-30" />
 
-<title>Regression</title>
+<title>R Lab</title>
 
 <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -263,91 +263,42 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression</h1>
+<h1 class="title toc-ignore">R Lab</h1>
 <h4 class="author">David Gerard</h4>
 <h4 class="date">2021-08-30</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#county-demographic-information-cdi">County Demographic Information (CDI)</a></li>
+</ul>
+</div>
 
-<div id="synopsis" class="section level1">
-<h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
-</div>
-<div id="administrative" class="section level1">
-<h1>Administrative</h1>
+<div id="county-demographic-information-cdi" class="section level1">
+<h1>County Demographic Information (CDI)</h1>
+<p>You can read about the CDI dataset <a href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">here</a>, and download it from here: <a href="https://dcgerard.github.io/stat_415_615/data/cdi.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/cdi.csv</a></p>
+<p>Complete this lab by writing solutions in an R markdown document, knitting to word or PDF.</p>
+<ol style="list-style-type: decimal">
+<li><p>Load the CDI dataset into R, saving the data frame in a variable called <code>cdi</code>.</p></li>
+<li><p>Use a function that provides a rough glimpse at these data.</p></li>
+<li><p>Calculate the mean and standard deviation of the population of the counties.</p></li>
+<li><p>Convert the <code>pop</code> variable to be in units of 100,000 individuals (so 1 corresponds to 100,000, 2 corresponds to 200,000, etc).</p></li>
+<li><p>Use an appropriate plot to explore the association between population and number of physicians.</p></li>
+<li><p>Use an appropriate plot to explore the association between region and population.</p></li>
+<li><p>Use an appropriate plot to explore the association between population and number of physicians in each region.</p></li>
+<li><p>Create four datasets, one for each region.</p></li>
+<li><p>Reproduce the following using markdown:</p>
+<ol style="list-style-type: decimal">
+<li>It was the best of times,</li>
+<li>it was the worst of times,</li>
+</ol>
 <ul>
-<li><a href="./syllabus.html">Syllabus</a></li>
-</ul>
-</div>
-<div id="lectures" class="section level1">
-<h1>Lectures</h1>
-<ul>
-<li>00 Motivation
-<ul>
-<li><a href="./00_motivation.html">Lecture 00-1: Linear Regression Overview</a>.</li>
+<li><strong>it was the age of wisdom</strong>,</li>
+<li><em>it was the age of foolishness,</em></li>
+<li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">it was the epoch of belief</a> …</li>
 </ul></li>
-<li>01 Crash Course in R
-<ul>
-<li><a href="./01_r_intro.html">Lecture 01-1: R introduction</a>.</li>
-<li><a href="01_r_markdown.html">Lecture 01-2: R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">Lecture 01-3: R graphics with <code>qplot()</code></a>.</li>
-<li><a href="./01_r_lab.html">Lab 01-1: R Lab</a>.</li>
-</ul></li>
-<li>02 Review
-<ul>
-<li><a href="./02_math_prereq.html">Lecture 02-1: Mathematical prerequisites</a>.</li>
-<li><a href="./02_prob_sim.html">Lecture 02-2: Probability and simulation</a>.</li>
-</ul></li>
-<li>03 Simple linear regression
-<ul>
-<li><a href="./03_ols.html">Lecture 03-1: The Model</a>.
-<ul>
-<li>Chapter 1 of KNNL.</li>
-</ul></li>
-<li><a href="./03_inference.html">Lecture 03-2: Inference</a>.
-<ul>
-<li>Chapter 2 of KNNL.</li>
-</ul></li>
-<li><a href="./03_diagnostics.html">Lecture 03-3: Diagnostics and Remedial Measures</a>.
-<ul>
-<li>Chapter 3 of KNNL.</li>
-</ul></li>
-<li><a href="./03_slr_case.html">Lecture 03-4: SLR Case Study</a>.</li>
-<li><a href="./03_other_topics.html">Lecture 03-5: Other Topics in SLR</a>.</li>
-<li><a href="./03_inference_lab.html">Lab 03-1: Inference Lab</a>.</li>
-<li><a href="./03_diagnostics_lab.html">Lab 03-2: Diagnostics Lab</a>.</li>
-</ul></li>
-<li>04 Linear algebra
-<ul>
-<li><a href="./04_linear_algebra.html">Lecture 04-1: Linear algebra basics</a>. Chapter 5 of KNNL.</li>
-<li>Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.</li>
-</ul></li>
-<li>05 Multiple linear regression
-<ul>
-<li>Model/Interpretation (including interactions, indicators)</li>
-<li>Estimation</li>
-<li>Hypothesis Testing</li>
-<li>Assumptions</li>
-<li>Transformations</li>
-</ul></li>
-<li>06 Design
-<ul>
-<li>Power</li>
-<li>Sample size calculation</li>
-</ul></li>
-<li>07 Missing data</li>
-<li>Review Sheets
-<ul>
-<li><a href="./rr_equations.html">Equations</a>.</li>
-</ul></li>
-</ul>
-</div>
-<div id="final-project" class="section level1">
-<h1>Final Project</h1>
-<ul>
-<li><a href="./pp_description.html">Final Project Description</a>.</li>
-</ul>
+</ol>
 </div>
 
 
