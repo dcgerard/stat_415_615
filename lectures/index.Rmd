@@ -42,8 +42,8 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [Lab 03-1: Inference Lab](./03_inference_lab.html).
   - [Lab 03-2: Diagnostics Lab](./03_diagnostics_lab.html).
 - 04 Linear algebra
-  - [Lecture 04-1: Linear algebra basics](./04_linear_algebra.html). Chapter 5 of KNNL.
-  - Simple linear regression in terms of linear algebra. Chapter 5 of KNNL.
+  - [Lecture 04-1: Linear Algebra](./04_linear_algebra.html). Chapter 5 of KNNL.
+  - [Lab 04-1: Linear Algebra Lab](./04_linear_algebra_lab.html). 
 - 05 Multiple linear regression
   - Model/Interpretation (including interactions, indicators)
   - Estimation

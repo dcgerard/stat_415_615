@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-08-31" />
 
-<title>Regression</title>
+<title>Linear Algebra Lab</title>
 
 <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -263,91 +263,67 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression</h1>
+<h1 class="title toc-ignore">Linear Algebra Lab</h1>
 <h4 class="author">David Gerard</h4>
 <h4 class="date">2021-08-31</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#blood-pressure">Blood Pressure</a></li>
+</ul>
+</div>
 
-<div id="synopsis" class="section level1">
-<h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
-</div>
-<div id="administrative" class="section level1">
-<h1>Administrative</h1>
-<ul>
-<li><a href="./syllabus.html">Syllabus</a></li>
-</ul>
-</div>
-<div id="lectures" class="section level1">
-<h1>Lectures</h1>
-<ul>
-<li>00 Motivation
-<ul>
-<li><a href="./00_motivation.html">Lecture 00-1: Linear Regression Overview</a>.</li>
-</ul></li>
-<li>01 Crash Course in R
-<ul>
-<li><a href="./01_r_intro.html">Lecture 01-1: R introduction</a>.</li>
-<li><a href="01_r_markdown.html">Lecture 01-2: R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">Lecture 01-3: R graphics with <code>qplot()</code></a>.</li>
-<li><a href="./01_r_lab.html">Lab 01-1: R Lab</a>.</li>
-</ul></li>
-<li>02 Review
-<ul>
-<li><a href="./02_math_prereq.html">Lecture 02-1: Mathematical prerequisites</a>.</li>
-<li><a href="./02_prob_sim.html">Lecture 02-2: Probability and simulation</a>.</li>
-</ul></li>
-<li>03 Simple linear regression
-<ul>
-<li><a href="./03_ols.html">Lecture 03-1: The Model</a>.
-<ul>
-<li>Chapter 1 of KNNL.</li>
-</ul></li>
-<li><a href="./03_inference.html">Lecture 03-2: Inference</a>.
-<ul>
-<li>Chapter 2 of KNNL.</li>
-</ul></li>
-<li><a href="./03_diagnostics.html">Lecture 03-3: Diagnostics and Remedial Measures</a>.
-<ul>
-<li>Chapter 3 of KNNL.</li>
-</ul></li>
-<li><a href="./03_slr_case.html">Lecture 03-4: SLR Case Study</a>.</li>
-<li><a href="./03_other_topics.html">Lecture 03-5: Other Topics in SLR</a>.</li>
-<li><a href="./03_inference_lab.html">Lab 03-1: Inference Lab</a>.</li>
-<li><a href="./03_diagnostics_lab.html">Lab 03-2: Diagnostics Lab</a>.</li>
-</ul></li>
-<li>04 Linear algebra
-<ul>
-<li><a href="./04_linear_algebra.html">Lecture 04-1: Linear Algebra</a>. Chapter 5 of KNNL.</li>
-<li><a href="./04_linear_algebra_lab.html">Lab 04-1: Linear Algebra Lab</a>.</li>
-</ul></li>
-<li>05 Multiple linear regression
-<ul>
-<li>Model/Interpretation (including interactions, indicators)</li>
-<li>Estimation</li>
-<li>Hypothesis Testing</li>
-<li>Assumptions</li>
-<li>Transformations</li>
-</ul></li>
-<li>06 Design
-<ul>
-<li>Power</li>
-<li>Sample size calculation</li>
-</ul></li>
-<li>07 Missing data</li>
-<li>Review Sheets
-<ul>
-<li><a href="./rr_equations.html">Equations</a>.</li>
-</ul></li>
-</ul>
-</div>
-<div id="final-project" class="section level1">
-<h1>Final Project</h1>
-<ul>
-<li><a href="./pp_description.html">Final Project Description</a>.</li>
-</ul>
+<div id="blood-pressure" class="section level1">
+<h1>Blood Pressure</h1>
+<p>The following data were obtained in a study of the relation between diastolic blood pressure and age for boys 5 to 13 years old. We will manually implement a regression of blood pressure on age.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right"><span class="math inline">\(i\)</span>:</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
+<th align="center">6</th>
+<th align="center">7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">age:</td>
+<td align="center">5</td>
+<td align="center">8</td>
+<td align="center">11</td>
+<td align="center">7</td>
+<td align="center">13</td>
+<td align="center">12</td>
+<td align="center">6</td>
+</tr>
+<tr class="even">
+<td align="right">pressure:</td>
+<td align="center">63</td>
+<td align="center">67</td>
+<td align="center">74</td>
+<td align="center">64</td>
+<td align="center">75</td>
+<td align="center">69</td>
+<td align="center">60</td>
+</tr>
+</tbody>
+</table>
+<ol style="list-style-type: decimal">
+<li><p>Create the response vector in R, call it <code>y</code>.</p></li>
+<li><p>Create the design matrix in R, call it <code>X</code>.</p></li>
+<li><p>Calculate the OLS estimates from a regression of pressure on age using matrix multiplication in R. Call this vector <code>betahat</code>.</p></li>
+<li><p>Calculate the fitted values from the above defined quantities. Call this vector <code>yhat</code>.</p></li>
+<li><p>Calculate the residuals from the above defined quantities. Call this vector <code>e</code>.</p></li>
+<li><p>Calculate the MSE from the above defined quantities. Call this value <code>mse</code>.</p></li>
+<li><p>Calculate the standard errors of <span class="math inline">\(\hat{\mathbf{\beta}}\)</span> from the above quantities.</p></li>
+<li><p>Verify all of your calculations above using <code>lm()</code>.</p></li>
+</ol>
 </div>
 
 

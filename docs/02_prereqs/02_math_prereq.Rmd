@@ -301,7 +301,7 @@ $$
             axis.ticks = element_blank())
     ```
 
-- $\beta_0$ is the value of $y$ when $x = 0$
+- $e^{\beta_0}$ is the value of $y$ when $x = 0$
 
 - $\beta_1$ determines the rate of growth or decline.
 
@@ -419,7 +419,7 @@ $$
 
 - For small values of $\beta_1$ (say, $-0.1 \leq \beta_1 \leq 0.1$), we can interpret $\beta_1$ as the proportion change for a 1 unit difference in $x$.
 
-- This is because for small $\beta_1$, we have $\beta_1 \approx e^{\beta_1}$.
+- This is because for small $\beta_1$, we have $e^{\beta_1} \approx 1 + \beta_1$.
 
 ```{r, echo = FALSE}
 tibble(beta1 = seq(0, 0.2, length = 11)) %>%
@@ -430,7 +430,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
 
 - In many real world applications, $\beta_1$ is typically small.
 
-- This relationship does not hold with other bases. E.g. $10^{0.02} = `r 10^0.02` \not\approx 1.02$.
+- This relationship does not hold with other bases. E.g. $10^{0.02} = `r 10^0.02` \not\approx 1 + 0.02$.
 
 - **Example**: From the DC population example above, we had $\beta_1 = `r beta1`$ and $e^{\beta_1} = `r exp(beta1)`$. So, a 3\% increase in population each year, and you can get that either from $\beta_1$ or $e^{\beta_1}$.
 
