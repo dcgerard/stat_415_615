@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-30" />
+<meta name="date" content="2021-08-31" />
 
 <title>Linear Algebra</title>
 
@@ -31,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -224,6 +227,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -231,6 +297,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -269,28 +345,10 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Linear Algebra</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-30</h4>
+<h4 class="date">2021-08-31</h4>
 
 </div>
 
-<div id="TOC">
-<ul>
-<li><a href="#learning-objectives">Learning Objectives</a></li>
-<li><a href="#vectors-and-matrices">Vectors and Matrices</a>
-<ul>
-<li><a href="#matrix-inverse">Matrix Inverse</a></li>
-<li><a href="#matrix-rank">Matrix Rank</a></li>
-<li><a href="#basic-results-for-matrices">Basic Results for Matrices</a></li>
-</ul></li>
-<li><a href="#linear-algebra-and-simple-linear-regression">Linear Algebra and Simple Linear Regression</a>
-<ul>
-<li><a href="#model-representation">Model Representation</a></li>
-<li><a href="#some-standard-matrix-multiplications">Some standard matrix multiplications</a></li>
-<li><a href="#estimates-representation">Estimates Representation</a></li>
-</ul></li>
-<li><a href="#linear-algebra-in-r">Linear Algebra in R</a></li>
-</ul>
-</div>
 
 <script>
   addClassKlippyTo("pre.r, pre.markdown");
@@ -300,12 +358,14 @@ $(document).ready(function () {
 <h1>Learning Objectives</h1>
 <ul>
 <li>Introduce/review basic linear algebra.</li>
-<li>Sections 5.1–5.7 of KNNL</li>
+<li>Chapter 5 of KNNL</li>
 <li>Chapters 2 and 3 of <a href="https://shainarace.github.io/LinearAlgebra/">Linear Algebra for Data Science with examples in R</a></li>
 </ul>
 </div>
 <div id="vectors-and-matrices" class="section level1">
 <h1>Vectors and Matrices</h1>
+<div id="basics" class="section level2">
+<h2>Basics</h2>
 <ul>
 <li><p>A <strong>vector</strong> is a list of numbers.</p>
 <p><span class="math display">\[
@@ -523,7 +583,9 @@ $(document).ready(function () {
   \end{array}
   \right)
   \]</span></p></li>
+<li><p><strong>Exercise</strong>: What is <span class="math inline">\(\mathbf{1}_n\mathbf{1}_n^T\)</span>? What is <span class="math inline">\(\mathbf{1}_n^T\mathbf{1}_n\)</span>?</p></li>
 </ul>
+</div>
 <div id="matrix-inverse" class="section level2">
 <h2>Matrix Inverse</h2>
 <ul>
@@ -568,7 +630,7 @@ $(document).ready(function () {
 <h2>Matrix Rank</h2>
 <ul>
 <li><p>The matrix inverse does not exist if there is redundant information between the columns in the matrix.</p></li>
-<li><p>Formally, vectors <span class="math inline">\(\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_p\)</span> are <strong>linearly dependent</strong> if there exist scalars <span class="math inline">\(k_1, k_2,\ldots, k_p\)</span> such that <span class="math display">\[
+<li><p>Formally, vectors <span class="math inline">\(\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_p\)</span> are <strong>linearly dependent</strong> if there exist scalars <span class="math inline">\(k_1, k_2,\ldots, k_p\)</span> (not all zero) such that <span class="math display">\[
   k_1\mathbf{a}_1 + k_2\mathbf{a}_2 + \cdots k_p \mathbf{a}_p = \mathbf{0}
   \]</span></p></li>
 <li><p>I.e., you can write one vector in terms of the other vectors.</p></li>
@@ -704,6 +766,67 @@ $(document).ready(function () {
   \]</span></p></li>
 </ul>
 </div>
+<div id="random-vectors" class="section level2">
+<h2>Random Vectors</h2>
+<ul>
+<li><p>A <strong>random vector</strong> is a vector whose elements are random variables. So <span class="math inline">\(\mathbf{\epsilon}\)</span> is a random vector.</p></li>
+<li><p>The expected value of a random vector is a vector whose elements are the expected values of the elements of the random vector. So, for example <span class="math display">\[
+E[\mathbf{\epsilon}] =
+E\left[
+\left(
+\begin{array}{c}
+\epsilon_1\\
+\epsilon_2\\
+\vdots\\
+\epsilon_n
+\end{array}
+\right)
+\right]
+=
+\left(
+\begin{array}{c}
+E[\epsilon_1]\\
+E[\epsilon_2]\\
+\vdots\\
+E[\epsilon_n]
+\end{array}
+\right)
+\]</span></p></li>
+<li><p>We know, from the assumptions of the linear model, that <span class="math inline">\(E[\epsilon_i] = 0\)</span> for all <span class="math inline">\(i\)</span>, and so <span class="math inline">\(E[\mathbf{\epsilon}] = \mathbf{0}_n\)</span>.</p></li>
+<li><p>We can concisely express the variances and covariances between all elements of a random vector in terms of the <strong>variance-covariance matrix</strong> (often just called the <strong>covariance matrix</strong>). <span class="math display">\[
+  cov(\mathbf{\epsilon}) = 
+  \left(
+  \begin{array}{cccc}
+  var(\epsilon_1) &amp; cov(\epsilon_1, \epsilon_2) &amp; \cdots &amp; cov(\epsilon_1, \epsilon_n)\\
+  cov(\epsilon_2, \epsilon_1) &amp; var(\epsilon_2) &amp; \cdots &amp; cov(\epsilon_2, \epsilon_n)\\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+  cov(\epsilon_n, \epsilon_1) &amp; cov(\epsilon_n, \epsilon_2) &amp; \cdots &amp; var(\epsilon_n)
+  \end{array}
+  \right)
+  \]</span></p></li>
+<li><p>Since we know, from the assumptions of the linear model, that <span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span> for all <span class="math inline">\(i\)</span> (equal variance assumption) and <span class="math inline">\(cov(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span> (independence assumption), we have that <span class="math display">\[
+  cov(\mathbf{\epsilon}_i) = \sigma^2\mathbf{I}_n
+  \]</span></p></li>
+<li><p>We frequently encounter a random vector <span class="math inline">\(\mathbf{w}\)</span> that is obtained by premultiplying a random vector <span class="math inline">\(\mathbf{y}\)</span> by a matrix <span class="math inline">\(\mathbf{A}\)</span>. <span class="math display">\[
+  \mathbf{w} = \mathbf{A}\mathbf{y}
+  \]</span></p></li>
+<li><p>Then <span class="math display">\[
+  cov(\mathbf{w}) = \mathbf{A}cov(\mathbf{y})\mathbf{A}^T
+  \]</span></p></li>
+<li><p>Let’s calculate together the mean and covariance of the random vector <span class="math inline">\(\mathbf{y}\)</span> (on the white board).</p></li>
+</ul>
+</div>
+<div id="full-expression-of-simple-linear-model" class="section level2">
+<h2>Full Expression of Simple Linear Model</h2>
+<ul>
+<li><p>The simple linear model can be fully expressed with assumptions via <span class="math display">\[\begin{align}
+  \mathbf{y} &amp;= \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}\\
+  E[\mathbf{\epsilon}] &amp;= \mathbf{0}_n\\
+  cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
+  \end{align}\]</span></p></li>
+<li><p>For the normal linear model, you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
+</ul>
+</div>
 <div id="some-standard-matrix-multiplications" class="section level2">
 <h2>Some standard matrix multiplications</h2>
 <p><span class="math display">\[
@@ -738,7 +861,7 @@ n &amp; \sum_{i=1}^nX_i\\
   \hat{\mathbf{Y}} = \mathbf{X}\hat{\mathbf{\beta}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
   \]</span></p></li>
 <li><p>The matrix <span class="math display">\[
-  \mathbf{H} = \mathbf{X}\hat{\mathbf{\beta}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
+  \mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
   \]</span> transforms <span class="math inline">\(\mathbf{Y}\)</span> to <span class="math inline">\(\hat{\mathbf{Y}}\)</span> through premultiplication, and so is often called the <strong>hat matrix</strong>.</p></li>
 <li><p>The hat matrix plays an important part in diagnostics (Chapter 10).</p></li>
 <li><p><strong>Exercise</strong>: Prove that the hat matrix is <strong>idempotent</strong>. That is <span class="math display">\[
@@ -747,6 +870,23 @@ n &amp; \sum_{i=1}^nX_i\\
 <li><p>The residuals are <span class="math display">\[
   \mathbf{e} = \mathbf{Y} - \hat{\mathbf{Y}} = \mathbf{Y} - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y} = (\mathbf{I}_n - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T)\mathbf{Y} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
   \]</span></p></li>
+<li><p><strong>Exercise</strong>: What is the covariance matrix of the residuals? Are the residuals uncorrelated?</p></li>
+</ul>
+</div>
+<div id="inference-of-regression-coefficients" class="section level2">
+<h2>Inference of regression coefficients</h2>
+<ul>
+<li><p>To obtain the standard errors of <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>, we can just obtain the covariance matrix of <span class="math inline">\(\hat{\mathbf{\beta}}\)</span>. <span class="math display">\[\begin{align}
+  cov(\hat{\mathbf{\beta}}) &amp;= cov((\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
+  &amp;= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tcov(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+  &amp;= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\sigma^2\mathbf{I}_n\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+  &amp;= \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+  &amp;= \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}.
+  \end{align}\]</span></p></li>
+<li><p>We estimate this variance covariance matrix with <span class="math display">\[
+  s^2(\hat{\mathbf{\beta}}) = MSE(\mathbf{X}^T\mathbf{X})^{-1}
+  \]</span></p></li>
+<li><p>Similarly concise equations for standard errors exist for mean responses (<span class="math inline">\(s^2(\hat{Y}_h)\)</span>) and predictions (<span class="math inline">\(s^2\{pred\}\)</span>).</p></li>
 </ul>
 </div>
 </div>
@@ -851,11 +991,36 @@ C</code></pre>
 <pre><code>##      [,1] [,2] [,3]
 ## [1,]    1    1    1
 ## [2,]    1    1    1</code></pre></li>
+<li><p><strong>Exercise</strong>: Suppose we have a response vector <span class="math inline">\(\mathbf{y}\)</span> and a design matrix <span class="math inline">\(\mathbf{X}\)</span> such that <span class="math display">\[
+  \mathbf{y} = 
+  \left(
+  \begin{array}{c}
+  7.8\\
+  9.0\\
+  10.2\\
+  11.0\\
+  11.7
+  \end{array}
+  \right)\\
+  \mathbf{X} = 
+  \left(
+  \begin{array}{cc}
+  1 &amp; 8\\
+  1 &amp; 4\\
+  1 &amp; 0\\
+  1 &amp; -4\\
+  1 &amp; -8
+  \end{array}
+  \right)
+  \]</span></p>
+<p>Use matrix methods to derive the estimated regression coefficients of a regression of <span class="math inline">\(\mathbf{y}\)</span> on <span class="math inline">\(\mathbf{X}\)</span>. Verify these estimates using <code>lm()</code>.</p></li>
 </ul>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -888,6 +1053,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

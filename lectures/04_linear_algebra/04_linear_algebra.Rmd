@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_depth: 4
+    toc_float: true
 urlcolor: "blue"
 ---
 
@@ -23,10 +24,12 @@ klippy::klippy()
 # Learning Objectives
 
 - Introduce/review basic linear algebra.
-- Sections 5.1--5.7 of KNNL
+- Chapter 5 of KNNL
 - Chapters 2 and 3 of [Linear Algebra for Data Science with examples in R](https://shainarace.github.io/LinearAlgebra/)
 
 # Vectors and Matrices
+
+## Basics
 
 - A **vector** is a list of numbers.
 
@@ -298,6 +301,13 @@ klippy::klippy()
     \end{array}
     \right)
     $$
+    
+- **Exercise**: What is $\mathbf{1}_n\mathbf{1}_n^T$? What is $\mathbf{1}_n^T\mathbf{1}_n$?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $\mathbf{J}_{n\times n}$ and $n$, respectively.
+    ```
+
 
 ## Matrix Inverse
 
@@ -356,7 +366,7 @@ klippy::klippy()
 
 - The matrix inverse does not exist if there is redundant information between the columns in the matrix.
 
-- Formally, vectors $\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_p$ are **linearly dependent** if there exist scalars $k_1, k_2,\ldots, k_p$ such that
+- Formally, vectors $\mathbf{a}_1,\mathbf{a}_2,\ldots,\mathbf{a}_p$ are **linearly dependent** if there exist scalars $k_1, k_2,\ldots, k_p$ (not all zero) such that
     $$
     k_1\mathbf{a}_1 + k_2\mathbf{a}_2 + \cdots k_p \mathbf{a}_p = \mathbf{0}
     $$
@@ -503,6 +513,77 @@ klippy::klippy()
     $$
     Y_i = \beta_0 X_0 + \beta_1 X_i + \epsilon_i
     $$
+    
+## Random Vectors
+
+- A **random vector** is a vector whose elements are random variables. So $\mathbf{\epsilon}$ is a random vector.
+
+- The expected value of a random vector is a vector whose elements are the expected values of the elements of the random vector. So, for example
+$$
+E[\mathbf{\epsilon}] =
+E\left[
+\left(
+\begin{array}{c}
+\epsilon_1\\
+\epsilon_2\\
+\vdots\\
+\epsilon_n
+\end{array}
+\right)
+\right]
+=
+\left(
+\begin{array}{c}
+E[\epsilon_1]\\
+E[\epsilon_2]\\
+\vdots\\
+E[\epsilon_n]
+\end{array}
+\right)
+$$
+
+- We know, from the assumptions of the linear model, that $E[\epsilon_i] = 0$ for all $i$, and so $E[\mathbf{\epsilon}] = \mathbf{0}_n$.
+
+- We can concisely express the variances and covariances between all elements of a random vector in terms of the **variance-covariance matrix** (often just called the **covariance matrix**).
+    $$
+    cov(\mathbf{\epsilon}) = 
+    \left(
+    \begin{array}{cccc}
+    var(\epsilon_1) & cov(\epsilon_1, \epsilon_2) & \cdots & cov(\epsilon_1, \epsilon_n)\\
+    cov(\epsilon_2, \epsilon_1) & var(\epsilon_2) & \cdots & cov(\epsilon_2, \epsilon_n)\\
+    \vdots & \vdots & \ddots & \vdots\\
+    cov(\epsilon_n, \epsilon_1) & cov(\epsilon_n, \epsilon_2) & \cdots & var(\epsilon_n)
+    \end{array}
+    \right)
+    $$
+    
+- Since we know, from the assumptions of the linear model, that $var(\epsilon_i) = \sigma^2$ for all $i$ (equal variance assumption) and $cov(\epsilon_i, \epsilon_j) = 0$ for all $i \neq j$ (independence assumption), we have that
+    $$
+    cov(\mathbf{\epsilon}_i) = \sigma^2\mathbf{I}_n
+    $$
+    
+- We frequently encounter a random vector $\mathbf{w}$ that is obtained by premultiplying a random vector $\mathbf{y}$ by a matrix $\mathbf{A}$.
+    $$
+    \mathbf{w} = \mathbf{A}\mathbf{y}
+    $$
+    
+- Then
+    $$
+    cov(\mathbf{w}) = \mathbf{A}cov(\mathbf{y})\mathbf{A}^T
+    $$
+
+- Let's calculate together the mean and covariance of the random vector $\mathbf{y}$ (on the white board).
+
+## Full Expression of Simple Linear Model
+
+- The simple linear model can be fully expressed with assumptions via
+    \begin{align}
+    \mathbf{y} &= \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}\\
+    E[\mathbf{\epsilon}] &= \mathbf{0}_n\\
+    cov(\mathbf{\epsilon}) &= \sigma^2\mathbf{I}_n
+    \end{align}
+    
+- For the normal linear model, you further assume that $\mathbf{\epsilon}$ is distributed according to the [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution).
 
 ## Some standard matrix multiplications
 
@@ -544,7 +625,7 @@ $$
 
 - The matrix
     $$
-    \mathbf{H} = \mathbf{X}\hat{\mathbf{\beta}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
+    \mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T
     $$
     transforms $\mathbf{Y}$ to $\hat{\mathbf{Y}}$ through premultiplication, and so is often called the **hat matrix**. 
     
@@ -567,6 +648,35 @@ $$
     $$
     \mathbf{e} = \mathbf{Y} - \hat{\mathbf{Y}} = \mathbf{Y} - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y} = (\mathbf{I}_n - \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T)\mathbf{Y} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
     $$
+    
+- **Exercise**: What is the covariance matrix of the residuals? Are the residuals uncorrelated?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $$
+    cov(\mathbf{e}) = cov((\mathbf{I}_n - \mathbf{H})\mathbf{Y}) = (\mathbf{I}_n - \mathbf{H})cov(\mathbf{Y})(\mathbf{I}_n - \mathbf{H}) = \sigma^2(\mathbf{I}_n - \mathbf{H})(\mathbf{I}_n - \mathbf{H}) = \sigma^2(\mathbf{I}_n - \mathbf{H})
+    $$
+    The last equality follows because $(\mathbf{I}_n - \mathbf{H})$ is idempotent.
+    
+    This is not a diagonal matrix, so the residuals are correlated. Though it turns out that they are mostly uncorrelated (especially for larger $n$).
+    ```
+    
+## Inference of regression coefficients
+
+- To obtain the standard errors of $\hat{\beta}_0$ and $\hat{\beta}_1$, we can just obtain the covariance matrix of $\hat{\mathbf{\beta}}$.
+    \begin{align}
+    cov(\hat{\mathbf{\beta}}) &= cov((\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
+    &= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tcov(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+    &= (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\sigma^2\mathbf{I}_n\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+    &= \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\\
+    &= \sigma^2(\mathbf{X}^T\mathbf{X})^{-1}.
+    \end{align}
+    
+- We estimate this variance covariance matrix with
+    $$
+    s^2(\hat{\mathbf{\beta}}) = MSE(\mathbf{X}^T\mathbf{X})^{-1}
+    $$
+
+- Similarly concise equations for standard errors exist for mean responses ($s^2(\hat{Y}_h)$) and predictions ($s^2\{pred\}$).
 
 # Linear Algebra in R
 
@@ -629,5 +739,38 @@ $$
     matrix(1, nrow = 2, ncol = 3)
     ```
 
-
+- **Exercise**: Suppose we have a response vector $\mathbf{y}$ and a design matrix $\mathbf{X}$ such that
+    $$
+    \mathbf{y} = 
+    \left(
+    \begin{array}{c}
+    7.8\\
+    9.0\\
+    10.2\\
+    11.0\\
+    11.7
+    \end{array}
+    \right)\\
+    \mathbf{X} = 
+    \left(
+    \begin{array}{cc}
+    1 & 8\\
+    1 & 4\\
+    1 & 0\\
+    1 & -4\\
+    1 & -8
+    \end{array}
+    \right)
+    $$
+    
+    Use matrix methods to derive the estimated regression coefficients of a regression of $\mathbf{y}$ on $\mathbf{X}$. Verify these estimates using `lm()`.
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    y <- matrix(c(7.8, 9, 10.2, 11, 11.7), ncol = 1)
+    X <- matrix(c(1, 1, 1, 1, 1, 8, 4, 0, -4, -8), ncol = 2)
+    betahat <- solve(t(X) %*% X) %*% t(X) %*% y
+    betahat
+    coef(lm(y ~ X[, 2]))
+    ```
+        
 
