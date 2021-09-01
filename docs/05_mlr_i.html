@@ -364,18 +364,41 @@ div.tocify {
 <li>Chapter 6 of KNNL</li>
 </ul>
 </div>
-<div id="overview" class="section level1">
-<h1>Overview</h1>
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
+<ul>
+<li><p>Most regression problems have more than one predictor.</p></li>
+<li><p>Multiple linear regression explores the relationship between <strong>one response variable</strong> and <strong>multiple predictor variables</strong>.</p>
+<ul>
+<li>(if you have multiple response variables, this is called “multivariate” regression, and is a separate topic)</li>
+</ul></li>
+<li><p>Examples:</p>
+<ul>
+<li>Predicting volume of tractor sales in a territory (<span class="math inline">\(Y\)</span>) given number of farms (<span class="math inline">\(X_1\)</span>) and crop production (<span class="math inline">\(X_2\)</span>).</li>
+<li>Predicting a political party’s vote share in a congressional district (<span class="math inline">\(Y\)</span>) given that party’s vote share in the previous election (<span class="math inline">\(X_1\)</span>) and the incumbancy’s status of the political party (<span class="math inline">\(X_2\)</span>).</li>
+</ul></li>
+<li><p>Why include more predictors?</p>
+<ul>
+<li>You can often get a more accurate prediction of <span class="math inline">\(Y\)</span> if you include more <span class="math inline">\(X\)</span>’s.</li>
+<li>You can control for other variables when assessing the relationship between a response and a predictor of interest.</li>
+</ul></li>
+<li><p>Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.</p></li>
+<li><p>Consider the earnings data described <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and available for download <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p></li>
+</ul>
+</div>
+<div id="the-model" class="section level1">
+<h1>The model</h1>
 <ul>
 <li><p>The multiple linear regression (MLR) model is of the form</p>
 <p><span class="math display">\[\begin{align}
-  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{ip} + \epsilon_i\\
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
   E[\epsilon_i] &amp;= 0\\
   var(\epsilon_i) &amp;= \sigma^2\\
   cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
   \end{align}\]</span></p></li>
-<li><p>This lecture extends everything we know from SLR To MLR.</p></li>
-<li><p>The next few lectures cover issues specific to MLR that do not appear in SLR.</p></li>
+<li><p>Using summation notation, we can write the top equation by <span class="math display">\[
+  Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
+  \]</span></p></li>
 </ul>
 </div>
 

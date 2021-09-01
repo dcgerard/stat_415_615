@@ -245,5 +245,8 @@ copier %>%
 earnings <- read_csv("https://github.com/avehtari/ROS-Examples/raw/master/Earnings/data/earnings.csv")
 earnings %>%
   mutate(mother_education = recode(mother_education, `99` = NA_real_),
-         father_education = recode(father_education, `99` = NA_real_)) %>%
+         father_education = recode(father_education, `99` = NA_real_),
+         sex = recode(male, `1` = "male", `0` = "female"),
+         smokenow = recode(smokenow, `1` = "yes", `2` = "no")) %>%
+  select(-male) %>%
   write_csv(file = "./earnings.csv")

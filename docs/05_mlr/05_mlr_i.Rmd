@@ -47,7 +47,7 @@ klippy::klippy()
     
 - Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.
 
-- The earnings data from Chapter 12 of ROS explore the relationship between earnings and height.
+- Consider the earnings data described [here](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data) and available for download [here](https://dcgerard.github.io/stat_415_615/data/earnings.csv).
 
 
 # The model
@@ -65,7 +65,5 @@ klippy::klippy()
     $$
     Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
     $$
-    
-- 
 
     
