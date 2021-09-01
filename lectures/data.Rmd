@@ -66,6 +66,25 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `disease`: Disease status indicator. `1` = with disease, `0` = without disease.
     - `savings`: Savings account status indicator. `1` = has savings account, `0` = does not have savings account.
     
+# Earnings Data
+
+- [earnings.csv](./data/earnings.csv): Data from [ROS](https://avehtari.github.io/ROS-Examples/) exploring the relationship between demographic variables and earnings. Data were originally from the "Work, Family, and Well-being in the United States, 1990" survey. Variables include:
+    - `height`: Height of the individual (inches).
+    - `weight`: Weight of the individual (lbs).
+    - `male`: Indicator variable on sex. (`1` = male, `2` = female).
+    - `earn`: Personal income (in dollars)
+    - `earnk`: Personal income (in thousands of dollars).
+    - `ethnicity`: Ethnicity of the individual. Either `"Black"`, `"Hispanic"`, `"White"`, or `"Other"`.
+    - `education`: Years of education completed by the individual. `17` means "some graduate school" and `18` means "graduate or professional degree".
+    - `mother_education`: Years of education completed by the mother. `17` means "some graduate school" and `18` means "graduate or professional degree".
+    - `father_education`: Years of education completed by the father. `17` means "some graduate school" and `18` means "graduate or professional degree".
+    - `walk`: How often does the respondent take a walk? (Includes walking to work/train station etc.) (`1` = "Never", `2` = "Once a month or less", `3` = "About twice a month", `4` = "About once a week", `5` = "Twice a week", `6` = "Three times a week", `7` = "More than 3 times a week", `8` = "Every day").
+    - `exercise`: How often does the respondent do strenuous exercise such as running, basketball, aerobics, tennis, swimming, biking, and so on? (`1` = "Never", `2` = "Once a month or less", `3` = "About twice a month", `4` = "About once a week", `5` = "Twice a week", `6` = "Three times a week", `7` = "More than 3 times a week").
+    - `smokenow`: Does the respondent currently smoke 7 or more cigarettes a week? (`1` = YES, `2` = NO)
+    - `tense`: On how many of the past 7 days has the respondent felt tense or anxious?
+    - `angry`: On how many of the past 7 days has the respondent felt angry?
+    - `age`: Age of the individual (years).
+    
 # Heating Equipment
 
 - [heating.csv](./data/heating.csv): Dataset C.8 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:

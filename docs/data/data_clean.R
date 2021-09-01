@@ -240,3 +240,10 @@ copier %>%
   rename(copiers = X2,
          minutes = X1) %>%
   write_csv("./copiers.csv")
+
+# Earnings
+earnings <- read_csv("https://github.com/avehtari/ROS-Examples/raw/master/Earnings/data/earnings.csv")
+earnings %>%
+  mutate(mother_education = recode(mother_education, `99` = NA_real_),
+         father_education = recode(father_education, `99` = NA_real_)) %>%
+  write_csv(file = "./earnings.csv")

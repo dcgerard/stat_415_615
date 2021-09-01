@@ -29,17 +29,43 @@ klippy::klippy()
 - Diagnostics and remedial measures.
 - Chapter 6 of KNNL
 
-# Overview
+# Motivation
+
+- Most regression problems have more than one predictor.
+
+- Multiple linear regression explores the relationship between **one response variable** and **multiple predictor variables**.
+
+    - (if you have multiple response variables, this is called "multivariate" regression, and is a separate topic)
+
+- Examples: 
+    - Predicting volume of tractor sales in a territory ($Y$) given number of farms ($X_1$) and crop production ($X_2$).
+    - Predicting a political party's vote share in a congressional district ($Y$) given that party's vote share in the previous election ($X_1$) and the incumbancy's status of the political party ($X_2$).
+
+- Why include more predictors?
+    - You can often get a more accurate prediction of $Y$ if you include more $X$'s.
+    - You can control for other variables when assessing the relationship between a response and a predictor of interest.
+    
+- Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.
+
+- The earnings data from Chapter 12 of ROS explore the relationship between earnings and height.
+
+
+# The model
 
 - The multiple linear regression (MLR) model is of the form
 
     \begin{align}
-    Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{ip} + \epsilon_i\\
+    Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
     E[\epsilon_i] &= 0\\
     var(\epsilon_i) &= \sigma^2\\
     cov(\epsilon_i, \epsilon_j) &= 0 \text{ for all } i \neq j
     \end{align}
+    
+- Using summation notation, we can write the top equation by
+    $$
+    Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
+    $$
+    
+- 
 
-- This lecture extends everything we know from SLR To MLR.
-
-- The next few lectures cover issues specific to MLR that do not appear in SLR.
+    
