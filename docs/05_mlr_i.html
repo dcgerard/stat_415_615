@@ -15,7 +15,7 @@
 
 <title>Linear Algebra</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -383,7 +383,55 @@ div.tocify {
 <li>You can control for other variables when assessing the relationship between a response and a predictor of interest.</li>
 </ul></li>
 <li><p>Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.</p></li>
-<li><p>Consider the earnings data described <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and available for download <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p></li>
+<li><p>Consider the earnings data described <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and available for download <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p>
+<p>We might be interested in the association between height and earnings. Indeed, there seems to be a slight positive relationship. <img src="05_mlr_i_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>But then we remember that men tend to be taller than women, and men tend to make more money than women, and so this might be the reason why <strong>marginally</strong> we are seeing this association between height and earnings. <img src="05_mlr_i_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>The relationship appears to still be slightly positive within each sex, but nowhere near as strong.</p></li>
+</ul>
+</div>
+<div id="multiple-linear-regression-model-2-predictors" class="section level1">
+<h1>Multiple linear regression model: 2 predictors</h1>
+<ul>
+<li><p>The multiple linear regression model for two predictors is <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
+  E[\epsilon_i] &amp;= 0\\
+  var(\epsilon_i) &amp;= \sigma^2\\
+  cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
+  \end{align}\]</span> where</p>
+<ul>
+<li><span class="math inline">\(Y_i\)</span> is the value of the response for individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(X_{i1}\)</span> is the value of the first predictor for individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(X_{i2}\)</span> is the value of the second predictor for individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\epsilon_i\)</span> is the error term for individual <span class="math inline">\(i\)</span> (vertical distance from plane).</li>
+</ul></li>
+<li><p>This necessarily means that <span class="math display">\[
+  E[Y_i] = \beta_0 + \beta_1 X_{i1} + \beta_2X_{i2}
+  \]</span></p></li>
+<li><p>We can visualize this model using KNNL’s figure 6.1:</p>
+<p><img src="figs/plane.png" /> </p></li>
+<li><p>The regression function (the deterministic part) is often called the <strong>regression surface</strong> or the <strong>response surface</strong>.</p></li>
+<li><p><strong>Example</strong>: It’s been determined, from the <code>mtcars</code> dataset, that the relationship of <code>drat</code> (<span class="math inline">\(X_1\)</span>) and <code>wt</code> (<span class="math inline">\(X_2\)</span>) with <code>mpg</code> (<span class="math inline">\(Y\)</span>) can be described by <span class="math display">\[
+  E[Y] = 30.3 + 1.4 X_1 - 4.8 X_2
+  \]</span></p>
+<pre class="r"><code>data(&quot;mtcars&quot;)
+coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
+<pre><code>## (Intercept)        drat          wt 
+##      30.290       1.442      -4.783</code></pre></li>
+<li><p>We interpret multiple linear models the same way we interpret simple linear models while <strong>considering that all predictors except one are fixed.</strong></p></li>
+<li><p>Suppose we are just interested in cars that are exactly 4000 pounds. Then, given a car is 4000 pounds, the regression relationship becomes <span class="math display">\[\begin{align}
+  E[Y] &amp;= 30.3 + 1.4X_1 - 4.8 \times 4\\
+  &amp;= 11.1 + 1.4 X_1.
+  \end{align}\]</span> So, given two cars that are the same weight, we expect the car with 1 more <code>drat</code> to have 1.4 more miles per gallon, on average.</p></li>
+<li><p>This interpretation would have held if we considered any other car weight (besides 4000 pounds).</p></li>
+<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as</p>
+<blockquote>
+<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_1\)</span> but have the same <span class="math inline">\(X_2\)</span>.</p>
+</blockquote></li>
+<li><p>Similarly, <span class="math inline">\(\beta_2\)</span> is interpreted as</p>
+<blockquote>
+<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_2\)</span> but have the same <span class="math inline">\(X_1\)</span>.</p>
+</blockquote></li>
+<li><p>In the <code>mtcars</code> dataset example, a car that weighs 1000 pounds more but has the same drat will on average have 4.8 worse mpg.</p></li>
 </ul>
 </div>
 <div id="the-model" class="section level1">
@@ -391,7 +439,7 @@ div.tocify {
 <ul>
 <li><p>The multiple linear regression (MLR) model is of the form</p>
 <p><span class="math display">\[\begin{align}
-  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
   E[\epsilon_i] &amp;= 0\\
   var(\epsilon_i) &amp;= \sigma^2\\
   cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
@@ -399,7 +447,192 @@ div.tocify {
 <li><p>Using summation notation, we can write the top equation by <span class="math display">\[
   Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
   \]</span></p></li>
+<li><p>Why use <span class="math inline">\(p-1\)</span> in the indexing? The <span class="math inline">\(p\)</span>th variable is <span class="math inline">\(X_{0i} = 1\)</span> and the linear model can be equivalently written <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0X_{0i} + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
+   &amp;= \sum_{j=0}^{p-1}\beta_j X_{ji}
+  \end{align}\]</span></p></li>
+<li><p>The response function <span class="math display">\[
+  E[Y] = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1}
+  \]</span> is a <strong>hyperplane</strong>. You cannot visualize this (since it involves more than three dimensions).</p></li>
+<li><p>The interpretation of <span class="math inline">\(\beta_i\)</span> is similar:</p>
+<blockquote>
+<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_i\)</span> but have the same values of every other predictor.</p>
+</blockquote></li>
+<li><p>Notice that I am not using the words “change”, “increase”, or “decrease”. These are forbidden words in this class.</p></li>
 </ul>
+</div>
+<div id="the-flexibility-of-the-linear-model" class="section level1">
+<h1>The flexibility of the linear model</h1>
+<ul>
+<li>Fitting a hyperplane through a cloud of points seems restrictive, but it turns out that the multiple linear regression model is extremely flexible by including transformations of variables as covariates.</li>
+</ul>
+<div id="polynomial-regression" class="section level2">
+<h2>Polynomial regression</h2>
+<ul>
+<li><p>Suppose we want to fit a quadratic function to some data. Our model is</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \epsilon_i
+  \]</span></p>
+<p><img src="figs/quad.png" /> </p></li>
+<li><p>We can redefine predictors: <span class="math display">\[\begin{align}
+  X_{i1} &amp;= X_i\\
+  X_{i2} &amp;= X_i^2
+  \end{align}\]</span></p></li>
+<li><p>Then it is easy to see that this is the multiple linear model: <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p>This induces curvature in the response surface.</p></li>
+<li><p>It is still called a linear model because it is linear in terms of the parameters (the <span class="math inline">\(\beta\)</span>’s).</p></li>
+</ul>
+</div>
+<div id="transformed-variables" class="section level2">
+<h2>Transformed variables</h2>
+<ul>
+<li><p>It should be clear that you can include arbitrary transformations of the <span class="math inline">\(X_i\)</span>’s (but this may or may not be a good idea).</p></li>
+<li><p>Suppose</p>
+<p><span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \]</span></p>
+<p>Then if we define <span class="math inline">\(Y_i&#39; = \log(Y_i)\)</span>, we have the MLR</p>
+<p><span class="math display">\[
+  Y_i&#39; = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \]</span></p></li>
+<li><p>Suppose <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 \log(X_{i1}) + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \]</span></p>
+<p>Then if we define <span class="math inline">\(X_{i1}&#39; = \log(X_{i1})\)</span>, we have the MLR</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1}&#39; + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \]</span></p></li>
+<li><p>These are result in complicated curved response surfaces.</p></li>
+<li><p>It is still called a linear model because it is linear in terms of the parameters (the <span class="math inline">\(\beta\)</span>’s).</p></li>
+</ul>
+</div>
+<div id="categorical-qualitative-variables" class="section level2">
+<h2>Categorical (qualitative) variables</h2>
+<ul>
+<li><p>Categorical variables (such as alive/dead, race, marital status, etc) can be used as predictors in the linear model by using indicator variables.</p></li>
+<li><p>An <strong>indicator variable</strong> takes on the value of 1 if a unit belongs to a category and 0 if it does not.</p></li>
+<li><p>E.g., from the <code>mtcars</code> dataset, <code>am</code> is an indicator variable where <span class="math display">\[
+  X_{i} = 
+  \begin{cases}
+  1 &amp; \text{ if manual}\\
+  0 &amp; \text{ if automatic}
+  \end{cases}
+  \]</span></p></li>
+<li><p>You could then include this indicator variable into the multiple linear regression model as a predictor. <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for automatic cars is <span class="math display">\[
+  Y_i = \beta_0 + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for manual cars is <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 + \epsilon_i
+  \]</span></p></li>
+<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as the mean difference between automatic and manual cars.</p></li>
+<li><p>If other covariates are included in the model, this interpretation changes to the “mean difference between automatic and manual cars while controlling for other variables”.</p></li>
+<li><p>If there are <span class="math inline">\(c\)</span> classes (instead of 2), we use <span class="math inline">\(c-1\)</span> indicator variables to represent this categorical variable.</p></li>
+<li><p>For example, in the <code>mpg</code> dataset from the <code>{ggplot2}</code> package, the <code>drv</code> variable has values <code>"f"</code>, <code>"4"</code> and <code>"r"</code>. We could create two variables <span class="math display">\[\begin{align}
+  X_{i1} &amp;= 
+  \begin{cases}
+  1 &amp; \text{ if forward-wheel drive}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}\\
+  X_{i2} &amp;= 
+  \begin{cases}
+  1 &amp; \text{ if 4-wheel drive}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}
+  \end{align}\]</span></p>
+<p>The multiple linear regression model (using, say, <code>cty</code> as the response) becomes</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for rea- wheel drive cars is <span class="math display">\[
+  Y_i = \beta_0 + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for forward-wheel drive cars is <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for 4-wheel drive cars is <span class="math display">\[
+  Y_i = \beta_0 + \beta_2 + \epsilon_i
+  \]</span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is interpreted as the mean city mpg for rear-wheel drive cars.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is interpreted as the mean difference in city mpg between rear-wheel drive and forward-wheel drive cars.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> is interpreted as the mean difference in city mpg between rear-wheel drive and 4-wheel drive cars.</p></li>
+<li><p><strong>Exercise</strong>: What is the mean difference in city mpg between 4-wheel drive and forward-wheel drive cars?</p></li>
+<li><p>This parameterization allows for a different mean for each class. This is the <strong>exact same</strong> as ANOVA.</p></li>
+<li><p>We’ll talk more about indicator variables in Chapter 8.</p></li>
+</ul>
+</div>
+<div id="interaction-effects" class="section level2">
+<h2>Interaction effects</h2>
+<ul>
+<li><p>The effect of one predictor may depend on the values of other predictors.</p></li>
+<li><p>E.g., in the height/earnings example, we saw that height might have a stronger earnings effect in men than in women (the slope was steeper for men than for women).</p></li>
+<li><p>Interaction terms are represented by multiplying predictors with each other: <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} +\beta_3X_{1i}X_{2i} + \epsilon_i
+  \]</span></p></li>
+<li><p>We can get back the linear model by setting <span class="math inline">\(X_3 = X_{1i}X_{2i}\)</span>.</p></li>
+<li><p>This creates a very complicated and flexible model. We will talk about these interaction terms in chapter 8.</p></li>
+</ul>
+</div>
+</div>
+<div id="matrix-representation" class="section level1">
+<h1>Matrix Representation</h1>
+<div id="model" class="section level2">
+<h2>Model</h2>
+<ul>
+<li><p>The matrix representation of the multiple linear regression model is <strong>the exact same</strong> as the matrix representation of the simple linear regression model, once we define the appropriate matrices.</p></li>
+<li><p>Let <span class="math display">\[\begin{align}
+  \mathbf{y} &amp;= 
+  \left(
+  \begin{array}{c}
+  Y_1\\
+  Y_2\\
+  \vdots\\
+  Y_n
+  \end{array}
+  \right),\\
+  \mathbf{X} &amp;= 
+  \left(
+  \begin{array}{cc}
+  1 &amp; X_{11} &amp; X_{12} &amp; \cdots &amp; X_{1,p-1}\\
+  1 &amp; X_{21} &amp; X_{22} &amp; \cdots &amp; X_{2,p-1}\\
+  \vdots &amp; \vdots &amp; \vdots &amp; &amp; \vdots \\
+  1 &amp; X_{n1} &amp; X_{n2} &amp; \cdots &amp; X_{n,p-1}
+  \end{array}
+  \right),\\
+  \mathbf{\beta} &amp;= 
+  \left(
+  \begin{array}{c}
+  \beta_0\\
+  \beta_1\\
+  \vdots\\
+  \beta_{p-1}
+  \end{array}
+  \right),\\
+  \mathbf{\epsilon} &amp;= 
+  \left(
+  \begin{array}{c}
+  \epsilon_1\\
+  \epsilon_2\\
+  \vdots\\
+  \epsilon_n
+  \end{array}
+  \right)
+  \end{align}\]</span></p></li>
+<li><p>The multiple linear model can be fully expressed with assumptions via <span class="math display">\[\begin{align}
+  \mathbf{y} &amp;= \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}\\
+  E[\mathbf{\epsilon}] &amp;= \mathbf{0}_n\\
+  cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
+  \end{align}\]</span></p></li>
+<li><p>For the normal linear model (important only for prediction invtervals), you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
+</ul>
+</div>
+<div id="estimates-and-fitted-values" class="section level2">
+<h2>Estimates and fitted values</h2>
+</div>
 </div>
 
 

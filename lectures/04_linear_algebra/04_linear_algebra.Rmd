@@ -584,7 +584,7 @@ $$
     cov(\mathbf{\epsilon}) &= \sigma^2\mathbf{I}_n
     \end{align}
     
-- For the normal linear model, you further assume that $\mathbf{\epsilon}$ is distributed according to the [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution).
+- For the normal linear model (important only for prediction intervals), you further assume that $\mathbf{\epsilon}$ is distributed according to the [multivariate normal distribution](https://en.wikipedia.org/wiki/Multivariate_normal_distribution).
 
 ## Some standard matrix multiplications
 
