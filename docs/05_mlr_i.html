@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-09-01" />
 
-<title>Regression</title>
+<title>Linear Algebra</title>
 
 <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -31,9 +31,16 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -220,6 +227,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -227,6 +297,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -263,100 +343,46 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression</h1>
+<h1 class="title toc-ignore">Linear Algebra</h1>
 <h4 class="author">David Gerard</h4>
 <h4 class="date">2021-09-01</h4>
 
 </div>
 
 
-<div id="synopsis" class="section level1">
-<h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
-</div>
-<div id="administrative" class="section level1">
-<h1>Administrative</h1>
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('left', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="learning-objectives" class="section level1">
+<h1>Learning Objectives</h1>
 <ul>
-<li><a href="./syllabus.html">Syllabus</a></li>
+<li>Multiple linear regression model definition and interpretation.</li>
+<li>Indicator variables, transformed variables, interaction effects,</li>
+<li>Inference</li>
+<li>Diagnostics and remedial measures.</li>
+<li>Chapter 6 of KNNL</li>
 </ul>
 </div>
-<div id="lectures" class="section level1">
-<h1>Lectures</h1>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
 <ul>
-<li>00 Motivation
-<ul>
-<li><a href="./00_motivation.html">Lecture 00-1: Linear Regression Overview</a>.</li>
-</ul></li>
-<li>01 Crash Course in R
-<ul>
-<li><a href="./01_r_intro.html">Lecture 01-1: R introduction</a>.</li>
-<li><a href="01_r_markdown.html">Lecture 01-2: R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">Lecture 01-3: R graphics with <code>qplot()</code></a>.</li>
-<li><a href="./01_r_lab.html">Lab 01-1: R Lab</a>.</li>
-</ul></li>
-<li>02 Review
-<ul>
-<li><a href="./02_math_prereq.html">Lecture 02-1: Mathematical prerequisites</a>.</li>
-<li><a href="./02_prob_sim.html">Lecture 02-2: Probability and simulation</a>.</li>
-</ul></li>
-<li>03 Simple linear regression
-<ul>
-<li><a href="./03_ols.html">Lecture 03-1: The Model</a>.
-<ul>
-<li>Chapter 1 of KNNL.</li>
-</ul></li>
-<li><a href="./03_inference.html">Lecture 03-2: Inference</a>.
-<ul>
-<li>Chapter 2 of KNNL.</li>
-</ul></li>
-<li><a href="./03_diagnostics.html">Lecture 03-3: Diagnostics and Remedial Measures</a>.
-<ul>
-<li>Chapter 3 of KNNL.</li>
-</ul></li>
-<li><a href="./03_slr_case.html">Lecture 03-4: SLR Case Study</a>.</li>
-<li><a href="./03_other_topics.html">Lecture 03-5: Other Topics in SLR</a>.</li>
-<li><a href="./03_inference_lab.html">Lab 03-1: Inference Lab</a>.</li>
-<li><a href="./03_diagnostics_lab.html">Lab 03-2: Diagnostics Lab</a>.</li>
-</ul></li>
-<li>04 Linear algebra
-<ul>
-<li><a href="./04_linear_algebra.html">Lecture 04-1: Linear Algebra</a>. Chapter 5 of KNNL.</li>
-<li><a href="./04_linear_algebra_lab.html">Lab 04-1: Linear Algebra Lab</a>.</li>
-</ul></li>
-<li>05 Multiple linear regression
-<ul>
-<li><a href="./05_mlr_i.html">Lecture 05-1: Multiple Linear Regression I</a>.
-<ul>
-<li>Model definition, interpretation, estimation, inference, assumptions.</li>
-<li>Chapter 6 of KNNL.</li>
-</ul></li>
-<li><a href="./05_mlr_ii.html">Lecture 05-2: Multiple Linear Regression II</a>.
-<ul>
-<li>ANOVA perspective of hypothesis testing, standardizing predictors, multicollinearity.</li>
-<li>Chapter 7 of KNNL.</li>
-</ul></li>
-</ul></li>
-<li>06 Design
-<ul>
-<li>Power</li>
-<li>Sample size calculation</li>
-</ul></li>
-<li>07 Missing data</li>
-<li>Review Sheets
-<ul>
-<li><a href="./rr_equations.html">Equations</a>.</li>
-</ul></li>
-</ul>
-</div>
-<div id="final-project" class="section level1">
-<h1>Final Project</h1>
-<ul>
-<li><a href="./pp_description.html">Final Project Description</a>.</li>
+<li><p>The multiple linear regression (MLR) model is of the form</p>
+<p><span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{ip} + \epsilon_i\\
+  E[\epsilon_i] &amp;= 0\\
+  var(\epsilon_i) &amp;= \sigma^2\\
+  cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
+  \end{align}\]</span></p></li>
+<li><p>This lecture extends everything we know from SLR To MLR.</p></li>
+<li><p>The next few lectures cover issues specific to MLR that do not appear in SLR.</p></li>
 </ul>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -389,6 +415,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

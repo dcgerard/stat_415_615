@@ -315,7 +315,7 @@ klippy::klippy()
     $$
     5 \times \frac{1}{5} = 1
     $$
-- There is a concept of an inverse in linear algebra as well. 
+- There is a concept of an inverse in linear algebra as well. Wheen you multiply a matrix by its inverse, you obtain the identity matrix $\mathbf{I}$.
 
 - Only square matrices (the number of rows equals the number of columns) may have inverses.
 
@@ -418,7 +418,7 @@ klippy::klippy()
     \right)
     $$
 
-- The inverse of an $r \times r$ square matrix $\mathbf{A}$  exists if and only if the rank of $\mathbf{A}$ is $r$.
+- *The inverse of an $r \times r$ square matrix $\mathbf{A}$  exists if and only if the rank of $\mathbf{A}$ is $r$.*
 
 - The maximum possible rank of an $n \times p$ matrix is $\min(n, p)$.
 
@@ -494,6 +494,7 @@ klippy::klippy()
     $$
     \mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}
     $$
+    [demonstrate on white board]
     
 - Using expectation notation, we can say that
     $$
@@ -572,7 +573,7 @@ $$
     cov(\mathbf{w}) = \mathbf{A}cov(\mathbf{y})\mathbf{A}^T
     $$
 
-- Let's calculate together the mean and covariance of the random vector $\mathbf{y}$ (on the white board).
+- Let's calculate together the mean and covariance of the random vector $\mathbf{y}$ [on the white board].
 
 ## Full Expression of Simple Linear Model
 

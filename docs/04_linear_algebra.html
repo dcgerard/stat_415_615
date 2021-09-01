@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-31" />
+<meta name="date" content="2021-09-01" />
 
 <title>Linear Algebra</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Linear Algebra</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-31</h4>
+<h4 class="date">2021-09-01</h4>
 
 </div>
 
@@ -592,7 +592,7 @@ div.tocify {
 <li><p>The inverse of a scalar is its reciprocal. E.g. the inverse of 5 is <span class="math inline">\(\frac{1}{5}\)</span>. A number multiplied by its inverse is 1 <span class="math display">\[
   5 \times \frac{1}{5} = 1
   \]</span></p></li>
-<li><p>There is a concept of an inverse in linear algebra as well.</p></li>
+<li><p>There is a concept of an inverse in linear algebra as well. Wheen you multiply a matrix by its inverse, you obtain the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.</p></li>
 <li><p>Only square matrices (the number of rows equals the number of columns) may have inverses.</p></li>
 <li><p>Not all square matrices have an inverse.</p></li>
 <li><p>When a square matrix has an inverse, it is unique.</p></li>
@@ -672,7 +672,7 @@ div.tocify {
   \end{array}
   \right)
   \]</span></p></li>
-<li><p>The inverse of an <span class="math inline">\(r \times r\)</span> square matrix <span class="math inline">\(\mathbf{A}\)</span> exists if and only if the rank of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(r\)</span>.</p></li>
+<li><p><em>The inverse of an <span class="math inline">\(r \times r\)</span> square matrix <span class="math inline">\(\mathbf{A}\)</span> exists if and only if the rank of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(r\)</span>.</em></p></li>
 <li><p>The maximum possible rank of an <span class="math inline">\(n \times p\)</span> matrix is <span class="math inline">\(\min(n, p)\)</span>.</p></li>
 <li><p>If <span class="math inline">\(\mathbf{C} = \mathbf{A}\mathbf{B}\)</span>, then the rank of <span class="math inline">\(\mathbf{C}\)</span> is less than or equal to <span class="math inline">\(\min(\text{rank }\mathbf{A}, \text{rank }\mathbf{B})\)</span>.</p></li>
 <li><p>This will show up when we put the covariates in an <span class="math inline">\(n \times p\)</span> (<span class="math inline">\(n\)</span> individuals and <span class="math inline">\(p\)</span> variables) matrix <span class="math inline">\(\mathbf{X}\)</span> and need to calculate the inverse of <span class="math inline">\(\mathbf{X}^T\mathbf{X}\)</span>, which is only possible if <span class="math inline">\(n \geq p\)</span>.</p></li>
@@ -748,7 +748,7 @@ div.tocify {
   \end{align}\]</span></p></li>
 <li><p>Then we can represent the simple linear regression model in terms of these matrices <span class="math display">\[
   \mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}
-  \]</span></p></li>
+  \]</span> [demonstrate on white board]</p></li>
 <li><p>Using expectation notation, we can say that <span class="math display">\[
   E[\mathbf{y}] = 
   \left(
@@ -813,7 +813,7 @@ E[\epsilon_n]
 <li><p>Then <span class="math display">\[
   cov(\mathbf{w}) = \mathbf{A}cov(\mathbf{y})\mathbf{A}^T
   \]</span></p></li>
-<li><p>Let’s calculate together the mean and covariance of the random vector <span class="math inline">\(\mathbf{y}\)</span> (on the white board).</p></li>
+<li><p>Let’s calculate together the mean and covariance of the random vector <span class="math inline">\(\mathbf{y}\)</span> [on the white board].</p></li>
 </ul>
 </div>
 <div id="full-expression-of-simple-linear-model" class="section level2">

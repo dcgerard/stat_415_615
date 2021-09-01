@@ -45,11 +45,12 @@ University by [David Gerard](https://dcgerard.github.io/).
   - [Lecture 04-1: Linear Algebra](./04_linear_algebra.html). Chapter 5 of KNNL.
   - [Lab 04-1: Linear Algebra Lab](./04_linear_algebra_lab.html). 
 - 05 Multiple linear regression
-  - Model/Interpretation (including interactions, indicators)
-  - Estimation
-  - Hypothesis Testing
-  - Assumptions
-  - Transformations
+  - [Lecture 05-1: Multiple Linear Regression I](./05_mlr_i.html).
+      - Model definition, interpretation, estimation, inference, assumptions.
+      - Chapter 6 of KNNL.
+  - [Lecture 05-2: Multiple Linear Regression II](./05_mlr_ii.html).
+      - ANOVA perspective of hypothesis testing, standardizing predictors, multicollinearity.
+      - Chapter 7 of KNNL.
 - 06 Design
   - Power
   - Sample size calculation

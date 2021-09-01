@@ -24,3 +24,70 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 
 The following data were obtained in a study of the relation between diastolic blood pressure and age for boys 5 to 13 years old. We will manually implement a regression of blood pressure on age.
 
+|   $i$:    | 1  | 2  | 3  | 4  | 5  | 6  | 7  |
+|----------:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| age:      | 5  | 8  | 11 | 7  | 13 | 12 | 6  |
+| pressure: | 63 | 67 | 74 | 64 | 75 | 69 | 60 |
+
+1. Create the response vector in R, call it `y`.
+
+    ```{r}
+    y <- matrix(c(63, 67, 74, 64, 75, 69, 60), ncol = 1)
+    y
+    ```
+
+2. Create the design matrix in R, call it `X`.
+
+    ```{r}
+    X <- matrix(c(rep(1, 7), 5, 8, 11, 7, 13, 12, 6), ncol = 2)
+    X
+    ```
+
+3. Calculate the OLS estimates from a regression of pressure on age using matrix multiplication in R. Call this vector `betahat`.
+
+    ```{r}
+    betahat <- solve(t(X) %*% X) %*% t(X) %*% y
+    betahat
+    ```
+
+4. Calculate the fitted values from the above defined quantities. Call this vector `yhat`.
+
+    ```{r}
+    yhat <- X %*% betahat
+    yhat
+    ```
+
+5. Calculate the residuals from the above defined quantities. Call this vector `e`.
+
+    ```{r}
+    e <- y - yhat
+    e
+    ```
+
+6. Calculate the MSE from the above defined quantities. Call this value `mse`.
+
+    ```{r}
+    mse <- sum(e^2) / (length(e) - 2)
+    mse
+    ```
+
+7. Calculate the standard errors of $\hat{\mathbf{\beta}}$ from the above quantities.
+
+    ```{r}
+    sqrt(mse * diag(solve(t(X) %*% X)))
+    ```
+
+8. Verify all of your calculations above using `lm()`.
+
+    ```{r, message = FALSE}
+    library(broom)
+    library(dplyr)
+    lmout <- lm(y ~ X[, 2])
+    tidy(lmout) %>%
+      select(term, estimate, std.error)
+    glance(lmout)$sigma^2 ## MSE
+    augment(lmout) %>%
+      select(.fitted, .resid)
+    ```
+
+
