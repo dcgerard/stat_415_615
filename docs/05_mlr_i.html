@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-01" />
+<meta name="date" content="2021-09-02" />
 
-<title>Linear Algebra</title>
+<title>Multiple Linear Regression I</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -343,9 +343,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Linear Algebra</h1>
+<h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-01</h4>
+<h4 class="date">2021-09-02</h4>
 
 </div>
 
@@ -548,7 +548,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
 <p><span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
   \]</span></p></li>
-<li><p>The model for rea- wheel drive cars is <span class="math display">\[
+<li><p>The model for rear-wheel drive cars is <span class="math display">\[
   Y_i = \beta_0 + \epsilon_i
   \]</span></p></li>
 <li><p>The model for forward-wheel drive cars is <span class="math display">\[
@@ -580,8 +580,6 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
 </div>
 <div id="matrix-representation" class="section level1">
 <h1>Matrix Representation</h1>
-<div id="model" class="section level2">
-<h2>Model</h2>
 <ul>
 <li><p>The matrix representation of the multiple linear regression model is <strong>the exact same</strong> as the matrix representation of the simple linear regression model, once we define the appropriate matrices.</p></li>
 <li><p>Let <span class="math display">\[\begin{align}
@@ -628,11 +626,65 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
   \end{align}\]</span></p></li>
 <li><p>For the normal linear model (important only for prediction invtervals), you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
+<li><p><strong>Exercise</strong>: In the <span class="math inline">\(\mathbf{X}\)</span> matrix. What does the <span class="math inline">\(i\)</span> represent in <span class="math inline">\(X_{ij}\)</span>? What does the <span class="math inline">\(j\)</span> represent?</p></li>
 </ul>
 </div>
-<div id="estimates-and-fitted-values" class="section level2">
-<h2>Estimates and fitted values</h2>
+<div id="estimates-and-fitted-values" class="section level1">
+<h1>Estimates and fitted values</h1>
+<p><span class="math display">\[
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+\]</span></p>
+<ul>
+<li><p>The <span class="math inline">\(\beta\)</span>’s are unknown. So, as in SLR, we estimate them by OLS: <span class="math display">\[
+  \min_{\beta_0,\beta_1,\ldots,\beta_{p-1}}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1})]^2
+  \]</span></p></li>
+<li><p>The OLS estimates can be expressed using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
+  \hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}
+  \]</span></p></li>
+<li><p>The fitted values and the residuals can be expressed using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
+  \hat{\mathbf{Y}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+  \]</span> <span class="math display">\[
+  \mathbf{e} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
+  \]</span></p></li>
+</ul>
 </div>
+<div id="inference" class="section level1">
+<h1>Inference</h1>
+<ul>
+<li><p>One can show that the OLS estimates are unbiased: <span class="math display">\[
+  E[\hat{\mathbf{\beta}}] = \mathbf{\beta},
+  \]</span> where this expectation is taken over the sampling distribution of <span class="math inline">\(\hat{\mathbf{\beta}}\)</span>.</p></li>
+<li><p>The estimated covariance matrix of <span class="math inline">\(\mathbf{\beta}\)</span> can be expressed the using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
+  s^2(\hat{\mathbf{\beta}}) = MSE(\mathbf{X}^T\mathbf{X})^{-1}
+  \]</span></p></li>
+<li><p><strong>Exercise</strong>: What is the dimension of <span class="math inline">\(s^2(\hat{\mathbf{\beta}})\)</span></p></li>
+<li><p><strong>Exercise</strong>: How would you get the standard error of <span class="math inline">\(\hat{\beta}_i\)</span> from this covariance matrix? We denote this standard error <span class="math inline">\(s\{\hat{\beta}_i\}\)</span>.</p></li>
+<li><p>It can be shown that the sampling distribution of <span class="math inline">\(\hat{\beta}_i\)</span> is given by <span class="math display">\[
+  t_i = \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \sim t(n-p)
+  \]</span></p></li>
+<li><p>Confidence intervals: Because of this sampling distribution, we have <span class="math display">\[
+  \text{Pr}(\text{qt}(\alpha / 2, n-p) \leq t \leq \text{qt}(1 - \alpha/2, n-p)) = 1 - \alpha,
+  \]</span> where this probability is taken over the sampling distribution of <span class="math inline">\(t\)</span>. <img src="05_mlr_i_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /> So a 95% confidence interval can be found by solving for <span class="math inline">\(\beta_i\)</span> in <span class="math display">\[\begin{align}
+  &amp;\text{qt}(\alpha / 2, n-p) \leq \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \leq \text{qt}(1 - \alpha/2, n-p)\\
+  &amp;\Leftrightarrow  \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \leq \hat{\beta}_i - \beta_i \leq \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}\\
+      &amp;\Leftrightarrow  \hat{\beta}_i - \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \geq \beta_i \geq \hat{\beta}_i - \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}.
+  \end{align}\]</span> Noting that <span class="math inline">\(\text{qt}(\alpha / 2, n-p) = -\text{qt}(1 - \alpha/2, n-p)\)</span>, we can write this interval as <span class="math display">\[
+  \hat{\beta}_i \pm \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}
+  \]</span></p></li>
+<li><p>This sampling distribution can also be used to test</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_i = 0\)</span> versus</li>
+<li><span class="math inline">\(H_A: \beta_i \neq 0\)</span>. Under the null, we have <span class="math display">\[
+  t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}} \sim t(n-p).
+  \]</span> So to test against <span class="math inline">\(H_0\)</span>, we can compare <span class="math inline">\(t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}\)</span> to a <span class="math inline">\(t(n-p)\)</span> distribution and see how extreme it is. <span class="math display">\[
+  p-\text{value} = 2*\text{pt}(-|t^*|, n-p).
+  \]</span></li>
+</ul>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="estimation-and-inference-in-r" class="section level1">
+<h1>Estimation and Inference in R</h1>
 </div>
 
 

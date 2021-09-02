@@ -1,5 +1,5 @@
 ---
-title: "Linear Algebra"
+title: "Multiple Linear Regression I"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:  
@@ -308,7 +308,7 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
     Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
     $$
     
-- The model for rea- wheel drive cars is
+- The model for rear-wheel drive cars is
     $$
     Y_i = \beta_0 + \epsilon_i
     $$
@@ -420,7 +420,126 @@ $$
 Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
 $$
 
-- The $\beta$'s are unknown. So, as in SLR, we estimate them by OLS
+- The $\beta$'s are unknown. So, as in SLR, we estimate them by OLS:
+    $$
+    \min_{\beta_0,\beta_1,\ldots,\beta_{p-1}}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1})]^2
+    $$
+
+- The OLS estimates can be expressed using matrix notation *the exact same way* as in SLR:
+    $$
+    \hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}
+    $$
+
+- The fitted values and the residuals can be expressed using matrix notation *the exact same way* as in SLR:
+    $$
+    \hat{\mathbf{Y}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+    $$
+    $$
+    \mathbf{e} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
+    $$
+    
+# Inference
+
+- One can show that the OLS estimates are unbiased:
+    $$
+    E[\hat{\mathbf{\beta}}] = \mathbf{\beta},
+    $$
+    where this expectation is taken over the sampling distribution of $\hat{\mathbf{\beta}}$.
+    
+- The estimated covariance matrix of $\mathbf{\beta}$ can be expressed the using matrix notation *the exact same way* as in SLR:
+    $$
+    s^2(\hat{\mathbf{\beta}}) = MSE(\mathbf{X}^T\mathbf{X})^{-1}
+    $$
+
+- **Exercise**: What is the dimension of $s^2(\hat{\mathbf{\beta}})$
+    ```{block, eval = FALSE, echo = FALSE}
+    $p$ by $p$
+    ```
+
+- **Exercise**: How would you get the standard error of $\hat{\beta}_i$ from this covariance matrix? We denote this standard error $s\{\hat{\beta}_i\}$.
+    ```{block, eval = FALSE, echo = FALSE}
+    Find the $(i, i)$th value of $s^2(\hat{\mathbf{\beta}})$ and take a square root.
+    ```
+
+- It can be shown that the sampling distribution of $\hat{\beta}_i$ is given by
+    $$
+    t_i = \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \sim t(n-p)
+    $$
+    
+- Confidence intervals: Because of this sampling distribution, we have
+    $$
+    \text{Pr}(\text{qt}(\alpha / 2, n-p) \leq t \leq \text{qt}(1 - \alpha/2, n-p)) = 1 - \alpha,
+    $$
+    where this probability is taken over the sampling distribution of $t$.
+    ```{r, echo = FALSE, warning = FALSE, fig.width = 7}
+    dfval <- 10
+    uval <- qt(1 - 0.05/2, dfval)
+    tibble(x = seq(-4, 4, length.out = 500)) %>%
+          mutate(y = dt(x = x, df = dfval)) ->
+          tdat
+    ggplot(tdat, aes(x = x, y = y)) +
+      geom_line() +
+      theme_classic() +
+      theme(axis.text = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title = element_blank()) +
+      geom_ribbon(data = filter(tdat, x < uval, x > -uval), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_vline(xintercept = uval, lty = 2, col = 2) +
+      geom_vline(xintercept = -uval, lty = 2, col = 2) +
+      annotate(x = uval + 1, y = max(tdat$y), geom = "text", label = TeX("qt($1 - \\alpha/2$, n-p)"), size = 5) +
+      annotate(x = -uval - 0.7, y = max(tdat$y), geom = "text", label = TeX("qt($\\alpha/2$, n-p)"), size = 5) +
+      annotate(x = 0, y = max(tdat$y) / 2, geom = "text", label = TeX("$1 - \\alpha$"), color = "white", size = 10)
+    ```
+    So a 95\% confidence interval can be found by solving for $\beta_i$ in
+    \begin{align}
+    &\text{qt}(\alpha / 2, n-p) \leq \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \leq \text{qt}(1 - \alpha/2, n-p)\\
+    &\Leftrightarrow  \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \leq \hat{\beta}_i - \beta_i \leq \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}\\
+        &\Leftrightarrow  \hat{\beta}_i - \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \geq \beta_i \geq \hat{\beta}_i - \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}.
+    \end{align}
+    Noting that $\text{qt}(\alpha / 2, n-p) = -\text{qt}(1 - \alpha/2, n-p)$, we can write this interval as
+    $$
+    \hat{\beta}_i \pm \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}
+    $$
+
+- This sampling distribution can also be used to test
+    - $H_0: \beta_i = 0$ versus
+    - $H_A: \beta_i \neq 0$.
+    Under the null, we have
+    $$
+    t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}} \sim t(n-p).
+    $$
+    So to test against $H_0$, we can compare $t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}$ to a $t(n-p)$ distribution and see how extreme it is.
+    $$
+    p-\text{value} = 2*\text{pt}(-|t^*|, n-p).
+    $$
+
+    ```{r, echo=FALSE, message = FALSE}
+    tibble(x = seq(-4, 4, length.out = 500)) %>%
+      mutate(y = dt(x = x, df = 2)) ->
+      tdat
+    ggplot(tdat, aes(x = x, y = y)) +
+      geom_line() +
+      theme_classic() +
+      theme(axis.text = element_blank(),
+              axis.ticks = element_blank(),
+              axis.title = element_blank()) +
+      geom_ribbon(data = filter(tdat, x > 2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_ribbon(data = filter(tdat, x < -2.5), aes(x = x, ymax = y), ymin = 0, fill = "blue") +
+      geom_vline(xintercept = 2.5, lty = 2, col = 2)
+    ```
+    
+    
+# Estimation and Inference in R
+
+- 
+
+
+
+
+
+
+
+
 
 
 
