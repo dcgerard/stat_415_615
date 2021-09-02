@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-30" />
+<meta name="date" content="2021-09-02" />
 
 <title>Probability and Simulation</title>
 
@@ -341,7 +341,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Probability and Simulation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-30</h4>
+<h4 class="date">2021-09-02</h4>
 
 </div>
 
@@ -352,12 +352,31 @@ div.tocify {
 <li>Basic Probability</li>
 <li>Normal/<span class="math inline">\(t\)</span>-distributions</li>
 <li>Simulation in R</li>
+<li>Appendix A of KNNL.</li>
 </ul>
 </div>
 <div id="probability-the-normal-and-t-distributions." class="section level1">
 <h1>Probability, the normal and <span class="math inline">\(t\)</span> distributions.</h1>
 <ul>
-<li><p><strong>Distribution</strong>: The possible values of a variable and how often it takes those values.</p></li>
+<li><p>A <strong>random variable</strong> is a variable whose value is a numerical outcome of a random process. We denote random variables with letters, like <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>In practice, this “random process” is sampling a unit from a population of units and observing that unit’s value of the variable. E.g., we sample birth weights of babies born in the United States, then birth weight a random variable.</p></li>
+<li><p>The <strong>mean</strong> of a random variable is average value of a very large sample of individuals. The notation for the mean of a random variable is <span class="math inline">\(E[Y]\)</span>.</p></li>
+<li><p>Properties:</p>
+<ul>
+<li>If <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants (not random variables), then <span class="math inline">\(E[a + bY] = a + bE[Y]\)</span>.</li>
+<li>If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are both random variables, then <span class="math inline">\(E[X + Y] = E[X] + E[Y]\)</span>.</li>
+</ul></li>
+<li><p>The <strong>variance</strong> of a random variable is the average squared deviation from the mean of this random variable. It measures how spread out the values are in a population. The notation for the variance of a random variable is <span class="math inline">\(var(Y)\)</span>. Specifically <span class="math display">\[
+  var(Y) = E[(Y - E[Y])^2]
+  \]</span></p></li>
+<li><p>Properties:</p>
+<ul>
+<li>If <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants, then <span class="math inline">\(var(a + bY) = b^2var(Y)\)</span></li>
+</ul></li>
+<li><p>The standard deviation of a random variable is the square root of its variance. <span class="math display">\[
+  sd(Y) = \sqrt{var(Y)}
+  \]</span></p></li>
+<li><p>The <strong>distribution</strong> of a random variable is possible values of a random variable and how often it takes those values.</p></li>
 <li><p>A <strong>density</strong> describes the distribution of a <em>quantitative</em> variable. You can think of it as approximating a histogram. It is a curve where</p>
 <ul>
 <li>The area under the curve between any two points is approximately the probability of being between those two points.</li>
@@ -410,6 +429,17 @@ head(samp)</code></pre>
 pt()
 qt()
 rt()</code></pre></li>
+</ul>
+</div>
+<div id="covariancecorrelation" class="section level1">
+<h1>Covariance/correlation</h1>
+<ul>
+<li><p>The covariance between two random variables, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, is a measure of the strength of the linear association between these variables. It is defined as <span class="math display">\[
+  cov(X, Y) = E[(X - E[X])(Y-E[Y])]
+  \]</span></p></li>
+<li><p>Covariance is related to correlation by <span class="math display">\[
+  cor(X, Y) = \frac{cov(X, Y)}{sd(X)sd(Y)}
+  \]</span></p></li>
 </ul>
 </div>
 <div id="simulation-as-a-way-of-life" class="section level1">

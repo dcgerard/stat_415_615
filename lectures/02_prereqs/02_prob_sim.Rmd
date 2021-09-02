@@ -23,10 +23,34 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 - Basic Probability
 - Normal/$t$-distributions
 - Simulation in R
+- Appendix A of KNNL.
 
 # Probability, the normal and $t$ distributions.
 
-- **Distribution**: The possible values of a variable and how often it takes those values. 
+- A **random variable** is a variable whose value is a numerical outcome of a random process. We denote random variables with letters, like $Y$.
+
+- In practice, this "random process" is sampling a unit from a population of units and observing that unit's value of the variable. E.g., we sample birth weights of babies born in the United States, then birth weight a random variable.
+
+- The **mean** of a random variable is average value of a very large sample of individuals. The notation for the mean of a random variable is $E[Y]$.
+
+- Properties:
+    - If $a$ and $b$ are constants (not random variables), then $E[a + bY] = a + bE[Y]$.
+    - If $X$ and $Y$ are both random variables, then $E[X + Y] = E[X] + E[Y]$.
+
+- The **variance** of a random variable is the average squared deviation from the mean of this random variable. It measures how spread out the values are in a population. The notation for the variance of a random variable is $var(Y)$. Specifically
+    $$
+    var(Y) = E[(Y - E[Y])^2]
+    $$
+
+- Properties:
+    - If $a$ and $b$ are constants, then $var(a + bY) = b^2var(Y)$
+    
+- The standard deviation of a random variable is the square root of its variance.
+    $$
+    sd(Y) = \sqrt{var(Y)}
+    $$
+
+- The **distribution** of a random variable is possible values of a random variable and how often it takes those values. 
   
 - A **density** describes the distribution of a *quantitative* variable. You can think of it as approximating a histogram. It is a curve where
   - The area under the curve between any two points is approximately the probability of being between those two points.
@@ -201,6 +225,19 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     qt()
     rt()
     ```
+
+# Covariance/correlation
+
+- The covariance between two random variables, $X$ and $Y$, is a measure of the strength of the linear association between these variables. It is defined as
+    $$
+    cov(X, Y) = E[(X - E[X])(Y-E[Y])]
+    $$
+
+- Covariance is related to correlation by
+    $$
+    cor(X, Y) = \frac{cov(X, Y)}{sd(X)sd(Y)}
+    $$
+
 
 # Simulation as a way of life
 
