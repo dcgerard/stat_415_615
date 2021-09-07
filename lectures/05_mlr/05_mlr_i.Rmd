@@ -789,7 +789,7 @@ $$
 
 - Be careful about hidden extrapolations in multiple linear regression. Looking at marginal ranges is not enough.
 
-- In the below plot, the red dot is in the range of $x_1 = $`young` and in the range of $x_2 = $`disp`, but is not in the range of the joint distribution of `young` and `disp`.
+- In the below plot, the red dot is in the range of $x_1$ = `young` and in the range of $x_2$ = `disp`, but is not in the range of the joint distribution of `young` and `disp`.
 
     ```{r, echo = FALSE, warning = FALSE}
     library(ggExtra)
@@ -840,3 +840,85 @@ $$
       geom_qq_line()
     ```
 
+- **Exercise**: Recall the real estate data that you can read about [here](https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales) and download here: <https://dcgerard.github.io/stat_415_615/data/estate.csv>
+    1. Fit a linear model of price on area and lot size. 
+    ```{r, eval = FALSE, echo = FALSE}
+    library(tidyverse)
+    library(broom)
+    estate <- read_csv("https://dcgerard.github.io/stat_415_615/data/estate.csv")
+    lmest <- lm(price ~ area + lot, data = estate)
+    ```
+    2. Make residual plots and from these alone, try to deduce any possible issues.
+    ```{r, eval = FALSE, echo = FALSE}
+    aout <- augment(lmest)
+    qplot(x = .fitted, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Linearity looks fine, but there is severe non-constant variance. Let's try logs.
+    ```
+    
+    3. Try to fix the issues from part 2. Iterate making residual plots and fixing issues until you have a final model.
+    ```{r, eval = FALSE, echo = FALSE}
+    estate_t <- mutate(estate, l_price = log(price))
+    lmest <- lm(l_price ~ area + lot, data = estate_t)
+    aout <- augment(lmest)
+    qplot(x = .fitted, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    ## now looks curved
+    qplot(x = area, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    qplot(x = lot, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    ## Logging both area and lot look like it might help (curved relationship in both).
+    estate_t <- mutate(estate_t, l_area = log(area), l_lot = log(lot))
+    lmest <- lm(l_price ~ l_area + l_lot, data = estate_t)
+    aout <- augment(lmest)
+    qplot(x = .fitted, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    qplot(x = l_area, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    qplot(x = l_lot, y = .resid, data = aout) +
+      geom_hline(yintercept = 0)
+    ## It looks pretty good.
+    ```
+    
+    4. Write down your final model
+    ```{block, eval = FALSE, echo = FALSE}
+    log-price = $\beta_0$ + $\beta_1$ log-area + $\beta_2$ log-lot + noise
+    
+    or 
+    
+    $$
+    \log(Y_i) = \beta_0 + \beta_1 \log(X_{i1}) + \beta_2 \log(X_{i2}) + \epsilon_i\\
+    E[\epsilon_i] = 0, var(\epsilon_i) = \sigma^2, cor(\epsilon_i, \epsilon_j) = 0 \text{ for all } i \neq j
+    $$
+    where $Y_i$ is the price for house $i$, $X_{i1}$ is the area for house $i$, and $X_{i2}$ is the lot-size for house $i$.
+    ```
+    
+    5. Obtain coefficient estimates and interpret them on the original scale of all variables.
+    ```{r, eval = FALSE, echo = FALSE}
+    range(estate$area)
+    range(estate$lot)
+    tidy(lmest)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Houses that are twice as large, but the same lot size, are worth about 2.3 (2^1.22) times as much, on average.
+    
+    Houses that have twice the lot-size, but are the same area, tend to be worth about 8\% (2^0.11 = 1.08) more, on average.
+    ```
+    
+    6. A new hourse is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.
+    ```{r, eval = FALSE, echo = FALSE}
+    newdf <- data.frame(area = 1000, lot = 10000)
+    newdf <- mutate(newdf, 
+                    l_area = log(area),
+                    l_lot = log(lot))
+    exp(predict(object = lmest, newdata = newdf, interval = "prediction"))
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Houses with that lot-size and area can sell anywhere from \$57,885 to \$139,404.
+    ```

@@ -52,6 +52,12 @@ klippy::klippy()
 
 # Multicollinearity
 
+## Be careful about comparisons
+
+- Sometimes, no data points exist that are one unit larger $X_1$ but the same $X_2$, because of multicollinearity. Thus, this interpretation is suspect. 
+
+- Multicollinearity therefore also messes with interpretation.
+
 # Practical versus statistical significance
 
 - Tests can have tiny $p$-values, but the effect sizes might be small.
