@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-03" />
+<meta name="date" content="2021-09-07" />
 
 <title>Multiple Linear Regression I</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-03</h4>
+<h4 class="date">2021-09-07</h4>
 
 </div>
 
@@ -625,7 +625,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   E[\mathbf{\epsilon}] &amp;= \mathbf{0}_n\\
   cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
   \end{align}\]</span></p></li>
-<li><p>For the normal linear model (important only for prediction invtervals), you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
+<li><p>For the normal linear model (important only for prediction intervals), you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
 <li><p><strong>Exercise</strong>: In the <span class="math inline">\(\mathbf{X}\)</span> matrix. What does the <span class="math inline">\(i\)</span> represent in <span class="math inline">\(X_{ij}\)</span>? What does the <span class="math inline">\(j\)</span> represent?</p></li>
 </ul>
 </div>
@@ -681,25 +681,11 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
   \]</span></li>
 </ul>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>When we test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> versus <span class="math inline">\(H_A:\beta_1 \neq 0\)</span>, we are still allowing all other <span class="math inline">\(\beta_k\)</span>’s to be non-zero. That is, we are comparing the two models:</p>
-<ul>
-<li><span class="math inline">\(H_0: Y_i = \beta_0 \phantom{~+ \beta_1X_{i1}} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></li>
-<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></li>
-</ul></li>
+<li><p>When we test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> versus <span class="math inline">\(H_A:\beta_1 \neq 0\)</span>, we are still allowing all other <span class="math inline">\(\beta_k\)</span>’s to be non-zero. That is, we are comparing the two models: <span class="math display">\[\begin{align}
+  H_0&amp;: Y_i = \beta_0 \phantom{+ \beta_1X_{i1}}\hspace{2.3mm} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+  H_A&amp;: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+  \end{align}\]</span></p></li>
 <li><p>The results of this hypothesis would be different if we had other covariates in the model because then we are comparing different models.</p></li>
-</ul>
-</div>
-<div id="steps-of-an-analysis" class="section level1">
-<h1>Steps of an analysis</h1>
-<ul>
-<li>For <strong>any analysis</strong> where you are applying a model, the steps you should take are:
-<ol style="list-style-type: decimal">
-<li>Exploratory data analysis</li>
-<li>Choose the form of the model.</li>
-<li>Fit the model to the data.</li>
-<li>Assess how well the model describes the data.</li>
-<li>Use the model to address the question of interest.</li>
-</ol></li>
 </ul>
 </div>
 <div id="estimation-and-inference-in-r" class="section level1">
@@ -762,6 +748,14 @@ tidy(lmout)</code></pre>
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266     
 ## 2 young           1.45     0.212      6.87 0.00000200
 ## 3 disp            9.37     4.06       2.30 0.0333</code></pre></li>
+<li><p>Confidence intervals can be obtained using the <code>conf.int = TRUE</code> argument.</p>
+<pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 3 × 7
+##   term        estimate std.error statistic    p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   -68.9     60.0       -1.15 0.266      -195.        57.2 
+## 2 young           1.45     0.212      6.87 0.00000200    1.01       1.90
+## 3 disp            9.37     4.06       2.30 0.0333        0.827     17.9</code></pre></li>
 <li><p>We will talk about assessing the fit of this model later.</p></li>
 <li><p><strong>Exercise</strong>: Let <span class="math inline">\(Y_i\)</span> be the sales for community <span class="math inline">\(i\)</span>, <span class="math inline">\(X_{i1}\)</span> be the number of young individuals in community <span class="math inline">\(i\)</span>, and <span class="math inline">\(X_{i2}\)</span> be the amount of disposable income for individual <span class="math inline">\(i\)</span>. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>0.002e-06</code> is testing. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>3.332e-02</code> is testing.</p></li>
 <li><p>Let’s compare these coefficients to those under simple linear regression.</p>
@@ -805,6 +799,103 @@ tidy(lm_simp_disp)</code></pre>
 <li><p>Write out the two models that the <span class="math inline">\(p\)</span>-value for <code>year</code> is testing.</p></li>
 <li><p>What is the residual standard deviation?</p></li>
 </ol></li>
+</ul>
+</div>
+<div id="estimating-mean-responses-and-making-predictions." class="section level1">
+<h1>Estimating mean responses and making predictions.</h1>
+<ul>
+<li><p>Let <span class="math inline">\(\mathbf{X}_h\)</span> denote the <span class="math inline">\(m\times p\)</span> matrix of the predictor values at <span class="math inline">\(m\)</span> new observations.</p></li>
+<li><p>The mean value of the response at these new observations is <span class="math display">\[
+  E[\mathbf{y}_h] = \mathbf{X}_h\mathbf{\beta}
+  \]</span></p></li>
+<li><p>We can estiamte this with <span class="math display">\[
+  \hat{\mathbf{y}}_h = \mathbf{X}_h\hat{\mathbf{\beta}} = \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+  \]</span></p></li>
+<li><p>If <span class="math inline">\(\mathbf{X}_h = \mathbf{X}\)</span>, then we can use <code>augment()</code> from <code>{broom}</code> to obtain the fitted value</p>
+<pre class="r"><code>augment(lmout)</code></pre>
+<pre><code>## # A tibble: 21 × 9
+##    sales young  disp .fitted  .resid   .hat .sigma   .cooksd .std.resid
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1  174.  68.5  16.7    187. -12.8   0.122   10.8  0.0710       -1.24  
+##  2  164.  45.2  16.8    154.  10.2   0.104   11.0  0.0370        0.976 
+##  3  244.  91.3  18.2    234.   9.80  0.174   11.0  0.0673        0.980 
+##  4  155.  47.8  16.3    153.   1.27  0.0863  11.3  0.000460      0.121 
+##  5  182.  46.9  17.3    161.  20.2   0.162    9.98 0.259         2.01  
+##  6  208.  66.1  18.2    198.   9.76  0.158   11.0  0.0585        0.966 
+##  7  153.  49.5  15.9    152.   0.745 0.143   11.3  0.000299      0.0731
+##  8  163.  52    17.2    168.  -4.67  0.0916  11.3  0.00665      -0.445 
+##  9  145.  48.9  16.6    158. -12.3   0.0724  10.9  0.0353       -1.16  
+## 10  137.  38.4  16      137.   0.354 0.133   11.3  0.0000607     0.0345
+## # … with 11 more rows</code></pre></li>
+<li><p>If we have a new set of predictors, then we need to first create the data frame representing <span class="math inline">\(\mathbf{X}_h\)</span> before using <code>predict()</code> to obtain estimated mean values.</p>
+<pre class="r"><code>newdf &lt;- data.frame(young = c(60, 55), disp = c(15, 15.5))
+predict(object = lmout, newdata = newdf)</code></pre>
+<pre><code>##     1     2 
+## 158.9 156.3</code></pre></li>
+<li><p>Standard errors for the fitted values can be obtained using matrix notation in the same way as in SLR \end{align} var(_h) &amp;= var(_h(<sup>T)</sup>{-1}^T)\ &amp;= _h(<sup>T)</sup>{-1}<sup>Tvar()(</sup>T)^{-1}_h^T\ &amp;= ^2_h(<sup>T)</sup>{-1}<sup>T(</sup>T)^{-1}_h^T\ &amp;= ^2_h(<sup>T)</sup>{-1}_h^T. \end{align} The standard errors are the square roots of the diagonal of the above matrix.</p></li>
+<li><p>If <span class="math inline">\(\hat{Y}_h\)</span> is a single value, then the formula for the confidence interval for the mean is <span class="math display">\[
+  \hat{Y}_h \pm qt(1 - \alpha / 2, n-p)s\{\hat{Y}_h\}
+  \]</span></p></li>
+<li><p>A Working-Hotelling procedure is also possible for the entire response surface.</p></li>
+<li><p>In R, you just tell <code>predict()</code> that you want confidence intervals.</p>
+<pre class="r"><code>predict(object = lmout, newdata = newdf, interval = &quot;confidence&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 158.9 140.6 177.2
+## 2 156.3 143.5 169.1</code></pre></li>
+<li><p><strong>Exercise</strong>: In the above portrait studio example that we implemented in R, write out <span class="math inline">\(\mathbf{X}_h\)</span> and <span class="math inline">\(\mathbf{y}_h\)</span>.</p></li>
+<li><p>Predicted values <span class="math inline">\(\hat{\mathbf{y}}_h\)</span> at a new set of predictor values <span class="math inline">\(\mathbf{X}_h\)</span> have the same form as the estimated mean response.</p></li>
+<li><p>You add the MSE to the estimated standard error to account for the added variability of individual observations.</p>
+<p><span class="math display">\[
+  s^2\{pred\} = MSE + s^2\{\hat{\mathbf{y}}_h\}
+  \]</span></p></li>
+<li><p>Prediction intervals can then be found by using this standard error <span class="math display">\[
+  \hat{Y}_h \pm qt(1 - \alpha / 2, n-p)s\{pred\}
+  \]</span></p></li>
+<li><p>In R, you just use the <code>interval = "prediction"</code> argument.</p>
+<pre class="r"><code>predict(object = lmout, newdata = newdf, interval = &quot;prediction&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 158.9 129.4 188.4
+## 2 156.3 129.9 182.7</code></pre></li>
+<li><p>Recall, <em>prediction intervals depend strongly on the normality assumption</em>.</p></li>
+<li><p>Be careful about hidden extrapolations in multiple linear regression. Looking at marginal ranges is not enough.</p></li>
+<li><p>In the below plot, the red dot is in the range of $x_1 = $<code>young</code> and in the range of $x_2 = $<code>disp</code>, but is not in the range of the joint distribution of <code>young</code> and <code>disp</code>.</p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="diagnostics" class="section level1">
+<h1>Diagnostics</h1>
+<ul>
+<li><p>Recall, the assumptions of the linear model in decreasing order of importance are:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Linearity</strong> - Does the relationship look like a straight line?</p></li>
+<li><p><strong>Independence</strong> - knowledge of the value of one observation does not give you any information on the value of another.</p></li>
+<li><p><strong>Equal Variance</strong> - The spread is the same for every value of <span class="math inline">\(x\)</span></p></li>
+<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations, or if you are doing prediction intervals).</p></li>
+</ol></li>
+<li><p>Residual plots are used the same way as before.</p></li>
+<li><p>Plot residuals versus fitted values</p>
+<ol style="list-style-type: decimal">
+<li>See curvature? Try logging variables if appropriate, or other transformation. If it doesn’t work, try including quadratic terms.</li>
+<li>See non-constant variance? If the goal is estimation, then use sandwich standard errors.</li>
+<li>See outlying observations? Try to first explain why that observation is outlying. If that doesn’t work, try a robust approach (like quantile regression).</li>
+</ol></li>
+<li><p>Plotting predictors versus residuals can tell you if you need to log certain predictors.</p></li>
+<li><p>Plot residuals versus omited predictor variables to explore if including these variables is necessary.</p>
+<ul>
+<li>If you see an association between the residuals and the omitted predictor, then you might want to include that predictor.</li>
+</ul></li>
+<li><p>Obtain residuals in MLR using the same code as in SLR:</p>
+<pre class="r"><code>aout &lt;- augment(x = lmout)
+qplot(x = .fitted, y = .resid, data = aout)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = young, y = .resid, data = aout)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-2.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = disp, y = .resid, data = aout)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Everything looks good for our portrait example. Even the QQ-plot looks good.</p>
+<pre class="r"><code>qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
+  geom_qq_line()</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 

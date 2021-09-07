@@ -613,8 +613,9 @@ We will go through these three intervals in turn.
 - There is no base R function that I can find that does this, but here is one if you want to use it:
     ```{r}
     #' Working-Hotelling bands for simple linear regression.
-    #' 
-    #' Only works for simple linear regression, not for multiple regression. 
+    #'
+    #' Intervals of the form "fit +/- w * standard-error", where w^2 is 
+    #' found by \code{p * qf(level, p, n - p)}.
     #'
     #' @param object An object of class "lm".
     #' @param newdata A data frame containing the new data.
@@ -625,9 +626,13 @@ We will go through these three intervals in turn.
       stopifnot(inherits(object, "lm"))
       stopifnot(inherits(newdata, "data.frame"))
       stopifnot(is.numeric(level), length(level) == 1)
-      pout <- stats::predict(object = object, newdata = newdf, se.fit = TRUE, interval = "none")
+      pout <- stats::predict(object = object, 
+                             newdata = newdata, 
+                             se.fit = TRUE, 
+                             interval = "none")
       n <- nrow(stats::model.frame(object))
-      w <- sqrt(2 * stats::qf(p = level, df1 = 2, df2 = n - 2))
+      p <- ncol(stats::model.frame(object))
+      w <- sqrt(p * stats::qf(p = level, df1 = p, df2 = n - p))
       lwr <- pout$fit - w * pout$se.fit
       upr <- pout$fit + w * pout$se.fit
       pout$fit <- cbind(fit = pout$fit, lwr = lwr, upr = upr)

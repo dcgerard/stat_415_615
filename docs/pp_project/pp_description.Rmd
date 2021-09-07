@@ -21,41 +21,101 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 klippy::klippy()
 ```
 
-# Synopsis
+# Important Dates
 
-You will work in groups of 3 or 4 people on a real data analysis project. Each group member is expected to be familiar with every aspect of the project, even the parts that they did not work on. There will be a within-group evaluation at the end of the project that will count for a portion of the project grade.
+- 10/07/2021: Project Proposal Due
+- 11/11/2021: Progress Report Due.
+- 12/14/2021 or 12/15/2021: Group project presentations, and final reports due.
 
-You will build multiple regression models to analyze a dataset from the real world to address a research question of interest. You are responsible for choosing this topic. I will not accept datasets from a publication, or that have already been deeply analyzed by others (like most Kaggle datasets). Here are some possible sources:
+# General Description
 
-- [College Scorecard](https://collegescorecard.ed.gov/data/)
-- [USA Spending](https://www.usaspending.gov/)
-- [World Bank](https://data.worldbank.org/)
+- Everyone will work in groups of 3 or 4 people to build multiple regression models to analyze a dataset from the real world to address a research question of interest, culminating in a written report and a project presentation.
 
-You will submit the following on Canvas. 
+- Graduate students (those taking credit for 615), should also prepare a group presentation on a topic from regression analysis that we did not cover in class. They may work with the same or different people as they worked with in the analysis project.
 
-a. Project proposal (1--2 pages). It should cover, but is not limited to, the question of interest, the variables under consideration, the methods to collect data, proposed models, etc.
-b. Progress report (1--2 pages). It should cover, but is not limited to, the work you’ve done so far and your next steps.
-c. The data set for your analysis, the articles being reviewed and a list of references. 
-d. The presentation material (power point or notes/handouts).
-e. A written report (2--3 pages). It should cover, but is not limited to, your question(s) of interest, your final regression model(s), verification of model(s) assumptions, and conclusions.
+# Project Proposal
+
+- You are responsible for choosing the topic of analysis. I will not accept datasets from a publication, or those that have already been deeply analyzed by others (like most Kaggle datasets). Here are some possible sources:
+
+    - [College Scorecard](https://collegescorecard.ed.gov/data/)
+    - [USA Spending](https://www.usaspending.gov/)
+    - [US Census Data](https://data.census.gov/)
+    - [World Bank](https://data.worldbank.org/)
+
+- For the project proposal, you will submit to Canvas:
+    1. A 1--2 page proposal that should cover, but is not limited to
+        a. The question of interest,
+        b. The data to be analyzed,
+        c. The variables under consideration.
+    2. The dataset you will analyze in CSV format.
+
+# Progress Report
+
+- Midway through the semester, you will submit a progress report.
+
+- This should be a 1--2 page report detailing the results of your exploratory data analysis. This should include:
+    1. What variables you consider to be important for the problem at hand.
+    2. Some plots demonstrating that you are informally exploring associations.
+    3. A description of your next steps.
+    
+# Presentation
+
+- Your group will prepare a 15 minute presentation for the class.
+
+
+- When preparing your presentation, consider these guidelines:
+    1. Your presentation should focus on solving the applied problem, and it should be accessible to the 
+    "educated layperson" audience. 
+    2. You should concisely and clearly describe the research question of interest and its background.  
+    3. You should explain the design of the study and how the data are collected. This would include, but is not limited to, a discussion of study design, sampling process, target population, etc., where applicable. 
+    4. You should concisely and clearly describe and present the data. Use appropriate exploratory statistics and graphs to summarize the data.  
+    5. You should present the statistical methods used for analysis, including a brief discussion of advantages, disadvantages and necessary assumptions of methods.  
+    6. You should make statistical inferences on the data and discuss the statistical results in the context of the problem.  
+    7. You should make concise conclusions in the context of the problem and discuss limitations of the analysis, if applicable.  
+
+# Final Written Report
+
+- You should prepare a written report (2--3 pages) that should cover (but is not limited to)
+    1. Your question(s) of interest, 
+    2. Your final regression model(s), 
+    3. Verification of model(s) assumptions, and
+    4. conclusions.
+
+- Use the same guidelines as above in the presentation section when preparing your final written report.
 
 # Extra Project for 615
 
-If you are taking this course for 615 credit, then I want to you also present on a topic from linear regression that we have not covered extensively. No written report is needed here, you will just prepare a 20 minute lecture to give to the class. Work in groups of 3 or 4. Possible topics include:
+If you are taking this course for 615 credit, then I want to you also present on a topic from linear regression that we have not covered extensively. No written report is needed here, you will just prepare a 10 minute lecture to give to the class. Work in groups of 3 or 4. Possible topics include:
 
-- LASSO
-- Random Effects Models
-- Genome-wide Association Studies
-- Regression splines
-- Quantile regression
+- [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics))
+- [Random Effects Models](https://en.wikipedia.org/wiki/Random_effects_model)
+- [Genome-wide Association Studies](https://en.wikipedia.org/wiki/Genome-wide_association_study)
+- [Quantile regression](https://en.wikipedia.org/wiki/Quantile_regression)
+- [Principal Components Analysis](https://en.wikipedia.org/wiki/Principal_component_analysis)
+- [Bayesian Linear Regression](https://en.wikipedia.org/wiki/Bayesian_linear_regression)
 
 You are responsible for choosing the topic of the project and looking for appropriate reference material. I will serve as your "consultant" throughout your project.
 
-At the end of the semester, each group will give a 20 minutes' lecture to introduce the method you have studied. You can give the lecture in your own style. However, it should include, but is not limited to, the following:
+At the end of the semester, each group will give a 10 minute lecture to introduce the method you have studied. You can give the lecture in your own style. However, it should include, but is not limited to, the following:
 
 a. An introduction of the statistical model, including the assumptions.
 b. A discussion on when and where the method can be applied. Give an example.
 c. The interpretation of analysis results from the method.
 d. A discussion on the benefits and cautions of the method.
-e. Extra credit: example and/or software demonstration.
+e. (BONUS) Software demonstration.
 
+# Grade Breakdown
+
+50 pts total
+
+- 415 Undergraduate Students
+    - (10 pts) Project proposal, team and data selection.
+    - (10 pts) Progress report.
+    - (10 pts) Final report
+    - (20 pts) Final presentation
+- 615 Graduate Students
+    - (10 pts) Project proposal, team and data selection.
+    - (10 pts) Progress report.
+    - (10 pts) Final report
+    - (10 pts) Analysis Final presentation
+    - (10 pts) Method Final presentation

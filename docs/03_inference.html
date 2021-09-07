@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-05" />
+<meta name="date" content="2021-09-07" />
 
 <title>Simple Linear Regression: Inference</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-05</h4>
+<h4 class="date">2021-09-07</h4>
 
 </div>
 
@@ -753,8 +753,9 @@ predict(object = lmhibbs, newdata = newdf, interval = &quot;prediction&quot;) %&
 <p><img src="03_figs/cband.gif" /> </p></li>
 <li><p>There is no base R function that I can find that does this, but here is one if you want to use it:</p>
 <pre class="r"><code>#&#39; Working-Hotelling bands for simple linear regression.
-#&#39; 
-#&#39; Only works for simple linear regression, not for multiple regression. 
+#&#39;
+#&#39; Intervals of the form &quot;fit +/- w * standard-error&quot;, where w^2 is 
+#&#39; found by \code{p * qf(level, p, n - p)}.
 #&#39;
 #&#39; @param object An object of class &quot;lm&quot;.
 #&#39; @param newdata A data frame containing the new data.
@@ -765,9 +766,13 @@ whbands &lt;- function(object, newdata, level = 0.95) {
   stopifnot(inherits(object, &quot;lm&quot;))
   stopifnot(inherits(newdata, &quot;data.frame&quot;))
   stopifnot(is.numeric(level), length(level) == 1)
-  pout &lt;- stats::predict(object = object, newdata = newdf, se.fit = TRUE, interval = &quot;none&quot;)
+  pout &lt;- stats::predict(object = object, 
+                         newdata = newdata, 
+                         se.fit = TRUE, 
+                         interval = &quot;none&quot;)
   n &lt;- nrow(stats::model.frame(object))
-  w &lt;- sqrt(2 * stats::qf(p = level, df1 = 2, df2 = n - 2))
+  p &lt;- ncol(stats::model.frame(object))
+  w &lt;- sqrt(p * stats::qf(p = level, df1 = p, df2 = n - p))
   lwr &lt;- pout$fit - w * pout$se.fit
   upr &lt;- pout$fit + w * pout$se.fit
   pout$fit &lt;- cbind(fit = pout$fit, lwr = lwr, upr = upr)
