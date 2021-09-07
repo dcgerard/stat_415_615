@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-03" />
+<meta name="date" content="2021-09-07" />
 
 <title>Simple Linear Regression: The Model</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-03</h4>
+<h4 class="date">2021-09-07</h4>
 
 </div>
 
@@ -520,7 +520,7 @@ qplot(x = growth, y = vote, data = hibbs) +
   Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
   \]</span></p></li>
 <li><p>Idea: Try to get <span class="math inline">\(Y_i\)</span> as close to its mean. So we want each <span class="math inline">\(Y_i - (\beta_0 + \beta_1 X_i)\)</span> to be close to 0.</p></li>
-<li><p>To make all of these differences on average close to zero, consider minimizing the <span class="math inline">\(sum of squares\)</span>:</p>
+<li><p>To make all of these differences on average close to zero, consider minimizing the <em>sum of squares</em>:</p>
 <p><span class="math display">\[
   \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
   \]</span></p></li>

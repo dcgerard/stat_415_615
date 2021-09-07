@@ -410,7 +410,7 @@ $$
     3. What is the average growth every 10 years?
     
     ```{block, echo = FALSE, eval = FALSE}
-    `exp(10 * 0.0289)` = 1.335, or about 34\% growth every 10 years.
+    `exp(10 * 0.0299)` = 1.349, or about 35\% growth every 10 years.
     ```
     
 ## Why use $e$ and not some other base?
