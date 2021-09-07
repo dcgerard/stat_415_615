@@ -44,9 +44,9 @@ klippy::klippy()
 
 - Why include more predictors?
     - You can often get a more accurate prediction of $Y$ if you include more $X$'s.
-    - You can control for other variables when assessing the relationship between a response and a predictor of interest.
+    - You can adjust for other variables when assessing the relationship between a response and a predictor of interest. (researchers often call this "controlling" for other variables)
     
-- Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.
+- Adjusting is necessary because the strength/sign of a relationship might change once you adjust for a variable.
 
 - Consider the earnings data described [here](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data) and available for download [here](https://dcgerard.github.io/stat_415_615/data/earnings.csv).
 
@@ -80,7 +80,7 @@ klippy::klippy()
       scale_color_colorblind()
     ```
     
-    The relationship appears to still be slightly positive within each sex, but nowhere near as strong.
+    The relationship appears to still be slightly positive within each sex, but nowhere near as strong as the marginal association.
 
 # Multiple linear regression model: 2 predictors
 
@@ -284,7 +284,7 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
     
 - So $\beta_1$ is interpreted as the mean difference between automatic and manual cars.
 
-- If other covariates are included in the model, this interpretation changes to the "mean difference between automatic and manual cars while controlling for other variables".
+- If other covariates are included in the model, this interpretation changes to the "mean difference between automatic and manual cars while adjusting for other variables".
 
 - If there are $c$ classes (instead of 2), we use $c-1$ indicator variables to represent this categorical variable.
 
@@ -528,16 +528,167 @@ $$
       geom_vline(xintercept = 2.5, lty = 2, col = 2)
     ```
     
+- When we test for $H_0: \beta_1 = 0$ versus $H_A:\beta_1 \neq 0$, we are still allowing all other $\beta_k$'s to be non-zero. That is, we are comparing the two models:
+    - $H_0: Y_i = \beta_0 \phantom{~+ \beta_1X_{i1}} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i$
     
+- The results of this hypothesis would be different if we had other covariates in the model because then we are comparing different models.
+
 # Estimation and Inference in R
 
-- 
+- A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include
+    - `young`: The number of persons aged 16 or younger in the community (thousands of persons).
+    - `disp`: The per capita disposable personal income in the community (thousands of dollars).
+    - `sales`: Portrait studio sales in the community (thousands of dollars).
+    
+- You can load these data into R with:
 
+    ```{r}
+    portrait <- tribble(~young, ~disp, ~sales,
+                        68.5,   16.7,  174.4,
+                        45.2,   16.8,  164.4,
+                        91.3,   18.2,  244.2,
+                        47.8,   16.3,  154.6,
+                        46.9,   17.3,  181.6,
+                        66.1,   18.2,  207.5,
+                        49.5,   15.9,  152.8,
+                        52.0,   17.2,  163.2,
+                        48.9,   16.6,  145.4,
+                        38.4,   16.0,  137.2,
+                        87.9,   18.3,  241.9,
+                        72.8,   17.1,  191.1,
+                        88.4,   17.4,  232.0,
+                        42.9,   15.8,  145.3,
+                        52.5,   17.8,  161.1,
+                        85.7,   18.4,  209.7,
+                        41.3,   16.5,  146.4,
+                        51.7,   16.3,  144.0,
+                        89.6,   18.1,  232.6,
+                        82.7,   19.1,  224.1,
+                        52.3,   16.0,  166.5)
+    ```
 
+- The goal is to predict sales from these other two variables.
+    
+- Let's begin with an EDA
 
+    ```{r}
+    qplot(x = disp, y = sales, data = portrait)
+    qplot(x = young, y = sales, data = portrait)
+    ```
 
+    There seems to be a strong linear relationship between portrait and disp and portrait and young.
+    
+- We will fit the model
+    $$
+    Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + \epsilon_i
+    $$
+    We use the same syntax as in SLR, but add multiple predictors on the right hand side of the formula.
+    
+    ```{r}
+    lmout <- lm(sales ~ young + disp, data = portrait)
+    lmout
+    ```
+    
+- You obtain coefficient estimates, standard errors, and $p$-values against the null of $\beta_k = 0$ using `tidy()` from the `{broom}` package.
 
+    ```{r}
+    library(broom)
+    tidy(lmout)
+    ```
 
+- We will talk about assessing the fit of this model later.
+
+- **Exercise**: Let $Y_i$ be the sales for community $i$, $X_{i1}$ be the number of young individuals in community $i$, and $X_{i2}$ be the amount of disposable income for individual $i$. Write out the two models that the $p$-value `0.002e-06` is testing. Write out the two models that the $p$-value `3.332e-02` is testing.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    The first $p$-value is comparing
+    
+    - $H_0: Y_i = \beta_0 + \beta_2X_{i2} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i$
+    
+    The second $p$-value is comparing
+    
+    - $H_0: Y_i = \beta_0 + \beta_1X_{i1} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i$
+    ```
+
+- Let's compare these coefficients to those under simple linear regression.
+
+    ```{r}
+    lm_simp_young <- lm(sales ~ young, data = portrait)
+    tidy(lm_simp_young)
+    
+    lm_simp_disp <- lm(sales ~ disp, data = portrait)
+    tidy(lm_simp_disp)
+    ```
+
+- Look how different the coefficient for `disp` is when we include `young` versus when we do not include `young`. 
+
+- You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model. 
+
+- Whenever you include more covariates in a model, the interpretation of the coefficient *on the same variable* changes.
+
+- What is the interpretation of the 31.17 coefficient?
+
+    > Communities that have a per-capita disposable income that is \$1000 more tend to have about \$31,000 more sales.
+    
+- What is the interpretation of the 9.366 coefficient?
+
+    > Communities that have a per-capita disposable income that is \$1000 more, but the same number of young people, tend to have about \$9400 more sales.
+  
+    > Or, adjusting for the number of young people in a community, communities that have \$1000 more in per capita income tend to have \$9400 more sales.
+    
+    - These are equivalent interpretations. I like the first description better, but when you are publishing a paper you should use the second description.
+
+- **Exercise**: Consider the university admissions data, described [here](https://dcgerard.github.io/stat_415_615/data.html#University_Admissions) and available for download here: <https://dcgerard.github.io/stat_415_615/data/university.csv>
+    1. Write out, using mathematical notation, the model for a multiple linear regression model for gpa on rank, act, and year. You should define variables.
+    ```{block, eval = FALSE, echo = FALSE}
+    Let
+    
+    - $Y_i$: be the GPA of student $i$.
+    - $X_{i1}$: be the rank of student $i$.
+    - $X_{i2}$: be the act of student $i$.
+    - $X_{i3}$: be the year of student $i$.
+    
+    Then the model we are fitting is
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+    $$
+    where $E[\epsilon_i] = 0$, $var(\epsilon_i) = \sigma^2$, and $cor(\epsilon_i,\epsilon_j) = 0$ for all $i\neq j$
+    ```
+    
+    
+    2. Fit this model in R, estimate the coefficients, and run hypothesis tests against the null that the coefficients of each term are zero.
+    ```{r, eval = FALSE, echo = FALSE}
+    university <- read_csv("https://dcgerard.github.io/stat_415_615/data/university.csv")
+    qplot(x = rank, y = gpa, data = university)
+    qplot(x = act, y = gpa, data = university)
+    qplot(x = year, y = gpa, data = university)
+    lmout_gpa <- lm(gpa ~ rank + act + year, data = university)
+    tidy(lmout_gpa)
+    ```
+    
+    3. What is the estimated regression surface?
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    y = -21.248 + 0.010 x_1 + 0.037 x_2 + 0.011 x_3
+    ```
+    
+    4. Provide an interpretation for the coefficient on `rank`.
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Students that are 10 percent higher in their class tend to have a GPA 0.1 higher, after adjusting for ACT scores and year of of admission.
+    ```
+    
+    5. Write out the two models that the $p$-value for `year` is testing.
+    ```{block, eval = FALSE, echo = FALSE}
+    - $H_0: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i$
+    ```
+    
+    6. What is the residual standard deviation?
+    
 
 
 

@@ -468,7 +468,7 @@ saveGIF(expr = {
 
     ```{r}
     epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
-    hist(epsilon)
+    qplot(epsilon, bins = 10)
     y <- beta0 + beta1 * x + epsilon
     qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)
     ```
@@ -796,7 +796,7 @@ saveGIF(expr = {
 
 - One idea is to find the values of $\beta_0$, $\beta_1$, and $\sigma^2$ to make the data that we did observe as likely as possible.
 
-- Typically, we actually worth with the log-likelihood
+- Typically, we actually work with the log-likelihood
     $$
     L(data|\beta_0,\beta_1,\sigma^2) = \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right]
     $$

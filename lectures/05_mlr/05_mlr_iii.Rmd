@@ -1,0 +1,97 @@
+---
+title: "MLR III: Practical Considerations"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+library(latex2exp)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3, fig.width = 4)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Concretely describe the proper steps of any analysis.
+- Choice of scaling predictors for interpretation.
+- Effect sizes, practical significance, and statistical significance.
+- Chapter 12 from ROS
+
+# Steps of an analysis
+
+- For **any analysis** where you are applying a model, the steps you should take are:
+    1. Exploratory data analysis
+    2. Choose the form of the model.
+    3. Fit the model to the data.
+    4. Assess how well the model describes the data.
+    5. Use the model to address the question of interest.
+    
+- You should be performing each of these steps when you apply a model to data.
+
+# Choosing a scale for interpretation
+
+- You should apply linear scalings to your data.
+
+- Height in millimeter (difference in $Y$ for a 1 mm difference in height?) versus height in centimeters (difference in $Y$ for a 1 cm difference in height?) versus height in meters (difference in $Y$ for a 1 m difference in height?). For humans, cm is probably the best scale.
+
+- Use standard deviations to guide your choice of scale. Roughly, 68\% of observations will be within 1 standard deviation of the mean, and so choosing your predictor on the order standard deviations (so within a magnitude of the SD) makes coefficients more interpretable.
+
+# Practical versus statistical significance
+
+- Tests can have tiny $p$-values, but the effect sizes might be small.
+
+# Comparing effect sizes to residual standard error
+
+- It is always a good idea to compare the effect sizes to the residual standard error.
+
+- **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
+
+    ```{r}
+    library(tidyverse)
+    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
+    earnings <- mutate(earnings, log_earn = log(earn))
+    earnings <- filter(earnings, is.finite(log_earn))
+    qplot(x = height, y = log_earn, data = earnings)
+    lm_earn <- lm(log_earn ~ height, data = earnings)
+    ```
+    
+    ```{r}
+    library(broom)
+    tidy(lm_earn)
+    ```
+    
+    The $p$-value is **tiny**. So is this a huge effect? Not really. Let's discuss.
+    
+    Individuals that are a whole foot taller earn about $0.05704 \times 12 = 0.6845$ log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let's look at the residual standard deviation.
+    
+    ```{r}
+    glance(lm_earn)
+    ```
+    
+    The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.
+    
+    If we compare prediction intervals between a 5'2'' individual and a 6'2'' individual (ignoring the appropriateness of the normal model for now), we have
+    
+    ```{r}
+    predict(object = lm_earn, 
+            newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
+            interval = "prediction") %>%
+      exp()
+    ```
+    So it is true that the taller individual is expected to make twice as much money (\$12,938 versus \$25,652), but the range of individuals at each level is huge (\$2312 to \$72,387 and \$4579 to \$143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).
+    
+
+
+

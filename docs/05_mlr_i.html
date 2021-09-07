@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-02" />
+<meta name="date" content="2021-09-03" />
 
 <title>Multiple Linear Regression I</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-02</h4>
+<h4 class="date">2021-09-03</h4>
 
 </div>
 
@@ -380,13 +380,13 @@ div.tocify {
 <li><p>Why include more predictors?</p>
 <ul>
 <li>You can often get a more accurate prediction of <span class="math inline">\(Y\)</span> if you include more <span class="math inline">\(X\)</span>’s.</li>
-<li>You can control for other variables when assessing the relationship between a response and a predictor of interest.</li>
+<li>You can adjust for other variables when assessing the relationship between a response and a predictor of interest. (researchers often call this “controlling” for other variables)</li>
 </ul></li>
-<li><p>Controlling is necessary because the strength/sign of a relationship might change once you control for a variable.</p></li>
+<li><p>Adjusting is necessary because the strength/sign of a relationship might change once you adjust for a variable.</p></li>
 <li><p>Consider the earnings data described <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and available for download <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p>
 <p>We might be interested in the association between height and earnings. Indeed, there seems to be a slight positive relationship. <img src="05_mlr_i_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>But then we remember that men tend to be taller than women, and men tend to make more money than women, and so this might be the reason why <strong>marginally</strong> we are seeing this association between height and earnings. <img src="05_mlr_i_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>The relationship appears to still be slightly positive within each sex, but nowhere near as strong.</p></li>
+<p>The relationship appears to still be slightly positive within each sex, but nowhere near as strong as the marginal association.</p></li>
 </ul>
 </div>
 <div id="multiple-linear-regression-model-2-predictors" class="section level1">
@@ -530,7 +530,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   Y_i = \beta_0 + \beta_1 + \epsilon_i
   \]</span></p></li>
 <li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as the mean difference between automatic and manual cars.</p></li>
-<li><p>If other covariates are included in the model, this interpretation changes to the “mean difference between automatic and manual cars while controlling for other variables”.</p></li>
+<li><p>If other covariates are included in the model, this interpretation changes to the “mean difference between automatic and manual cars while adjusting for other variables”.</p></li>
 <li><p>If there are <span class="math inline">\(c\)</span> classes (instead of 2), we use <span class="math inline">\(c-1\)</span> indicator variables to represent this categorical variable.</p></li>
 <li><p>For example, in the <code>mpg</code> dataset from the <code>{ggplot2}</code> package, the <code>drv</code> variable has values <code>"f"</code>, <code>"4"</code> and <code>"r"</code>. We could create two variables <span class="math display">\[\begin{align}
   X_{i1} &amp;= 
@@ -681,10 +681,131 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
   \]</span></li>
 </ul>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>When we test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> versus <span class="math inline">\(H_A:\beta_1 \neq 0\)</span>, we are still allowing all other <span class="math inline">\(\beta_k\)</span>’s to be non-zero. That is, we are comparing the two models:</p>
+<ul>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 \phantom{~+ \beta_1X_{i1}} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></li>
+</ul></li>
+<li><p>The results of this hypothesis would be different if we had other covariates in the model because then we are comparing different models.</p></li>
+</ul>
+</div>
+<div id="steps-of-an-analysis" class="section level1">
+<h1>Steps of an analysis</h1>
+<ul>
+<li>For <strong>any analysis</strong> where you are applying a model, the steps you should take are:
+<ol style="list-style-type: decimal">
+<li>Exploratory data analysis</li>
+<li>Choose the form of the model.</li>
+<li>Fit the model to the data.</li>
+<li>Assess how well the model describes the data.</li>
+<li>Use the model to address the question of interest.</li>
+</ol></li>
 </ul>
 </div>
 <div id="estimation-and-inference-in-r" class="section level1">
 <h1>Estimation and Inference in R</h1>
+<ul>
+<li><p>A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include</p>
+<ul>
+<li><code>young</code>: The number of persons aged 16 or younger in the community (thousands of persons).</li>
+<li><code>disp</code>: The per capita disposable personal income in the community (thousands of dollars).</li>
+<li><code>sales</code>: Portrait studio sales in the community (thousands of dollars).</li>
+</ul></li>
+<li><p>You can load these data into R with:</p>
+<pre class="r"><code>portrait &lt;- tribble(~young, ~disp, ~sales,
+                    68.5,   16.7,  174.4,
+                    45.2,   16.8,  164.4,
+                    91.3,   18.2,  244.2,
+                    47.8,   16.3,  154.6,
+                    46.9,   17.3,  181.6,
+                    66.1,   18.2,  207.5,
+                    49.5,   15.9,  152.8,
+                    52.0,   17.2,  163.2,
+                    48.9,   16.6,  145.4,
+                    38.4,   16.0,  137.2,
+                    87.9,   18.3,  241.9,
+                    72.8,   17.1,  191.1,
+                    88.4,   17.4,  232.0,
+                    42.9,   15.8,  145.3,
+                    52.5,   17.8,  161.1,
+                    85.7,   18.4,  209.7,
+                    41.3,   16.5,  146.4,
+                    51.7,   16.3,  144.0,
+                    89.6,   18.1,  232.6,
+                    82.7,   19.1,  224.1,
+                    52.3,   16.0,  166.5)</code></pre></li>
+<li><p>The goal is to predict sales from these other two variables.</p></li>
+<li><p>Let’s begin with an EDA</p>
+<pre class="r"><code>qplot(x = disp, y = sales, data = portrait)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = young, y = sales, data = portrait)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p>There seems to be a strong linear relationship between portrait and disp and portrait and young.</p></li>
+<li><p>We will fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + \epsilon_i
+  \]</span> We use the same syntax as in SLR, but add multiple predictors on the right hand side of the formula.</p>
+<pre class="r"><code>lmout &lt;- lm(sales ~ young + disp, data = portrait)
+lmout</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = sales ~ young + disp, data = portrait)
+## 
+## Coefficients:
+## (Intercept)        young         disp  
+##      -68.86         1.45         9.37</code></pre></li>
+<li><p>You obtain coefficient estimates, standard errors, and <span class="math inline">\(p\)</span>-values against the null of <span class="math inline">\(\beta_k = 0\)</span> using <code>tidy()</code> from the <code>{broom}</code> package.</p>
+<pre class="r"><code>library(broom)
+tidy(lmout)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic    p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+## 1 (Intercept)   -68.9     60.0       -1.15 0.266     
+## 2 young           1.45     0.212      6.87 0.00000200
+## 3 disp            9.37     4.06       2.30 0.0333</code></pre></li>
+<li><p>We will talk about assessing the fit of this model later.</p></li>
+<li><p><strong>Exercise</strong>: Let <span class="math inline">\(Y_i\)</span> be the sales for community <span class="math inline">\(i\)</span>, <span class="math inline">\(X_{i1}\)</span> be the number of young individuals in community <span class="math inline">\(i\)</span>, and <span class="math inline">\(X_{i2}\)</span> be the amount of disposable income for individual <span class="math inline">\(i\)</span>. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>0.002e-06</code> is testing. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>3.332e-02</code> is testing.</p></li>
+<li><p>Let’s compare these coefficients to those under simple linear regression.</p>
+<pre class="r"><code>lm_simp_young &lt;- lm(sales ~ young, data = portrait)
+tidy(lm_simp_young)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    68.0      9.46       7.19 7.86e- 7
+## 2 young           1.84     0.146     12.5  1.23e-10</code></pre>
+<pre class="r"><code>lm_simp_disp &lt;- lm(sales ~ disp, data = portrait)
+tidy(lm_simp_disp)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic    p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+## 1 (Intercept)   -352.      80.7      -4.37 0.000329  
+## 2 disp            31.2      4.70      6.64 0.00000239</code></pre></li>
+<li><p>Look how different the coefficient for <code>disp</code> is when we include <code>young</code> versus when we do not include <code>young</code>.</p></li>
+<li><p>You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model.</p></li>
+<li><p>Whenever you include more covariates in a model, the interpretation of the coefficient <em>on the same variable</em> changes.</p></li>
+<li><p>What is the interpretation of the 31.17 coefficient?</p>
+<blockquote>
+<p>Communities that have a per-capita disposable income that is $1000 more tend to have about $31,000 more sales.</p>
+</blockquote></li>
+<li><p>What is the interpretation of the 9.366 coefficient?</p>
+<blockquote>
+<p>Communities that have a per-capita disposable income that is $1000 more, but the same number of young people, tend to have about $9400 more sales.</p>
+</blockquote>
+<blockquote>
+<p>Or, adjusting for the number of young people in a community, communities that have $1000 more in per capita income tend to have $9400 more sales.</p>
+</blockquote>
+<ul>
+<li>These are equivalent interpretations. I like the first description better, but when you are publishing a paper you should use the second description.</li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Consider the university admissions data, described <a href="https://dcgerard.github.io/stat_415_615/data.html#University_Admissions">here</a> and available for download here: <a href="https://dcgerard.github.io/stat_415_615/data/university.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/university.csv</a></p>
+<ol style="list-style-type: decimal">
+<li><p>Write out, using mathematical notation, the model for a multiple linear regression model for gpa on rank, act, and year. You should define variables.</p></li>
+<li><p>Fit this model in R, estimate the coefficients, and run hypothesis tests against the null that the coefficients of each term are zero.</p></li>
+<li><p>What is the estimated regression surface?</p></li>
+<li><p>Provide an interpretation for the coefficient on <code>rank</code>.</p></li>
+<li><p>Write out the two models that the <span class="math inline">\(p\)</span>-value for <code>year</code> is testing.</p></li>
+<li><p>What is the residual standard deviation?</p></li>
+</ol></li>
+</ul>
 </div>
 
 
