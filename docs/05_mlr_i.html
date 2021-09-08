@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-07" />
+<meta name="date" content="2021-09-08" />
 
 <title>Multiple Linear Regression I</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-07</h4>
+<h4 class="date">2021-09-08</h4>
 
 </div>
 
@@ -727,6 +727,13 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
 <pre class="r"><code>qplot(x = young, y = sales, data = portrait)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
 <p>There seems to be a strong linear relationship between portrait and disp and portrait and young.</p></li>
+<li><p>A shortcut to making these plots is the <code>ggpairs()</code> function from the <code>{GGally}</code> package. It creates what’s called a <strong>scatterplot matrix</strong>.</p>
+<pre class="r"><code>library(GGally)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;GGally&#39;:
+##   method from   
+##   +.gg   ggplot2</code></pre>
+<pre class="r"><code>ggpairs(data = portrait)</code></pre>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>We will fit the model <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + \epsilon_i
   \]</span> We use the same syntax as in SLR, but add multiple predictors on the right hand side of the formula.</p>
@@ -859,7 +866,7 @@ predict(object = lmout, newdata = newdf)</code></pre>
 <li><p>Recall, <em>prediction intervals depend strongly on the normality assumption</em>.</p></li>
 <li><p>Be careful about hidden extrapolations in multiple linear regression. Looking at marginal ranges is not enough.</p></li>
 <li><p>In the below plot, the red dot is in the range of <span class="math inline">\(x_1\)</span> = <code>young</code> and in the range of <span class="math inline">\(x_2\)</span> = <code>disp</code>, but is not in the range of the joint distribution of <code>young</code> and <code>disp</code>.</p>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="diagnostics" class="section level1">
@@ -880,22 +887,22 @@ predict(object = lmout, newdata = newdf)</code></pre>
 <li>See outlying observations? Try to first explain why that observation is outlying. If that doesn’t work, try a robust approach (like quantile regression).</li>
 </ol></li>
 <li><p>Plotting predictors versus residuals can tell you if you need to log certain predictors.</p></li>
-<li><p>Plot residuals versus omited predictor variables to explore if including these variables is necessary.</p>
+<li><p>Plot residuals versus omitted predictor variables to explore if including these variables is necessary.</p>
 <ul>
 <li>If you see an association between the residuals and the omitted predictor, then you might want to include that predictor.</li>
 </ul></li>
 <li><p>Obtain residuals in MLR using the same code as in SLR:</p>
 <pre class="r"><code>aout &lt;- augment(x = lmout)
 qplot(x = .fitted, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = young, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-2.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = disp, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-3.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Everything looks good for our portrait example. Even the QQ-plot looks good.</p>
 <pre class="r"><code>qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
   geom_qq_line()</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: Recall the real estate data that you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales">here</a> and download here: <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/estate.csv</a></p>
 <ol style="list-style-type: decimal">
 <li><p>Fit a linear model of price on area and lot size.</p></li>

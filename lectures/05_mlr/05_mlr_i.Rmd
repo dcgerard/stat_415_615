@@ -581,6 +581,12 @@ $$
 
     There seems to be a strong linear relationship between portrait and disp and portrait and young.
     
+- A shortcut to making these plots is the `ggpairs()` function from the `{GGally}` package. It creates what's called a **scatterplot matrix**.
+    ```{r}
+    library(GGally)
+    ggpairs(data = portrait)
+    ```
+
 - We will fit the model
     $$
     Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + \epsilon_i
@@ -822,7 +828,7 @@ $$
     
 - Plotting predictors versus residuals can tell you if you need to log certain predictors.
     
-- Plot residuals versus omited predictor variables to explore if including these variables is necessary.
+- Plot residuals versus omitted predictor variables to explore if including these variables is necessary.
     - If you see an association between the residuals and the omitted predictor, then you might want to include that predictor.
     
 - Obtain residuals in MLR using the same code as in SLR:
