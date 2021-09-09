@@ -1,5 +1,5 @@
 ---
-title: "MLR III: Practical Considerations"
+title: "MLR: Practical Considerations"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:  

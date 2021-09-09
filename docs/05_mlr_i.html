@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-08" />
+<meta name="date" content="2021-09-09" />
 
 <title>Multiple Linear Regression I</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-08</h4>
+<h4 class="date">2021-09-09</h4>
 
 </div>
 
@@ -815,7 +815,7 @@ tidy(lm_simp_disp)</code></pre>
 <li><p>The mean value of the response at these new observations is <span class="math display">\[
   E[\mathbf{y}_h] = \mathbf{X}_h\mathbf{\beta}
   \]</span></p></li>
-<li><p>We can estiamte this with <span class="math display">\[
+<li><p>We can estimate this with <span class="math display">\[
   \hat{\mathbf{y}}_h = \mathbf{X}_h\hat{\mathbf{\beta}} = \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
   \]</span></p></li>
 <li><p>If <span class="math inline">\(\mathbf{X}_h = \mathbf{X}\)</span>, then we can use <code>augment()</code> from <code>{broom}</code> to obtain the fitted value</p>
@@ -910,7 +910,7 @@ qplot(x = .fitted, y = .resid, data = aout)</code></pre>
 <li><p>Try to fix the issues from part 2. Iterate making residual plots and fixing issues until you have a final model.</p></li>
 <li><p>Write down your final model</p></li>
 <li><p>Obtain coefficient estimates and interpret them on the original scale of all variables.</p></li>
-<li><p>A new hourse is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.</p></li>
+<li><p>A new house is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.</p></li>
 </ol></li>
 </ul>
 </div>

@@ -638,7 +638,7 @@ $$
 
 - Look how different the coefficient for `disp` is when we include `young` versus when we do not include `young`. 
 
-- You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model. 
+- **You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model.**
 
 - Whenever you include more covariates in a model, the interpretation of the coefficient *on the same variable* changes.
 
@@ -711,7 +711,7 @@ $$
     E[\mathbf{y}_h] = \mathbf{X}_h\mathbf{\beta}
     $$
     
-- We can estiamte this with
+- We can estimate this with
     $$
     \hat{\mathbf{y}}_h = \mathbf{X}_h\hat{\mathbf{\beta}} = \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
     $$
@@ -916,7 +916,7 @@ $$
     Houses that have twice the lot-size, but are the same area, tend to be worth about 8\% (2^0.11 = 1.08) more, on average.
     ```
     
-    6. A new hourse is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.
+    6. A new house is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.
     ```{r, eval = FALSE, echo = FALSE}
     newdf <- data.frame(area = 1000, lot = 10000)
     newdf <- mutate(newdf, 

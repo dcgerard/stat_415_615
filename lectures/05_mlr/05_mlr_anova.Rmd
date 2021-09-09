@@ -27,6 +27,85 @@ klippy::klippy()
 - ANOVA Perspective of hypothesis testing in the multiple linear regression model.
 - Sections 6.5, 6.9, 7.1, 7.2, and 7.3 of KNNL
 
+# Sums of squares
+
+- Consider the multiple linear regression model
+    $$
+    Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+    $$
+- The *error sum of squares* associated with this model is the sum of squared residuals.
+    $$
+    SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} + \cdots + \hat{\beta}_{p-1}X_{i,p-1})\right]^2
+    $$
+
+- For example, with one variable we have
+    $$
+    SSE(X_1) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1})\right]^2
+    $$
+    or
+    $$
+    SSE(X_2) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_2X_{i2})\right]^2
+    $$
+    etc.
+- With two variables we have
+    $$
+    SSE(X_1,X_2) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} )\right]^2
+    $$
+
+- Note that the $\hat{\beta}$'s are generally different in the above SSE's. That is, $\hat{\beta}_1$ will be different if we fit the model
+    $$
+    Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i
+    $$
+    and obtain $SSE(X_1)$, versus if we fit the model
+    $$
+    Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
+    $$
+    and obtain $SSE(X_1,X_2)$, versus if we fit the model
+    $$
+    Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+    $$
+    and obtain $SSE(X_1,X_2,X_3)$, etc...
+
+- That is, including new predictors affects the coefficient estimates of other predictors.
+
+- Each $SSE$ measures how close the regression surface is to the data. Smaller means closer, larger means further away.
+
+
+- Let's consider the Body Data example from Table 7.1 of KNNL. Variables include
+    - `triceps`: Tricepts skinfold thickness.
+    - `thigh`: Thigh circumference.
+    - `midarm`: Midarm circumference
+    - `fat`: Body fat.
+    
+    ```{r, message=FALSE}
+    library(tidyverse)
+    body <- tribble(~triceps, ~thigh, ~midarm, ~fat,
+                    19.5, 43.1, 29.1, 11.9,
+                    24.7, 49.8, 28.2, 22.8,
+                    30.7, 51.9, 37.0, 18.7,
+                    29.8, 54.3, 31.1, 20.1,
+                    19.1, 42.2, 30.9, 12.9,
+                    25.6, 53.9, 23.7, 21.7,
+                    31.4, 58.5, 27.6, 27.1,
+                    27.9, 52.1, 30.6, 25.4,
+                    22.1, 49.9, 23.2, 21.3,
+                    25.5, 53.5, 24.8, 19.3,
+                    31.1, 56.6, 30.0, 25.4,
+                    30.4, 56.7, 28.3, 27.2,
+                    18.7, 46.5, 23.0, 11.7,
+                    19.7, 44.2, 28.6, 17.8,
+                    14.6, 42.7, 21.3, 12.8,
+                    29.5, 54.4, 30.1, 23.9,
+                    27.7, 55.3, 25.7, 22.6,
+                    30.2, 58.6, 24.6, 25.4,
+                    22.7, 48.2, 27.1, 14.8,
+                    25.2, 51.0, 27.5, 21.1)
+    ```
+
+
+    
+
+
 # $F$-test for lack of fit
 
 - If you have repeat observations at the same levels of predictor variables, then you can run a lack-of-fit test as before.
