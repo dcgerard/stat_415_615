@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-09" />
+<meta name="date" content="2021-09-13" />
 
 <title>ANOVA View of Linear Models</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-09</h4>
+<h4 class="date">2021-09-13</h4>
 
 </div>
 
@@ -361,8 +361,305 @@ div.tocify {
 <li>Sections 6.5, 6.9, 7.1, 7.2, and 7.3 of KNNL</li>
 </ul>
 </div>
-<div id="f-test-for-lack-of-fit" class="section level1">
-<h1><span class="math inline">\(F\)</span>-test for lack of fit</h1>
+<div id="sums-of-squares" class="section level1">
+<h1>Sums of squares</h1>
+<ul>
+<li><p>Consider the multiple linear regression model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+  \]</span></p></li>
+<li><p>The <em>error sum of squares</em> associated with this model is the sum of squared residuals. <span class="math display">\[
+  SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} + \cdots + \hat{\beta}_{p-1}X_{i,p-1})\right]^2
+  \]</span></p></li>
+<li><p>For example, with one variable we have <span class="math display">\[
+  SSE(X_1) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1})\right]^2
+  \]</span> or <span class="math display">\[
+  SSE(X_2) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_2X_{i2})\right]^2
+  \]</span> etc.</p></li>
+<li><p>With two variables we have <span class="math display">\[
+  SSE(X_1,X_2) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} )\right]^2
+  \]</span></p></li>
+<li><p>Note that the <span class="math inline">\(\hat{\beta}\)</span>’s are generally different in the above SSE’s. That is, <span class="math inline">\(\hat{\beta}_1\)</span> will be different if we fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i
+  \]</span> and obtain <span class="math inline">\(SSE(X_1)\)</span>, versus if we fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
+  \]</span> and obtain <span class="math inline">\(SSE(X_1,X_2)\)</span>, versus if we fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \]</span> and obtain <span class="math inline">\(SSE(X_1,X_2,X_3)\)</span>, etc…</p></li>
+<li><p>That is, including new predictors affects the coefficient estimates of other predictors.</p></li>
+<li><p>Each <span class="math inline">\(SSE\)</span> measures how close the regression surface is to the data. Smaller means closer, larger means further away.</p></li>
+<li><p>Let’s consider the Body Data example from Table 7.1 of KNNL. Variables include</p>
+<ul>
+<li><code>triceps</code>: Tricepts skinfold thickness.</li>
+<li><code>thigh</code>: Thigh circumference.</li>
+<li><code>midarm</code>: Midarm circumference</li>
+<li><code>fat</code>: Body fat.</li>
+</ul>
+<p>The goal is to predict body fat from the other variables. You can load these data into R using:</p>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+body &lt;- tribble(~triceps, ~thigh, ~midarm, ~fat,
+                19.5, 43.1, 29.1, 11.9,
+                24.7, 49.8, 28.2, 22.8,
+                30.7, 51.9, 37.0, 18.7,
+                29.8, 54.3, 31.1, 20.1,
+                19.1, 42.2, 30.9, 12.9,
+                25.6, 53.9, 23.7, 21.7,
+                31.4, 58.5, 27.6, 27.1,
+                27.9, 52.1, 30.6, 25.4,
+                22.1, 49.9, 23.2, 21.3,
+                25.5, 53.5, 24.8, 19.3,
+                31.1, 56.6, 30.0, 25.4,
+                30.4, 56.7, 28.3, 27.2,
+                18.7, 46.5, 23.0, 11.7,
+                19.7, 44.2, 28.6, 17.8,
+                14.6, 42.7, 21.3, 12.8,
+                29.5, 54.4, 30.1, 23.9,
+                27.7, 55.3, 25.7, 22.6,
+                30.2, 58.6, 24.6, 25.4,
+                22.7, 48.2, 27.1, 14.8,
+                25.2, 51.0, 27.5, 21.1)</code></pre>
+<p>The if we regress body fat on midarm, we obtain</p>
+<pre class="r"><code>lmmid &lt;- lm(fat ~ midarm, data = body)
+lmmid</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = fat ~ midarm, data = body)
+## 
+## Coefficients:
+## (Intercept)       midarm  
+##      14.687        0.199</code></pre>
+<p>The estimated regression function is <span class="math display">\[
+  y = 14.7 + 0.2x
+  \]</span> and the error sum of squares is</p>
+<pre class="r"><code>amid &lt;- augment(lmmid)
+sum(amid$.resid^2)</code></pre>
+<pre><code>## [1] 485.3</code></pre>
+<p><span class="math display">\[
+  SSE(midarm) = 485.3
+  \]</span> If we regress body fat on both midarm and thigh, then we obtain</p>
+<pre class="r"><code>lm_mid_thigh &lt;- lm(fat ~ midarm + thigh, data = body)
+lm_mid_thigh</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = fat ~ midarm + thigh, data = body)
+## 
+## Coefficients:
+## (Intercept)       midarm        thigh  
+##     -25.997        0.096        0.851</code></pre>
+<p>The estimated regression function is <span class="math display">\[
+  y = -26.00 + 0.10x_1 + 0.85x_2
+  \]</span> and the error sum of sqquare is</p>
+<pre class="r"><code>a_mt &lt;- augment(lm_mid_thigh)
+sum(a_mt$.resid^2)</code></pre>
+<pre><code>## [1] 111.1</code></pre>
+<ul>
+<li>Notice that the coefficient estimate for <code>midarm</code> changed between these two fits.</li>
+<li>Notice that the SSE decreased when we added thigh.</li>
+</ul></li>
+<li><p><strong>NOTE</strong>: The SSE will <strong>always</strong> decrease as you add more predictors (more accurately, it never increases). So, by itself, it is not a good indication of model quality, since it is not always better to add more predictors to a model.</p>
+<p><span class="math display">\[
+  SSE(X_1) \geq SSE(X_1, X_2) \geq SSE(X_1, X_2, X_3) \text{ etc...}
+  \]</span></p></li>
+<li><p>But looking at SSE reductions can tell us how much more variability can be explained by adding predictors.</p></li>
+<li><p>The <strong>extra sum of squares</strong> <span class="math display">\[
+  SSR(X_1|X_2) = SSE(X_1) - SSE(X_1, X_2)\\
+  SSR(X_2|X_1) = SSE(X_2) - SSE(X_1, X_2)\\
+  SSR(X_1, X_2|X_3) = SSE(X_3) - SSE(X_1, X_2, X_3)\\
+  \text{ etc...}
+  \]</span></p></li>
+<li><p>Recall: The regression sum of squares is how much the total sum of squares is reduced by including a covariate in the model. <span class="math display">\[
+  SSR(X_1) = SSTO - SSE(X_1)\\
+  SSR(X_2) = SSTO - SSE(X_2)\\
+  SSR(X_1, X_2) = SSTO - SSE(X_1, X_2)\\
+  etc...
+  \]</span> It is how much variability is accounted for by the regression model.</p>
+<p><img src="figs/ss.png" /> </p></li>
+<li><p>We can use this to show that the extra sum of squares is also how much the regression sum of squares improves</p>
+<p><span class="math display">\[
+  SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_1)\\
+  SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_2)\\
+  SSR(X_1, X_2|X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
+  \text{ etc...}
+  \]</span></p></li>
+<li><p>Proof: <span class="math display">\[\begin{align}
+  SSR(X_1|X_2) &amp;= SSE(X_1) - SSE(X_1, X_2)\\
+  &amp;= [SSTO - SSR(X_1)] - [SSTO - SSR(X_1, X_2)]\\
+  &amp;= SSR(X_1, X_2) - SSR(X_1).
+  \end{align}\]</span></p></li>
+<li><p><strong>Exercise</strong>: True/False and explain: The regression sum of squares never decreases as you include more covariates in a model.</p></li>
+<li><p><strong>Exercise</strong>: Express <span class="math inline">\(SSR(X_1, X_3 | X_2, X_4)\)</span> both in terms of error sums of squares and in terms of regression sums of squares.</p></li>
+<li><p>The total sum of squares can be decomposed using regression sum of squares, extra sum of squares, and error sum of squares as follows:</p>
+<p><span class="math display">\[
+  SSTO = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) + SSE(X_1, X_2, X_3)
+  \]</span> with the pattern continuing if more covariates are in the model.</p></li>
+<li><p>The order of covariates does not matter</p>
+<p><span class="math display">\[
+  SSTO = SSR(X_3) + SSR(X_2|X_3) + SSR(X_1|X_2, X_3) + SSE(X_1, X_2, X_3)
+  \]</span></p></li>
+<li><p>Many researchers will represent regression results in terms of this sum of squares decomposition.</p></li>
+<li><p>E.g. in R if you use the <code>anova()</code> function on the <code>lm</code> object, you get the decomposition</p>
+<table>
+<thead>
+<tr class="header">
+<th>SS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SSR(<span class="math inline">\(X_1\)</span>)</td>
+</tr>
+<tr class="even">
+<td>SSR(<span class="math inline">\(X_2\)</span>|<span class="math inline">\(X_1\)</span>)</td>
+</tr>
+<tr class="odd">
+<td>SSR(<span class="math inline">\(X_3\)</span>|<span class="math inline">\(X_2\)</span>,<span class="math inline">\(X_1\)</span>)</td>
+</tr>
+<tr class="even">
+<td>SSE(<span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
+anova(lm_all)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: fat
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)
+## triceps    1    352     352   57.28 1.1e-06
+## thigh      1     33      33    5.39   0.034
+## midarm     1     12      12    1.88   0.190
+## Residuals 16     98       6</code></pre></li>
+<li><p>In the above R output, if <span class="math inline">\(X_1\)</span> = triceps, <span class="math inline">\(X_2\)</span> = thigh, and <span class="math inline">\(X_3\)</span> = midarm, then we have</p>
+<ul>
+<li><span class="math inline">\(SSR(X_1) = 352\)</span></li>
+<li><span class="math inline">\(SSR(X_2|X_1) = 33\)</span></li>
+<li><span class="math inline">\(SSR(X_3|X_1, X_2) = 12\)</span></li>
+<li><span class="math inline">\(SSE = 98\)</span>.</li>
+</ul></li>
+<li><p>The SSTO is then the sum of these values: <span class="math inline">\(SSTO = 352 + 33 + 12 + 98 = 495\)</span>. We can verify this in R</p>
+<pre class="r"><code>## SSTO
+sum((body$fat - mean(body$fat))^2)</code></pre>
+<pre><code>## [1] 495.4</code></pre></li>
+<li><p>Showing the sum of squares in this pattern is called “Type I Sum of Squares”. Other researchers display the “Type II Sum of Squares”:</p>
+<table>
+<thead>
+<tr class="header">
+<th>SS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SSR(<span class="math inline">\(X_1\)</span>|<span class="math inline">\(X_2\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+</tr>
+<tr class="even">
+<td>SSR(<span class="math inline">\(X_2\)</span>|<span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+</tr>
+<tr class="odd">
+<td>SSR(<span class="math inline">\(X_3\)</span>|<span class="math inline">\(X_2\)</span>,<span class="math inline">\(X_1\)</span>)</td>
+</tr>
+<tr class="even">
+<td>SSE(<span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>The easiest way to get Type II Sum of Squares is through the <code>Anova()</code> function in the <code>{car}</code> package</p>
+<pre class="r"><code>library(car)
+Anova(lm_all)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: fat
+##           Sum Sq Df F value Pr(&gt;F)
+## triceps     12.7  1    2.07   0.17
+## thigh        7.5  1    1.22   0.28
+## midarm      11.5  1    1.88   0.19
+## Residuals   98.4 16</code></pre></li>
+</ul>
+</div>
+<div id="hypothesis-testing" class="section level1">
+<h1>Hypothesis Testing</h1>
+<ul>
+<li><p>Why am I torturing you with sums of squares?</p></li>
+<li><p>Sums of squares have two uses</p>
+<ol style="list-style-type: decimal">
+<li>Discussing proportionate decline in variability when you add a predictor.</li>
+<li>Hypothesis testing.</li>
+</ol></li>
+<li><p>E.g. “Adding tricep skinfold thickness decreased the sum of squares by 352, but adding in thigh only decreased it by an additional 33.”</p></li>
+<li><p>Whether this is a big or small reduction is completely context dependent.</p></li>
+<li><p>For hypothesis testing, suppose we are considering two <strong>nested</strong> models (null model is a subset of the alternative model)</p>
+<ul>
+<li><p><span class="math inline">\(H_0: Y_i = \beta_0 + \beta_1 X_{i1} + \cdots + \beta_qX_{i,q-1} + \epsilon_i\)</span></p></li>
+<li><p><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1 X_{i1} + \cdots + \beta_qX_{i,q-1} + \beta_{q}X_{i,q} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></p></li>
+</ul>
+<p>That is, the null model does not include <span class="math inline">\(X_{q},\ldots,X_{p-1}\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(SSE(R) = SSE(X_1,X_2,\ldots,X_q-1)\)</span> be the sum of squares under the <strong>reduced model</strong>.</p></li>
+<li><p>Let <span class="math inline">\(df_r = n - q\)</span> be the degrees of freedom of the reduced model. (sample size minus number of parameters)</p></li>
+<li><p>Let <span class="math inline">\(SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1}\)</span> be the sum of squares under the <strong>full model</strong>.</p></li>
+<li><p>Let <span class="math inline">\(df_f = n - p\)</span> be the degrees of freedom of the reduced model. (sample size minus number of parameters)</p></li>
+<li><p>The test statistic is <span class="math display">\[
+  F^* = \frac{[SSE(R) - SSE(F)] / (df_r - df_f)}{SSE(F) / df_f}
+  \]</span></p></li>
+<li><p>Under <span class="math inline">\(H_0\)</span>, we have <span class="math display">\[
+  F^* \sim F(df_r - df_f, df_f)
+  \]</span></p></li>
+<li><p>So we can obtain a <span class="math inline">\(p\)</span>-value via <span class="math inline">\(\text{qf}(F^*, df_r - df_f, df_f, \text{lower.tail = FALSE})\)</span>.</p>
+<p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>NOTE</strong>: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that <em>all</em> <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_p\)</span> are non-zero. So we can re-write the hypotheses as</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_q = \beta_{q+1} = \cdots = \beta_p = 0\)</span></li>
+<li><span class="math inline">\(H_A:\)</span> At least one of <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_p\)</span> is non-zero.</li>
+</ul></li>
+<li><p><strong>NOTE</strong>: We can re-write the <span class="math inline">\(F\)</span>-statistic in terms of extra sums of squares <span class="math display">\[
+  F^* = \frac{[SSR(X_q,X_{q+1},\ldots,X_{p-1}|X_1,X_2,\ldots,X_{q-1})] / (df_r - df_f)}{SSE(F) / df_f}
+  \]</span></p>
+<p>In which case, the **extra degrees of freedom$ is <span class="math inline">\(df_r - df_f\)</span>, which is the difference in the number of parameters in the full versus reduced model, <span class="math inline">\(p - q\)</span>.</p></li>
+</ul>
+</div>
+<div id="applications-of-f-test" class="section level1">
+<h1>Applications of <span class="math inline">\(F\)</span>-test</h1>
+<div id="overall-f-test" class="section level2">
+<h2>Overall <span class="math inline">\(F\)</span>-test</h2>
+<ul>
+<li><p>Consider the testing if at least one variable is associated with our response:</p></li>
+<li><p><span class="math inline">\(H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0\)</span></p></li>
+<li><p><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1,\beta_{2},\ldots,\beta_p\)</span></p></li>
+<li><p>Then under the null <span class="math display">\[
+  F^* \sim F(p-1, n - p)
+  \]</span></p></li>
+<li><p>In R, the overall <span class="math inline">\(F\)</span> test is done automatically and is included in the output of <code>glance()</code> from the <code>{broom}</code> package. It is the <code>p.value</code> term. The <code>statistic</code> term is <span class="math inline">\(F^*\)</span>.</p>
+<pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
+glance(lm_all)</code></pre>
+<pre><code>## # A tibble: 1 × 12
+##   r.squared adj.r.squared sigma statistic    p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.801         0.764  2.48      21.5 0.00000734     3  -44.3  98.6  104.
+## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
+<li><p>We can verify this manually</p>
+<pre class="r"><code>a_all &lt;- augment(lm_all)
+
+sse_f &lt;- sum(a_all$.resid^2)
+df_f &lt;- nrow(body) - 4 ## four parameters
+sse_r &lt;- sum((body$fat - mean(body$fat))^2)
+df_r &lt;- nrow(body) - 1 ## one parameter (beta_0)
+
+F_star &lt;- ((sse_r - sse_f) / (df_r - df_f)) / (sse_f / df_f)
+F_star</code></pre>
+<pre><code>## [1] 21.52</code></pre>
+<pre class="r"><code>pf(q = F_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 7.343e-06</code></pre></li>
+</ul>
+</div>
+<div id="f-test-for-one-variable" class="section level2">
+<h2><span class="math inline">\(F\)</span>-test for one variable</h2>
+<ul>
+<li>If we want to test whether we should include one more variable</li>
+</ul>
+</div>
+<div id="f-test-for-including-a-categorical-variable" class="section level2">
+<h2><span class="math inline">\(F\)</span>-test for including a categorical variable</h2>
+</div>
+<div id="f-test-for-lack-of-fit" class="section level2">
+<h2><span class="math inline">\(F\)</span>-test for lack of fit</h2>
 <ul>
 <li><p>If you have repeat observations at the same levels of predictor variables, then you can run a lack-of-fit test as before.</p></li>
 <li><p>NOTE: You need to have repeat observations where <em>all</em> predictor levels are equal. E.g. this design matrix has <em>no</em> repeat observations: <span class="math display">\[
@@ -381,6 +678,7 @@ div.tocify {
   \end{pmatrix}
   \]</span></p></li>
 </ul>
+</div>
 </div>
 
 

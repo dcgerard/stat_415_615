@@ -77,8 +77,11 @@ klippy::klippy()
     - `midarm`: Midarm circumference
     - `fat`: Body fat.
     
+    The goal is to predict body fat from the other variables. You can load these data into R using:
+    
     ```{r, message=FALSE}
     library(tidyverse)
+    library(broom)
     body <- tribble(~triceps, ~thigh, ~midarm, ~fat,
                     19.5, 43.1, 29.1, 11.9,
                     24.7, 49.8, 28.2, 22.8,
@@ -101,12 +104,275 @@ klippy::klippy()
                     22.7, 48.2, 27.1, 14.8,
                     25.2, 51.0, 27.5, 21.1)
     ```
+    
+    The if we regress body fat on midarm, we obtain
+    ```{r}
+    lmmid <- lm(fat ~ midarm, data = body)
+    lmmid
+    ```
+    The estimated regression function is
+    $$
+    y = 14.7 + 0.2x
+    $$
+    and the error sum of squares is
+    ```{r}
+    amid <- augment(lmmid)
+    sum(amid$.resid^2)
+    ```
+    $$
+    SSE(midarm) = 485.3
+    $$
+    If we regress body fat on both midarm and thigh, then we obtain
+    ```{r}
+    lm_mid_thigh <- lm(fat ~ midarm + thigh, data = body)
+    lm_mid_thigh
+    ```
+    The estimated regression function is
+    $$
+    y = -26.00 + 0.10x_1 + 0.85x_2
+    $$
+    and the error sum of sqquare is
+    ```{r}
+    a_mt <- augment(lm_mid_thigh)
+    sum(a_mt$.resid^2)
+    ```
+    - Notice that the coefficient estimate for `midarm` changed between these two fits.
+    - Notice that the SSE decreased when we added thigh.
+    
+- **NOTE**: The SSE will **always** decrease as you add more predictors (more accurately, it never increases). So, by itself, it is not a good indication of model quality, since it is not always better to add more predictors to a model.
+    
+    $$
+    SSE(X_1) \geq SSE(X_1, X_2) \geq SSE(X_1, X_2, X_3) \text{ etc...}
+    $$
+    
+- But looking at SSE reductions can tell us how much more variability can be explained by adding predictors.
 
 
+- The **extra sum of squares**
+    $$
+    SSR(X_1|X_2) = SSE(X_1) - SSE(X_1, X_2)\\
+    SSR(X_2|X_1) = SSE(X_2) - SSE(X_1, X_2)\\
+    SSR(X_1, X_2|X_3) = SSE(X_3) - SSE(X_1, X_2, X_3)\\
+    \text{ etc...}
+    $$
+    
+- Recall: The regression sum of squares is how much the total sum of squares is reduced by including a covariate in the model.
+    $$
+    SSR(X_1) = SSTO - SSE(X_1)\\
+    SSR(X_2) = SSTO - SSE(X_2)\\
+    SSR(X_1, X_2) = SSTO - SSE(X_1, X_2)\\
+    etc...
+    $$
+    It is how much variability is accounted for by the regression model.
+    
+    ![](./figs/ss.png)\ 
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(data = body, aes(x = thigh, y = fat)) +
+      geom_point() +
+      geom_smooth(method = "lm", se = FALSE) +
+      geom_hline(yintercept = mean(body$fat), color = "red") +
+      theme_classic() ->
+      pl
+    ## ggsave(filename = "./figs/ss.pdf", plot = pl)
+    ```
     
 
+- We can use this to show that the extra sum of squares is also how much the regression sum of squares improves
 
-# $F$-test for lack of fit
+    $$
+    SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_1)\\
+    SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_2)\\
+    SSR(X_1, X_2|X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
+    \text{ etc...}
+    $$
+
+- Proof:
+    \begin{align}
+    SSR(X_1|X_2) &= SSE(X_1) - SSE(X_1, X_2)\\
+    &= [SSTO - SSR(X_1)] - [SSTO - SSR(X_1, X_2)]\\
+    &= SSR(X_1, X_2) - SSR(X_1).
+    \end{align}
+
+- **Exercise**: True/False and explain: The regression sum of squares never decreases as you include more covariates in a model.
+    ```{block, eval = FALSE, echo = FALSE}
+    TRUE. SSTO is a constant and SSTO = SSR + SSE. So if SSE never increases, that means that SSR never decreases.
+    ```
+
+- **Exercise**: Express $SSR(X_1, X_3 | X_2, X_4)$ both in terms of error sums of squares and in terms of regression sums of squares.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $$
+    SSR(X_1, X_3|X_2, X_4) = SSE(X_2, X_4) - SSE(X_1, X_2, X_3, X_4)\\
+    SSR(X_1, X_3|X_2, X_4) = SSR(X_1, X_2, X_3, X_4) - SSR(X_2, X_4)\\
+    $$
+    ```
+    
+- The total sum of squares can be decomposed using regression sum of squares, extra sum of squares, and error sum of squares as follows:
+
+    $$
+    SSTO = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) + SSE(X_1, X_2, X_3)
+    $$
+    with the pattern continuing if more covariates are in the model.
+
+- The order of covariates does not matter
+
+    $$
+    SSTO = SSR(X_3) + SSR(X_2|X_3) + SSR(X_1|X_2, X_3) + SSE(X_1, X_2, X_3)
+    $$
+    
+- Many researchers will represent regression results in terms of this sum of squares decomposition.
+
+- E.g. in R if you use the `anova()` function on the `lm` object, you get the decomposition
+
+    | SS                       |
+    |--------------------------|
+    | SSR($X_1$)               |
+    | SSR($X_2$\|$X_1$)        |
+    | SSR($X_3$\|$X_2$,$X_1$)  |
+    | SSE($X_1$, $X_2$, $X_3$) |
+    
+    ```{r}
+    lm_all <- lm(fat ~ triceps + thigh + midarm, data = body)
+    anova(lm_all)
+    ```
+
+- In the above R output, if $X_1$ = triceps, $X_2$ = thigh, and $X_3$ = midarm, then we have
+    - $SSR(X_1) = 352$
+    - $SSR(X_2|X_1) = 33$
+    - $SSR(X_3|X_1, X_2) = 12$
+    - $SSE = 98$.
+    
+- The SSTO is then the sum of these values: $SSTO = 352 + 33 + 12 + 98 = 495$. We can verify this in R
+    ```{r}
+    ## SSTO
+    sum((body$fat - mean(body$fat))^2)
+    ```
+    
+- Showing the sum of squares in this pattern is called "Type I Sum of Squares". Other researchers display the "Type II Sum of Squares":
+
+    | SS                       |
+    |--------------------------|
+    | SSR($X_1$\|$X_2$, $X_3$) |
+    | SSR($X_2$\|$X_1$, $X_3$) |
+    | SSR($X_3$\|$X_2$,$X_1$)  |
+    | SSE($X_1$, $X_2$, $X_3$) |
+
+- The easiest way to get Type II Sum of Squares is through the `Anova()` function in the `{car}` package
+    ```{r, message = FALSE}
+    library(car)
+    Anova(lm_all)
+    ```
+
+# Hypothesis Testing
+
+- Why am I torturing you with sums of squares?
+
+- Sums of squares have two uses
+    1. Discussing proportionate decline in variability when you add a predictor.
+    2. Hypothesis testing.
+    
+- E.g. "Adding tricep skinfold thickness decreased the sum of squares by 352, but adding in thigh only decreased it by an additional 33."
+
+- Whether this is a big or small reduction is completely context dependent.
+
+- For hypothesis testing, suppose we are considering two **nested** models (null model is a subset of the alternative model)
+
+    - $H_0: Y_i = \beta_0 + \beta_1 X_{i1} + \cdots + \beta_qX_{i,q-1} + \epsilon_i$
+    
+    - $H_A: Y_i = \beta_0 + \beta_1 X_{i1} + \cdots + \beta_qX_{i,q-1} + \beta_{q}X_{i,q} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i$
+
+    That is, the null model does not include $X_{q},\ldots,X_{p-1}$.
+    
+- Let $SSE(R) = SSE(X_1,X_2,\ldots,X_q-1)$ be the sum of squares under the **reduced model**.
+
+- Let $df_r = n - q$ be the degrees of freedom of the reduced model. (sample size minus number of parameters)
+
+- Let $SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1}$ be the sum of squares under the **full model**.
+
+- Let $df_f = n - p$ be the degrees of freedom of the reduced model. (sample size minus number of parameters)
+
+- The test statistic is
+    $$
+    F^* = \frac{[SSE(R) - SSE(F)] / (df_r - df_f)}{SSE(F) / df_f}
+    $$
+    
+- Under $H_0$, we have
+    $$
+    F^* \sim F(df_r - df_f, df_f)
+    $$
+
+- So we can obtain a $p$-value via $\text{qf}(F^*, df_r - df_f, df_f, \text{lower.tail = FALSE})$.
+
+    ```{r, echo = FALSE}
+    library(latex2exp)
+    df <- tibble(x = seq(0, 10, length.out = 500)) %>%
+      mutate(y = df(x = x, df1 = 3, df2 = 10))
+    df_sub <- filter(df, x > 2.5)
+    ggplot(df, aes(x = x, y = y)) +
+      geom_line() +
+      theme_classic() +
+      xlab(TeX("$F^*$")) +
+      ylab("Density") +
+      geom_ribbon(data = df_sub, mapping = aes(ymin = 0, ymax = y), fill = "blue", alpha = 1/2) +
+      geom_vline(xintercept = 2.5, lty = 2, col = 2)
+    ```
+    
+- **NOTE**: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that *all* $\beta_q,\beta_{q+1},\ldots,\beta_p$ are non-zero. So we can re-write the hypotheses as
+    - $H_0: \beta_q = \beta_{q+1} = \cdots = \beta_p = 0$
+    - $H_A:$ At least one of $\beta_q,\beta_{q+1},\ldots,\beta_p$ is non-zero.
+    
+- **NOTE**: We can re-write the $F$-statistic in terms of extra sums of squares
+    $$
+    F^* = \frac{[SSR(X_q,X_{q+1},\ldots,X_{p-1}|X_1,X_2,\ldots,X_{q-1})] / (df_r - df_f)}{SSE(F) / df_f}
+    $$
+    
+    In which case, the **extra degrees of freedom$ is $df_r - df_f$, which is the difference in the number of parameters in the full versus reduced model, $p - q$.
+  
+  
+# Applications of $F$-test
+
+## Overall $F$-test
+
+- Consider the testing if at least one variable is associated with our response:
+- $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
+- $H_A:$ At least one $\beta_1,\beta_{2},\ldots,\beta_p$
+
+- Then under the null 
+    $$
+    F^* \sim F(p-1, n - p)
+    $$
+
+- In R, the overall $F$ test is done automatically and is included in the output of `glance()` from the `{broom}` package. It is the `p.value` term. The `statistic` term is $F^*$.
+
+    ```{r}
+    lm_all <- lm(fat ~ triceps + thigh + midarm, data = body)
+    glance(lm_all)
+    ```
+
+- We can verify this manually
+    ```{r}
+    a_all <- augment(lm_all)
+    
+    sse_f <- sum(a_all$.resid^2)
+    df_f <- nrow(body) - 4 ## four parameters
+    sse_r <- sum((body$fat - mean(body$fat))^2)
+    df_r <- nrow(body) - 1 ## one parameter (beta_0)
+    
+    F_star <- ((sse_r - sse_f) / (df_r - df_f)) / (sse_f / df_f)
+    F_star
+    pf(q = F_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)
+    ```
+
+## $F$-test for one variable
+
+- If we want to test whether we should include one more variable
+
+
+
+## $F$-test for including a categorical variable
+
+## $F$-test for lack of fit
 
 - If you have repeat observations at the same levels of predictor variables, then you can run a lack-of-fit test as before.
 
