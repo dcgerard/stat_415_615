@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-07" />
+<meta name="date" content="2021-09-14" />
 
 <title>Simple Linear Regression: Inference</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-07</h4>
+<h4 class="date">2021-09-14</h4>
 
 </div>
 
@@ -585,7 +585,7 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 ## 2 growth          3.06 6.10e- 4    0.988      5.13</code></pre></li>
 <li><p>A full interpretation might go something like this:</p>
 <blockquote>
-<p>We estimate that incumbants have 3.1% higher vote-share in years which experience 1% more growth (95% confidence interval of 1.6% higher to 4.6% higher). We have strong evidence that this association is not due to chance alone (<span class="math inline">\(p = 0.00061\)</span>, <span class="math inline">\(n = 16\)</span>).</p>
+<p>We estimate that incumbants tend to have 3.1% higher vote-share in years which experience 1% more growth (95% confidence interval of 1.6% higher to 4.6% higher). We have strong evidence that this association is not due to chance alone (<span class="math inline">\(p = 0.00061\)</span>, <span class="math inline">\(n = 16\)</span>).</p>
 </blockquote></li>
 <li><p><strong>Exercise</strong>: Make a plot of <code>qt(1 - alpha, 10)</code> from <code>alpha = 0.01</code> to <code>alpha = 0.1</code>. What does the the plot tell you about the width of confidence intervals as <code>alpha</code> increases?</p></li>
 <li><p><strong>Exercise</strong>: From the <code>mtcars</code> dataset, obtain the confidence interval for the slope parameter from a regression of <code>mpg</code> on <code>drat</code>.</p></li>
@@ -687,7 +687,7 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
 <ul>
 <li><p>What if, instead of estimating the mean at a given <span class="math inline">\(X_i\)</span>, we want to estimate the value of <strong>a single observational/experimental unit</strong> at <span class="math inline">\(X_i\)</span>.</p></li>
 <li><p><strong>Prediction</strong>: Estimating the value of a single experimental/observational unit.</p></li>
-<li><p>So “estimation” is reserved for parameters, and “prediction” is observed for unit values.</p></li>
+<li><p>So “estimation” is reserved for parameters, and “prediction” is reserved for unit values.</p></li>
 <li><p>In linear regression, the predicted value at <span class="math inline">\(X_i\)</span> <em>is the same</em> as the estimated mean at <span class="math inline">\(X_i\)</span>.</p>
 <p><span class="math display">\[
   \hat{Y}_{i(new)} = \hat{\beta}_0 + \hat{\beta}_1X_{i(new)}
@@ -712,7 +712,7 @@ select(t_hibbs, term, estimate, p.value, conf.low, conf.high)</code></pre>
   \]</span></p></li>
 <li><p>KEY IDEA: Variance of prediction = variance of estimated mean + error variance.</p></li>
 <li><p>The corresponding prediction interval is <span class="math display">\[
-  \hat{\beta}_0 + \hat{\beta}_1X_{i(new)} \pm \text{qt}(1 - \alpha/2, n-2)s^2(\text{pred})
+  \hat{\beta}_0 + \hat{\beta}_1X_{i(new)} \pm \text{qt}(1 - \alpha/2, n-2)s(\text{pred})
   \]</span></p></li>
 <li><p>Graphic for interpretation:</p>
 <p><img src="03_figs/pred_int.gif" /> </p></li>
@@ -972,10 +972,10 @@ Anova(mod = lmhibbs)</code></pre>
 ##           Sum Sq Df F value  Pr(&gt;F)
 ## growth       274  1    19.3 0.00061
 ## Residuals    198 14</code></pre></li>
-<li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <code>df_R</code>, <code>df_E</code>, <code>SSE</code>, <code>SSR</code>.</p></li>
+<li><p><strong>Exercise</strong>: From the output of <code>Anova()</code>, label each of the following (which can be found in the above table): <span class="math inline">\(df_R\)</span>, <span class="math inline">\(df_E\)</span>, <span class="math inline">\(SSE\)</span>, <span class="math inline">\(SSR\)</span>.</p></li>
 <li><p><strong>Exercise</strong>: Using the above ANOVA table, derive the MSE (the estimated variance).</p></li>
 <li><p>There exists an <code>anova()</code> function in R, and it produces the same results for simple linear regression, but it produces worse results for multiple linear regression.</p></li>
-<li><p>Use the <code>linearHypothesis()</code> function from the <code>{car}</code> package to run a general linear hypothesis.</p>
+<li><p>We can use the <code>linearHypothesis()</code> function from the <code>{car}</code> package to run a general linear hypothesis.</p>
 <pre class="r"><code>linearHypothesis(model = lmhibbs, &quot;growth = 0&quot;)</code></pre>
 <pre><code>## Linear hypothesis test
 ## 
@@ -988,7 +988,7 @@ Anova(mod = lmhibbs)</code></pre>
 ##   Res.Df RSS Df Sum of Sq    F  Pr(&gt;F)
 ## 1     15 472                          
 ## 2     14 198  1       274 19.3 0.00061</code></pre></li>
-<li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <code>df_R</code>, <code>df_E</code>, <code>df_{TO}</code>, <code>SSE</code>, <code>SSR</code>, <code>SSTO</code>.</p></li>
+<li><p><strong>Exercise</strong>: From the output of <code>linearHypothesis()</code>, label each of the following (which can be found in the above table): <span class="math inline">\(df_R\)</span>, <span class="math inline">\(df_E\)</span>, <span class="math inline">\(df_{TO}\)</span>, <span class="math inline">\(SSE\)</span>, <span class="math inline">\(SSR\)</span>, <span class="math inline">\(SSTO\)</span>.</p></li>
 <li><p>You can use <code>linearHypothesis()</code> to test for other values of <span class="math inline">\(\beta_1\)</span>. E.g. <span class="math inline">\(H_0: \beta_1 = 2\)</span> versus <span class="math inline">\(H_A: \beta_1 \neq 2\)</span>.</p>
 <pre class="r"><code>linearHypothesis(model = lmhibbs, hypothesis.matrix = &quot;growth = 2&quot;)</code></pre>
 <pre><code>## Linear hypothesis test

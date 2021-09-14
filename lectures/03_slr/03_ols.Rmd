@@ -538,7 +538,7 @@ saveGIF(expr = {
     $$
     What is the estimated mean incumband vote-share when the growth is 2\%?
     
-    ```{block, eval = FALSE}
+    ```{block, eval = FALSE, echo = FALSE}
     46.248 + 3.061 * 2 = 52.37\%
     ```
 
