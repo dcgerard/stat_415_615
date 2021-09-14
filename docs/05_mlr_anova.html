@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-13" />
+<meta name="date" content="2021-09-14" />
 
 <title>ANOVA View of Linear Models</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-13</h4>
+<h4 class="date">2021-09-14</h4>
 
 </div>
 
@@ -418,7 +418,7 @@ body &lt;- tribble(~triceps, ~thigh, ~midarm, ~fat,
                 30.2, 58.6, 24.6, 25.4,
                 22.7, 48.2, 27.1, 14.8,
                 25.2, 51.0, 27.5, 21.1)</code></pre>
-<p>The if we regress body fat on midarm, we obtain</p>
+<p>Then if we regress body fat on midarm, we obtain</p>
 <pre class="r"><code>lmmid &lt;- lm(fat ~ midarm, data = body)
 lmmid</code></pre>
 <pre><code>## 
@@ -540,7 +540,8 @@ anova(lm_all)</code></pre>
 <pre class="r"><code>## SSTO
 sum((body$fat - mean(body$fat))^2)</code></pre>
 <pre><code>## [1] 495.4</code></pre></li>
-<li><p>Showing the sum of squares in this pattern is called “Type I Sum of Squares”. Other researchers display the “Type II Sum of Squares”:</p>
+<li><p>Showing the sum of squares in this pattern is called “Type I Sum of Squares”.</p></li>
+<li><p>Other researchers display the “Type II Sum of Squares”:</p>
 <table>
 <thead>
 <tr class="header">
@@ -573,6 +574,8 @@ Anova(lm_all)</code></pre>
 ## thigh        7.5  1    1.22   0.28
 ## midarm      11.5  1    1.88   0.19
 ## Residuals   98.4 16</code></pre></li>
+<li><p><strong>Exercise</strong>: In the above output, using <span class="math inline">\(X_1\)</span> = triceps, <span class="math inline">\(X_2\)</span> = thigh, and <span class="math inline">\(X_3\)</span> = midarm, what is <span class="math inline">\(SSR(X_1|X_2, X_3)\)</span>, <span class="math inline">\(SSR(X_2|X_1, X_3)\)</span>, <span class="math inline">\(SSR(X_3|X_1, X_2)\)</span>, and <span class="math inline">\(SSE(X_1, X_2, X_3)\)</span>?</p></li>
+<li><p><strong>Exercise</strong>: Does the Type II sum of squares ANOVA table provide us with enough information to calculate SSTO?</p></li>
 </ul>
 </div>
 <div id="hypothesis-testing" class="section level1">
@@ -592,18 +595,23 @@ Anova(lm_all)</code></pre>
 <li><p><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1 X_{i1} + \cdots + \beta_qX_{i,q-1} + \beta_{q}X_{i,q} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\)</span></p></li>
 </ul>
 <p>That is, the null model does not include <span class="math inline">\(X_{q},\ldots,X_{p-1}\)</span>.</p></li>
-<li><p>Let <span class="math inline">\(SSE(R) = SSE(X_1,X_2,\ldots,X_q-1)\)</span> be the sum of squares under the <strong>reduced model</strong>.</p></li>
-<li><p>Let <span class="math inline">\(df_r = n - q\)</span> be the degrees of freedom of the reduced model. (sample size minus number of parameters)</p></li>
-<li><p>Let <span class="math inline">\(SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1}\)</span> be the sum of squares under the <strong>full model</strong>.</p></li>
-<li><p>Let <span class="math inline">\(df_f = n - p\)</span> be the degrees of freedom of the reduced model. (sample size minus number of parameters)</p></li>
+<li><p><strong>Exercise</strong>: What values of <span class="math inline">\(\beta_q, \beta_{q+1},\ldots,\beta_{p-1}\)</span> would turn the model under the alternative into the model under the null?</p></li>
+<li><p>Let <span class="math inline">\(SSE(R) = SSE(X_1,X_2,\ldots,X_{q-1})\)</span> be the sum of squares under the <strong>reduced model</strong>.</p></li>
+<li><p>Let <span class="math inline">\(df_r = n - q\)</span> be the degrees of freedom of the reduced model (sample size minus number of parameters).</p></li>
+<li><p>Let <span class="math inline">\(SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1})\)</span> be the sum of squares under the <strong>full model</strong>.</p></li>
+<li><p>Let <span class="math inline">\(df_f = n - p\)</span> be the degrees of freedom of the full model (sample size minus number of parameters).</p></li>
 <li><p>The test statistic is <span class="math display">\[
   F^* = \frac{[SSE(R) - SSE(F)] / (df_r - df_f)}{SSE(F) / df_f}
   \]</span></p></li>
 <li><p>Under <span class="math inline">\(H_0\)</span>, we have <span class="math display">\[
   F^* \sim F(df_r - df_f, df_f)
   \]</span></p></li>
+<li><p>Under <span class="math inline">\(H_A\)</span>, <span class="math inline">\(F^*\)</span> would not follow this distribution, and would be larger than expected.</p>
+<ul>
+<li>This is because the reduction in the error sums of squares (<span class="math inline">\(SSE(R) - SSE(F)\)</span>) would be larger than expected by chance alone.</li>
+</ul></li>
 <li><p>So we can obtain a <span class="math inline">\(p\)</span>-value via <span class="math inline">\(\text{qf}(F^*, df_r - df_f, df_f, \text{lower.tail = FALSE})\)</span>.</p>
-<p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-15-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>NOTE</strong>: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that <em>all</em> <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_p\)</span> are non-zero. So we can re-write the hypotheses as</p>
 <ul>
 <li><span class="math inline">\(H_0: \beta_q = \beta_{q+1} = \cdots = \beta_p = 0\)</span></li>
@@ -612,7 +620,7 @@ Anova(lm_all)</code></pre>
 <li><p><strong>NOTE</strong>: We can re-write the <span class="math inline">\(F\)</span>-statistic in terms of extra sums of squares <span class="math display">\[
   F^* = \frac{[SSR(X_q,X_{q+1},\ldots,X_{p-1}|X_1,X_2,\ldots,X_{q-1})] / (df_r - df_f)}{SSE(F) / df_f}
   \]</span></p>
-<p>In which case, the **extra degrees of freedom$ is <span class="math inline">\(df_r - df_f\)</span>, which is the difference in the number of parameters in the full versus reduced model, <span class="math inline">\(p - q\)</span>.</p></li>
+<p>In which case, the <strong>extra degrees of freedom</strong> is <span class="math inline">\(df_r - df_f\)</span>, which is the difference in the number of parameters in the full versus reduced model, <span class="math inline">\(p - q\)</span>.</p></li>
 </ul>
 </div>
 <div id="applications-of-f-test" class="section level1">
@@ -620,12 +628,17 @@ Anova(lm_all)</code></pre>
 <div id="overall-f-test" class="section level2">
 <h2>Overall <span class="math inline">\(F\)</span>-test</h2>
 <ul>
-<li><p>Consider the testing if at least one variable is associated with our response:</p></li>
-<li><p><span class="math inline">\(H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0\)</span></p></li>
-<li><p><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1,\beta_{2},\ldots,\beta_p\)</span></p></li>
+<li><p>Consider the testing if at least one variable is associated with our response:</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0\)</span></li>
+<li><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1,\beta_{2},\ldots,\beta_p\)</span></li>
+</ul></li>
 <li><p>Then under the null <span class="math display">\[
   F^* \sim F(p-1, n - p)
   \]</span></p></li>
+<li><p><strong>Exercise</strong>: What is the degrees of freedom of the reduced model?</p></li>
+<li><p><strong>Exercise</strong>: What is the degrees of freedom of the full model?</p></li>
+<li><p><strong>Exercise</strong>: What is the extra degrees of freedom?</p></li>
 <li><p>In R, the overall <span class="math inline">\(F\)</span> test is done automatically and is included in the output of <code>glance()</code> from the <code>{broom}</code> package. It is the <code>p.value</code> term. The <code>statistic</code> term is <span class="math inline">\(F^*\)</span>.</p>
 <pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 glance(lm_all)</code></pre>
@@ -652,11 +665,131 @@ F_star</code></pre>
 <div id="f-test-for-one-variable" class="section level2">
 <h2><span class="math inline">\(F\)</span>-test for one variable</h2>
 <ul>
-<li>If we want to test whether we should include one more variable</li>
+<li><p>If we want to test whether we should include one more variable in the model, we would consider the hypotheses</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_k = 0\)</span></li>
+<li><span class="math inline">\(H_A: \beta_k \neq 0\)</span>.</li>
+</ul></li>
+<li><p>If there are <span class="math inline">\(p-1\)</span> variables in the full model, then the full degrees of freedom would be <span class="math inline">\(df_f = n - p\)</span>.</p></li>
+<li><p>The degrees of freedom of the reduced model would be <span class="math inline">\(df_r = n - (p - 1) = n - p + 1\)</span>.</p></li>
+<li><p>The extra degrees of freedom would be <span class="math inline">\((n - p + 1) - (n - p) = n - p + 1 - n + p = 1\)</span>. This is the number of parameters different between the two models.</p></li>
+<li><p><strong>Exercise</strong>: Suppose we have three variables and we are testing if <span class="math inline">\(\beta_2\)</span> should be 0. Write out the full and reduced models.</p></li>
+<li><p>Thus, the we have under the null that <span class="math display">\[
+  F^* \sim F(1, n - p)
+  \]</span></p></li>
+<li><p>In R, you can obtain the result of all of these tests using <code>Anova()</code> from the <code>{car}</code> package.</p>
+<pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
+Anova(lm_all)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: fat
+##           Sum Sq Df F value Pr(&gt;F)
+## triceps     12.7  1    2.07   0.17
+## thigh        7.5  1    1.22   0.28
+## midarm      11.5  1    1.88   0.19
+## Residuals   98.4 16</code></pre></li>
+<li><p>Let’s verify one of these manually.</p>
+<ul>
+<li><p>First, we’ll fit a reduced model without <code>triceps</code></p>
+<pre class="r"><code>lm_tm &lt;- lm(fat ~ thigh + midarm, data = body)</code></pre></li>
+<li><p>Now, let’s get the sums of squares and degrees of freedom.</p>
+<pre class="r"><code>a_full &lt;- augment(lm_all)
+a_red &lt;- augment(lm_tm)
+
+sse_full &lt;- sum(a_full$.resid^2)
+sse_red &lt;- sum(a_red$.resid^2)
+df_full &lt;- nrow(body) - 4
+df_red &lt;- nrow(body) - 3
+
+f_star &lt;- ((sse_red - sse_full) / (df_red - df_full)) / (sse_full / df_full)
+f_star</code></pre>
+<pre><code>## [1] 2.066</code></pre>
+<pre class="r"><code>pf(q = f_star, df1 = df_red - df_full, df2 = df_full, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 0.1699</code></pre></li>
+</ul></li>
+<li><p>Recall, we already came up with a way to test against the null of <span class="math inline">\(H_0: \beta_k = 0\)</span> using <span class="math inline">\(t\)</span>-statistics.</p>
+<pre class="r"><code>tidy(lm_all)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   117.       99.8       1.17   0.258
+## 2 triceps         4.33      3.02      1.44   0.170
+## 3 thigh          -2.86      2.58     -1.11   0.285
+## 4 midarm         -2.19      1.60     -1.37   0.190</code></pre></li>
+<li><p>It turns out that using the <span class="math inline">\(F\)</span>-test and the <span class="math inline">\(t\)</span>-test are <em>equivalent</em>. So no need to worry about which one to use.</p></li>
 </ul>
 </div>
 <div id="f-test-for-including-a-categorical-variable" class="section level2">
 <h2><span class="math inline">\(F\)</span>-test for including a categorical variable</h2>
+<ul>
+<li><p>We will use the earnings data for this example, which you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and download from <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a></p>
+<pre class="r"><code>earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earnings.csv&quot;)</code></pre></li>
+<li><p>We will consider fitting a model of log-earnings on ethnicity and height.</p>
+<pre class="r"><code>earnings &lt;- mutate(earnings, log_earn = log(earn))
+earnings &lt;- select(earnings, log_earn, ethnicity, height)
+earnings &lt;- filter(earnings, is.finite(log_earn))
+glimpse(earnings)</code></pre>
+<pre><code>## Rows: 1,629
+## Columns: 3
+## $ log_earn  &lt;dbl&gt; 10.820, 11.002, 10.309, 10.127, 10.820, 11.035, 10.840, 9.10…
+## $ ethnicity &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Other&quot;, &quot;Black&quot;, &quot;White…
+## $ height    &lt;dbl&gt; 74, 66, 64, 65, 63, 68, 63, 64, 62, 73, 72, 72, 72, 70, 68, …</code></pre></li>
+<li><p>Recall that we can encode a categorical variable with <span class="math inline">\(c\)</span> classes in terms of <span class="math inline">\(c-1\)</span> indicator variables.</p></li>
+<li><p>For example, the variable <code>ethnicity</code> with <span class="math inline">\(c = 4\)</span> values</p>
+<pre><code>## [1] &quot;White&quot;    &quot;Other&quot;    &quot;Black&quot;    &quot;Hispanic&quot;</code></pre>
+<p>can be encoded with with variables</p>
+<pre><code>## # A tibble: 4 × 5
+##   `(Intercept)` ethnicityHispanic ethnicityOther ethnicityWhite race    
+##           &lt;dbl&gt;             &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;   
+## 1             1                 0              0              1 White   
+## 2             1                 0              1              0 Other   
+## 3             1                 0              0              0 Black   
+## 4             1                 1              0              0 Hispanic</code></pre></li>
+<li><p>That is, black individuals are coded <span class="math inline">\(X_1 = X_2 = X_3 = 0\)</span>, hispanic individuals are coded as <span class="math inline">\(X_1 = 1\)</span> and <span class="math inline">\(X_2 = X_3 = 0\)</span>, white individuals are coded as <span class="math inline">\(X_3 = 1\)</span> and <span class="math inline">\(X_1 = X_2 = 0\)</span>, and other individuals are coded as <span class="math inline">\(X_2 = 1\)</span> and <span class="math inline">\(X_1 = X_3 = 0\)</span>.</p></li>
+<li><p>If we also include <span class="math inline">\(X_4\)</span> = height, then we can test for whether or not to include ethnicity in the model by comparing the two models</p>
+<ul>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 + \beta_4 X_{i4} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \beta_4 X_{i4} + \epsilon_i\)</span></li>
+</ul></li>
+<li><p>This is exactly what an <span class="math inline">\(F\)</span>-test is useful for.</p></li>
+<li><p>The <span class="math inline">\(df_f\)</span> in this case is <span class="math inline">\(n-5\)</span> while the <span class="math inline">\(df_r\)</span> is <span class="math inline">\(n-2\)</span>, so the <span class="math inline">\(df_{extra}\)</span> is <span class="math inline">\((n-2) - (n-5) = 3\)</span>.</p></li>
+<li><p>We compare the resulting <span class="math inline">\(F^*\)</span> to a <span class="math inline">\(F(3, n-5)\)</span> distribution to obtain the <span class="math inline">\(p\)</span>-value.</p></li>
+<li><p>In R, when you use a categorical variable in <code>lm()</code>, it will automatically convert the variable to indicators.</p>
+<pre class="r"><code>lm_earn &lt;- lm(log_earn ~ ethnicity + height, data = earnings)
+tidy(lm_earn)</code></pre>
+<pre><code>## # A tibble: 5 × 5
+##   term              estimate std.error statistic  p.value
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)         5.82     0.380      15.3   1.52e-49
+## 2 ethnicityHispanic  -0.0315   0.114      -0.277 7.82e- 1
+## 3 ethnicityOther      0.244    0.165       1.48  1.38e- 1
+## 4 ethnicityWhite      0.184    0.0719      2.56  1.05e- 2
+## 5 height              0.0561   0.00563     9.96  9.89e-23</code></pre></li>
+<li><p>Notice that the output returns only the <span class="math inline">\(p\)</span>-values for tests of whether to include each indicator variable. This is rarely helpful. Use <code>Anova()</code> from the <code>{car}</code> package to obtain the <span class="math inline">\(p\)</span>-value from the <span class="math inline">\(F\)</span>-test of whether to include the ethnicity variable at all.</p>
+<pre class="r"><code>Anova(lm_earn)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: log_earn
+##           Sum Sq   Df F value Pr(&gt;F)
+## ethnicity      9    3    3.74  0.011
+## height        76    1   99.24 &lt;2e-16
+## Residuals   1243 1624</code></pre></li>
+<li><p>We can verify this calculation in R</p>
+<pre class="r"><code>lm_earn_red &lt;- lm(log_earn ~ height, data = earnings)
+a_full &lt;- augment(lm_earn)
+a_red &lt;- augment(lm_earn_red)
+
+sse_full &lt;- sum(a_full$.resid^2)
+sse_red &lt;- sum(a_red$.resid^2)
+df_full &lt;- nrow(earnings) - 5
+df_red &lt;- nrow(earnings) - 2
+
+f_star &lt;- ((sse_red - sse_full) / (df_red - df_full)) / (sse_full / df_full)
+f_star</code></pre>
+<pre><code>## [1] 3.738</code></pre>
+<pre class="r"><code>pf(q = f_star, df1 = df_red - df_full, df2 = df_full, lower.tail = FALSE)</code></pre>
+<pre><code>## [1] 0.01079</code></pre></li>
+</ul>
 </div>
 <div id="f-test-for-lack-of-fit" class="section level2">
 <h2><span class="math inline">\(F\)</span>-test for lack of fit</h2>
@@ -677,8 +810,32 @@ F_star</code></pre>
   1 &amp; 43 &amp; 13
   \end{pmatrix}
   \]</span></p></li>
+<li><p>Typically, you only have repeat observations like this in a controlled experiment.</p></li>
+<li><p>It is nice to have such repeat observations specifically to test the adequacy of the linear model using an <span class="math inline">\(F\)</span>-test lack-of-fit.</p></li>
 </ul>
 </div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<ul>
+<li><p>If you have a full model and reduced model, which is a <strong>submodel</strong> of the full model (very important), then you can run an <span class="math inline">\(F\)</span>-test with the null hypothesis being the reduced model.</p></li>
+<li><p>The degrees of freedom for each model is the sample size minus the number of parameters in each model.</p></li>
+<li><p>We calculate an <span class="math inline">\(F\)</span>-statistic: <span class="math display">\[
+  F^* = \frac{[SSE(R) - SSE(F)] / (df_r - df_f)}{SSE(F) / df_f}
+  \]</span></p></li>
+<li><p>Under <span class="math inline">\(H_0\)</span> (the reduced model), the <span class="math inline">\(F^*\)</span> follows an <span class="math inline">\(F(df_r - df_f, df_f)\)</span> distribution.</p></li>
+<li><p>Larger values of <span class="math inline">\(F^*\)</span> provide evidence against the null, since then there is a bigger decline in the SSE between models than expected by chance alone.</p></li>
+<li><p>The <span class="math inline">\(F\)</span>-test encompases many situations as special cases</p>
+<ul>
+<li>Overall <span class="math inline">\(F\)</span>-test. Use <code>glance()</code> from the <code>{broom}</code> package.</li>
+<li><span class="math inline">\(F\)</span>-test for one predictor. Use <code>Anova()</code> from the <code>{car}</code> package and full model fit.</li>
+<li><span class="math inline">\(F\)</span>-test for one categorical variable. Use <code>Anova()</code> from the <code>{car}</code> package on full model fit.</li>
+<li><span class="math inline">\(F\)</span>-test lack-of-fit. Fit both models, use <code>Anova()</code> from the <code>{car}</code> package.</li>
+</ul></li>
+</ul>
+</div>
+<div id="exercise" class="section level1">
+<h1>Exercise</h1>
 </div>
 
 

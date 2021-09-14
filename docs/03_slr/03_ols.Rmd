@@ -331,7 +331,7 @@ saveGIF(expr = {
 
 - Idea: Try to get $Y_i$  as close to its mean. So we want each $Y_i - (\beta_0 + \beta_1 X_i)$ to be close to 0.
 
-- To make all of these differences on average close to zero, consider minimizing the $sum of squares$:
+- To make all of these differences on average close to zero, consider minimizing the *sum of squares*:
 
     $$
     \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
@@ -538,7 +538,7 @@ saveGIF(expr = {
     $$
     What is the estimated mean incumband vote-share when the growth is 2\%?
     
-    ```{block, eval = FALSE}
+    ```{block, eval = FALSE, echo = FALSE}
     46.248 + 3.061 * 2 = 52.37\%
     ```
 

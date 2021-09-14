@@ -1,5 +1,5 @@
 ---
-title: "MLR III: Practical Considerations"
+title: "MLR: Practical Considerations"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:  
@@ -51,6 +51,12 @@ klippy::klippy()
 - Use standard deviations to guide your choice of scale. Roughly, 68\% of observations will be within 1 standard deviation of the mean, and so choosing your predictor on the order standard deviations (so within a magnitude of the SD) makes coefficients more interpretable.
 
 # Multicollinearity
+
+## Be careful about comparisons
+
+- Sometimes, no data points exist that are one unit larger $X_1$ but the same $X_2$, because of multicollinearity. Thus, this interpretation is suspect. 
+
+- Multicollinearity therefore also messes with interpretation.
 
 # Practical versus statistical significance
 

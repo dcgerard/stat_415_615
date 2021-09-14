@@ -201,6 +201,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `patients`: Average number of patients in hospital per day during study period.
     - `nurses`: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).
     - `facilities`: Percent of 35 potential facilities and services that are provided by the hospital.
+    
+# Textile Data
+
+- [textile.csv](./data/textile.csv): These data from @shadid2010study measures the strength to resist breakage of knited fabric across conditions of length and yarn count. Variables include:
+    - `count`: Yarn count (thickness of the yarn) (g/km).
+    - `length`: Stitch length (mm).
+    - `strength`: Bursting strength of the fabric against a multidirectional flow of pressure (100[kpa](https://en.wikipedia.org/wiki/Pascal_(unit))).
 
 # University Admissions
 

@@ -2,6 +2,7 @@
 title: "ANOVA View of Linear Models"
 author: "David Gerard"
 date: "`r Sys.Date()`"
+bibliography: "../data.bib"
 output:  
   html_document:
     toc: true
@@ -105,7 +106,7 @@ klippy::klippy()
                     25.2, 51.0, 27.5, 21.1)
     ```
     
-    The if we regress body fat on midarm, we obtain
+    Then if we regress body fat on midarm, we obtain
     ```{r}
     lmmid <- lm(fat ~ midarm, data = body)
     lmmid
@@ -249,7 +250,9 @@ klippy::klippy()
     sum((body$fat - mean(body$fat))^2)
     ```
     
-- Showing the sum of squares in this pattern is called "Type I Sum of Squares". Other researchers display the "Type II Sum of Squares":
+- Showing the sum of squares in this pattern is called "Type I Sum of Squares". 
+
+- Other researchers display the "Type II Sum of Squares":
 
     | SS                       |
     |--------------------------|
@@ -263,6 +266,21 @@ klippy::klippy()
     library(car)
     Anova(lm_all)
     ```
+    
+- **Exercise**: In the above output, using $X_1$ = triceps, $X_2$ = thigh, and $X_3$ = midarm, what is $SSR(X_1|X_2, X_3)$, $SSR(X_2|X_1, X_3)$, $SSR(X_3|X_1, X_2)$, and $SSE(X_1, X_2, X_3)$?
+    ```{block, eval = FALSE, echo = FALSE}
+    - $SSR(X_1|X_2, X_3)$ = 12.7
+    - $SSR(X_2|X_1, X_3)$ = 7.5
+    - $SSR(X_3|X_1, X_2)$ = 11.5
+    - $SSE(X_1, X_2, X_3)$ = 98.4
+    ```
+
+
+- **Exercise**: Does the Type II sum of squares ANOVA table provide us with enough information to calculate SSTO?
+    ```{block, eval = FALSE, echo = FALSE}
+    No. It only gives information on conditionally adding each covariate, along with the SSE of using all three covariates. It does not give us marginal information on any of the covariates.
+    ```
+
 
 # Hypothesis Testing
 
@@ -284,13 +302,19 @@ klippy::klippy()
 
     That is, the null model does not include $X_{q},\ldots,X_{p-1}$.
     
-- Let $SSE(R) = SSE(X_1,X_2,\ldots,X_q-1)$ be the sum of squares under the **reduced model**.
+- **Exercise**: What values of $\beta_q, \beta_{q+1},\ldots,\beta_{p-1}$ would turn the model under the alternative into the model under the null?
 
-- Let $df_r = n - q$ be the degrees of freedom of the reduced model. (sample size minus number of parameters)
+    ```{block, eval = FALSE, echo = FALSE}
+    Set them all to 0.
+    ```
+    
+- Let $SSE(R) = SSE(X_1,X_2,\ldots,X_{q-1})$ be the sum of squares under the **reduced model**.
 
-- Let $SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1}$ be the sum of squares under the **full model**.
+- Let $df_r = n - q$ be the degrees of freedom of the reduced model (sample size minus number of parameters).
 
-- Let $df_f = n - p$ be the degrees of freedom of the reduced model. (sample size minus number of parameters)
+- Let $SSE(F) = SSE(X_1,X_2,\ldots,X_{p-1})$ be the sum of squares under the **full model**.
+
+- Let $df_f = n - p$ be the degrees of freedom of the full model (sample size minus number of parameters).
 
 - The test statistic is
     $$
@@ -301,6 +325,9 @@ klippy::klippy()
     $$
     F^* \sim F(df_r - df_f, df_f)
     $$
+    
+- Under $H_A$, $F^*$ would not follow this distribution, and would be larger than expected.
+    - This is because the reduction in the error sums of squares ($SSE(R) - SSE(F)$) would be larger than expected by chance alone.
 
 - So we can obtain a $p$-value via $\text{qf}(F^*, df_r - df_f, df_f, \text{lower.tail = FALSE})$.
 
@@ -327,7 +354,7 @@ klippy::klippy()
     F^* = \frac{[SSR(X_q,X_{q+1},\ldots,X_{p-1}|X_1,X_2,\ldots,X_{q-1})] / (df_r - df_f)}{SSE(F) / df_f}
     $$
     
-    In which case, the **extra degrees of freedom$ is $df_r - df_f$, which is the difference in the number of parameters in the full versus reduced model, $p - q$.
+    In which case, the **extra degrees of freedom** is $df_r - df_f$, which is the difference in the number of parameters in the full versus reduced model, $p - q$.
   
   
 # Applications of $F$-test
@@ -335,13 +362,30 @@ klippy::klippy()
 ## Overall $F$-test
 
 - Consider the testing if at least one variable is associated with our response:
-- $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
-- $H_A:$ At least one $\beta_1,\beta_{2},\ldots,\beta_p$
+    - $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
+    - $H_A:$ At least one $\beta_1,\beta_{2},\ldots,\beta_p$
 
 - Then under the null 
     $$
     F^* \sim F(p-1, n - p)
     $$
+    
+- **Exercise**: What is the degrees of freedom of the reduced model?
+    ```{block, eval = FALSE, echo = FALSE}
+    $n - 1$. There is only one parameter in the reduced model ($\beta_0$).
+    ```
+
+- **Exercise**: What is the degrees of freedom of the full model?
+    ```{block, eval = FALSE, echo = FALSE}
+    $n - p$. There are $p$ parameters in the full model.
+    ```
+    
+- **Exercise**: What is the extra degrees of freedom?
+    ```{block, eval = FALSE, echo = FALSE}
+    This is the difference in the degrees of freedom of the full and reduced models. So
+    
+    $(n - 1) - (n - p) = n - 1 - n + p = p - 1$.
+    ```
 
 - In R, the overall $F$ test is done automatically and is included in the output of `glance()` from the `{broom}` package. It is the `p.value` term. The `statistic` term is $F^*$.
 
@@ -366,11 +410,132 @@ klippy::klippy()
 
 ## $F$-test for one variable
 
-- If we want to test whether we should include one more variable
+- If we want to test whether we should include one more variable in the model, we would consider the hypotheses
+    - $H_0: \beta_k = 0$
+    - $H_A: \beta_k \neq 0$.
+    
+- If there are $p-1$ variables in the full model, then the full degrees of freedom would be $df_f = n - p$.
 
+- The degrees of freedom of the reduced model would be $df_r = n - (p - 1) = n - p + 1$.
 
+- The extra degrees of freedom would be $(n - p + 1) - (n - p) = n - p + 1 - n + p = 1$. This is the number of parameters different between the two models.
+
+- **Exercise**: Suppose we have three variables and we are testing if $\beta_2$ should be 0. Write out the full and reduced models.
+    ```{block, eval = FALSE, echo = FALSE}
+    - Reduced: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_3 X_{i3} + \epsilon_i$
+    - Full: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i$
+    ```
+
+- Thus, the we have under the null that
+    $$
+    F^* \sim F(1, n - p)
+    $$
+- In R, you can obtain the result of all of these tests using `Anova()` from the `{car}` package.
+    ```{r}
+    lm_all <- lm(fat ~ triceps + thigh + midarm, data = body)
+    Anova(lm_all)
+    ```
+
+- Let's verify one of these manually. 
+    - First, we'll fit a reduced model without `triceps`
+        ```{r}
+        lm_tm <- lm(fat ~ thigh + midarm, data = body)
+        ```
+    - Now, let's get the sums of squares and degrees of freedom.
+        ```{r}
+        a_full <- augment(lm_all)
+        a_red <- augment(lm_tm)
+        
+        sse_full <- sum(a_full$.resid^2)
+        sse_red <- sum(a_red$.resid^2)
+        df_full <- nrow(body) - 4
+        df_red <- nrow(body) - 3
+        
+        f_star <- ((sse_red - sse_full) / (df_red - df_full)) / (sse_full / df_full)
+        f_star
+        pf(q = f_star, df1 = df_red - df_full, df2 = df_full, lower.tail = FALSE)
+        ```
+    
+- Recall, we already came up with a way to test against the null of $H_0: \beta_k = 0$ using $t$-statistics.
+    ```{r}
+    tidy(lm_all)
+    ```
+
+- It turns out that using the $F$-test and the $t$-test are *equivalent*. So no need to worry about which one to use.
 
 ## $F$-test for including a categorical variable
+
+- We will use the earnings data for this example, which you can read about [here](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data) and download from [here](https://dcgerard.github.io/stat_415_615/data/earnings.csv)
+
+    ```{r, message=FALSE}
+    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
+    ```
+
+- We will consider fitting a model of log-earnings on ethnicity and height.
+
+    ```{r}
+    earnings <- mutate(earnings, log_earn = log(earn))
+    earnings <- select(earnings, log_earn, ethnicity, height)
+    earnings <- filter(earnings, is.finite(log_earn))
+    glimpse(earnings)
+    ```
+
+- Recall that we can encode a categorical variable with $c$ classes in terms of $c-1$ indicator variables.
+
+- For example, the variable `ethnicity` with $c = 4$ values
+    ```{r, echo = FALSE}
+    unique(earnings$ethnicity)
+    ```
+    can be encoded with with variables
+    ```{r, echo = FALSE}
+    earnings %>%
+      select(ethnicity) %>%
+      distinct() %>%
+      model.matrix(~ethnicity, data = .) %>%
+      as_tibble() %>%
+      mutate(race = unique(earnings$ethnicity))
+    ```
+    
+- That is, black individuals are coded $X_1 = X_2 = X_3 = 0$, hispanic individuals are coded as $X_1 = 1$ and $X_2 = X_3 = 0$, white individuals are coded as $X_3 = 1$ and $X_1 = X_2 = 0$, and other individuals are coded as $X_2 = 1$ and $X_1 = X_3 = 0$.
+
+- If we also include $X_4$ = height, then we can test for whether or not to include ethnicity in the model by comparing the two models
+    - $H_0: Y_i = \beta_0 + \beta_4 X_{i4} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \beta_4 X_{i4} + \epsilon_i$
+    
+- This is exactly what an $F$-test is useful for.
+
+- The $df_f$ in this case is $n-5$ while the $df_r$ is $n-2$, so the $df_{extra}$ is $(n-2) - (n-5) = 3$.
+
+- We compare the resulting $F^*$ to a $F(3, n-5)$ distribution to obtain the $p$-value.
+
+- In R, when you use a categorical variable in `lm()`, it will automatically convert the variable to indicators.
+
+    ```{r}
+    lm_earn <- lm(log_earn ~ ethnicity + height, data = earnings)
+    tidy(lm_earn)
+    ```
+
+- Notice that the output returns only the $p$-values for tests of whether to include each indicator variable. This is rarely helpful. Use `Anova()` from the `{car}` package to obtain the $p$-value from the $F$-test of whether to include the ethnicity variable at all.
+
+    ```{r}
+    Anova(lm_earn)
+    ```
+
+- We can verify this calculation in R
+    ```{r}
+    lm_earn_red <- lm(log_earn ~ height, data = earnings)
+    a_full <- augment(lm_earn)
+    a_red <- augment(lm_earn_red)
+    
+    sse_full <- sum(a_full$.resid^2)
+    sse_red <- sum(a_red$.resid^2)
+    df_full <- nrow(earnings) - 5
+    df_red <- nrow(earnings) - 2
+    
+    f_star <- ((sse_red - sse_full) / (df_red - df_full)) / (sse_full / df_full)
+    f_star
+    pf(q = f_star, df1 = df_red - df_full, df2 = df_full, lower.tail = FALSE)
+    ```
 
 ## $F$-test for lack of fit
 
@@ -394,3 +559,38 @@ klippy::klippy()
     1 & 43 & 13
     \end{pmatrix}
     $$
+
+- Typically, you only have repeat observations like this in a controlled experiment. 
+
+- It is nice to have such repeat observations specifically to test the adequacy of the linear model using an $F$-test lack-of-fit.
+
+- To demonstrate this test, consider the textile strength from @shadid2010study, which you can read about [here] and download from [here]
+    
+
+
+
+# Summary
+
+- If you have a full model and reduced model, which is a **submodel** of the full model (very important), then you can run an $F$-test with the null hypothesis being the reduced model.
+
+- The degrees of freedom for each model is the sample size minus the number of parameters in each model.
+
+- We calculate an $F$-statistic:
+    $$
+    F^* = \frac{[SSE(R) - SSE(F)] / (df_r - df_f)}{SSE(F) / df_f}
+    $$
+
+- Under $H_0$ (the reduced model), the $F^*$ follows an $F(df_r - df_f, df_f)$ distribution. 
+
+- Larger values of $F^*$ provide evidence against the null, since then there is a bigger decline in the SSE between models than expected by chance alone.
+
+- The $F$-test encompases many situations as special cases
+    - Overall $F$-test. Use `glance()` from the `{broom}` package.
+    - $F$-test for one predictor. Use `Anova()` from the `{car}` package and full model fit.
+    - $F$-test for one categorical variable. Use `Anova()` from the `{car}` package on full model fit.
+    - $F$-test lack-of-fit. Fit both models, use `Anova()` from the `{car}` package.
+
+# Exercise
+
+
+# References

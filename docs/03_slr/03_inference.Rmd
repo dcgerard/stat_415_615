@@ -361,7 +361,7 @@ klippy::klippy()
 
 - A full interpretation might go something like this:
 
-    > We estimate that incumbants have 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
+    > We estimate that incumbants tend to have 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
     
 - **Exercise**: Make a plot of `qt(1 - alpha, 10)` from `alpha = 0.01` to `alpha = 0.1`. What does the the plot tell you about the width of confidence intervals as `alpha` increases?
 
@@ -508,7 +508,7 @@ We will go through these three intervals in turn.
 
 - **Prediction**: Estimating the value of a single experimental/observational unit.
 
-- So "estimation" is reserved for parameters, and "prediction" is observed for unit values.
+- So "estimation" is reserved for parameters, and "prediction" is reserved for unit values.
 
 - In linear regression, the predicted value at $X_i$ *is the same* as the estimated mean at $X_i$.
 
@@ -564,7 +564,7 @@ We will go through these three intervals in turn.
     
 - The corresponding prediction interval is
     $$
-    \hat{\beta}_0 + \hat{\beta}_1X_{i(new)} \pm \text{qt}(1 - \alpha/2, n-2)s^2(\text{pred})
+    \hat{\beta}_0 + \hat{\beta}_1X_{i(new)} \pm \text{qt}(1 - \alpha/2, n-2)s(\text{pred})
     $$
 
 - Graphic for interpretation: 
@@ -942,7 +942,7 @@ $$
     Anova(mod = lmhibbs)
     ```
 
-- **Exercise**: From the output of `linearHypothesis()`, label each of the following (which can be found in the above table): `df_R`, `df_E`, `SSE`, `SSR`.
+- **Exercise**: From the output of `Anova()`, label each of the following (which can be found in the above table): $df_R$, $df_E$, $SSE$, $SSR$.
 
 ```{block, eval = FALSE, echo = FALSE}
           Sum Sq Df F value  Pr(>F)
@@ -960,13 +960,13 @@ Residuals    SSE  dfE
 
 - There exists an `anova()` function in R, and it produces the same results for simple linear regression, but it produces worse results for multiple linear regression.
 
-- Use the `linearHypothesis()` function from the `{car}` package to run a general linear hypothesis.
+- We can use the `linearHypothesis()` function from the `{car}` package to run a general linear hypothesis.
 
     ```{r, message = FALSE}
     linearHypothesis(model = lmhibbs, "growth = 0")
     ```
 
-- **Exercise**: From the output of `linearHypothesis()`, label each of the following (which can be found in the above table): `df_R`, `df_E`, `df_{TO}`, `SSE`, `SSR`, `SSTO`.
+- **Exercise**: From the output of `linearHypothesis()`, label each of the following (which can be found in the above table): $df_R$, $df_E$, $df_{TO}$, $SSE$, $SSR$, $SSTO$.
     ```{block, eval = FALSE, echo = FALSE}
     It's a weird format, but we have
     
