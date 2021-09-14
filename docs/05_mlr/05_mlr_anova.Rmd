@@ -564,7 +564,7 @@ klippy::klippy()
 
 - It is nice to have such repeat observations specifically to test the adequacy of the linear model using an $F$-test lack-of-fit.
 
-- To demonstrate this test, consider the textile strength from @shadid2010study. Variables include
+- To demonstrate this test, consider the textile strength from @shadid2010study, which you can read about [here] and download from [here]
     
 
 
