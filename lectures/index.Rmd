@@ -55,6 +55,12 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Standardizing predictors, multicollinearity, statistical versus practical significance.
       - Chapter 7 of KNNL.
       - Chapter 12 of ROS.
+  - [Lecture 05-4: MLR: Quadratic Terms, Interaction Effects, and Categorical Variables](./05_mlr_iii.html).
+      - Chapter 8 of KNNL.
+  - [Lecture 05-5: MLR: Model Selection](./05_mlr_selection.html).
+      - Chapter 12 of Statistical Sleuth.
+  - [Lecture 05-6: MLR: More Complicated Model Diagnostics](05_mlr_diagnostics.html).
+      - Chapter 10 of KNNL.
 - 06 Design
   - Power
   - Sample size calculation

@@ -1,0 +1,36 @@
+---
+title: 'MLR III: Generality of MLR'
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+library(latex2exp)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3, fig.width = 4)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Incorporating/interpreting quadratic terms.
+- Incorporating/interpreting interaction effects.
+- Incorporationg/interpreting categorical variables (through incators).
+- Chapter 8 of KNNL.
+
+# Quadratic Terms
+
+# Interaction Effects
+
+# Categorical Variables

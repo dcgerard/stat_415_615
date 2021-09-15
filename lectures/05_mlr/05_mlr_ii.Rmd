@@ -68,7 +68,7 @@ klippy::klippy()
 
 - **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
 
-    ```{r}
+    ```{r, message = FALSE}
     library(tidyverse)
     earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
     earnings <- mutate(earnings, log_earn = log(earn))

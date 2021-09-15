@@ -1,0 +1,28 @@
+---
+title: 'MLR: Model Selection and Validation'
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+library(latex2exp)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3, fig.width = 4)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Choosing what variables to include in a model.
+- Chapter 12 of Statistical Sleuth.
