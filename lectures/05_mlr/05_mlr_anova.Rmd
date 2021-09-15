@@ -435,6 +435,15 @@ klippy::klippy()
     lm_all <- lm(fat ~ triceps + thigh + midarm, data = body)
     Anova(lm_all)
     ```
+    
+- The output above returns
+
+    |           | Sum Sq                   | Df                                              | F value                              | Pr(>F)                                   |
+    |-----------|--------------------------|-------------------------------------------------|--------------------------------------|------------------------------------------|
+    | triceps   | SSR($X_1$\|$X_2$, $X_3$) | $df_{extra} = 1$ for the test $H_0:\beta_1 = 0$ | $F^*$ for the test $H_0:\beta_1 = 0$ | $p$-value for the test $H_0:\beta_1 = 0$ |
+    | thigh     | SSR($X_2$\|$X_1$, $X_3$) | $df_{extra} = 1$ for the test $H_0:\beta_2 = 0$ | $F^*$ for the test $H_0:\beta_2 = 0$ | $p$-value for the test $H_0:\beta_2 = 0$ |
+    | midarm    | SSR($X_3$\|$X_1$,$X_2$)  | $df_{extra} = 1$ for the test $H_0:\beta_3 = 0$ | $F^*$ for the test $H_0:\beta_3 = 0$ | $p$-value for the test $H_0:\beta_3 = 0$ |
+    | Residuals | SSE($X_1$, $X_2$, $X_3$) | n-p                                             |                                      |                                          |
 
 - Let's verify one of these manually. 
     - First, we'll fit a reduced model without `triceps`
@@ -462,6 +471,84 @@ klippy::klippy()
     ```
 
 - It turns out that using the $F$-test and the $t$-test are *equivalent*. So no need to worry about which one to use.
+
+## $F$-test for multiple variables.
+
+- Consider the Real Estate Sales data, which you can read about [here](https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales) and download from [here](https://dcgerard.github.io/stat_415_615/data/estate.csv).
+
+- Suppose we wanted to explore the relationship between log-price, log-area, log-lot size, and bed-number.
+    ```{r, message = FALSE}
+    estate <- read_csv("https://dcgerard.github.io/stat_415_615/data/estate.csv")
+    estate <- mutate(estate, 
+                     log_price = log(price),
+                     log_area = log(area),
+                     log_lot = log(lot))
+    estate <- select(estate, log_price, log_area, log_lot, bed)
+    glimpse(estate)
+    ```
+
+- We want to regress log-price ($Y$) on log-area ($X_1$), log-lot ($X_2$), and bed number ($X_3$). Suppose we have already decided to include bed number, and we want to ask if we should include one of log-price and log-area. Then the two models that we care considering
+    - Reduced: $Y_i = \beta_0 + \beta_3 X_{3i} + \epsilon_i$
+    - Full: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i$
+    
+- In other words, we are testing
+    - $H_0: \beta_1 = \beta_2 = 0$.
+    - $H_A:$ At least one $\beta_1$ or $\beta_2$ is not zero.
+    
+- The reduced model as $df_r = n - 2$ degrees of freedom and the full model has $df_f = n-4$ degrees of freedom. That means the extra degrees of freedom is $df_{extra} = df_r - df_f = 2$.
+
+- So under the null
+    $$
+    F^* \sim F(df_r - df_f, df_f)
+    $$
+    
+- To do this in R, we need to separately fit the full and reduced models.
+
+```{r}
+lm_estate_reduced <- lm(log_price ~ bed, data = estate)
+lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
+```
+
+- We then insert both models into `anova()` (**not** `Anova()`):
+
+    ```{r}
+    anova(lm_estate_reduced, lm_estate_full)
+    ```
+    
+    
+- The output above returns:
+
+    | Res.Df   | RSS                  | Df         | Sum of Sq           | F                                                  | Pr(>F)                                                 |
+    |----------|----------------------|------------|---------------------|----------------------------------------------------|--------------------------------------------------------|
+    | $df_{r}$ | SSE($X_3$)           |            |                     |                                                    |                                                        |
+    | $df_f$   | SSE($X_1, X_2, X_3$) | $df_{extra}$ | SSR($X_1, X_2|X_3$) | $F^*$ for the test of $H_0: \beta_1 = \beta_2 = 0$ | $p$-value for the test of $H_0: \beta_1 = \beta_2 = 0$ |
+
+- From the above output, we have
+    - $df_r = 520$
+    - $df_f = 518$
+    - $SSE(X_3) = 74.3$
+    - $SSE(X_1, X_2, X_3) = 25.5$
+    - $df_{extra} = 2$
+    - $SSE(X_1, X_2|X_3) = 48.8$
+    - $F^* = 496$
+    - $p$-value is the `<2e-16`, indicating very strong evidence for including at least one of log-area and log-lot.
+    
+- **Exercise**: Fill in the blanks of the following ANOVA table:
+    ```{r, echo = FALSE, message=FALSE}
+    estate <- slice(estate, 1:300)
+    lm_estate_full2 <- lm(log_price ~ log_area + log_lot + bed, data = estate)
+    lm_estate_reduced2 <- lm(log_price ~ log_area, data = estate)
+    an_estate <- anova(lm_estate_reduced2, lm_estate_full2)
+    an_estate[1, 1] <- NA_real_
+    an_estate[2, 2] <- NA_real_
+    an_estate
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    The missing degrees of freedom is $df_r$, which is 2 + 296 = 298.
+    
+    The missing sum of squares is $SSE(F)$, which is 20.4 - 1.22 = 19.18. Since $SSE(R) - SSE(F) = SSR(extra)$ which means $20.4 - z = 1.22$. Solve for $z$.
+    ```
 
 ## $F$-test for including a categorical variable
 
@@ -564,10 +651,74 @@ klippy::klippy()
 
 - It is nice to have such repeat observations specifically to test the adequacy of the linear model using an $F$-test lack-of-fit.
 
-- To demonstrate this test, consider the textile strength from @shadid2010study, which you can read about [here] and download from [here]
-    
+- To demonstrate this test, consider the textile strength data from @shadid2010study, which you can read about [here](https://dcgerard.github.io/stat_415_615/data.html#Textile_Data) and download from [here](https://dcgerard.github.io/stat_415_615/data/textile.csv).
 
+    ```{r, message = FALSE}
+    textile <- read_csv("https://dcgerard.github.io/stat_415_615/data/textile.csv")
+    glimpse(textile)
+    ```
 
+- The goal for these data is to study the effects of yarn-count and and stitch-length on fabric's bursting strength.
+
+    ```{r, message=FALSE}
+    library(GGally)
+    ggpairs(textile)
+    ```
+
+- The notation for a lack-of-fit $F$-test is kind of clunky, so we'll just discuss this test in intuitive terms.
+
+- The full model assumes that there is a separate mean bursting strength for each unique combination of yard-count and stitch length.
+
+- The reduced model assumes that the mean bursting strength is a linear function of yard-count and stitch length.
+
+- Here is a table demonstrating these two mean models
+
+    ```{r, echo = FALSE}
+    textile %>%
+      select(count, length) %>%
+      distinct() %>%
+      rename(`Yard-count` = count, `Stitch Length` = length) %>%
+      mutate(`Mean Full` = paste0("$\\mu_{", 1:n(), "}$")) %>%
+      mutate(`Mean Reduced` = paste0("$\\beta_0 + \\beta_1 ", `Yard-count`, " + \\beta_2 ", `Stitch Length`, "$")) %>%
+      knitr::kable()
+    ```
+
+- Conceptually, we fit both models, obtain their error sum of squares for each, calculate the $F$-statistic, and compare this to the appropriate $F$ distribution.
+
+- In the above example, the degrees of freedom of the full model is `n - 14` since there are 14 parameters to estimate (14 $\mu$'s).
+
+- The degrees of freedom of the reduced model is $n - 3$, since there are only three $\beta$'s to estimate.
+
+- To compare these models in R, we first fit both models.
+
+- We fit the reduced model the usual way
+
+    ```{r}
+    lm_text <- lm(strength ~ count + length, data = textile)
+    ```
+
+- We fit the full model by first converting `count` and `length` into categorical variables.
+    ```{r}
+    textile <- mutate(textile,
+                      count_cat = as.factor(count),
+                      length_cat = as.factor(length))
+    ```
+    We then use these categorical variables as covariates, but you do so by including interactions between covariates using `*` (not `+`):
+    ```{r}
+    lm_sat <- lm(strength ~ count_cat * length_cat, data = textile)
+    ```
+    - The `*` means that there will be separate means for each unique combination of yard-count and stitch-length, instead of an additive effect for yard-count and a separate additive effect for stitch-length.
+
+- Finally, we run `anova()` (the base R version, **not** the `{car}` version), on these fitted models.
+    ```{r}
+    anova(lm_text, lm_sat)
+    ```
+
+- In the above, the SSE is called `RSS` for "residual sum of squares" (it's confusing that software and books use different terminology, I know).
+
+- The $p$-value is very small, indicating a lack-of-fit.
+
+- **NOTE**: This does not necessarily imply that the model is not useful. This just indicates that the variability within conditions is much smaller than the variability between conditions. Use residual plots to better determine lack-of-fit. In this example, we can still use a linear model to say things like "higher yard-count tends to have lower bursting strength" and "higher length tends to have lower bursting strength". This might be all we need for our purposes.
 
 # Summary
 
@@ -587,10 +738,116 @@ klippy::klippy()
 - The $F$-test encompases many situations as special cases
     - Overall $F$-test. Use `glance()` from the `{broom}` package.
     - $F$-test for one predictor. Use `Anova()` from the `{car}` package and full model fit.
+    - $F$-test for multiple predictors. Fit both models, use `anova()` to compare.
     - $F$-test for one categorical variable. Use `Anova()` from the `{car}` package on full model fit.
-    - $F$-test lack-of-fit. Fit both models, use `Anova()` from the `{car}` package.
+    - $F$-test lack-of-fit. Fit both models, use `anova()` to compare.
 
 # Exercise
 
+From the `estate` data, let's consider the association between log-price, the number of beds, and the number of baths.
+
+```{r, message = FALSE}
+estate <- read_csv("https://dcgerard.github.io/stat_415_615/data/estate.csv")
+estate <- mutate(estate, log_price = log(price))
+estate <- select(estate, log_price, bed, bath)
+glimpse(estate)
+```
+
+We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number of baths ($X_2$).
+
+1. Make a pairs plot and explore the association between these variables. What do you conclude?
+
+    ```{r, message = FALSE, echo = FALSE, eval = FALSE}
+    library(GGally)
+    ggpairs(estate)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    It seems like the linear model is a good choice. Positive association between price and bed/bath number.
+    ```
+
+2. Create an ANOVA table that contains $SSR(X_2)$, $SSR(X_1|X_2)$, and $SSE(X_1, X_2)$. State what each of these are numerically.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    lm_est <- lm(log_price ~ bath + bed, data = estate)
+    anova(lm_est)
+    ```
+
+    ```{block, eval = FALSE, echo = FALSE}
+    - $SSR(X_2)$ = 53.7
+    - $SSR(X_1|X_2)$ = 0.4
+    - $SSE(X_1, X_2)$ = 43.0
+    ```
+
+3. Calculate the SSTO from this output.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    SSTO = 53.7 + 0.4 + 43.0 = 97.1
+    ```
+
+4. For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Row 1
+    
+    - Reduced: $Y_{i} = \beta_0 + \epsilon_i$
+    - Full: $Y_i = \beta_0 + \beta_2X_{i2} + \epsilon_i$
+    
+    Row 2
+    
+    - Reduced: $Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i$
+    - Full: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i$
+    ```
+
+5. For each row of the above ANOVA table, state the conclusions of the hyptohesis tests.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    Row 1: we have strong evidence that bath is associated with liking ($p < 0.001$, $n = 522$).
+    
+    Row 2: We have moderate evidence that bed is associated with liking, after adjusting for bath ($p = 0.034$, $n = 522$).
+    ```
+
+6. Conduct an overall $F$-test for the model. 
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
+    $$
+    State the hypotheses and conclusions.
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    - $H_0: \beta_1 = \beta_2 = 0$
+    - $H_A:$ At least one $\beta_1$ or $\beta_2$ are non-zero.
+    ```
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    glance(lm_est)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    The $p$-value is small ($p < 0.001$) indicating very strong evidence that at least one of bath or bed is associated with liking.
+    ```
+
+8. Is it possible to run an $F$-test lack-of-fit for the model
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
+    $$
+    If so, conduct one, stating the hypotheses and conclusions.
+    
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Yes, we have repeat observations of bed and bath.
+    
+    - $H_0$: E[Y_i] = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2}
+    - $H_A$: E[Y_i] \neq \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2}
+    ```
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    estate <- mutate(estate, bed_cat = as.factor(bed), bath_cat = as.factor(bath))
+    lm_sat <- lm(log_price ~ bed_cat * bath_cat, data = estate)
+    anova(lm_est, lm_sat)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    We have strong evidence of a lack of fit ($p < 0.001$), indicating that our data does not exactly fit the regression surface. Whether this matters is context specific.
+    ```
 
 # References

@@ -754,7 +754,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     
 - Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.
 
-# $F$-test for lack of fit
+# $F$-test for lack-of-fit
 
 - In many cases, you have repeat observations at the same value of the predictors. If you design a study, it is a good idea to include repeats at the same predictor levels.
 

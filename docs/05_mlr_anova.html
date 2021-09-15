@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-14" />
+<meta name="date" content="2021-09-15" />
 
 <title>ANOVA View of Linear Models</title>
 
@@ -65,6 +65,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 
 
@@ -345,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-14</h4>
+<h4 class="date">2021-09-15</h4>
 
 </div>
 
@@ -540,7 +562,7 @@ anova(lm_all)</code></pre>
 <pre class="r"><code>## SSTO
 sum((body$fat - mean(body$fat))^2)</code></pre>
 <pre><code>## [1] 495.4</code></pre></li>
-<li><p>Showing the sum of squares in this pattern is called “Type I Sum of Squares”.</p></li>
+<li><p>Showing the sum of squares in this pattern is called “Type I Sum of Squares.”</p></li>
 <li><p>Other researchers display the “Type II Sum of Squares”:</p>
 <table>
 <thead>
@@ -688,6 +710,55 @@ Anova(lm_all)</code></pre>
 ## thigh        7.5  1    1.22   0.28
 ## midarm      11.5  1    1.88   0.19
 ## Residuals   98.4 16</code></pre></li>
+<li><p>The output above returns</p>
+<table>
+<colgroup>
+<col width="6%" />
+<col width="15%" />
+<col width="29%" />
+<col width="22%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Sum Sq</th>
+<th>Df</th>
+<th>F value</th>
+<th>Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>triceps</td>
+<td>SSR(<span class="math inline">\(X_1\)</span>|<span class="math inline">\(X_2\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+<td><span class="math inline">\(df_{extra} = 1\)</span> for the test <span class="math inline">\(H_0:\beta_1 = 0\)</span></td>
+<td><span class="math inline">\(F^*\)</span> for the test <span class="math inline">\(H_0:\beta_1 = 0\)</span></td>
+<td><span class="math inline">\(p\)</span>-value for the test <span class="math inline">\(H_0:\beta_1 = 0\)</span></td>
+</tr>
+<tr class="even">
+<td>thigh</td>
+<td>SSR(<span class="math inline">\(X_2\)</span>|<span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+<td><span class="math inline">\(df_{extra} = 1\)</span> for the test <span class="math inline">\(H_0:\beta_2 = 0\)</span></td>
+<td><span class="math inline">\(F^*\)</span> for the test <span class="math inline">\(H_0:\beta_2 = 0\)</span></td>
+<td><span class="math inline">\(p\)</span>-value for the test <span class="math inline">\(H_0:\beta_2 = 0\)</span></td>
+</tr>
+<tr class="odd">
+<td>midarm</td>
+<td>SSR(<span class="math inline">\(X_3\)</span>|<span class="math inline">\(X_1\)</span>,<span class="math inline">\(X_2\)</span>)</td>
+<td><span class="math inline">\(df_{extra} = 1\)</span> for the test <span class="math inline">\(H_0:\beta_3 = 0\)</span></td>
+<td><span class="math inline">\(F^*\)</span> for the test <span class="math inline">\(H_0:\beta_3 = 0\)</span></td>
+<td><span class="math inline">\(p\)</span>-value for the test <span class="math inline">\(H_0:\beta_3 = 0\)</span></td>
+</tr>
+<tr class="even">
+<td>Residuals</td>
+<td>SSE(<span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, <span class="math inline">\(X_3\)</span>)</td>
+<td>n-p</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></li>
 <li><p>Let’s verify one of these manually.</p>
 <ul>
 <li><p>First, we’ll fit a reduced model without <code>triceps</code></p>
@@ -717,6 +788,112 @@ f_star</code></pre>
 ## 3 thigh          -2.86      2.58     -1.11   0.285
 ## 4 midarm         -2.19      1.60     -1.37   0.190</code></pre></li>
 <li><p>It turns out that using the <span class="math inline">\(F\)</span>-test and the <span class="math inline">\(t\)</span>-test are <em>equivalent</em>. So no need to worry about which one to use.</p></li>
+</ul>
+</div>
+<div id="f-test-for-multiple-variables." class="section level2">
+<h2><span class="math inline">\(F\)</span>-test for multiple variables.</h2>
+<ul>
+<li><p>Consider the Real Estate Sales data, which you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales">here</a> and download from <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv">here</a>.</p></li>
+<li><p>Suppose we wanted to explore the relationship between log-price, log-area, log-lot size, and bed-number.</p>
+<pre class="r"><code>estate &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/estate.csv&quot;)
+estate &lt;- mutate(estate, 
+                 log_price = log(price),
+                 log_area = log(area),
+                 log_lot = log(lot))
+estate &lt;- select(estate, log_price, log_area, log_lot, bed)
+glimpse(estate)</code></pre>
+<pre><code>## Rows: 522
+## Columns: 4
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
+## $ log_area  &lt;dbl&gt; 8.017, 7.629, 7.484, 7.401, 7.694, 7.584, 7.703, 7.376, 7.39…
+## $ log_lot   &lt;dbl&gt; 10.009, 10.039, 9.969, 9.761, 9.989, 9.847, 9.833, 10.004, 9…
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …</code></pre></li>
+<li><p>We want to regress log-price (<span class="math inline">\(Y\)</span>) on log-area (<span class="math inline">\(X_1\)</span>), log-lot (<span class="math inline">\(X_2\)</span>), and bed number (<span class="math inline">\(X_3\)</span>). Suppose we have already decided to include bed number, and we want to ask if we should include one of log-price and log-area. Then the two models that we care considering</p>
+<ul>
+<li>Reduced: <span class="math inline">\(Y_i = \beta_0 + \beta_3 X_{3i} + \epsilon_i\)</span></li>
+<li>Full: <span class="math inline">\(Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i\)</span></li>
+</ul></li>
+<li><p>In other words, we are testing</p>
+<ul>
+<li><span class="math inline">\(H_0: \beta_1 = \beta_2 = 0\)</span>.</li>
+<li><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(\beta_2\)</span> is not zero.</li>
+</ul></li>
+<li><p>The reduced model as <span class="math inline">\(df_r = n - 2\)</span> degrees of freedom and the full model has <span class="math inline">\(df_f = n-4\)</span> degrees of freedom. That means the extra degrees of freedom is <span class="math inline">\(df_{extra} = df_r - df_f = 2\)</span>.</p></li>
+<li><p>So under the null <span class="math display">\[
+  F^* \sim F(df_r - df_f, df_f)
+  \]</span></p></li>
+<li><p>To do this in R, we need to separately fit the full and reduced models.</p></li>
+</ul>
+<pre class="r"><code>lm_estate_reduced &lt;- lm(log_price ~ bed, data = estate)
+lm_estate_full &lt;- lm(log_price ~ log_area + log_lot + bed, data = estate)</code></pre>
+<ul>
+<li><p>We then insert both models into <code>anova()</code> (<strong>not</strong> <code>Anova()</code>):</p>
+<pre class="r"><code>anova(lm_estate_reduced, lm_estate_full)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log_price ~ bed
+## Model 2: log_price ~ log_area + log_lot + bed
+##   Res.Df  RSS Df Sum of Sq   F Pr(&gt;F)
+## 1    520 74.3                        
+## 2    518 25.5  2      48.8 496 &lt;2e-16</code></pre></li>
+<li><p>The output above returns:</p>
+<table>
+<colgroup>
+<col width="5%" />
+<col width="12%" />
+<col width="6%" />
+<col width="12%" />
+<col width="30%" />
+<col width="32%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Res.Df</th>
+<th>RSS</th>
+<th>Df</th>
+<th>Sum of Sq</th>
+<th>F</th>
+<th>Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(df_{r}\)</span></td>
+<td>SSE(<span class="math inline">\(X_3\)</span>)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(df_f\)</span></td>
+<td>SSE(<span class="math inline">\(X_1, X_2, X_3\)</span>)</td>
+<td><span class="math inline">\(df_{extra}\)</span></td>
+<td>SSR(<span class="math inline">\(X_1, X_2|X_3\)</span>)</td>
+<td><span class="math inline">\(F^*\)</span> for the test of <span class="math inline">\(H_0: \beta_1 = \beta_2 = 0\)</span></td>
+<td><span class="math inline">\(p\)</span>-value for the test of <span class="math inline">\(H_0: \beta_1 = \beta_2 = 0\)</span></td>
+</tr>
+</tbody>
+</table></li>
+<li><p>From the above output, we have</p>
+<ul>
+<li><span class="math inline">\(df_r = 520\)</span></li>
+<li><span class="math inline">\(df_f = 518\)</span></li>
+<li><span class="math inline">\(SSE(X_3) = 74.3\)</span></li>
+<li><span class="math inline">\(SSE(X_1, X_2, X_3) = 25.5\)</span></li>
+<li><span class="math inline">\(df_{extra} = 2\)</span></li>
+<li><span class="math inline">\(SSE(X_1, X_2|X_3) = 48.8\)</span></li>
+<li><span class="math inline">\(F^* = 496\)</span></li>
+<li><span class="math inline">\(p\)</span>-value is the <code>&lt;2e-16</code>, indicating very strong evidence for including at least one of log-area and log-lot.</li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Fill in the blanks of the following ANOVA table:</p>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: log_price ~ log_area
+## Model 2: log_price ~ log_area + log_lot + bed
+##   Res.Df  RSS Df Sum of Sq    F  Pr(&gt;F)
+## 1        20.4                          
+## 2    296       2      1.22 9.41 0.00011</code></pre></li>
 </ul>
 </div>
 <div id="f-test-for-including-a-categorical-variable" class="section level2">
@@ -812,6 +989,145 @@ f_star</code></pre>
   \]</span></p></li>
 <li><p>Typically, you only have repeat observations like this in a controlled experiment.</p></li>
 <li><p>It is nice to have such repeat observations specifically to test the adequacy of the linear model using an <span class="math inline">\(F\)</span>-test lack-of-fit.</p></li>
+<li><p>To demonstrate this test, consider the textile strength data from <span class="citation">Shadid and Rahman (2010)</span>, which you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Textile_Data">here</a> and download from <a href="https://dcgerard.github.io/stat_415_615/data/textile.csv">here</a>.</p>
+<pre class="r"><code>textile &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/textile.csv&quot;)
+glimpse(textile)</code></pre>
+<pre><code>## Rows: 56
+## Columns: 3
+## $ count    &lt;dbl&gt; 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 2…
+## $ length   &lt;dbl&gt; 2.70, 2.70, 2.70, 2.70, 2.74, 2.74, 2.74, 2.74, 2.80, 2.80, 2…
+## $ strength &lt;dbl&gt; 7.90, 7.86, 7.85, 7.91, 7.38, 7.32, 7.37, 7.33, 7.30, 7.22, 7…</code></pre></li>
+<li><p>The goal for these data is to study the effects of yarn-count and and stitch-length on fabric’s bursting strength.</p>
+<pre class="r"><code>library(GGally)
+ggpairs(textile)</code></pre>
+<p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-39-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>The notation for a lack-of-fit <span class="math inline">\(F\)</span>-test is kind of clunky, so we’ll just discuss this test in intuitive terms.</p></li>
+<li><p>The full model assumes that there is a separate mean bursting strength for each unique combination of yard-count and stitch length.</p></li>
+<li><p>The reduced model assumes that the mean bursting strength is a linear function of yard-count and stitch length.</p></li>
+<li><p>Here is a table demonstrating these two mean models</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Yard-count</th>
+<th align="right">Stitch Length</th>
+<th align="left">Mean Full</th>
+<th align="left">Mean Reduced</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">2.70</td>
+<td align="left"><span class="math inline">\(\mu_{1}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 24 + \beta_2 2.7\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="right">2.74</td>
+<td align="left"><span class="math inline">\(\mu_{2}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 24 + \beta_2 2.74\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">24</td>
+<td align="right">2.80</td>
+<td align="left"><span class="math inline">\(\mu_{3}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 24 + \beta_2 2.8\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="right">2.90</td>
+<td align="left"><span class="math inline">\(\mu_{4}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 24 + \beta_2 2.9\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">26</td>
+<td align="right">2.70</td>
+<td align="left"><span class="math inline">\(\mu_{5}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 26 + \beta_2 2.7\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="right">2.72</td>
+<td align="left"><span class="math inline">\(\mu_{6}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 26 + \beta_2 2.72\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">26</td>
+<td align="right">2.78</td>
+<td align="left"><span class="math inline">\(\mu_{7}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 26 + \beta_2 2.78\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="right">2.90</td>
+<td align="left"><span class="math inline">\(\mu_{8}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 26 + \beta_2 2.9\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">26</td>
+<td align="right">2.94</td>
+<td align="left"><span class="math inline">\(\mu_{9}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 26 + \beta_2 2.94\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">2.68</td>
+<td align="left"><span class="math inline">\(\mu_{10}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 30 + \beta_2 2.68\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">30</td>
+<td align="right">2.77</td>
+<td align="left"><span class="math inline">\(\mu_{11}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 30 + \beta_2 2.77\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">2.80</td>
+<td align="left"><span class="math inline">\(\mu_{12}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 30 + \beta_2 2.8\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">30</td>
+<td align="right">2.84</td>
+<td align="left"><span class="math inline">\(\mu_{13}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 30 + \beta_2 2.84\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">2.96</td>
+<td align="left"><span class="math inline">\(\mu_{14}\)</span></td>
+<td align="left"><span class="math inline">\(\beta_0 + \beta_1 30 + \beta_2 2.96\)</span></td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Conceptually, we fit both models, obtain their error sum of squares for each, calculate the <span class="math inline">\(F\)</span>-statistic, and compare this to the appropriate <span class="math inline">\(F\)</span> distribution.</p></li>
+<li><p>In the above example, the degrees of freedom of the full model is <code>n - 14</code> since there are 14 parameters to estimate (14 <span class="math inline">\(\mu\)</span>’s).</p></li>
+<li><p>The degrees of freedom of the reduced model is <span class="math inline">\(n - 3\)</span>, since there are only three <span class="math inline">\(\beta\)</span>’s to estimate.</p></li>
+<li><p>To compare these models in R, we first fit both models.</p></li>
+<li><p>We fit the reduced model the usual way</p>
+<pre class="r"><code>lm_text &lt;- lm(strength ~ count + length, data = textile)</code></pre></li>
+<li><p>We fit the full model by first converting <code>count</code> and <code>length</code> into categorical variables.</p>
+<pre class="r"><code>textile &lt;- mutate(textile,
+                  count_cat = as.factor(count),
+                  length_cat = as.factor(length))</code></pre>
+<p>We then use these categorical variables as covariates, but you do so by including interactions between covariates using <code>*</code> (not <code>+</code>):</p>
+<pre class="r"><code>lm_sat &lt;- lm(strength ~ count_cat * length_cat, data = textile)</code></pre>
+<ul>
+<li>The <code>*</code> means that there will be separate means for each unique combination of yard-count and stitch-length, instead of an additive effect for yard-count and a separate additive effect for stitch-length.</li>
+</ul></li>
+<li><p>Finally, we run <code>anova()</code> (the base R version, <strong>not</strong> the <code>{car}</code> version), on these fitted models.</p>
+<pre class="r"><code>anova(lm_text, lm_sat)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: strength ~ count + length
+## Model 2: strength ~ count_cat * length_cat
+##   Res.Df  RSS Df Sum of Sq   F Pr(&gt;F)
+## 1     53 4.55                        
+## 2     42 0.05 11       4.5 335 &lt;2e-16</code></pre></li>
+<li><p>In the above, the SSE is called <code>RSS</code> for “residual sum of squares” (it’s confusing that software and books use different terminology, I know).</p></li>
+<li><p>The <span class="math inline">\(p\)</span>-value is very small, indicating a lack-of-fit.</p></li>
+<li><p><strong>NOTE</strong>: This does not necessarily imply that the model is not useful. This just indicates that the variability within conditions is much smaller than the variability between conditions. Use residual plots to better determine lack-of-fit. In this example, we can still use a linear model to say things like “higher yard-count tends to have lower bursting strength” and “higher length tends to have lower bursting strength.” This might be all we need for our purposes.</p></li>
 </ul>
 </div>
 </div>
@@ -829,13 +1145,46 @@ f_star</code></pre>
 <ul>
 <li>Overall <span class="math inline">\(F\)</span>-test. Use <code>glance()</code> from the <code>{broom}</code> package.</li>
 <li><span class="math inline">\(F\)</span>-test for one predictor. Use <code>Anova()</code> from the <code>{car}</code> package and full model fit.</li>
+<li><span class="math inline">\(F\)</span>-test for multiple predictors. Fit both models, use <code>anova()</code> to compare.</li>
 <li><span class="math inline">\(F\)</span>-test for one categorical variable. Use <code>Anova()</code> from the <code>{car}</code> package on full model fit.</li>
-<li><span class="math inline">\(F\)</span>-test lack-of-fit. Fit both models, use <code>Anova()</code> from the <code>{car}</code> package.</li>
+<li><span class="math inline">\(F\)</span>-test lack-of-fit. Fit both models, use <code>anova()</code> to compare.</li>
 </ul></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
+<p>From the <code>estate</code> data, let’s consider the association between log-price, the number of beds, and the number of baths.</p>
+<pre class="r"><code>estate &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/estate.csv&quot;)
+estate &lt;- mutate(estate, log_price = log(price))
+estate &lt;- select(estate, log_price, bed, bath)
+glimpse(estate)</code></pre>
+<pre><code>## Rows: 522
+## Columns: 3
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …
+## $ bath      &lt;dbl&gt; 4, 2, 3, 2, 3, 3, 2, 1, 2, 3, 5, 4, 4, 4, 3, 5, 2, 4, 3, 3, …</code></pre>
+<p>We will consider regressing log-price (<span class="math inline">\(Y\)</span>) on number of beds (<span class="math inline">\(X_1\)</span>) and number of baths (<span class="math inline">\(X_2\)</span>).</p>
+<ol style="list-style-type: decimal">
+<li><p>Make a pairs plot and explore the association between these variables. What do you conclude?</p></li>
+<li><p>Create an ANOVA table that contains <span class="math inline">\(SSR(X_2)\)</span>, <span class="math inline">\(SSR(X_1|X_2)\)</span>, and <span class="math inline">\(SSE(X_1, X_2)\)</span>. State what each of these are numerically.</p></li>
+<li><p>Calculate the SSTO from this output.</p></li>
+<li><p>For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.</p></li>
+<li><p>For each row of the above ANOVA table, state the conclusions of the hyptohesis tests.</p></li>
+<li><p>Conduct an overall <span class="math inline">\(F\)</span>-test for the model. <span class="math display">\[
+ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
+ \]</span> State the hypotheses and conclusions.</p></li>
+<li><p>Is it possible to run an <span class="math inline">\(F\)</span>-test lack-of-fit for the model <span class="math display">\[
+ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
+ \]</span> If so, conduct one, stating the hypotheses and conclusions.</p></li>
+</ol>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-shadid2010study" class="csl-entry">
+Shadid, S A, and M F Rahman. 2010. <span>“Study on the Effect of Stitch Length on Bursting Strength of Knit Fabric.”</span> <em>Annals of the University of Oradea, Fascicle of Textiles, Leatherwork</em> 1: 142–46. <a href="http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf">http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf</a>.
+</div>
+</div>
 </div>
 
 

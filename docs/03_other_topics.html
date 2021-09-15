@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-11" />
+<meta name="date" content="2021-09-15" />
 
 <title>Other Topics in SLR</title>
 
@@ -367,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Other Topics in SLR</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-11</h4>
+<h4 class="date">2021-09-15</h4>
 
 </div>
 
@@ -495,7 +495,7 @@ plumb &lt;- tribble(~work, ~cost,
       &amp;= \beta_0 + \beta_1 X_i^* + \epsilon^*_i.
   \end{align}\]</span></p>
 <p>Thus, if we fit the model <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i^*\)</span>, then our error term is <span class="math inline">\(\epsilon^*_i = -\beta_1\delta_i + \epsilon_i\)</span>.</p>
-<p>Since <span class="math inline">\(\epsilon^*\)</span>_i (<span class="math inline">\(=-\beta_1\delta_i + \epsilon_i\)</span>) and <span class="math inline">\(X^*\)</span> (<span class="math inline">\(=X_i + \delta_i\)</span>) both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>.</p>
+<p>Since <span class="math inline">\(\epsilon^*_i\)</span> (<span class="math inline">\(=-\beta_1\delta_i + \epsilon_i\)</span>) and <span class="math inline">\(X^*\)</span> (<span class="math inline">\(=X_i + \delta_i\)</span>) both depend on the value of <span class="math inline">\(\delta_i\)</span>, they are <em>correlated</em>.</p>
 <p><span class="math display">\[\begin{align}
   cov(X^*, \epsilon^*) &amp;= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
   &amp;= -\beta_1 cov(\delta_i, \delta_i)\\

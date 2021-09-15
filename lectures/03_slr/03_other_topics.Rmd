@@ -234,7 +234,7 @@ klippy::klippy()
     
     Thus, if we fit the model $E[Y_i] = \beta_0 + \beta_1 X_i^*$, then our error term is $\epsilon^*_i = -\beta_1\delta_i + \epsilon_i$.
     
-    Since $\epsilon^*$_i ($=-\beta_1\delta_i + \epsilon_i$) and $X^*$ ($=X_i + \delta_i$) both depend on the value of $\delta_i$, they are *correlated*.
+    Since $\epsilon^*_i$ ($=-\beta_1\delta_i + \epsilon_i$) and $X^*$ ($=X_i + \delta_i$) both depend on the value of $\delta_i$, they are *correlated*.
     
     \begin{align}
     cov(X^*, \epsilon^*) &= cov(X_i + \delta_i, -\beta_1\delta_i + \epsilon_i)\\
