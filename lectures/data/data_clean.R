@@ -250,3 +250,14 @@ earnings %>%
          smokenow = recode(smokenow, `1` = "yes", `2` = "no")) %>%
   select(-male) %>%
   write_csv(file = "./earnings.csv")
+
+# Ballot Data
+ballot <- read_csv("../../raw_data/ballot_extract.csv", col_names = FALSE)
+ballot %>%
+  rename(poll = X1, vote = X2) %>%
+  mutate(poll = round(poll, digits = 1),
+         vote = round(vote, digits = 1)) %>%
+  arrange(vote) ->
+  ballot
+write_csv("./ballot.csv", x = ballot)
+

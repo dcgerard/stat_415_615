@@ -85,6 +85,12 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `angry`: On how many of the past 7 days has the respondent felt angry?
     - `age`: Age of the individual (years).
     
+# Generic Ballot Data
+
+- [ballot.csv](./data/ballot.csv): These data were extracted from the scatterplot from a [FiveThirtyEight artcle](https://fivethirtyeight.com/features/our-best-tool-for-predicting-midterm-elections-doesnt-show-a-republican-wave-but-history-is-on-the-gops-side/). They were exploring the association between their generic ballot average versus the election results. Variables include
+    - `poll`: Generic ballot average on election day.
+    - `vote`: House popular vote margin.
+    
 # Heating Equipment
 
 - [heating.csv](./data/heating.csv): Dataset C.8 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
