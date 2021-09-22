@@ -163,6 +163,12 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `year`: The date (in years) of the new world record.
     - `seconds`: The new world record (in seconds).
     
+# Muscle Mass
+
+- [muscle.csv](./data/muscle.csv): A person's muscle mass is expected to decrease with age. To explore this relationship in women, a nutritionist randomly selected 15 women from each 10-year age group, beginning with age 40 and ending with age 79. This is from KNNL. Variables include
+    - `mass`: A measure of muscle mass (g).
+    - `age`: Age (years)
+    
 # Prostate Cancer
 
 - [prostate.csv](./data/prostate.csv): Dataset C.5 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:

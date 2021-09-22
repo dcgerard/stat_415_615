@@ -43,7 +43,7 @@ klippy::klippy()
 
 1. **Linearity** - Linear regression line does not pick up actual relationship
 
-2. **Independence** - Linear regression line is unbiased, but standard errors are off.
+2. **Independence** - Linear regression line is unbiased, but standard errors are too small.
 
 3. **Equal Variance** - Linear regression line is unbiased, but standard errors are off.
 

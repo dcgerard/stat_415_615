@@ -261,3 +261,10 @@ ballot %>%
   ballot
 write_csv("./ballot.csv", x = ballot)
 
+# Muscle Mass
+library(tidyverse)
+muscle <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%201%20Data%20Sets/CH01PR27.txt", col_names = FALSE)
+muscle %>%
+  rename(mass = X1,
+         age = X2) %>%
+  write_csv("./muscle.csv", x = .)

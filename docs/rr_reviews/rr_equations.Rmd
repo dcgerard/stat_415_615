@@ -27,10 +27,10 @@ Here is a list of the equations I want you to have memorized at the top of your 
 
 # List
 
-- Mean: $\bar{Y} = \frac{1}{n}\sum_{i=1}^n$
+- Mean: $\bar{Y} = \frac{1}{n}\sum_{i=1}^nY_i$
 - SLR Model: $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$, $E[\epsilon_i] = 0$, $var(\epsilon_i) = \sigma^2$, $cor(\epsilon_i, \epsilon_j) = 0$ for $i\neq j$.
 - Normal SLR Model: $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$, $\epsilon \overset{iid}{\sim} N(0, \sigma^2)$.
-- OLS Objective: $\sum_{i=1}^n\left[Y_i - (\beta_0 + \beta_1X_i)\right]^2
+- OLS Objective: $\sum_{i=1}^n\left[Y_i - (\beta_0 + \beta_1X_i)\right]^2$
 - SLR OLS estimates: $\hat{\beta}_0 = \bar{Y} - \hat{\beta}_1\bar{X}$, $\hat{\beta}_1 = cor(X, Y)\frac{sd(Y)}{sd(X)}$.
 - Residuals $e_i = Y_i - \hat{Y}_i$.
 - Properties of fitted regression line: (i) mean of residuals is 0, (ii) mean of observed values equals mean of fitted values, (iii) residuals are uncorrelated with predictors, (iv) residuals are uncorrelated with *fitted* values, and (v) regression line always goes through mean $(\bar{X}, \bar{Y})$.
@@ -45,10 +45,22 @@ Here is a list of the equations I want you to have memorized at the top of your 
 - $SSTO = \sum_{i=1}^n(Y_i - \bar{Y}_i)^2$, with $df_{TO} = n-1$
 - $SSTO = SSE + SSR$
 - $F^* = \frac{SSR/df_R}{SSE/df_E}$, which follows an $F(df_R, df_E)$ distribution under the null model of $Y_i = \beta_0 + \epsilon_i$.
-- $F^* = \frac{[SSE(R) - SSE(F)]/[df_R - df_F]]}{SSE(F)/df_F}$
+- $F^* = \frac{[SSE(R) - SSE(F)]/[df_R - df_F]]}{SSE(F)/df_F}$ which follows a $F(dr_R - df_F, df_F)$ distribution under the null of the reduced model.
 - $R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}$
-- If relationship is $y = \beta_0 + \beta_1x$, then add one to $x$ means add $\beta_1$ to $y$.
-- If relationship is $y = \beta_0 + \beta_1 \log(x)$, then double $x$ means add $\beta_1\log(2)$ to $y$.
-- If relationship is $\log(y) = \beta_0 + \beta_1 x$, then add one to $x$ means multiply $y$ by $\exp(\beta_1)$.
-- If relationship is $\log(y) = \beta_0 + \beta_1 \log(x)$, then double $x$ means multiply $y$ by $2^{\beta_1}$.
-
+- Interpretations:
+    - If relationship is $y = \beta_0 + \beta_1x$, then add one to $x$ means add $\beta_1$ to $y$.
+    - If relationship is $y = \beta_0 + \beta_1 \log(x)$, then double $x$ means add $\beta_1\log(2)$ to $y$.
+    - If relationship is $\log(y) = \beta_0 + \beta_1 x$, then add one to $x$ means multiply $y$ by $\exp(\beta_1)$.
+    - If relationship is $\log(y) = \beta_0 + \beta_1 \log(x)$, then double $x$ means multiply $y$ by $2^{\beta_1}$.
+    - Make sure you describe interpretations in terms of the original variables (not saying "x" and "y").
+    - Make sure you do not use causal language, implying any sort of "change" to the x variable.
+- Bonferroni corrected $p$-values: unadjusted $p$-value $\times$ number of tests.
+- Matrix stuff
+    - $x_{ij}$ is the $(i, j)$th element of the matrix $\mathbf{X}$.
+    - Matrix transpose definition $\mathbf{X}^T$
+    - Identity matrix, $\mathbf{I}_n$.
+    - Matrix multiplication rules.
+    - Properties of matrix inverse.
+    - Matrix form of linear model: $\mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}$
+    - Matrix form of coefficient estimates: $\hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
+    - Hat matrix, $\mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T$, and why it is called the hat matrix.

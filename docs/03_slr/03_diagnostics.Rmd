@@ -43,7 +43,7 @@ klippy::klippy()
 
 1. **Linearity** - Linear regression line does not pick up actual relationship
 
-2. **Independence** - Linear regression line is unbiased, but standard errors are off.
+2. **Independence** - Linear regression line is unbiased, but standard errors are too small.
 
 3. **Equal Variance** - Linear regression line is unbiased, but standard errors are off.
 
@@ -918,6 +918,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - If your goal is *prediction*, then have at it.
 
 - But if your goal is inference, then you lose all interpretability by using transformations other than $\log()$. So think carefully before trying other transformations.
+
+- If you are transforming a variable that you do not care about (are just controlling for it), then it would be OK to use non-interpretable transformations.
 
 # Back Transforming
 
