@@ -24,30 +24,53 @@ klippy::klippy()
 
 # Learning Objectives
 
-- Concretely describe the proper steps of any analysis.
 - Choice of scaling predictors for interpretation.
 - Multicollinearity
 - Effect sizes, practical significance, and statistical significance.
 - Chapter 12 from ROS
 - Chapter 7 from KNNL
 
-# Steps of an analysis
+<!-- # Steps of an analysis -->
 
-- For **any analysis** where you are applying a model, the steps you should take are:
-    1. Exploratory data analysis
-    2. Choose the form of the model.
-    3. Fit the model to the data.
-    4. Assess how well the model describes the data.
-    5. Use the model to address the question of interest.
+<!-- - For **any analysis** where you are applying a model, the steps you should take are: -->
+<!--     1. Exploratory data analysis -->
+<!--     2. Choose the form of the model. -->
+<!--     3. Fit the model to the data. -->
+<!--     4. Assess how well the model describes the data. -->
+<!--     5. Use the model to address the question of interest. -->
+
+<!-- - You should be performing each of these steps when you apply a model to data. -->
+
+# Scales
+
+## Interpretable Scales
+
+- Recall [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data) exploring the relationship between height and earnings.
+
+    ```{r, message=FALSE}
+    library(tidyverse)
+    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
+    earnings <- mutate(earnings, log_earn = log(earn))
+    earnings <- filter(earnings, is.finite(log_earn))
+    earnings <- select(earnings, earn, log_earn, height)
+    glimpse(earnings)
+    qplot(x = height, y = log_earn, data = earnings, ylab = "log(earnings)", xlab = "height (inches)")
+    ```
+
+
+- The estimated regression line depends on the units for $X$ and $Y$.
+    - earnings = -85,000 + 36 * height(millimeters)
+    - earnings = -85,000 + 1600 * height(inches)
+    - earnings = -85,000 + 101,001,000 * height(miles)
     
-- You should be performing each of these steps when you apply a model to data.
-
-# Choosing a scale for interpretation
-
-- You should apply linear scalings to your data.
+- Does this mean that height in miles is a stronger predictor of earnings (since it's coefficient estimate is larger?)
+    - NO! 🤦
+    
+    
 
 - Height in millimeter (difference in $Y$ for a 1 mm difference in height?) versus height in centimeters (difference in $Y$ for a 1 cm difference in height?) versus height in meters (difference in $Y$ for a 1 m difference in height?). For humans, cm is probably the best scale.
 
+## Z-score scales
 - Use standard deviations to guide your choice of scale. Roughly, 68\% of observations will be within 1 standard deviation of the mean, and so choosing your predictor on the order standard deviations (so within a magnitude of the SD) makes coefficients more interpretable.
 
 # Multicollinearity
