@@ -49,29 +49,111 @@ klippy::klippy()
 
     ```{r, message=FALSE}
     library(tidyverse)
+    library(broom)
     earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
-    earnings <- mutate(earnings, log_earn = log(earn))
-    earnings <- filter(earnings, is.finite(log_earn))
-    earnings <- select(earnings, earn, log_earn, height)
-    glimpse(earnings)
-    qplot(x = height, y = log_earn, data = earnings, ylab = "log(earnings)", xlab = "height (inches)")
+    earnings <- mutate(earnings,
+                       height_mm = height * 25.4,
+                       height_in = height,
+                       height_mi = height / 63360)
+                       
+    tidy(lm(earn ~ height_mm, data = earnings))
+    tidy(lm(earn ~ height_in, data = earnings))
+    tidy(lm(earn ~ height_mi, data = earnings))
     ```
-
 
 - The estimated regression line depends on the units for $X$ and $Y$.
     - earnings = -85,000 + 36 * height(millimeters)
     - earnings = -85,000 + 1600 * height(inches)
     - earnings = -85,000 + 101,001,000 * height(miles)
     
-- Does this mean that height in miles is a stronger predictor of earnings (since it's coefficient estimate is larger?)
+- Does this mean that height in miles is a stronger predictor of earnings (since its coefficient estimate is larger?)
     - NO! 🤦
-    
-    
+    - The scale of height was chosen arbitrarily. These three equations all reflect the same underlying information.
 
-- Height in millimeter (difference in $Y$ for a 1 mm difference in height?) versus height in centimeters (difference in $Y$ for a 1 cm difference in height?) versus height in meters (difference in $Y$ for a 1 m difference in height?). For humans, cm is probably the best scale.
+- Better to choose a scale which is in the most interpretable units.
+
+- A 1 millimeter difference in height is not a meaningful difference, in terms of the distribution of human heights.
+
+- A 1 mile difference in height is unrealistic.
+
+- A 1 inch difference in height is more reasonable.
+
+    ```{r}
+    qplot(x = height_in, data = earnings, bins = 20)
+    ```
+
+- You can use the standard deviation of the variables to help guide you. If the standard deviation is between 1 and 10, then you have a good scale. But this is a rough rule of thumb.
+
+    ```{r}
+    sd(earnings$height_mm)
+    sd(earnings$height_in)
+    sd(earnings$height_mi)
+    ```
+    
+- What if you are logging variables?
+    - Recall, we interpret log-relationships in terms of *multiplicative* changes. So being twice as tall is just as good in inches (84 inches versus 42 inches) as it is in miles (0.00133 miles versus 0.00066 miles). 
+    - So choosing the units does not really matter.
+    - But choosing the *size* of the multiplicative difference is important (50\% larger versus twice as large versus ten times as large, etc). 
+    - E.g., there are very few humans who are twice as large as other humans. So a better multiplicative difference would be 1.05 (5\% taller).
+    
+    ```{r}
+    earnings <- mutate(earnings, log_height = log(height))
+    tidy(lm(earn ~ log_height, data = earnings))
+    ```
+    
+    Individuals that are 5\% taller tend to make $106362 * \log(1.05) = \$5189$ more on average.
+    
+    - You can choose a good multiplier by seeing if the standard deviation of the log of that base is between 1 and 10 (but this is a rough rule of thumb).
+
+    ```{r}
+    sd(log(earnings$height, base = 10)) # bad
+    sd(log(earnings$height, base = 2)) # bad
+    sd(log(earnings$height, base = 1.05)) # good
+    sd(log(earnings$height, base = 1.01)) # good
+    ```
+
+
+- **Exercise**: A study was exploring the association between a country's wine consumption (liters per person per year) and mortality rate (deaths per 1000 individuals). Researchers found that a power-law relationship was a fine approximation. Based on the below plot alone, choose a good multiplier to interpret the coefficient of a regression of log-mortality on log-wine. Verify your result using our rule of thumb above.
+
+    ```{r}
+    library(Sleuth3)
+    data("ex0823")
+    wine <- ex0823
+    qplot(x = Wine, y = Mortality, data = wine)
+    ```
+    
+    ```{block, echo = FALSE, eval = TRUE}
+    2 would be the best, as there aren't oo many countries with 10 times as much wine consumption.
+    ```
+
+    ```{r, echo = FALSE, eval = FALSE}
+    sd(log(wine$Wine, base = 1.1))
+    sd(log(wine$Wine, base = 1.5))
+    sd(log(wine$Wine, base = 2))
+    sd(log(wine$Wine, base = 10))
+    ```
+
 
 ## Z-score scales
-- Use standard deviations to guide your choice of scale. Roughly, 68\% of observations will be within 1 standard deviation of the mean, and so choosing your predictor on the order standard deviations (so within a magnitude of the SD) makes coefficients more interpretable.
+
+- The idea behind using standard deviations is that roughly 68\% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.
+
+- Above, I suggested to use standard deviations to guide your scaling. An alternative choice is to scale explicitely *by* standard deviations.
+
+- The $Z$-score for a variable is its value, minus its mean, divided by its standard deviation.
+    $$
+    Z_i = \frac{X_i - \bar{X}}{s_x}
+    $$
+    
+- If you do this to all variables in your model, you can use the following multiple regression model:
+    $$
+    Y_i = \beta_0 + \beta_1Z_{i1} + \beta_2 Z_{i2} + \cdots + \beta_{p-1}Z_{i, p-1} + \epsilon_i
+    $$
+
+```{r}
+
+```
+
 
 # Multicollinearity
 
