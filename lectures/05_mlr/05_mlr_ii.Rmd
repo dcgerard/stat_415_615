@@ -69,6 +69,8 @@ klippy::klippy()
 - Does this mean that height in miles is a stronger predictor of earnings (since its coefficient estimate is larger?)
     - NO! 🤦
     - The scale of height was chosen arbitrarily. These three equations all reflect the same underlying information.
+    
+- By itself, **the size of the regression coefficients tells you nothing about the importance of a predictor** because this coefficient can change if you change the units of the predictor.
 
 - Better to choose a scale which is in the most interpretable units.
 
@@ -82,7 +84,7 @@ klippy::klippy()
     qplot(x = height_in, data = earnings, bins = 20)
     ```
 
-- You can use the standard deviation of the variables to help guide you. If the standard deviation is between 1 and 10, then you have a good scale. But this is a rough rule of thumb.
+- You can use the standard deviation of the variables to help guide you. If the standard deviation is between 0.5 and 10, then you have a good scale. But this is a rough rule of thumb.
 
     ```{r}
     sd(earnings$height_mm)
@@ -103,7 +105,7 @@ klippy::klippy()
     
     Individuals that are 5\% taller tend to make $106362 * \log(1.05) = \$5189$ more on average.
     
-    - You can choose a good multiplier by seeing if the standard deviation of the log of that base is between 1 and 10 (but this is a rough rule of thumb).
+    - You can choose a good multiplier by seeing if the standard deviation of the log of that base is between 0.5 and 10 (but this is a rough rule of thumb).
 
     ```{r}
     sd(log(earnings$height, base = 10)) # bad
@@ -123,7 +125,7 @@ klippy::klippy()
     ```
     
     ```{block, echo = FALSE, eval = TRUE}
-    2 would be the best, as there aren't oo many countries with 10 times as much wine consumption.
+    2 and 10 would be the best.
     ```
 
     ```{r, echo = FALSE, eval = FALSE}
@@ -133,10 +135,11 @@ klippy::klippy()
     sd(log(wine$Wine, base = 10))
     ```
 
+- **Exercise**: XYZ Have them determine a good scale when it is a linear relationship, not a power-law.
 
 ## Z-score scales
 
-- The idea behind using standard deviations is that roughly 68\% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.
+- The idea behind using standard deviations is that roughly (i.e. generally only exactly if normal) 68\% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.
 
 - Above, I suggested to use standard deviations to guide your scaling. An alternative choice is to scale explicitely *by* standard deviations.
 
@@ -144,16 +147,27 @@ klippy::klippy()
     $$
     Z_i = \frac{X_i - \bar{X}}{s_x}
     $$
+
+- $Z_i$ is now in units of *standard deviations of $X_i$ from its mean*. 
+    - $Z_i = 1$ means individual $i$ has an $X_i$ value that is one standard deviation above the mean.
+    - $Z_i = -1$ means individual $i$ has an $X_i$ value that is one standard deviation below the mean.
+    - $Z_i = 2$ means individual $i$ has an $X_i$ value that is two standard deviations above the mean.
+    - etc
+
+- **Example**: XYZ demonstrate $Z$-scores here on a real dataset.
     
 - If you do this to all variables in your model, you can use the following multiple regression model:
     $$
-    Y_i = \beta_0 + \beta_1Z_{i1} + \beta_2 Z_{i2} + \cdots + \beta_{p-1}Z_{i, p-1} + \epsilon_i
+    Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
     $$
+- If we run a linear regression under this model, then the interpretation of coefficient $\beta_i^*$ is:
+    > Individuals that are 1 standard deviation larger in X_i tend to have $\beta_1^*$ higher $Y_i$ on average, adjusting for all other predictors in our model.
 
-```{r}
+- **Example**: XYZ Fit a multiple linear regression model, then scale. Provide interpretation in terms of model.
 
-```
+- Note: If $X_i^* = \frac{X_i - a}{b}$, then $\beta_i^* = b\beta_i$ and $\hat{\beta}_i^* = b\hat{\beta}_i$.
 
+- **Exercise**: XYZ Let them fit both with and without $Z$-score scaling. Compare coefficients. Provide interpretation using both models. See if the coefficients of other variables change when we scale a different variable.
 
 # Multicollinearity
 
@@ -166,10 +180,21 @@ klippy::klippy()
 # Practical versus statistical significance
 
 - Tests can have tiny $p$-values, but the effect sizes might be small.
+    - This can occur if we have a large sample size when two variables have a weak relationship.
+
+- Tests can have large $p$-values, but the effect sizes might be huge.
+    - This can occur if we have a small sample size when two variables have a strong relationship.
+    
+- So **never** use $p$-values to describe the strength of the relationship between two variables. 
+    - This is what other statistics like $R^2$, partial $R^2$, sums of squares, and Cohen's $d$ are meant for.
+
+- Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
 
 # Comparing effect sizes to residual standard error
 
 - It is always a good idea to compare the effect sizes to the residual standard error.
+    - Recall: Residual standard error is the estimated population standard deviation.
+    - Recall: Residual standard error is the square root of the MSE.
 
 - **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
 
