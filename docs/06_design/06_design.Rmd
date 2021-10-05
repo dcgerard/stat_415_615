@@ -1,0 +1,60 @@
+---
+title: 'Design of Experiments I'
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+library(latex2exp)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3, fig.width = 4)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Sample Size Calculations
+- Simulation Studies
+- Choosing Predictor Levels
+- Section 4.7 of KNNL. 
+- Chapter 16 of ROS.
+- Chapter 23 of the Statistical Sleuth.
+
+# Power
+
+# Sample Size Calculation
+
+# Predictor Levels
+
+- General guidelines for choosing levels of a predictor variable.
+
+- Recall that most standard errors we have in this class decrease with the variance of the predictor variables.
+
+- David Cox has these suggestions for choosing the number of predictor levels [@cox1958planning]:
+    - Use two levels when the object is primarily to examine whether or not ... (the predictor variable) ... has an effect and in which direction that effect is. 
+    - Use three levels whenever a description of the response curve by its slope and curvature is likely to be adequate; this should cover most cases. 
+    - Use four levels if further examination of the shape of the response curve is important. 
+    - Use more than four levels when it is required to estimate the detailed shape of the response curve, or when the curve is expected to rise to an asymptotic value, or in general to show features not adequately described by slope and curvature. 
+    - Except in these last cases it is generally satisfactory to use equally spaced levels with equal numbers of  observations per level.
+
+- Orthogonal levels: Reduce confounding/orthogonality. Make it easier to interpret sums of squares.
+
+- Repeat observations: Choose as many samples as you can. Select an equal number of observations per unique combination of predictor levels.
+
+- **Exercise**: I have the following predictor levels I want to study: $X_1 \in \{1, 5\}$, $X_2 \in \{20, 100\}$. I have funding for 20 observations. What levels of values should I set and how many observations should I put in each group?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    For $(X_1, X_2)$, we should place 5 individuals in each of $(1, 20)$, $(1, 100)$, $(5, 20)$, and $(5, 100)$.
+    ```
+

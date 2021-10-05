@@ -915,6 +915,10 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - $1/X$ and $exp(X)$ and $exp(-X)$ and $\sqrt{X}$ could all help improve linearity.
 
+- $1/X$ works well when the non-constant variance is *more* severe.
+
+- $\sqrt{X}$ works well when the non-constant variance is *less* severe.
+
 - If your goal is *prediction*, then have at it.
 
 - But if your goal is inference, then you lose all interpretability by using transformations other than $\log()$. So think carefully before trying other transformations.

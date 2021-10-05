@@ -1,0 +1,85 @@
+---
+title: 'Design of Experiments I'
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output:  
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE, message=FALSE}
+set.seed(1)
+library(latex2exp)
+library(tidyverse)
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.align  = "center",
+                      fig.height = 3, fig.width = 4)
+ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
+
+# Learning Objectives
+
+- Sample Size Calculations
+- Simulation Studies
+- Choosing Predictor Levels
+- Section 4.7 of KNNL. 
+- Chapter 16 of ROS.
+- Chapter 23 of the Statistical Sleuth.
+
+# Power
+
+# Sample Size Calculation
+
+# Predictor Levels
+
+- General guidelines for choosing levels of a predictor variable.
+
+
+- Recall that most standard errors we have in this class decrease with the variance of the predictor variables.
+    \begin{align}
+    s^2(\hat{\beta}_1) &= \frac{MSE}{\sum_{i=1}^n(X_i - \bar{X})^2}\\
+    s^2(\hat{Y}_h) &= MSE\left(\frac{1}{n} + \frac{(X_h - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right)\\
+    s^2(pred) &= MSE\left(1 + \frac{1}{n} + \frac{(X_h - \bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\right)
+    \end{align}
+
+- So, the design that reduces the standard errors of all of these quantities the most will have two levels per predictor, placing them as far apart as is possible given the goals of the study design.
+
+- However, if you only use two levels, you will not be able to tell if the relationship is \emph{linear}:
+
+    ```{r, echo = FALSE, fig.width = 5}
+    data.frame(x = seq(0, 5, length.out = 500)) %>%
+      mutate(Linear = x * sin(5) / 5, Nonlinear = sin(x)) %>%
+      gather(-x, key = "Relationship", value = "y") ->
+      df_line
+    
+    df_data <- data.frame(x = c(rep(0, 10), rep(5, 10))) %>%
+      mutate(y = rnorm(n(), mean = sin(x), sd = 0.25))
+    ggplot() +
+      geom_line(data = df_line, mapping = aes(x = x, y = y, color = Relationship, lty = Relationship)) +
+      geom_point(data = df_data, mapping = aes(x = x, y = y))
+    ```
+
+- David Cox has these suggestions for choosing the number of predictor levels [@cox1958planning]:
+    - Use two levels when the object is primarily to examine whether or not the predictor variable has an effect and in which direction that effect is. 
+    - Use three levels whenever a description of the response curve by its slope and curvature is likely to be adequate; this should cover most cases. 
+    - Use four levels if further examination of the shape of the response curve is important. 
+    - Use more than four levels when it is required to estimate the detailed shape of the response curve, or when the curve is expected to rise to an asymptotic value, or in general to show features not adequately described by slope and curvature. 
+    - Except in these last cases it is generally satisfactory to use equally spaced levels with equal numbers of  observations per level.
+
+- Orthogonal levels: Reduce confounding/orthogonality. Make it easier to interpret sums of squares.
+
+- Repeat observations: Choose as many samples as you can. Select an equal number of observations per unique combination of predictor levels.
+
+- **Exercise**: I have the following predictor levels I want to study: $X_1 \in \{1, 5\}$, $X_2 \in \{20, 100\}$. I have funding for 20 observations. What levels of values should I set and how many observations should I put in each group?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    For $(X_1, X_2)$, we should place 5 individuals in each of $(1, 20)$, $(1, 100)$, $(5, 20)$, and $(5, 100)$.
+    ```
+
