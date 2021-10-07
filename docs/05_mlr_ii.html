@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-01" />
+<meta name="date" content="2021-10-05" />
 
 <title>MLR: Practical Considerations</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-01</h4>
+<h4 class="date">2021-10-05</h4>
 
 </div>
 
@@ -416,12 +416,24 @@ tidy(lm(earn ~ height_mm, data = earnings))</code></pre>
 <li>The scale of height was chosen arbitrarily. These three equations all reflect the same underlying information.</li>
 </ul></li>
 <li><p>By itself, <strong>the size of the regression coefficients tells you nothing about the importance of a predictor</strong> because this coefficient can change if you change the units of the predictor.</p></li>
-<li><p>Better to choose a scale which is in the most interpretable units.</p></li>
+<li><p><strong>Exercise</strong>: When exploring the effect of the percent of of the population with bachelor’s degrees and percent unemployment on percent below the poverty line in the <a href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">County Demographic Information</a> data, researchers obtained the following output:</p>
+<pre class="r"><code>cdi &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/cdi.csv&quot;)
+cdi &lt;- select(cdi, poverty, bachelors, unemployment)
+lmout &lt;- lm(poverty ~ bachelors + unemployment, data = cdi)
+tidy(lmout)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term         estimate std.error statistic  p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)     7.83     1.15        6.80 3.56e-11
+## 2 bachelors      -0.148    0.0303     -4.88 1.47e- 6
+## 3 unemployment    0.608    0.0992      6.13 1.97e- 9</code></pre>
+<p>Which has a bigger effect on <code>poverty</code>: <code>bachelors</code> or <code>unemployment</code> and why?</p></li>
+<li><p>You should choose a scale which is in the most interpretable units.</p></li>
 <li><p>A 1 millimeter difference in height is not a meaningful difference, in terms of the distribution of human heights.</p></li>
 <li><p>A 1 mile difference in height is unrealistic.</p></li>
 <li><p>A 1 inch difference in height is more reasonable.</p>
 <pre class="r"><code>qplot(x = height_in, data = earnings, bins = 20)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>You can use the standard deviation of the variables to help guide you. If the standard deviation is between 0.5 and 10, then you have a good scale. But this is a rough rule of thumb.</p>
 <pre class="r"><code>sd(earnings$height_mm)</code></pre>
 <pre><code>## [1] 97.33</code></pre>
@@ -460,7 +472,7 @@ tidy(lm(earn ~ log_height, data = earnings))</code></pre>
 data(&quot;ex0823&quot;)
 wine &lt;- ex0823
 qplot(x = Wine, y = Mortality, data = wine)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: XYZ Have them determine a good scale when it is a linear relationship, not a power-law.</p></li>
 </ul>
 </div>
@@ -532,7 +544,7 @@ earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earni
 earnings &lt;- mutate(earnings, log_earn = log(earn))
 earnings &lt;- filter(earnings, is.finite(log_earn))
 qplot(x = height, y = log_earn, data = earnings)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
 <pre class="r"><code>library(broom)
 tidy(lm_earn)</code></pre>

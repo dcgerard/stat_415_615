@@ -72,7 +72,21 @@ klippy::klippy()
     
 - By itself, **the size of the regression coefficients tells you nothing about the importance of a predictor** because this coefficient can change if you change the units of the predictor.
 
-- Better to choose a scale which is in the most interpretable units.
+- **Exercise**: When exploring the effect of the percent of of the population with bachelor's degrees and percent unemployment on percent below the poverty line in the [County Demographic Information](https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information) data, researchers obtained the following output:
+    ```{r, message = FALSE}
+    cdi <- read_csv("https://dcgerard.github.io/stat_415_615/data/cdi.csv")
+    cdi <- select(cdi, poverty, bachelors, unemployment)
+    lmout <- lm(poverty ~ bachelors + unemployment, data = cdi)
+    tidy(lmout)
+    ```
+    
+    Which has a bigger effect on `poverty`: `bachelors` or `unemployment` and why?
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    You cannot tell based on the given information.
+    ```
+
+- You should choose a scale which is in the most interpretable units.
 
 - A 1 millimeter difference in height is not a meaningful difference, in terms of the distribution of human heights.
 
@@ -113,7 +127,6 @@ klippy::klippy()
     sd(log(earnings$height, base = 1.05)) # good
     sd(log(earnings$height, base = 1.01)) # good
     ```
-
 
 - **Exercise**: A study was exploring the association between a country's wine consumption (liters per person per year) and mortality rate (deaths per 1000 individuals). Researchers found that a power-law relationship was a fine approximation. Based on the below plot alone, choose a good multiplier to interpret the coefficient of a regression of log-mortality on log-wine. Verify your result using our rule of thumb above.
 
