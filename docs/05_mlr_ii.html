@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-05" />
+<meta name="date" content="2021-10-14" />
 
 <title>MLR: Practical Considerations</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-05</h4>
+<h4 class="date">2021-10-14</h4>
 
 </div>
 
@@ -387,19 +387,19 @@ earnings &lt;- mutate(earnings,
                    height_mi = height / 63360)
 
 tidy(lm(earn ~ height_mm, data = earnings))</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept) -85027.    8861.       -9.60 2.64e-21
 ## 2 height_mm       62.8      5.23     12.0  5.42e-32</code></pre>
 <pre class="r"><code>tidy(lm(earn ~ height_in, data = earnings))</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)  -85027.     8861.     -9.60 2.64e-21
 ## 2 height_in      1595.      133.     12.0  5.42e-32</code></pre>
 <pre class="r"><code>tidy(lm(earn ~ height_mi, data = earnings))</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term          estimate std.error statistic  p.value
 ##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)    -85027.     8861.     -9.60 2.64e-21
@@ -421,7 +421,7 @@ tidy(lm(earn ~ height_mm, data = earnings))</code></pre>
 cdi &lt;- select(cdi, poverty, bachelors, unemployment)
 lmout &lt;- lm(poverty ~ bachelors + unemployment, data = cdi)
 tidy(lmout)</code></pre>
-<pre><code>## # A tibble: 3 × 5
+<pre><code>## # A tibble: 3 x 5
 ##   term         estimate std.error statistic  p.value
 ##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)     7.83     1.15        6.80 3.56e-11
@@ -450,7 +450,7 @@ tidy(lmout)</code></pre>
 </ul>
 <pre class="r"><code>earnings &lt;- mutate(earnings, log_height = log(height))
 tidy(lm(earn ~ log_height, data = earnings))</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept) -425211.    37370.     -11.4 5.03e-29
@@ -473,14 +473,32 @@ data(&quot;ex0823&quot;)
 wine &lt;- ex0823
 qplot(x = Wine, y = Mortality, data = wine)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: XYZ Have them determine a good scale when it is a linear relationship, not a power-law.</p></li>
+<li><p><strong>Exercise</strong>: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of ROS. Variables include</p>
+<ul>
+<li><code>year</code>: The date (in years) of the new world record.</li>
+<li><code>seconds</code>: The new world record (in seconds).</li>
+</ul>
+<pre class="r"><code>mile &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/mile.csv&quot;)</code></pre>
+<pre><code>## Rows: 32 Columns: 2</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## dbl (2): year, seconds</code></pre>
+<pre><code>## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>glimpse(mile)</code></pre>
+<pre><code>## Rows: 32
+## Columns: 2
+## $ year    &lt;dbl&gt; 1913, 1916, 1924, 1932, 1934, 1934, 1938, 1943, 1943, 1943, 19~
+## $ seconds &lt;dbl&gt; 254.4, 252.6, 250.4, 249.2, 247.6, 246.8, 246.4, 246.2, 246.2,~</code></pre>
+<p>The default scale of the <span class="math inline">\(X\)</span> variable is in years. Is this the best scale? If not, transform the <span class="math inline">\(X\)</span>-variable to a more appropriate scale, fit a regression of world record on year, then provide an interpretation for the slope.</p></li>
 </ul>
 </div>
 <div id="z-score-scales" class="section level2">
 <h2>Z-score scales</h2>
 <ul>
 <li><p>The idea behind using standard deviations is that roughly (i.e. generally only exactly if normal) 68% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.</p></li>
-<li><p>Above, I suggested to use standard deviations to guide your scaling. An alternative choice is to scale explicitely <em>by</em> standard deviations.</p></li>
+<li><p>Above, I suggested to use standard deviations to <em>guide</em> your scaling. Alternatively, we could scale explicitly <em>by</em> standard deviations.</p></li>
 <li><p>The <span class="math inline">\(Z\)</span>-score for a variable is its value, minus its mean, divided by its standard deviation. <span class="math display">\[
   Z_i = \frac{X_i - \bar{X}}{s_x}
   \]</span></p></li>
@@ -491,7 +509,30 @@ qplot(x = Wine, y = Mortality, data = wine)</code></pre>
 <li><span class="math inline">\(Z_i = 2\)</span> means individual <span class="math inline">\(i\)</span> has an <span class="math inline">\(X_i\)</span> value that is two standard deviations above the mean.</li>
 <li>etc</li>
 </ul></li>
-<li><p><strong>Example</strong>: XYZ demonstrate <span class="math inline">\(Z\)</span>-scores here on a real dataset.</p></li>
+<li><p><strong>Example</strong>: For the heights and earnings dataset, let’s create <span class="math inline">\(Z\)</span>-scores.</p>
+<pre class="r"><code>earnings &lt;- mutate(earnings, 
+                   height_z = (height - mean(height)) / sd(height),
+                   earn_z = (earn - mean(earn)) / sd(earn))
+glimpse(select(earnings, earn_z, height_z))</code></pre>
+<pre><code>## Rows: 1,816
+## Columns: 2
+## $ earn_z   &lt;dbl&gt; 1.28053, 1.72435, 0.39290, 0.17099, 1.28053, 1.81312, 1.32492~
+## $ height_z &lt;dbl&gt; 1.9393, -0.1484, -0.6704, -0.4094, -0.9314, 0.3735, -0.9314, ~</code></pre>
+<p>Centering and scaling does not change the underlying information.</p>
+<pre class="r"><code>qplot(x = height, y = earn, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-2.png" width="384" style="display: block; margin: auto;" /> But this will make interpretation a little easier.</p>
+<pre class="r"><code>lm_earn_z &lt;- lm(earn_z ~ height_z, data = earnings)
+tidy(lm_earn_z, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 2 x 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept) 7.99e-16    0.0226  3.54e-14 1.00e+ 0  -0.0443    0.0443
+## 2 height_z    2.71e- 1    0.0226  1.20e+ 1 5.42e-32   0.227     0.316</code></pre>
+<p>So a 1 standard deviation difference in height corresponds to 0.27 standard deviations higher earnings.</p></li>
 <li><p>If you do this to all variables in your model, you can use the following multiple regression model: <span class="math display">\[
   Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
   \]</span></p></li>
@@ -544,11 +585,11 @@ earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earni
 earnings &lt;- mutate(earnings, log_earn = log(earn))
 earnings &lt;- filter(earnings, is.finite(log_earn))
 qplot(x = height, y = log_earn, data = earnings)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
 <pre class="r"><code>library(broom)
 tidy(lm_earn)</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)   5.91     0.376        15.7 6.70e-52
@@ -556,11 +597,11 @@ tidy(lm_earn)</code></pre>
 <p>The <span class="math inline">\(p\)</span>-value is <strong>tiny</strong>. So is this a huge effect? Not really. Let’s discuss.</p>
 <p>Individuals that are a whole foot taller earn about <span class="math inline">\(0.05704 \times 12 = 0.6845\)</span> log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let’s look at the residual standard deviation.</p>
 <pre class="r"><code>glance(lm_earn)</code></pre>
-<pre><code>## # A tibble: 1 × 12
+<pre><code>## # A tibble: 1 x 12
 ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1    0.0595        0.0590 0.877      103. 1.65e-23     1 -2097. 4200. 4216.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
 <p>The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.</p>
 <p>If we compare prediction intervals between a 5’2’’ individual and a 6’2’’ individual (ignoring the appropriateness of the normal model for now), we have</p>
 <pre class="r"><code>predict(object = lm_earn, 
