@@ -419,27 +419,14 @@ div.tocify {
 <p>The goal is to predict body fat from the other variables. You can load these data into R using:</p>
 <pre class="r"><code>library(tidyverse)
 library(broom)
-body &lt;- tribble(~triceps, ~thigh, ~midarm, ~fat,
-                19.5, 43.1, 29.1, 11.9,
-                24.7, 49.8, 28.2, 22.8,
-                30.7, 51.9, 37.0, 18.7,
-                29.8, 54.3, 31.1, 20.1,
-                19.1, 42.2, 30.9, 12.9,
-                25.6, 53.9, 23.7, 21.7,
-                31.4, 58.5, 27.6, 27.1,
-                27.9, 52.1, 30.6, 25.4,
-                22.1, 49.9, 23.2, 21.3,
-                25.5, 53.5, 24.8, 19.3,
-                31.1, 56.6, 30.0, 25.4,
-                30.4, 56.7, 28.3, 27.2,
-                18.7, 46.5, 23.0, 11.7,
-                19.7, 44.2, 28.6, 17.8,
-                14.6, 42.7, 21.3, 12.8,
-                29.5, 54.4, 30.1, 23.9,
-                27.7, 55.3, 25.7, 22.6,
-                30.2, 58.6, 24.6, 25.4,
-                22.7, 48.2, 27.1, 14.8,
-                25.2, 51.0, 27.5, 21.1)</code></pre>
+body &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/body.csv&quot;)
+glimpse(body)</code></pre>
+<pre><code>## Rows: 20
+## Columns: 4
+## $ triceps &lt;dbl&gt; 19.5, 24.7, 30.7, 29.8, 19.1, 25.6, 31.4, 27.9, 22.1, 25.5, 31~
+## $ thigh   &lt;dbl&gt; 43.1, 49.8, 51.9, 54.3, 42.2, 53.9, 58.5, 52.1, 49.9, 53.5, 56~
+## $ midarm  &lt;dbl&gt; 29.1, 28.2, 37.0, 31.1, 30.9, 23.7, 27.6, 30.6, 23.2, 24.8, 30~
+## $ fat     &lt;dbl&gt; 11.9, 22.8, 18.7, 20.1, 12.9, 21.7, 27.1, 25.4, 21.3, 19.3, 25~</code></pre>
 <p>Then if we regress body fat on midarm, we obtain</p>
 <pre class="r"><code>lmmid &lt;- lm(fat ~ midarm, data = body)
 lmmid</code></pre>
@@ -1192,6 +1179,12 @@ ggpairs(textile)</code></pre>
 <div id="coefficients-of-partial-determination" class="section level1">
 <h1>Coefficients of Partial Determination</h1>
 <ul>
+<li><p>Sums of squares have two uses</p>
+<ol style="list-style-type: decimal">
+<li>Discussing proportionate decline in variability when you add a predictor.</li>
+<li>Hypothesis testing.</li>
+</ol></li>
+<li><p>We already discussed hypothesis testing, let’s talk about proportionate decline.</p></li>
 <li><p>The MLR model with two predictors <span class="math display">\[\begin{align}
   Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
   E[\epsilon_i] &amp;= 0\\
@@ -1208,6 +1201,71 @@ ggpairs(textile)</code></pre>
 <li><p>Similarly, the proportionate reduction in the variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_2\)</span> is added, given that <span class="math inline">\(X_1\)</span> is already in the model, is defined by <span class="math display">\[\begin{align}
   R^2_{Y2|1} = \frac{SSE(X_1) - SSE(X_1,X_2)}{SSE(X_1)} = \frac{SSR(X_2|X_1)}{SSE(X_1)}
   \end{align}\]</span></p></li>
+<li><p>General case <span class="math display">\[\begin{align}
+  R^2_{Y1|23} &amp;= \frac{SSR(X_1|X_2, X_3)}{SSE(X_2, X_3)}\\
+  R^2_{Y2|13} &amp;= \frac{SSR(X_2|X_1, X_3)}{SSE(X_1, X_3)}\\
+  R^2_{Y3|12} &amp;= \frac{SSR(X_3|X_1, X_2)}{SSE(X_1, X_2)}\\
+  R^2_{Y4|123} &amp;= \frac{SSR(X_4|X_1, X_2, X_3)}{SSE(X_1, X_2, X_3)}\\
+  &amp;\text{etc...}
+\end{align}\]</span></p></li>
+<li><p>Number to left of vertical bar (the <span class="math inline">\(|\)</span> symbol) show the <span class="math inline">\(X\)</span> variable being added.</p></li>
+<li><p>The Numbers to the right of the vertical bar show the <span class="math inline">\(X\)</span> variables already in the model.</p></li>
+<li><p><strong>Example</strong>: From the body fat example, we fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i,
+  \]</span> where <span class="math inline">\(Y\)</span> is fat, <span class="math inline">\(X_1\)</span> is triceps, <span class="math inline">\(X_2\)</span> is thigh, and <span class="math inline">\(X_3\)</span> is midarm. We then obtain the Type I sums of squares using <code>anova()</code>.</p>
+<pre class="r"><code>lmout &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
+anova(lmout)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: fat
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)
+## triceps    1    352     352   57.28 1.1e-06
+## thigh      1     33      33    5.39   0.034
+## midarm     1     12      12    1.88   0.190
+## Residuals 16     98       6</code></pre>
+<ul>
+<li><p><span class="math inline">\(SSR(X_1) = 352\)</span></p></li>
+<li><p><span class="math inline">\(SSR(X_2|X_1) = 33\)</span></p></li>
+<li><p><span class="math inline">\(SSR(X_3|X_1, X_2) = 12\)</span></p></li>
+<li><p><span class="math inline">\(SSE(X_1, X_2, X_3) = 98\)</span>.</p></li>
+</ul>
+<p>We have that</p>
+<ul>
+<li><p><span class="math inline">\(SSE(X_1) = SSE(X_1, X_2, X_3) + SSR(X_3|X_1, X_2) + SSR(X_2|X_1) = 98 + 12 + 33 = 143\)</span></p></li>
+<li><p><span class="math inline">\(SSE(X_1,X_2) = SSE(X_1, X_2, X_3) + SSR(X_3|X_1, X_2) = 98 + 12 = 110\)</span></p></li>
+<li><p><span class="math inline">\(SSR(X_1, X_2, X_3) = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) = 352 + 33 + 12 = 397\)</span></p></li>
+<li><p><span class="math inline">\(SSTO = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) + SSE(X_1, X_2, X_3) = 352 + 33 + 12 + 98 = 495\)</span></p></li>
+</ul>
+<p><span class="math display">\[\begin{align}
+  R^2 &amp;= \frac{SSR(X_1, X_2, X_3)}{SSTO} = \frac{397}{495} = 0.80\\
+  R^2_{Y1} = \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
+  R^2_{Y2|1} &amp;= \frac{SSR(X_2|X_1)}{SSE(X_1)} = \frac{33}{143} = 0.23\\
+  R^2_{Y3|12} &amp;= \frac{SSR(X_3|X_1,X_2)}{SSE(X_1, X_2)} = \frac{12}{110} = 0.11\\
+  \end{align}\]</span></p>
+<ul>
+<li><p>So including a single variable (in this case, <span class="math inline">\(X_1\)</span>) accounts for most of the variation decrease in Y at 71%. Including <span class="math inline">\(X_2\)</span> in the model reduces the variation an additional 23%, and then including <span class="math inline">\(X_3\)</span> in the model additionally reduces the variation by 11%</p></li>
+<li><p>Changing the order that we fit the variables would change what coefficients of partial determination we could obtain.</p></li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Consider the following ANOVA table with Type I Sums of Squares:</p>
+<pre class="r"><code>lmout &lt;- lm(fat ~ thigh + triceps + midarm, data = body)
+anova(lmout)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: fat
+##           Df Sum Sq Mean Sq F value  Pr(&gt;F)
+## thigh      1    382     382   62.11 6.7e-07
+## triceps    1      3       3    0.56    0.46
+## midarm     1     12      12    1.88    0.19
+## Residuals 16     98       6</code></pre>
+<ol style="list-style-type: decimal">
+<li>What is SSR(X_2)?</li>
+<li>What is SSR(X_1|X_2)?</li>
+<li>What is SSR(X_3|X_1, X_2)?</li>
+<li>What is SSE(X_1, X_2, X_3)?</li>
+<li>What is SSE(X_2)?</li>
+<li>What is <span class="math inline">\(R^2_{Y2}\)</span>?</li>
+<li>What is <span class="math inline">\(R^2_{Y1|2}\)</span>?</li>
+</ol></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
@@ -1227,8 +1285,10 @@ glimpse(estate)</code></pre>
 <li><p>Make a pairs plot and explore the association between these variables. What do you conclude?</p></li>
 <li><p>Create an ANOVA table that contains <span class="math inline">\(SSR(X_2)\)</span>, <span class="math inline">\(SSR(X_1|X_2)\)</span>, and <span class="math inline">\(SSE(X_1, X_2)\)</span>. State what each of these are numerically.</p></li>
 <li><p>Calculate the SSTO from this output.</p></li>
+<li><p>What proportion of variation in <span class="math inline">\(Y\)</span> can be explained by <span class="math inline">\(X_2\)</span>?</p></li>
+<li><p>What is the proportionate decrease in variation when we add <span class="math inline">\(X_1\)</span> to the model that already contains <span class="math inline">\(X_2\)</span>?</p></li>
 <li><p>For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.</p></li>
-<li><p>For each row of the above ANOVA table, state the conclusions of the hyptohesis tests.</p></li>
+<li><p>For each row of the above ANOVA table, state the conclusions of the hypothesis tests.</p></li>
 <li><p>Conduct an overall <span class="math inline">\(F\)</span>-test for the model. <span class="math display">\[
  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
  \]</span> State the hypotheses and conclusions.</p></li>
