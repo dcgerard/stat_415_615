@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-15" />
+<meta name="date" content="2021-10-20" />
 
 <title>ANOVA View of Linear Models</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -367,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-15</h4>
+<h4 class="date">2021-10-20</h4>
 
 </div>
 
@@ -411,7 +411,7 @@ div.tocify {
 <li><p>Each <span class="math inline">\(SSE\)</span> measures how close the regression surface is to the data. Smaller means closer, larger means further away.</p></li>
 <li><p>Let’s consider the Body Data example from Table 7.1 of KNNL. Variables include</p>
 <ul>
-<li><code>triceps</code>: Tricepts skinfold thickness.</li>
+<li><code>triceps</code>: Triceps skinfold thickness.</li>
 <li><code>thigh</code>: Thigh circumference.</li>
 <li><code>midarm</code>: Midarm circumference</li>
 <li><code>fat</code>: Body fat.</li>
@@ -664,11 +664,11 @@ Anova(lm_all)</code></pre>
 <li><p>In R, the overall <span class="math inline">\(F\)</span> test is done automatically and is included in the output of <code>glance()</code> from the <code>{broom}</code> package. It is the <code>p.value</code> term. The <code>statistic</code> term is <span class="math inline">\(F^*\)</span>.</p>
 <pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 glance(lm_all)</code></pre>
-<pre><code>## # A tibble: 1 × 12
+<pre><code>## # A tibble: 1 x 12
 ##   r.squared adj.r.squared sigma statistic    p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.801         0.764  2.48      21.5 0.00000734     3  -44.3  98.6  104.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
 <li><p>We can verify this manually</p>
 <pre class="r"><code>a_all &lt;- augment(lm_all)
 
@@ -780,7 +780,7 @@ f_star</code></pre>
 </ul></li>
 <li><p>Recall, we already came up with a way to test against the null of <span class="math inline">\(H_0: \beta_k = 0\)</span> using <span class="math inline">\(t\)</span>-statistics.</p>
 <pre class="r"><code>tidy(lm_all)</code></pre>
-<pre><code>## # A tibble: 4 × 5
+<pre><code>## # A tibble: 4 x 5
 ##   term        estimate std.error statistic p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 (Intercept)   117.       99.8       1.17   0.258
@@ -804,10 +804,10 @@ estate &lt;- select(estate, log_price, log_area, log_lot, bed)
 glimpse(estate)</code></pre>
 <pre><code>## Rows: 522
 ## Columns: 4
-## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
-## $ log_area  &lt;dbl&gt; 8.017, 7.629, 7.484, 7.401, 7.694, 7.584, 7.703, 7.376, 7.39…
-## $ log_lot   &lt;dbl&gt; 10.009, 10.039, 9.969, 9.761, 9.989, 9.847, 9.833, 10.004, 9…
-## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …</code></pre></li>
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1~
+## $ log_area  &lt;dbl&gt; 8.017, 7.629, 7.484, 7.401, 7.694, 7.584, 7.703, 7.376, 7.39~
+## $ log_lot   &lt;dbl&gt; 10.009, 10.039, 9.969, 9.761, 9.989, 9.847, 9.833, 10.004, 9~
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, ~</code></pre></li>
 <li><p>We want to regress log-price (<span class="math inline">\(Y\)</span>) on log-area (<span class="math inline">\(X_1\)</span>), log-lot (<span class="math inline">\(X_2\)</span>), and bed number (<span class="math inline">\(X_3\)</span>). Suppose we have already decided to include bed number, and we want to ask if we should include one of log-price and log-area. Then the two models that we care considering</p>
 <ul>
 <li>Reduced: <span class="math inline">\(Y_i = \beta_0 + \beta_3 X_{3i} + \epsilon_i\)</span></li>
@@ -908,14 +908,14 @@ earnings &lt;- filter(earnings, is.finite(log_earn))
 glimpse(earnings)</code></pre>
 <pre><code>## Rows: 1,629
 ## Columns: 3
-## $ log_earn  &lt;dbl&gt; 10.820, 11.002, 10.309, 10.127, 10.820, 11.035, 10.840, 9.10…
-## $ ethnicity &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Other&quot;, &quot;Black&quot;, &quot;White…
-## $ height    &lt;dbl&gt; 74, 66, 64, 65, 63, 68, 63, 64, 62, 73, 72, 72, 72, 70, 68, …</code></pre></li>
+## $ log_earn  &lt;dbl&gt; 10.820, 11.002, 10.309, 10.127, 10.820, 11.035, 10.840, 9.10~
+## $ ethnicity &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Other&quot;, &quot;Black&quot;, &quot;White~
+## $ height    &lt;dbl&gt; 74, 66, 64, 65, 63, 68, 63, 64, 62, 73, 72, 72, 72, 70, 68, ~</code></pre></li>
 <li><p>Recall that we can encode a categorical variable with <span class="math inline">\(c\)</span> classes in terms of <span class="math inline">\(c-1\)</span> indicator variables.</p></li>
 <li><p>For example, the variable <code>ethnicity</code> with <span class="math inline">\(c = 4\)</span> values</p>
 <pre><code>## [1] &quot;White&quot;    &quot;Other&quot;    &quot;Black&quot;    &quot;Hispanic&quot;</code></pre>
 <p>can be encoded with with variables</p>
-<pre><code>## # A tibble: 4 × 5
+<pre><code>## # A tibble: 4 x 5
 ##   `(Intercept)` ethnicityHispanic ethnicityOther ethnicityWhite race    
 ##           &lt;dbl&gt;             &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;   
 ## 1             1                 0              0              1 White   
@@ -934,7 +934,7 @@ glimpse(earnings)</code></pre>
 <li><p>In R, when you use a categorical variable in <code>lm()</code>, it will automatically convert the variable to indicators.</p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ ethnicity + height, data = earnings)
 tidy(lm_earn)</code></pre>
-<pre><code>## # A tibble: 5 × 5
+<pre><code>## # A tibble: 5 x 5
 ##   term              estimate std.error statistic  p.value
 ##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)         5.82     0.380      15.3   1.52e-49
@@ -994,9 +994,9 @@ f_star</code></pre>
 glimpse(textile)</code></pre>
 <pre><code>## Rows: 56
 ## Columns: 3
-## $ count    &lt;dbl&gt; 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 2…
-## $ length   &lt;dbl&gt; 2.70, 2.70, 2.70, 2.70, 2.74, 2.74, 2.74, 2.74, 2.80, 2.80, 2…
-## $ strength &lt;dbl&gt; 7.90, 7.86, 7.85, 7.91, 7.38, 7.32, 7.37, 7.33, 7.30, 7.22, 7…</code></pre></li>
+## $ count    &lt;dbl&gt; 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 2~
+## $ length   &lt;dbl&gt; 2.70, 2.70, 2.70, 2.70, 2.74, 2.74, 2.74, 2.74, 2.80, 2.80, 2~
+## $ strength &lt;dbl&gt; 7.90, 7.86, 7.85, 7.91, 7.38, 7.32, 7.37, 7.33, 7.30, 7.22, 7~</code></pre></li>
 <li><p>The goal for these data is to study the effects of yarn-count and and stitch-length on fabric’s bursting strength.</p>
 <pre class="r"><code>library(GGally)
 ggpairs(textile)</code></pre>
@@ -1151,6 +1151,65 @@ ggpairs(textile)</code></pre>
 </ul></li>
 </ul>
 </div>
+<div id="coefficient-of-multiple-determination" class="section level1">
+<h1>Coefficient of Multiple Determination</h1>
+<ul>
+<li><p>The MLR model <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+  E[\epsilon_i] &amp;= 0\\
+  var(\epsilon_i) &amp;= \sigma^2\\
+  cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
+  \end{align}\]</span></p></li>
+<li><p>Sums of Squares <span class="math display">\[\begin{align}
+  SSE &amp;= SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2\\
+  SSR &amp;= SSR(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2\\
+  SSTO &amp;= \sum_{i=1}^n(Y_i - \bar{Y})^2
+  \end{align}\]</span></p></li>
+<li><p>Coefficient of multiple determination <span class="math display">\[\begin{align}
+  R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}
+  \end{align}\]</span></p></li>
+<li><p>Proportionate reduction of total variation in <span class="math inline">\(Y\)</span> associated with the use of the set variables <span class="math inline">\(X_1, X_2,\ldots,X_{p-1}\)</span>.</p>
+<ul>
+<li>I.e. a measure of the strength of association between <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_1,X_2,\ldots,X_{p-1}\)</span>.</li>
+</ul></li>
+<li><p><span class="math inline">\(0 \leq R^2 \leq 1\)</span>.</p>
+<ul>
+<li>Close to 0 when <span class="math inline">\(Y\)</span> is only weakly associated with <span class="math inline">\(X_1,X_2,\ldots,X_{p-1}\)</span>.</li>
+<li>Close to 1 when <span class="math inline">\(Y\)</span> is strongly associated with <span class="math inline">\(X_1,X_2,\ldots,X_{p-1}\)</span>.</li>
+</ul></li>
+<li><p>Reduces down to the coefficient of simple determination when <span class="math inline">\(p = 2\)</span> (SLR model).</p></li>
+<li><p>Note, adding more <span class="math inline">\(X\)</span> variables can only increase <span class="math inline">\(R^2\)</span>. So this cannot be used to compare two models with different number of predictors.</p></li>
+<li><p>Adjusted coefficient of multiple determination: <span class="math display">\[\begin{align}
+  R^2_a = 1 - \left(\frac{n-1}{n-p}\right)\frac{SSE}{SSTO}.
+  \end{align}\]</span></p></li>
+<li><p><span class="math inline">\(R_a^2\)</span> might decrease as we add variables to the model if the reduction in SSE is offset by the decrease in degrees of freedom of the model.</p>
+<ul>
+<li>So, could potentially be used to compare different models.</li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Does a high <span class="math inline">\(R^2\)</span> indicate that multiple linear regression model is appropriate?</p></li>
+</ul>
+</div>
+<div id="coefficients-of-partial-determination" class="section level1">
+<h1>Coefficients of Partial Determination</h1>
+<ul>
+<li><p>The MLR model with two predictors <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
+  E[\epsilon_i] &amp;= 0\\
+  var(\epsilon_i) &amp;= \sigma^2\\
+  cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
+  \end{align}\]</span></p></li>
+<li><p><span class="math inline">\(SSE(X_2)\)</span> measures variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_2\)</span> is included in the model.</p></li>
+<li><p><span class="math inline">\(SSE(X_1, X_2)\)</span> measures the variation in <span class="math inline">\(Y\)</span> when both <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> are included in the model.</p></li>
+<li><p><span class="math inline">\(SSE(X_1, X_2) \leq SSE(X_2)\)</span></p></li>
+<li><p>So the proportionate reduction in the variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_1\)</span> is added can be a measure of the contribution of <span class="math inline">\(X_1\)</span>.</p></li>
+<li><p>Coefficient of multiple determination <span class="math display">\[\begin{align}
+  R^2_{Y1|2} = \frac{SSE(X_2) - SSE(X_1,X_2)}{SSE(X_2)} = \frac{SSR(X_1|X_2)}{SSE(X_2)}
+  \end{align}\]</span></p></li>
+<li><p>Similarly, the proportionate reduction in the variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_2\)</span> is added, given that <span class="math inline">\(X_1\)</span> is already in the model, is defined by <span class="math display">\[\begin{align}
+  R^2_{Y2|1} = \frac{SSE(X_1) - SSE(X_1,X_2)}{SSE(X_1)} = \frac{SSR(X_2|X_1)}{SSE(X_1)}
+  \end{align}\]</span></p></li>
+</ul>
+</div>
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 <p>From the <code>estate</code> data, let’s consider the association between log-price, the number of beds, and the number of baths.</p>
@@ -1160,9 +1219,9 @@ estate &lt;- select(estate, log_price, bed, bath)
 glimpse(estate)</code></pre>
 <pre><code>## Rows: 522
 ## Columns: 3
-## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
-## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …
-## $ bath      &lt;dbl&gt; 4, 2, 3, 2, 3, 3, 2, 1, 2, 3, 5, 4, 4, 4, 3, 5, 2, 4, 3, 3, …</code></pre>
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1~
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, ~
+## $ bath      &lt;dbl&gt; 4, 2, 3, 2, 3, 3, 2, 1, 2, 3, 5, 4, 4, 4, 3, 5, 2, 4, 3, 3, ~</code></pre>
 <p>We will consider regressing log-price (<span class="math inline">\(Y\)</span>) on number of beds (<span class="math inline">\(X_1\)</span>) and number of baths (<span class="math inline">\(X_2\)</span>).</p>
 <ol style="list-style-type: decimal">
 <li><p>Make a pairs plot and explore the association between these variables. What do you conclude?</p></li>

@@ -73,7 +73,7 @@ klippy::klippy()
 
 
 - Let's consider the Body Data example from Table 7.1 of KNNL. Variables include
-    - `triceps`: Tricepts skinfold thickness.
+    - `triceps`: Triceps skinfold thickness.
     - `thigh`: Thigh circumference.
     - `midarm`: Midarm circumference
     - `fat`: Body fat.
@@ -741,6 +741,83 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
     - $F$-test for multiple predictors. Fit both models, use `anova()` to compare.
     - $F$-test for one categorical variable. Use `Anova()` from the `{car}` package on full model fit.
     - $F$-test lack-of-fit. Fit both models, use `anova()` to compare.
+    
+# Coefficient of Multiple Determination
+
+- The MLR model
+    \begin{align}
+    Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+    E[\epsilon_i] &= 0\\
+    var(\epsilon_i) &= \sigma^2\\
+    cov(\epsilon_i, \epsilon_j) &= 0 \text{ for all } i \neq j
+    \end{align}
+    
+- Sums of Squares
+    \begin{align}
+    SSE &= SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n(Y_i - \hat{Y}_i)^2\\
+    SSR &= SSR(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n(\hat{Y}_i - \bar{Y})^2\\
+    SSTO &= \sum_{i=1}^n(Y_i - \bar{Y})^2
+    \end{align}
+
+- Coefficient of multiple determination
+    \begin{align}
+    R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO}
+    \end{align}
+
+- Proportionate reduction of total variation in $Y$ associated with the use of the set variables $X_1, X_2,\ldots,X_{p-1}$.
+    - I.e. a measure of the strength of association between $Y$ and $X_1,X_2,\ldots,X_{p-1}$.
+
+- $0 \leq R^2 \leq 1$.
+    - Close to 0 when $Y$ is only weakly associated with $X_1,X_2,\ldots,X_{p-1}$.
+    - Close to 1 when $Y$ is strongly associated with $X_1,X_2,\ldots,X_{p-1}$.
+
+- Reduces down to the coefficient of simple determination when $p = 2$ (SLR model).
+
+
+- Note, adding more $X$ variables can only increase $R^2$. So this cannot be used to compare two models with different number of predictors.
+
+- Adjusted coefficient of multiple determination:
+    \begin{align}
+    R^2_a = 1 - \left(\frac{n-1}{n-p}\right)\frac{SSE}{SSTO}.
+    \end{align}
+    
+- $R_a^2$ might decrease as we add variables to the model if the reduction in SSE is offset by the decrease in degrees of freedom of the model.
+    - So, could potentially be used to compare different models.
+    
+- **Exercise**: Does a high $R^2$ indicate that multiple linear regression model is appropriate?
+    ```{block, eval = FALSE, echo = FALSE}
+    No. A high $R^2$ does not say anything about whether the assumptions of the linear model are fulfilled.
+    
+    $R^2$ is only a useful measure of association if all of the assumptions of the linear model are fulfilled.
+    ```
+
+# Coefficients of Partial Determination
+
+- The MLR model with two predictors
+    \begin{align}
+    Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
+    E[\epsilon_i] &= 0\\
+    var(\epsilon_i) &= \sigma^2\\
+    cov(\epsilon_i, \epsilon_j) &= 0 \text{ for all } i \neq j
+    \end{align}
+    
+- $SSE(X_2)$ measures variation in $Y$ when $X_2$ is included in the model.
+
+- $SSE(X_1, X_2)$ measures the variation in $Y$ when both $X_1$ and $X_2$ are included in the model.
+
+- $SSE(X_1, X_2) \leq SSE(X_2)$
+
+- So the proportionate reduction in the variation in $Y$ when $X_1$ is added can be a measure of the contribution of $X_1$.
+    
+- Coefficient of multiple determination
+    \begin{align}
+    R^2_{Y1|2} = \frac{SSE(X_2) - SSE(X_1,X_2)}{SSE(X_2)} = \frac{SSR(X_1|X_2)}{SSE(X_2)}
+    \end{align}
+    
+- Similarly, the proportionate reduction in the variation in $Y$ when $X_2$ is added, given that $X_1$ is already in the model, is defined by
+    \begin{align}
+    R^2_{Y2|1} = \frac{SSE(X_1) - SSE(X_1,X_2)}{SSE(X_1)} = \frac{SSR(X_2|X_1)}{SSE(X_1)}
+    \end{align}
 
 # Exercise
 

@@ -19,15 +19,23 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
 
+# Body Fat
+
+- [body.csv](./data/body.csv): Dataset from Section 7.1 of KNNL. Data were collected from 20 healthy females, 25--34 years old, to study the relationship between body fat and three predictors. Variables include
+    - `triceps`: Triceps skinfold thickness.
+    - `thigh`: Thigh circumference.
+    - `midarm`: Midarm circumference
+    - `fat`: Body fat.
+
 # Copiers
 
-- [copiers.csv](./data/copiers.csv): Dataset from exercise 1.20 of [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
+- [copiers.csv](./data/copiers.csv): Dataset from exercise 1.20 of KNNL. A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
     - `copiers`: The number of copiers serviced during a single call.
     - `minutes`: The total number of minutes spend by the service person.
 
 # County Demographic Information
 
-- [cdi.csv](./data/cdi.csv): Dataset C.2 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Demographic information on counties in 1990 and 1992. Variables include:
+- [cdi.csv](./data/cdi.csv): Dataset C.2 from KNNL. Demographic information on counties in 1990 and 1992. Variables include:
     - `id`: Identification number of the county.
     - `county`: County name.
     - `state`: Two-letter state abbreviation.
@@ -58,7 +66,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Disease Outbreak
 
-- [disease.csv](./data/disease.csv): Dataset C.10 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
+- [disease.csv](./data/disease.csv): Dataset C.10 from KNNL. Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
     - `id`: Identification number.
     - `age`: Age of the individual.
     - `socioeconomic`: Socioeconomic status of the individual. `1` = upper, `2` = middle, `3` = lower.
@@ -93,7 +101,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Heating Equipment
 
-- [heating.csv](./data/heating.csv): Dataset C.8 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
+- [heating.csv](./data/heating.csv): Dataset C.8 from KNNL. A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
     - `id`: Month identification number.
     - `orders`: Number of heating equipment orders duing the month.
     - `interest`: Prime rate in effect during the month.
@@ -115,7 +123,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # IPO
 
-- [ipo.csv](./data/ipo.csv): Dataset C.11 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
+- [ipo.csv](./data/ipo.csv): Dataset C.11 from KNNL. Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
     - `id`: Identification number.
     - `vc`: Presence or absence of venture capital funding. Either `"yes"` or `"no"`.
     - `value`: Estimated face value of company from prospectus (in dollars).
@@ -124,7 +132,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Ischemic Heart Disease
 
-- [ischemic.csv](./data/ischemic.csv): Dataset C.9 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
+- [ischemic.csv](./data/ischemic.csv): Dataset C.9 from KNNL. Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
     - `id`: Identification number.
     - `cost`: Total cost of claims by subscriber (dollars).
     - `age`: Age of subscriber (years).
@@ -147,7 +155,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Market Share
 
-- [market.csv](./data/market.csv): Dataset C.3 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
+- [market.csv](./data/market.csv): Dataset C.3 from KNNL. Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
     - `num`: Month number (1--36)
     - `share`: Average monthly market share for product (percent)
     - `price`: Average monthly price of product (dollars)
@@ -171,7 +179,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Prostate Cancer
 
-- [prostate.csv](./data/prostate.csv): Dataset C.5 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
+- [prostate.csv](./data/prostate.csv): Dataset C.5 from KNNL. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
     - `id`: Identification number of the patient.
     - `psa`: Serum prostate-specific antigen level (mg/ml)
     - `volume`: Estimate of prostate cancer volume (cubic centimeters)
@@ -184,7 +192,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Real Estate Sales
 
-- [estate.csv](./data/estate.csv): Dataset C.7 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
+- [estate.csv](./data/estate.csv): Dataset C.7 from KNNL. Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
     - `price`: Sales price of residence (in dollars)
     - `area`: Finished area of residence (in square feet)
     - `bed`: Total number of bedrooms in residence
@@ -200,7 +208,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
  
 # Study on the Efficacy of Nosocomial Infection Control (SENIC)
 
-- [senic.csv](./data/senic.csv): Dataset C.1 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
+- [senic.csv](./data/senic.csv): Dataset C.1 from KNNL. The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
     - `id`: Hospital identification number.
     - `length`: Average length of stay of all patients in hospital (days).
     - `age`: Average age of patients (years).
@@ -223,7 +231,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 
 # University Admissions
 
-- [university.csv](./data/university.csv): Dataset C.4 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
+- [university.csv](./data/university.csv): Dataset C.4 from KNNL. Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
     - `id`: The student identification number.
     - `gpa`: Grade-point average following freshman year.
     - `rank`: High school class rank as percentile. Lower percentiles imply higher class ranks.
@@ -231,7 +239,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `year`: Calendar year that the freshman entered university.
 
 # Website Developer
-- [website.csv](./data/website.csv): Dataset C.6 from [KNNL](http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/Appendix%20C%20Data%20Sets.html). A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
+- [website.csv](./data/website.csv): Dataset C.6 from KNNL. A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
     - `id`: Identification number for row.
     - `number`: Number of websites completed and delivered to customers during the quarter.
     - `backlog`: Number of website orders in backlog at the close of the quarter.

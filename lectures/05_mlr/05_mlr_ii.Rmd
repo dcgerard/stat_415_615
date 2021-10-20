@@ -151,7 +151,7 @@ klippy::klippy()
 - **Exercise**: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of ROS. Variables include
     - `year`: The date (in years) of the new world record.
     - `seconds`: The new world record (in seconds).
-    ```{r}
+    ```{r, message = FALSE}
     mile <- read_csv("https://dcgerard.github.io/stat_415_615/data/mile.csv")
     glimpse(mile)
     ```

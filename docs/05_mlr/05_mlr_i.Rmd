@@ -153,13 +153,13 @@ klippy::klippy()
     
 - Using summation notation, we can write the top equation by
     $$
-    Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
+    Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ij}
     $$
     
 - Why use $p-1$ in the indexing? The $p$th variable is $X_{0i} = 1$ and the linear model can be equivalently written
     \begin{align}
     Y_i &= \beta_0X_{0i} + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
-     &= \sum_{j=0}^{p-1}\beta_j X_{ji}
+     &= \sum_{j=0}^{p-1}\beta_j X_{ij}
     \end{align}
 
 - The response function

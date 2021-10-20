@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-09" />
+<meta name="date" content="2021-10-20" />
 
 <title>Multiple Linear Regression I</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-09</h4>
+<h4 class="date">2021-10-20</h4>
 
 </div>
 
@@ -445,11 +445,11 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
   \end{align}\]</span></p></li>
 <li><p>Using summation notation, we can write the top equation by <span class="math display">\[
-  Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ji}
+  Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ij}
   \]</span></p></li>
 <li><p>Why use <span class="math inline">\(p-1\)</span> in the indexing? The <span class="math inline">\(p\)</span>th variable is <span class="math inline">\(X_{0i} = 1\)</span> and the linear model can be equivalently written <span class="math display">\[\begin{align}
   Y_i &amp;= \beta_0X_{0i} + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
-   &amp;= \sum_{j=0}^{p-1}\beta_j X_{ji}
+   &amp;= \sum_{j=0}^{p-1}\beta_j X_{ij}
   \end{align}\]</span></p></li>
 <li><p>The response function <span class="math display">\[
   E[Y] = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1}
@@ -749,7 +749,7 @@ lmout</code></pre>
 <li><p>You obtain coefficient estimates, standard errors, and <span class="math inline">\(p\)</span>-values against the null of <span class="math inline">\(\beta_k = 0\)</span> using <code>tidy()</code> from the <code>{broom}</code> package.</p>
 <pre class="r"><code>library(broom)
 tidy(lmout)</code></pre>
-<pre><code>## # A tibble: 3 × 5
+<pre><code>## # A tibble: 3 x 5
 ##   term        estimate std.error statistic    p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266     
@@ -757,7 +757,7 @@ tidy(lmout)</code></pre>
 ## 3 disp            9.37     4.06       2.30 0.0333</code></pre></li>
 <li><p>Confidence intervals can be obtained using the <code>conf.int = TRUE</code> argument.</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
-<pre><code>## # A tibble: 3 × 7
+<pre><code>## # A tibble: 3 x 7
 ##   term        estimate std.error statistic    p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266      -195.        57.2 
@@ -768,20 +768,20 @@ tidy(lmout)</code></pre>
 <li><p>Let’s compare these coefficients to those under simple linear regression.</p>
 <pre class="r"><code>lm_simp_young &lt;- lm(sales ~ young, data = portrait)
 tidy(lm_simp_young)</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)    68.0      9.46       7.19 7.86e- 7
 ## 2 young           1.84     0.146     12.5  1.23e-10</code></pre>
 <pre class="r"><code>lm_simp_disp &lt;- lm(sales ~ disp, data = portrait)
 tidy(lm_simp_disp)</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic    p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 (Intercept)   -352.      80.7      -4.37 0.000329  
 ## 2 disp            31.2      4.70      6.64 0.00000239</code></pre></li>
 <li><p>Look how different the coefficient for <code>disp</code> is when we include <code>young</code> versus when we do not include <code>young</code>.</p></li>
-<li><p>You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model.</p></li>
+<li><p><strong>You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model.</strong></p></li>
 <li><p>Whenever you include more covariates in a model, the interpretation of the coefficient <em>on the same variable</em> changes.</p></li>
 <li><p>What is the interpretation of the 31.17 coefficient?</p>
 <blockquote>
@@ -820,7 +820,7 @@ tidy(lm_simp_disp)</code></pre>
   \]</span></p></li>
 <li><p>If <span class="math inline">\(\mathbf{X}_h = \mathbf{X}\)</span>, then we can use <code>augment()</code> from <code>{broom}</code> to obtain the fitted value</p>
 <pre class="r"><code>augment(lmout)</code></pre>
-<pre><code>## # A tibble: 21 × 9
+<pre><code>## # A tibble: 21 x 9
 ##    sales young  disp .fitted  .resid   .hat .sigma   .cooksd .std.resid
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ##  1  174.  68.5  16.7    187. -12.8   0.122   10.8  0.0710       -1.24  
@@ -833,7 +833,7 @@ tidy(lm_simp_disp)</code></pre>
 ##  8  163.  52    17.2    168.  -4.67  0.0916  11.3  0.00665      -0.445 
 ##  9  145.  48.9  16.6    158. -12.3   0.0724  10.9  0.0353       -1.16  
 ## 10  137.  38.4  16      137.   0.354 0.133   11.3  0.0000607     0.0345
-## # … with 11 more rows</code></pre></li>
+## # ... with 11 more rows</code></pre></li>
 <li><p>If we have a new set of predictors, then we need to first create the data frame representing <span class="math inline">\(\mathbf{X}_h\)</span> before using <code>predict()</code> to obtain estimated mean values.</p>
 <pre class="r"><code>newdf &lt;- data.frame(young = c(60, 55), disp = c(15, 15.5))
 predict(object = lmout, newdata = newdf)</code></pre>

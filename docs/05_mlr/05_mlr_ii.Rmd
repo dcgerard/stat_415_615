@@ -72,7 +72,21 @@ klippy::klippy()
     
 - By itself, **the size of the regression coefficients tells you nothing about the importance of a predictor** because this coefficient can change if you change the units of the predictor.
 
-- Better to choose a scale which is in the most interpretable units.
+- **Exercise**: When exploring the effect of the percent of of the population with bachelor's degrees and percent unemployment on percent below the poverty line in the [County Demographic Information](https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information) data, researchers obtained the following output:
+    ```{r, message = FALSE}
+    cdi <- read_csv("https://dcgerard.github.io/stat_415_615/data/cdi.csv")
+    cdi <- select(cdi, poverty, bachelors, unemployment)
+    lmout <- lm(poverty ~ bachelors + unemployment, data = cdi)
+    tidy(lmout)
+    ```
+    
+    Which has a bigger effect on `poverty`: `bachelors` or `unemployment` and why?
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    You cannot tell based on the given information.
+    ```
+
+- You should choose a scale which is in the most interpretable units.
 
 - A 1 millimeter difference in height is not a meaningful difference, in terms of the distribution of human heights.
 
@@ -114,7 +128,6 @@ klippy::klippy()
     sd(log(earnings$height, base = 1.01)) # good
     ```
 
-
 - **Exercise**: A study was exploring the association between a country's wine consumption (liters per person per year) and mortality rate (deaths per 1000 individuals). Researchers found that a power-law relationship was a fine approximation. Based on the below plot alone, choose a good multiplier to interpret the coefficient of a regression of log-mortality on log-wine. Verify your result using our rule of thumb above.
 
     ```{r}
@@ -135,13 +148,39 @@ klippy::klippy()
     sd(log(wine$Wine, base = 10))
     ```
 
-- **Exercise**: XYZ Have them determine a good scale when it is a linear relationship, not a power-law.
+- **Exercise**: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of ROS. Variables include
+    - `year`: The date (in years) of the new world record.
+    - `seconds`: The new world record (in seconds).
+    ```{r, message = FALSE}
+    mile <- read_csv("https://dcgerard.github.io/stat_415_615/data/mile.csv")
+    glimpse(mile)
+    ```
+    
+    The default scale of the $X$ variable is in years. Is this the best scale? If not, transform the $X$-variable to a more appropriate scale, fit a regression of world record on year, then provide an interpretation for the slope.
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    sd(mile$year)
+    ```
+    ```{block, eval = FALSE, echo = FALSE}
+    Maybe decades would be better.
+    ```
+    ```{r, echo = FALSE, eval = FALSE}
+    mile <- mutate(mile, year_dec = year / 10)
+    qplot(x = year_dec, y = seconds, data = mile) +
+      geom_smooth(method = "lm", se = FALSE)
+    lm_mile <- lm(seconds ~ year_dec, data = mile)
+    tidy(lm_mile, conf.int = TRUE)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Each decade, the world record tended to be about 3.9 seconds lower (95\% confidence interval of 3.7 to 4.2 seconds lower).
+    ```
 
 ## Z-score scales
 
 - The idea behind using standard deviations is that roughly (i.e. generally only exactly if normal) 68\% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.
 
-- Above, I suggested to use standard deviations to guide your scaling. An alternative choice is to scale explicitely *by* standard deviations.
+- Above, I suggested to use standard deviations to *guide* your scaling. Alternatively, we could scale explicitly *by* standard deviations.
 
 - The $Z$-score for a variable is its value, minus its mean, divided by its standard deviation.
     $$
@@ -154,8 +193,26 @@ klippy::klippy()
     - $Z_i = 2$ means individual $i$ has an $X_i$ value that is two standard deviations above the mean.
     - etc
 
-- **Example**: XYZ demonstrate $Z$-scores here on a real dataset.
-    
+- **Example**: For the heights and earnings dataset, let's create $Z$-scores.
+
+    ```{r}
+    earnings <- mutate(earnings, 
+                       height_z = (height - mean(height)) / sd(height),
+                       earn_z = (earn - mean(earn)) / sd(earn))
+    glimpse(select(earnings, earn_z, height_z))
+    ```
+    Centering and scaling does not change the underlying information.
+    ```{r}
+    qplot(x = height, y = earn, data = earnings) + geom_smooth(method = "lm", se = FALSE)
+    qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = "lm", se = FALSE)
+    ```
+    But this will make interpretation a little easier.
+    ```{r}
+    lm_earn_z <- lm(earn_z ~ height_z, data = earnings)
+    tidy(lm_earn_z, conf.int = TRUE)
+    ```
+    So a 1 standard deviation difference in height corresponds to 0.27 standard deviations higher earnings.
+        
 - If you do this to all variables in your model, you can use the following multiple regression model:
     $$
     Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
