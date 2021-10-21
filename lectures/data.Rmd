@@ -26,6 +26,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `thigh`: Thigh circumference.
     - `midarm`: Midarm circumference
     - `fat`: Body fat.
+    
+# Brand Preference
+
+- [brand.csv](./data/brand.csv): Dataset from problem 6.5 of KNNL. An experiment was performed on various characteristics of a brand. Variables include
+    - `like`: The degree of brand liking, on a 0-100 scale.
+    - `moisture`: The moisture content (higher is more moisture).
+    - `sweetness`: The sweetness content (higher is sweeter).
 
 # Copiers
 

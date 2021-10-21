@@ -83,27 +83,8 @@ klippy::klippy()
     ```{r, message=FALSE}
     library(tidyverse)
     library(broom)
-    body <- tribble(~triceps, ~thigh, ~midarm, ~fat,
-                    19.5, 43.1, 29.1, 11.9,
-                    24.7, 49.8, 28.2, 22.8,
-                    30.7, 51.9, 37.0, 18.7,
-                    29.8, 54.3, 31.1, 20.1,
-                    19.1, 42.2, 30.9, 12.9,
-                    25.6, 53.9, 23.7, 21.7,
-                    31.4, 58.5, 27.6, 27.1,
-                    27.9, 52.1, 30.6, 25.4,
-                    22.1, 49.9, 23.2, 21.3,
-                    25.5, 53.5, 24.8, 19.3,
-                    31.1, 56.6, 30.0, 25.4,
-                    30.4, 56.7, 28.3, 27.2,
-                    18.7, 46.5, 23.0, 11.7,
-                    19.7, 44.2, 28.6, 17.8,
-                    14.6, 42.7, 21.3, 12.8,
-                    29.5, 54.4, 30.1, 23.9,
-                    27.7, 55.3, 25.7, 22.6,
-                    30.2, 58.6, 24.6, 25.4,
-                    22.7, 48.2, 27.1, 14.8,
-                    25.2, 51.0, 27.5, 21.1)
+    body <- read_csv("https://dcgerard.github.io/stat_415_615/data/body.csv")
+    glimpse(body)
     ```
     
     Then if we regress body fat on midarm, we obtain
@@ -583,7 +564,11 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
       mutate(race = unique(earnings$ethnicity))
     ```
     
-- That is, black individuals are coded $X_1 = X_2 = X_3 = 0$, hispanic individuals are coded as $X_1 = 1$ and $X_2 = X_3 = 0$, white individuals are coded as $X_3 = 1$ and $X_1 = X_2 = 0$, and other individuals are coded as $X_2 = 1$ and $X_1 = X_3 = 0$.
+- That is, 
+    - black individuals are coded $X_1 = X_2 = X_3 = 0$, 
+    - hispanic individuals are coded as $X_1 = 1$ and $X_2 = X_3 = 0$, 
+    - white individuals are coded as $X_3 = 1$ and $X_1 = X_2 = 0$, and 
+    - other individuals are coded as $X_2 = 1$ and $X_1 = X_3 = 0$.
 
 - If we also include $X_4$ = height, then we can test for whether or not to include ethnicity in the model by comparing the two models
     - $H_0: Y_i = \beta_0 + \beta_4 X_{i4} + \epsilon_i$
@@ -793,6 +778,12 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 
 # Coefficients of Partial Determination
 
+- Sums of squares have two uses
+    1. Discussing proportionate decline in variability when you add a predictor.
+    2. Hypothesis testing.
+    
+- We already discussed hypothesis testing, let's talk about proportionate decline.
+
 - The MLR model with two predictors
     \begin{align}
     Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
@@ -818,6 +809,155 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
     \begin{align}
     R^2_{Y2|1} = \frac{SSE(X_1) - SSE(X_1,X_2)}{SSE(X_1)} = \frac{SSR(X_2|X_1)}{SSE(X_1)}
     \end{align}
+    
+- General case
+\begin{align}
+    R^2_{Y1|23} &= \frac{SSR(X_1|X_2, X_3)}{SSE(X_2, X_3)}\\
+    R^2_{Y2|13} &= \frac{SSR(X_2|X_1, X_3)}{SSE(X_1, X_3)}\\
+    R^2_{Y3|12} &= \frac{SSR(X_3|X_1, X_2)}{SSE(X_1, X_2)}\\
+    R^2_{Y4|123} &= \frac{SSR(X_4|X_1, X_2, X_3)}{SSE(X_1, X_2, X_3)}\\
+    &\text{etc...}
+\end{align}
+
+- Number to left of vertical bar (the $|$ symbol) show the $X$ variable being added.
+
+- The Numbers to the right of the vertical bar show the $X$ variables already in the model.
+
+
+- **Example**: From the body fat example, we fit the model
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i,
+    $$
+    where $Y$ is fat, $X_1$ is triceps, $X_2$ is thigh, and $X_3$ is midarm. 
+    We then obtain the Type I sums of squares using `anova()`.
+    ```{r}
+    lmout <- lm(fat ~ triceps + thigh + midarm, data = body)
+    anova(lmout)
+    ```
+    
+    - $SSR(X_1) = 352$
+    
+    - $SSR(X_2|X_1) = 33$
+    
+    - $SSR(X_3|X_1, X_2) = 12$
+    
+    - $SSE(X_1, X_2, X_3) = 98$.
+    
+    We have that 
+    
+    - $SSE(X_1) = SSE(X_1, X_2, X_3) + SSR(X_3|X_1, X_2) + SSR(X_2|X_1) = 98 + 12 + 33 = 143$
+    
+    - $SSE(X_1,X_2) = SSE(X_1, X_2, X_3) + SSR(X_3|X_1, X_2) = 98 + 12 = 110$
+    
+    - $SSR(X_1, X_2, X_3) = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) = 352 + 33 + 12 = 397$
+    
+    - $SSTO = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2) + SSE(X_1, X_2, X_3) = 352 + 33 + 12 + 98 = 495$
+    
+    \begin{align}
+    R^2 &= \frac{SSR(X_1, X_2, X_3)}{SSTO} = \frac{397}{495} = 0.80\\
+    R^2_{Y1} = \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
+    R^2_{Y2|1} &= \frac{SSR(X_2|X_1)}{SSE(X_1)} = \frac{33}{143} = 0.23\\
+    R^2_{Y3|12} &= \frac{SSR(X_3|X_1,X_2)}{SSE(X_1, X_2)} = \frac{12}{110} = 0.11\\
+    \end{align}
+    
+    - So including a single variable (in this case, $X_1$) accounts for most of the variation decrease in Y at 71\%. Including $X_2$ in the model reduces the variation an additional 23\%, and then including $X_3$ in the model additionally reduces the variation by 11\%
+
+    - Changing the order that we fit the variables would change what coefficients of partial determination we could obtain.
+    
+- **Exercise**: Consider the following ANOVA table with Type I Sums of Squares:
+    ```{r}
+    lmout <- lm(fat ~ thigh + triceps + midarm, data = body)
+    anova(lmout)
+    ```
+    
+    1. What is SSR(X_2)?
+    2. What is SSR(X_1|X_2)?
+    3. What is SSR(X_3|X_1, X_2)?
+    4. What is SSE(X_1, X_2, X_3)?
+    5. What is SSE(X_2)?
+    6. What is $R^2_{Y2}$?
+    7. What is $R^2_{Y1|2}$?
+
+    ```{block, echo = FALSE, eval = FALSE}
+    - $SSR(X_2) = 382$
+    - $SSR(X_1|X_2) = 3$
+    - $SSR(X_3|X_1, X_2) = 12$
+    - $SSE(X_1, X_2, X_3) = 98$
+    - $SSE(X_2) = SSE(X_1, X_2, X_3) + SSR(X_3|X_1, X_2) + SSR(X_1|X_2) = 98 + 12 + 3 = 113$
+    - $R^2_{Y2} = \frac{SSR(X_2)}{SSTO} = \frac{382}{495} = 0.77$
+    - $R^2_{Y1|2} = \frac{SSR(X_1|X_2)}{SSE(X_2)} = \frac{3}{113} = 0.03$
+    
+    So adding $X_1$ when $X_2$ is already in the model only reduces the variation by an additional 3\%.
+    
+    It seems that $X_2$ (thigh) is a more important predictor of body fat tahn $X_1$ (triceps).
+    ```
+    
+# Statistical versus Practical significance
+
+- Tests can have tiny $p$-values, but the effect sizes might be small.
+    - This can occur if we have a large sample size when two variables have a weak relationship.
+
+- Tests can have large $p$-values, but the effect sizes might be huge.
+    - This can occur if we have a small sample size when two variables have a strong relationship.
+    
+- So **never** use $p$-values to describe the strength of the relationship between two variables. 
+    - This is what other statistics like $R^2$, partial $R^2$, sums of squares, and Cohen's $d$ are meant for.
+
+- Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
+
+- Coefficients of determination are useful for determining practical significance.
+
+- Another tool to do this is to compare the effect sizes to the residual standard error.
+    - Recall: Residual standard error is the estimated population standard deviation.
+    - Recall: Residual standard error is the square root of the MSE.
+
+- **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
+    earnings <- mutate(earnings, log_earn = log(earn))
+    earnings <- filter(earnings, is.finite(log_earn))
+    qplot(x = height, y = log_earn, data = earnings)
+    lm_earn <- lm(log_earn ~ height, data = earnings)
+    ```
+    
+    ```{r}
+    library(broom)
+    tidy(lm_earn)
+    ```
+    
+    The $p$-value is **tiny**. So is this a huge effect? Not really. Let's discuss.
+    
+    Individuals that are a whole foot taller earn about $0.05704 \times 12 = 0.6845$ log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let's look at the residual standard deviation.
+    
+    ```{r}
+    glance(lm_earn)$sigma
+    ```
+    
+    The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.
+    
+    If we compare prediction intervals between a 5'2'' individual and a 6'2'' individual (ignoring the appropriateness of the normal model for now), we have
+    
+    ```{r}
+    predict(object = lm_earn, 
+            newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
+            interval = "prediction") %>%
+      exp()
+    ```
+    So it is true that the taller individual is expected to make twice as much money (\$12,938 versus \$25,652), but the range of individuals at each level is huge (\$2312 to \$72,387 and \$4579 to \$143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).
+    
+    A simpler measure would be to look a the $R^2$.
+    
+    ```{r}
+    glance(lm_earn)$r.squared
+    ```
+    
+    So only 5\% of the variation in log-earnings can be explained by height. This is probably a good thing.
+    
+- Conclusion: A small $p$-value does **not** mean there is a big effect. 
+
+- Make plots, look at residual standard deviations, look at the $R^2$ values, to determine if an effect is practically significant.
 
 # Exercise
 
@@ -861,8 +1001,33 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     ```{block, eval = FALSE, echo = FALSE}
     SSTO = 53.7 + 0.4 + 43.0 = 97.1
     ```
+    
+4. What proportion of variation in $Y$ can be explained by $X_2$?
+    ```{block, echo = FALSE, eval = FALSE}
+    $$
+    R^2_{Y2} = \frac{SSR(X_2)}{SSTO} = \frac{53.7}{97.1} = 0.553
+    $$
+    ```
 
-4. For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.
+5. What is the proportionate decrease in variation when we add $X_1$ to the model that already contains $X_2$?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $R^2_{Y1|2} = \frac{SSR(X_1|X_2)}{SSE(X_2)} = \frac{0.4}{43 + 0.4} = 0.009217$
+    
+    So the proportionate reduction in variation in $Y$ is tiny.
+    ```
+
+6. How strong is the association between log-price and the predictors?
+
+    ```{r, eval = FALSE, echo = FALSE}
+    glance(lm_est)$r.squared
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    The $R^2$ is 0.56, so quite a bit of variation in log-price can be explained by beds and baths.
+    ```
+
+7. For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.
 
     ```{block, eval = FALSE, echo = FALSE}
     Row 1
@@ -876,7 +1041,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     - Full: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i$
     ```
 
-5. For each row of the above ANOVA table, state the conclusions of the hyptohesis tests.
+8. For each row of the above ANOVA table, state the conclusions of the hypothesis tests.
 
     ```{block, eval = FALSE, echo = FALSE}
     Row 1: we have strong evidence that bath is associated with liking ($p < 0.001$, $n = 522$).
@@ -884,7 +1049,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     Row 2: We have moderate evidence that bed is associated with liking, after adjusting for bath ($p = 0.034$, $n = 522$).
     ```
 
-6. Conduct an overall $F$-test for the model. 
+9. Conduct an overall $F$-test for the model. 
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
     $$
@@ -903,7 +1068,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     The $p$-value is small ($p < 0.001$) indicating very strong evidence that at least one of bath or bed is associated with liking.
     ```
 
-8. Is it possible to run an $F$-test lack-of-fit for the model
+10. Is it possible to run an $F$-test lack-of-fit for the model
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
     $$
