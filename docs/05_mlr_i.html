@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-20" />
+<meta name="date" content="2021-10-21" />
 
 <title>Multiple Linear Regression I</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-20</h4>
+<h4 class="date">2021-10-21</h4>
 
 </div>
 
@@ -625,7 +625,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   E[\mathbf{\epsilon}] &amp;= \mathbf{0}_n\\
   cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
   \end{align}\]</span></p></li>
-<li><p>For the normal linear model (important only for prediction intervals), you further assume that <span class="math inline">\(\mathbf{\epsilon}\)</span> is distributed according to the <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">multivariate normal distribution</a>.</p></li>
+<li><p>For the normal linear model (important only for prediction intervals or small sample sizes), you further assume that each <span class="math inline">\(\epsilon_i\)</span> is normally distributed.</p></li>
 <li><p><strong>Exercise</strong>: In the <span class="math inline">\(\mathbf{X}\)</span> matrix. What does the <span class="math inline">\(i\)</span> represent in <span class="math inline">\(X_{ij}\)</span>? What does the <span class="math inline">\(j\)</span> represent?</p></li>
 </ul>
 </div>
@@ -749,7 +749,7 @@ lmout</code></pre>
 <li><p>You obtain coefficient estimates, standard errors, and <span class="math inline">\(p\)</span>-values against the null of <span class="math inline">\(\beta_k = 0\)</span> using <code>tidy()</code> from the <code>{broom}</code> package.</p>
 <pre class="r"><code>library(broom)
 tidy(lmout)</code></pre>
-<pre><code>## # A tibble: 3 x 5
+<pre><code>## # A tibble: 3 × 5
 ##   term        estimate std.error statistic    p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266     
@@ -757,7 +757,7 @@ tidy(lmout)</code></pre>
 ## 3 disp            9.37     4.06       2.30 0.0333</code></pre></li>
 <li><p>Confidence intervals can be obtained using the <code>conf.int = TRUE</code> argument.</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
-<pre><code>## # A tibble: 3 x 7
+<pre><code>## # A tibble: 3 × 7
 ##   term        estimate std.error statistic    p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266      -195.        57.2 
@@ -768,14 +768,14 @@ tidy(lmout)</code></pre>
 <li><p>Let’s compare these coefficients to those under simple linear regression.</p>
 <pre class="r"><code>lm_simp_young &lt;- lm(sales ~ young, data = portrait)
 tidy(lm_simp_young)</code></pre>
-<pre><code>## # A tibble: 2 x 5
+<pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)    68.0      9.46       7.19 7.86e- 7
 ## 2 young           1.84     0.146     12.5  1.23e-10</code></pre>
 <pre class="r"><code>lm_simp_disp &lt;- lm(sales ~ disp, data = portrait)
 tidy(lm_simp_disp)</code></pre>
-<pre><code>## # A tibble: 2 x 5
+<pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic    p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 (Intercept)   -352.      80.7      -4.37 0.000329  
@@ -820,7 +820,7 @@ tidy(lm_simp_disp)</code></pre>
   \]</span></p></li>
 <li><p>If <span class="math inline">\(\mathbf{X}_h = \mathbf{X}\)</span>, then we can use <code>augment()</code> from <code>{broom}</code> to obtain the fitted value</p>
 <pre class="r"><code>augment(lmout)</code></pre>
-<pre><code>## # A tibble: 21 x 9
+<pre><code>## # A tibble: 21 × 9
 ##    sales young  disp .fitted  .resid   .hat .sigma   .cooksd .std.resid
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ##  1  174.  68.5  16.7    187. -12.8   0.122   10.8  0.0710       -1.24  
@@ -833,7 +833,7 @@ tidy(lm_simp_disp)</code></pre>
 ##  8  163.  52    17.2    168.  -4.67  0.0916  11.3  0.00665      -0.445 
 ##  9  145.  48.9  16.6    158. -12.3   0.0724  10.9  0.0353       -1.16  
 ## 10  137.  38.4  16      137.   0.354 0.133   11.3  0.0000607     0.0345
-## # ... with 11 more rows</code></pre></li>
+## # … with 11 more rows</code></pre></li>
 <li><p>If we have a new set of predictors, then we need to first create the data frame representing <span class="math inline">\(\mathbf{X}_h\)</span> before using <code>predict()</code> to obtain estimated mean values.</p>
 <pre class="r"><code>newdf &lt;- data.frame(young = c(60, 55), disp = c(15, 15.5))
 predict(object = lmout, newdata = newdf)</code></pre>
