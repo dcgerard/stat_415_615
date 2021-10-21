@@ -532,19 +532,4 @@ select(tidy(lm_tr_th_m), term, std.error)
 
 - Conclusion: When designing an experiment, make sure your predictors are all uncorrelated.
 
-# Practical versus statistical significance
-
-- Tests can have tiny $p$-values, but the effect sizes might be small.
-    - This can occur if we have a large sample size when two variables have a weak relationship.
-
-- Tests can have large $p$-values, but the effect sizes might be huge.
-    - This can occur if we have a small sample size when two variables have a strong relationship.
-    
-- So **never** use $p$-values to describe the strength of the relationship between two variables. 
-    - This is what other statistics like $R^2$, partial $R^2$, sums of squares, and Cohen's $d$ are meant for.
-
-- Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
-
-
-
 
