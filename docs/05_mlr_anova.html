@@ -1277,10 +1277,19 @@ anova(lmout)</code></pre>
 <div id="statistical-versus-practical-significance" class="section level1">
 <h1>Statistical versus Practical significance</h1>
 <ul>
-<li><p>Recall: a relationship can be <em>statistically</em> significant without having any practical importance (because the effect size is small).</p>
+<li><p>Tests can have tiny <span class="math inline">\(p\)</span>-values, but the effect sizes might be small.</p>
 <ul>
-<li>it is very common to see this in studies with large sample sizes.</li>
+<li>This can occur if we have a large sample size when two variables have a weak relationship.</li>
 </ul></li>
+<li><p>Tests can have large <span class="math inline">\(p\)</span>-values, but the effect sizes might be huge.</p>
+<ul>
+<li>This can occur if we have a small sample size when two variables have a strong relationship.</li>
+</ul></li>
+<li><p>So <strong>never</strong> use <span class="math inline">\(p\)</span>-values to describe the strength of the relationship between two variables.</p>
+<ul>
+<li>This is what other statistics like <span class="math inline">\(R^2\)</span>, partial <span class="math inline">\(R^2\)</span>, sums of squares, and Cohen’s <span class="math inline">\(d\)</span> are meant for.</li>
+</ul></li>
+<li><p>Only use <span class="math inline">\(p\)</span>-values to describe the strength of the <strong>evidence that there is a relationship</strong> between two variables.</p></li>
 <li><p>Coefficients of determination are useful for determining practical significance.</p></li>
 <li><p>Another tool to do this is to compare the effect sizes to the residual standard error.</p>
 <ul>

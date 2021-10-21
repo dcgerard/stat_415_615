@@ -871,9 +871,78 @@ predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
 </ol>
 </div>
 <div id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity" class="section level2">
-<h2>OK, that sucked, but what about when there is no multicollinearity</h2>
+<h2>OK, that sucked, but what about when there is no multicollinearity?</h2>
 <ul>
-<li></li>
+<li><p>Researchers were studying the effect of work crew size (<span class="math inline">\(X_1\)</span>) and level of bonus pay (<span class="math inline">\(X_2\)</span>) on crew productivity (<span class="math inline">\(Y\)</span>).</p>
+<pre class="r"><code>crew &lt;- tibble::tribble(
+  ~size, ~bonus, ~productivity,
+      4,      2,            42,
+      4,      2,            39,
+      4,      3,            48,
+      4,      3,            51,
+      6,      2,            49,
+      6,      2,            53,
+      6,      3,            61,
+      6,      3,            60
+  )</code></pre></li>
+<li><p><code>size</code> and <code>bonus</code> are both uncorrelated, by design.</p>
+<pre class="r"><code>cor(crew$size, crew$bonus)</code></pre>
+<pre><code>## [1] 0</code></pre></li>
+<li><p>Let’s fit these models:</p>
+<pre class="r"><code>lm_s &lt;- lm(productivity ~ size, data = crew)
+lm_b &lt;- lm(productivity ~ bonus, data = crew)
+lm_bs &lt;- lm(productivity ~ bonus + size, data = crew)</code></pre></li>
+<li><p>Notice that the estimated coefficients are unchanged when we add more predictors.</p>
+<pre class="r"><code>tidy(lm_s)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    23.5      10.1       2.32  0.0591
+## 2 size            5.37      1.98      2.71  0.0351</code></pre>
+<pre class="r"><code>tidy(lm_b)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    27.3      11.6       2.35  0.0572
+## 2 bonus           9.25      4.55      2.03  0.0885</code></pre>
+<pre class="r"><code>tidy(lm_bs)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)    0.375     4.74     0.0791 0.940   
+## 2 bonus          9.25      1.33     6.97   0.000937
+## 3 size           5.37      0.664    8.10   0.000466</code></pre></li>
+<li><p>The interpretation of the coefficients still changes based on what variables are in the model (controlling for the other predictor), but the effect size is estimated to be the same regardless.</p></li>
+<li><p>Did you also notice that the standard errors did not get inflated?</p></li>
+<li><p>The extra sums of squares are the same. That is <span class="math display">\[
+  SSR(X_1) = SSR(X_1|X_2)\\
+  SSR(X_2) = SSR(X_2|X_1)
+  \]</span></p>
+<p>so the relative reduction in the variation in <span class="math inline">\(Y\)</span> by including <span class="math inline">\(X_1\)</span> is the same no matter if <span class="math inline">\(X_2\)</span> is in the model.</p>
+<pre class="r"><code>Anova(lm_b)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: productivity
+##           Sum Sq Df F value Pr(&gt;F)
+## bonus        171  1    4.13  0.088
+## Residuals    249  6</code></pre>
+<pre class="r"><code>Anova(lm_s)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: productivity
+##           Sum Sq Df F value Pr(&gt;F)
+## size         231  1    7.35  0.035
+## Residuals    189  6</code></pre>
+<pre class="r"><code>Anova(lm_bs)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: productivity
+##           Sum Sq Df F value  Pr(&gt;F)
+## bonus      171.1  1    48.5 0.00094
+## size       231.1  1    65.6 0.00047
+## Residuals   17.6  5</code></pre></li>
+<li><p>Thus, it is relatively straightforward to determine if a variable should be included in a model, because this question may be answered without looking at other variables.</p></li>
+<li><p>Conclusion: When designing an experiment, make sure your predictors are all uncorrelated.</p></li>
 </ul>
 </div>
 </div>
@@ -893,49 +962,6 @@ predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
 <li>This is what other statistics like <span class="math inline">\(R^2\)</span>, partial <span class="math inline">\(R^2\)</span>, sums of squares, and Cohen’s <span class="math inline">\(d\)</span> are meant for.</li>
 </ul></li>
 <li>Only use <span class="math inline">\(p\)</span>-values to describe the strength of the <strong>evidence that there is a relationship</strong> between two variables.</li>
-</ul>
-</div>
-<div id="comparing-effect-sizes-to-residual-standard-error" class="section level1">
-<h1>Comparing effect sizes to residual standard error</h1>
-<ul>
-<li><p>It is always a good idea to compare the effect sizes to the residual standard error.</p>
-<ul>
-<li>Recall: Residual standard error is the estimated population standard deviation.</li>
-<li>Recall: Residual standard error is the square root of the MSE.</li>
-</ul></li>
-<li><p><strong>Example</strong>: Recall the <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">earnings data</a>. Let’s read it in and fit a model for log-earnings on height:</p>
-<pre class="r"><code>library(tidyverse)
-earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earnings.csv&quot;)
-earnings &lt;- mutate(earnings, log_earn = log(earn))
-earnings &lt;- filter(earnings, is.finite(log_earn))
-qplot(x = height, y = log_earn, data = earnings)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
-<pre class="r"><code>library(broom)
-tidy(lm_earn)</code></pre>
-<pre><code>## # A tibble: 2 × 5
-##   term        estimate std.error statistic  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)   5.91     0.376        15.7 6.70e-52
-## 2 height        0.0570   0.00562      10.1 1.65e-23</code></pre>
-<p>The <span class="math inline">\(p\)</span>-value is <strong>tiny</strong>. So is this a huge effect? Not really. Let’s discuss.</p>
-<p>Individuals that are a whole foot taller earn about <span class="math inline">\(0.05704 \times 12 = 0.6845\)</span> log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let’s look at the residual standard deviation.</p>
-<pre class="r"><code>glance(lm_earn)</code></pre>
-<pre><code>## # A tibble: 1 × 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    0.0595        0.0590 0.877      103. 1.65e-23     1 -2097. 4200. 4216.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
-<p>The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.</p>
-<p>If we compare prediction intervals between a 5’2’’ individual and a 6’2’’ individual (ignoring the appropriateness of the normal model for now), we have</p>
-<pre class="r"><code>predict(object = lm_earn, 
-        newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
-        interval = &quot;prediction&quot;) %&gt;%
-  exp()</code></pre>
-<pre><code>##     fit  lwr    upr
-## 1 12938 2312  72387
-## 2 25652 4579 143718</code></pre>
-<p>So it is true that the taller individual is expected to make twice as much money ($12,938 versus $25,652), but the range of individuals at each level is huge ($2312 to $72,387 and $4579 to $143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).</p></li>
 </ul>
 </div>
 
