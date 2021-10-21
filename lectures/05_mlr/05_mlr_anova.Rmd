@@ -564,7 +564,11 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
       mutate(race = unique(earnings$ethnicity))
     ```
     
-- That is, black individuals are coded $X_1 = X_2 = X_3 = 0$, hispanic individuals are coded as $X_1 = 1$ and $X_2 = X_3 = 0$, white individuals are coded as $X_3 = 1$ and $X_1 = X_2 = 0$, and other individuals are coded as $X_2 = 1$ and $X_1 = X_3 = 0$.
+- That is, 
+    - black individuals are coded $X_1 = X_2 = X_3 = 0$, 
+    - hispanic individuals are coded as $X_1 = 1$ and $X_2 = X_3 = 0$, 
+    - white individuals are coded as $X_3 = 1$ and $X_1 = X_2 = 0$, and 
+    - other individuals are coded as $X_2 = 1$ and $X_1 = X_3 = 0$.
 
 - If we also include $X_4$ = height, then we can test for whether or not to include ethnicity in the model by comparing the two models
     - $H_0: Y_i = \beta_0 + \beta_4 X_{i4} + \epsilon_i$
