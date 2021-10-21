@@ -28,7 +28,7 @@ klippy::klippy()
 - Multicollinearity
 - Effect sizes, practical significance, and statistical significance.
 - Chapter 12 from ROS
-- Chapter 7 from KNNL
+- Section 7.6 from KNNL
 
 <!-- # Steps of an analysis -->
 
@@ -228,11 +228,309 @@ klippy::klippy()
 
 # Multicollinearity
 
-## Be careful about comparisons
+- **Multicollinearity**: Correlation between predictors.
+
+- Multicollinearity is the rule, not the exception.
+    - In observational studies, you will always have some correlation between predictors.
+    - But too much correlation can be a really bad thing (how much is too much is calculated in Chapter 10).
+
+- The consequences of multicollinearity:
+    1. Estimates of coefficients change based on what other predictors are in the model. 
+    2. Extra sums of squares change based on what other predictors are in the model.
+    3. Standard errors are inflated.
+    4. Fits and predictions and MSE are less affected.
+    5. The significance of some predictors can be masked.
+    6. Interpretation becomes more difficult.
+    
+- We will demonstrate all of these issues through the body fat example with variables
+    - $X_1$ `triceps`: Triceps skinfold thickness.
+    - $X_2$ `thigh`: Thigh circumference.
+    - $X_3$ `midarm`: Midarm circumference
+    - $Y$ `fat`: Body fat.
+    
+    ```{r, message = FALSE}
+    body <- read_csv("https://dcgerard.github.io/stat_415_615/data/body.csv")
+    glimpse(body)
+    ```
+    
+- These data exhibit multicollinearity
+    ```{r, message=FALSE}
+    library(GGally)
+    ggpairs(data = body)
+    ```
+
+- Notice that $X_1$ = triceps and $X_2$ = thigh are highly correlated with each other, but these are less correlated with $X_3$ = midarm.
+
+- Let's fit a bunch of models
+    ```{r}
+    lm_tr <- lm(fat ~ triceps, data = body)
+    lm_th <- lm(fat ~ thigh, data = body)
+    lm_tr_th <- lm(fat ~ triceps + thigh, data = body)
+    lm_tr_th_m <- lm(fat ~ triceps + thigh + midarm, data = body)
+    ```
+
+## Coefficient Estimates Change
+
+```{r}
+select(tidy(lm_tr), term, estimate)
+select(tidy(lm_th), term, estimate)
+select(tidy(lm_tr_th), term, estimate)
+select(tidy(lm_tr_th_m), term, estimate)
+```
+
+- Coefficient estimates change based on what predictors are in the model.
+
+| Variables in Model | $\hat{\beta}_1$ | $\hat{\beta}_2$ |
+|:------------------:|:---------------:|:---------------:|
+|        $X_1$       |       0.86      |        -        |
+|        $X_2$       |        -        |       0.86      |
+|     $X_1, X_2$     |       0.22      |       0.66      |
+|   $X_1, X_2, X_3$  |       4.33      |      -2.86      |
+
+
+
+- 😲 Look how much they change!
+
+- **Exercise**: What is the model for each row in the above table?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    - Row 1
+        $$
+        Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i
+        $$
+        
+    - Row 2
+        $$
+        Y_i = \beta_0 + \beta_2 X_{i2} + \epsilon_i
+        $$
+        
+    - Row 3
+        $$
+        Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2X_{i2} + \epsilon_i
+        $$
+        
+    - Row 4
+        $$
+        Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \epsilon_i
+        $$
+    ```
+
+- We saw that $X_1$ and $X_2$ were highly correlated, so it makes sense that those coefficients change when they are included together in the model.
+
+- But $X_3$ was not highly correlated with either $X_1$ nor $X_2$, so why did the coefficients change so much?
+
+- It turns out that, although $X_3$ is not highly correlated with $X_1$ and is not highly correlated with $X_2$, it is highly correlated with the combination of $X_1$ and $X_2$. 
+
+- We can measure the strength of the association between $X_3$ and the combination of $X_1$ and $X_2$ by the multiple $R^2$ value of regression of $X_3$ on $X_1$ and $X_2$
+
+    ```{r}
+    glance(lm(midarm ~ triceps + thigh, data = body))$r.squared
+    ```
+
+- So, you cannot detect multicollinearity by just looking at pairwise correlations between predictors.
+    - Chapter 10 provides more sophisticated measures of multicollinearity.
+    
+    
+- Key Takeaway: a regression coefficient does not reflect any inherent effect of a particular predictor on the response, but only a marginal or partial effect given whatever other predictors are in the model.
+
+## Extra Sums of Squares Change
+
+```{r, message=FALSE}
+library(car)
+Anova(lm_tr)
+Anova(lm_tr_th)
+Anova(lm_tr_th_m)
+```
+
+
+- Extra sums of squares will differ based on what other predictors are in the model
+    - $SSR(X_1) = 352$
+    - $SSR(X_1|X_2) = 3.5$
+    - $SSR(X_1|X_2, X_3) = 12.7$
+
+- Recall, the extra sum of squares is how much the error sum of squares is reduced when we include a predictor in a model with other predictors already in the model.
+
+- The extra sum of squares can increase or decrease depending on what other variables are in the model.
+
+- Key Takeaway: there is no unique sum of squares that can be ascribed to any one predictor as reflecting its effect in reducing the total variation in $Y$ --- this depends on what other predictors are in the model.
+
+## Standard Errors are Larger
+
+```{r}
+select(tidy(lm_tr), term, std.error)
+select(tidy(lm_th), term, std.error)
+select(tidy(lm_tr_th), term, std.error)
+select(tidy(lm_tr_th_m), term, std.error)
+```
+
+| Variables in Model | $s\{\hat{\beta}_1\}$ | $s\{\hat{\beta}_2\}$ |
+|:------------------:|:--------------------:|:--------------------:|
+|        $X_1$       |         0.13         |           -          |
+|        $X_2$       |           -          |         0.11         |
+|     $X_1, X_2$     |         0.30         |         0.29         |
+|   $X_1, X_2, X_3$  |         3.02         |         2.58         |
+
+- Standard error increases as you include correlated predictors in the model.
+
+- Why? Consider the case of perfectly correlated variables where $X_{i1} = X_{i2}$ for all $i$. Then for an number $a$
+    \begin{align}
+    \hat{Y}_i &= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
+    &= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+    \end{align}
+
+    - So it is impossible to tell $\hat{\beta}_1$ and $\hat{\beta}_2$ apart. 
+    
+    - We don't know what effect to attribute to $X_1$ and what to attribute to $X_2$.
+    
+
+
+## Fitted Values, Predictions, and MSE are Relatively Stable
+
+- The major issue with multicollinearity is that we can't tell what effect comes from which predictor.
+
+- But the effect of multicollinearity on fitted values, predictions, and MSE is much more models.
+
+- Confidence intervals for mean have about the same width (predictor levels chosen to have about the same mean estimate in each model)
+    ```{r}
+    df1 <- data.frame(triceps = 25)
+    df2 <- data.frame(triceps = 25, thigh = 50)
+    df3 <- data.frame(triceps = 25, thigh = 50, midarm = 28.8)
+    predict(lm_tr, newdata = df1, interval = "confidence")
+    predict(lm_tr_th, newdata = df2, interval = "confidence")
+    predict(lm_tr_th_m, newdata = df3, interval = "confidence")
+    ```
+
+- Prediction intervals have about the same width
+    ```{r}
+    predict(lm_tr, newdata = df1, interval = "prediction")
+    predict(lm_tr_th, newdata = df2, interval = "prediction")
+    predict(lm_tr_th_m, newdata = df3, interval = "prediction")
+    ```
+
+- Residual standard deviation (square root of MSE) is about the same in all models
+
+    ```{r}
+    glance(lm_tr)$sigma
+    glance(lm_tr_th)$sigma
+    glance(lm_tr_th_m)$sigma
+    ```
+
+- Why? Consider the case of perfectly correlated variables where $X_{i1} = X_{i2}$ for all $i$. Then for an number $a$
+    \begin{align}
+    \hat{Y}_i &= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
+    &= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+    \end{align}
+    
+    - The estimated mean value does not change no matter what value of $a$ is provided (so predictions would also be robust to change).
+    
+    - This means the residuals would also not change no matter what value of $a$ is provided (so the MSE would be more robust to change).
+
+- This is not to say that you should just include every predictor in the model. This is called "overfitting" and can cause bad issues (machine learning will discuss this).
+    - The point is just that predictions are more *robust* to issues of multicollinearity.
+
+## Masking Significance
+
+- The $p$-values for all three variables are all large, indicating a lack of evidence to include any of them.
+    ```{r}
+    tidy(lm_tr_th_m)
+    ```
+
+- But the overall $F$-test indicates strong evidence that we should include at least one of them:
+    ```{r}
+    glance(lm_tr_th_m)$p.value
+    ```
+
+- The $t$-test for $H_0: \beta_1 = 0$ compares the two models:
+    - $H_0: Y_i = \beta_0 + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i$
+    
+    and if $X_2$ is highly correlated with $X_1$, and $X_2$ is already in the model, then why do we also need to have $X_1$ in the model?
+    
+- The overall $F$-test compares the two models:
+    - $H_0: Y_i = \beta_0 + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i$
+
+    So this test says that we should have at least one of these variables in the model.
+    
+- Key point: Just because the $p$-values from the $t$-tests are large does *not* mean that none of the predictors are associated with $Y$.
+
+## The Difficulty of Interpretation
 
 - Sometimes, no data points exist that are one unit larger $X_1$ but the same $X_2$, because of multicollinearity. Thus, this interpretation is suspect. 
 
+- E.g.
+
 - Multicollinearity therefore also messes with interpretation.
+
+## Remedies for Multicollinearity
+
+1. Drop some of the correlated predictor variables.
+
+2. Develop "composite" predictors that combine the correlated predictors.
+    - Do this manually.
+    - Use [principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (PCA).
+
+3. Apply [ridge regression](https://en.wikipedia.org/wiki/Ridge_regression) (Chapter 10).
+
+## OK, that sucked, but what about when there is no multicollinearity?
+
+- Researchers were studying the effect of work crew size ($X_1$) and level of bonus pay ($X_2$) on crew productivity ($Y$).
+
+    ```{r}
+    crew <- tibble::tribble(
+      ~size, ~bonus, ~productivity,
+          4,      2,            42,
+          4,      2,            39,
+          4,      3,            48,
+          4,      3,            51,
+          6,      2,            49,
+          6,      2,            53,
+          6,      3,            61,
+          6,      3,            60
+      )
+    ```
+    
+- `size` and `bonus` are both uncorrelated, by design.
+    ```{r}
+    cor(crew$size, crew$bonus)
+    ```
+
+- Let's fit these models:
+    ```{r}
+    lm_s <- lm(productivity ~ size, data = crew)
+    lm_b <- lm(productivity ~ bonus, data = crew)
+    lm_bs <- lm(productivity ~ bonus + size, data = crew)
+    ```
+
+
+- Notice that the estimated coefficients are unchanged when we add more predictors.   
+    ```{r}
+    tidy(lm_s)
+    tidy(lm_b)
+    tidy(lm_bs)
+    ```
+    
+- The interpretation of the coefficients still changes based on what variables are in the model (controlling for the other predictor), but the effect size is estimated to be the same regardless.
+    
+- Did you also notice that the standard errors did not get inflated?
+
+- The extra sums of squares are the same. That is
+    $$
+    SSR(X_1) = SSR(X_1|X_2)\\
+    SSR(X_2) = SSR(X_2|X_1)
+    $$
+
+    so the relative reduction in the variation in $Y$ by including $X_1$ is the same no matter if $X_2$ is in the model.
+
+    ```{r}
+    Anova(lm_b)
+    Anova(lm_s)
+    Anova(lm_bs)
+    ```
+
+- Thus, it is relatively straightforward to determine if a variable should be included in a model, because this question may be answered without looking at other variables.
+
+- Conclusion: When designing an experiment, make sure your predictors are all uncorrelated.
 
 # Practical versus statistical significance
 
@@ -247,48 +545,6 @@ klippy::klippy()
 
 - Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
 
-# Comparing effect sizes to residual standard error
-
-- It is always a good idea to compare the effect sizes to the residual standard error.
-    - Recall: Residual standard error is the estimated population standard deviation.
-    - Recall: Residual standard error is the square root of the MSE.
-
-- **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
-
-    ```{r, message = FALSE}
-    library(tidyverse)
-    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
-    earnings <- mutate(earnings, log_earn = log(earn))
-    earnings <- filter(earnings, is.finite(log_earn))
-    qplot(x = height, y = log_earn, data = earnings)
-    lm_earn <- lm(log_earn ~ height, data = earnings)
-    ```
-    
-    ```{r}
-    library(broom)
-    tidy(lm_earn)
-    ```
-    
-    The $p$-value is **tiny**. So is this a huge effect? Not really. Let's discuss.
-    
-    Individuals that are a whole foot taller earn about $0.05704 \times 12 = 0.6845$ log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let's look at the residual standard deviation.
-    
-    ```{r}
-    glance(lm_earn)
-    ```
-    
-    The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.
-    
-    If we compare prediction intervals between a 5'2'' individual and a 6'2'' individual (ignoring the appropriateness of the normal model for now), we have
-    
-    ```{r}
-    predict(object = lm_earn, 
-            newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
-            interval = "prediction") %>%
-      exp()
-    ```
-    So it is true that the taller individual is expected to make twice as much money (\$12,938 versus \$25,652), but the range of individuals at each level is huge (\$2312 to \$72,387 and \$4579 to \$143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).
-    
 
 
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-18" />
+<meta name="date" content="2021-10-21" />
 
 <title>MLR: Practical Considerations</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-18</h4>
+<h4 class="date">2021-10-21</h4>
 
 </div>
 
@@ -361,7 +361,7 @@ div.tocify {
 <li>Multicollinearity</li>
 <li>Effect sizes, practical significance, and statistical significance.</li>
 <li>Chapter 12 from ROS</li>
-<li>Chapter 7 from KNNL</li>
+<li>Section 7.6 from KNNL</li>
 </ul>
 <!-- # Steps of an analysis -->
 <!-- - For **any analysis** where you are applying a model, the steps you should take are: -->
@@ -523,7 +523,7 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic  p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept) 4.57e-16    0.0226  2.02e-14 1.00e+ 0  -0.0443    0.0443
+## 1 (Intercept) 4.70e-16    0.0226  2.08e-14 1.00e+ 0  -0.0443    0.0443
 ## 2 height_z    2.71e- 1    0.0226  1.20e+ 1 5.42e-32   0.227     0.316</code></pre>
 <p>So a 1 standard deviation difference in height corresponds to 0.27 standard deviations higher earnings.</p></li>
 <li><p>If you do this to all variables in your model, you can use the following multiple regression model: <span class="math display">\[
@@ -538,11 +538,342 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 </div>
 <div id="multicollinearity" class="section level1">
 <h1>Multicollinearity</h1>
-<div id="be-careful-about-comparisons" class="section level2">
-<h2>Be careful about comparisons</h2>
+<ul>
+<li><p><strong>Multicollinearity</strong>: Correlation between predictors.</p></li>
+<li><p>Multicollinearity is the rule, not the exception.</p>
+<ul>
+<li>In observational studies, you will always have some correlation between predictors.</li>
+<li>But too much correlation can be a really bad thing (how much is too much is calculated in Chapter 10).</li>
+</ul></li>
+<li><p>The consequences of multicollinearity:</p>
+<ol style="list-style-type: decimal">
+<li>Estimates of coefficients change based on what other predictors are in the model.</li>
+<li>Extra sums of squares change based on what other predictors are in the model.</li>
+<li>Standard errors are inflated.</li>
+<li>Fits and predictions and MSE are less affected.</li>
+<li>The significance of some predictors can be masked.</li>
+<li>Interpretation becomes more difficult.</li>
+</ol></li>
+<li><p>We will demonstrate all of these issues through the body fat example with variables</p>
+<ul>
+<li><span class="math inline">\(X_1\)</span> <code>triceps</code>: Triceps skinfold thickness.</li>
+<li><span class="math inline">\(X_2\)</span> <code>thigh</code>: Thigh circumference.</li>
+<li><span class="math inline">\(X_3\)</span> <code>midarm</code>: Midarm circumference</li>
+<li><span class="math inline">\(Y\)</span> <code>fat</code>: Body fat.</li>
+</ul>
+<pre class="r"><code>body &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/body.csv&quot;)
+glimpse(body)</code></pre>
+<pre><code>## Rows: 20
+## Columns: 4
+## $ triceps &lt;dbl&gt; 19.5, 24.7, 30.7, 29.8, 19.1, 25.6, 31.4, 27.9, 22.1, 25.5, 31…
+## $ thigh   &lt;dbl&gt; 43.1, 49.8, 51.9, 54.3, 42.2, 53.9, 58.5, 52.1, 49.9, 53.5, 56…
+## $ midarm  &lt;dbl&gt; 29.1, 28.2, 37.0, 31.1, 30.9, 23.7, 27.6, 30.6, 23.2, 24.8, 30…
+## $ fat     &lt;dbl&gt; 11.9, 22.8, 18.7, 20.1, 12.9, 21.7, 27.1, 25.4, 21.3, 19.3, 25…</code></pre></li>
+<li><p>These data exhibit multicollinearity</p>
+<pre class="r"><code>library(GGally)
+ggpairs(data = body)</code></pre>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Notice that <span class="math inline">\(X_1\)</span> = triceps and <span class="math inline">\(X_2\)</span> = thigh are highly correlated with each other, but these are less correlated with <span class="math inline">\(X_3\)</span> = midarm.</p></li>
+<li><p>Let’s fit a bunch of models</p>
+<pre class="r"><code>lm_tr &lt;- lm(fat ~ triceps, data = body)
+lm_th &lt;- lm(fat ~ thigh, data = body)
+lm_tr_th &lt;- lm(fat ~ triceps + thigh, data = body)
+lm_tr_th_m &lt;- lm(fat ~ triceps + thigh + midarm, data = body)</code></pre></li>
+</ul>
+<div id="coefficient-estimates-change" class="section level2">
+<h2>Coefficient Estimates Change</h2>
+<pre class="r"><code>select(tidy(lm_tr), term, estimate)</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)   -1.50 
+## 2 triceps        0.857</code></pre>
+<pre class="r"><code>select(tidy(lm_th), term, estimate)</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  -23.6  
+## 2 thigh          0.857</code></pre>
+<pre class="r"><code>select(tidy(lm_tr_th), term, estimate)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  -19.2  
+## 2 triceps        0.222
+## 3 thigh          0.659</code></pre>
+<pre class="r"><code>select(tidy(lm_tr_th_m), term, estimate)</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)   117.  
+## 2 triceps         4.33
+## 3 thigh          -2.86
+## 4 midarm         -2.19</code></pre>
+<ul>
+<li>Coefficient estimates change based on what predictors are in the model.</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Variables in Model</th>
+<th align="center"><span class="math inline">\(\hat{\beta}_1\)</span></th>
+<th align="center"><span class="math inline">\(\hat{\beta}_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(X_1\)</span></td>
+<td align="center">0.86</td>
+<td align="center">-</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(X_2\)</span></td>
+<td align="center">-</td>
+<td align="center">0.86</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(X_1, X_2\)</span></td>
+<td align="center">0.22</td>
+<td align="center">0.66</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(X_1, X_2, X_3\)</span></td>
+<td align="center">4.33</td>
+<td align="center">-2.86</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>😲 Look how much they change!</p></li>
+<li><p><strong>Exercise</strong>: What is the model for each row in the above table?</p></li>
+<li><p>We saw that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> were highly correlated, so it makes sense that those coefficients change when they are included together in the model.</p></li>
+<li><p>But <span class="math inline">\(X_3\)</span> was not highly correlated with either <span class="math inline">\(X_1\)</span> nor <span class="math inline">\(X_2\)</span>, so why did the coefficients change so much?</p></li>
+<li><p>It turns out that, although <span class="math inline">\(X_3\)</span> is not highly correlated with <span class="math inline">\(X_1\)</span> and is not highly correlated with <span class="math inline">\(X_2\)</span>, it is highly correlated with the combination of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>.</p></li>
+<li><p>We can measure the strength of the association between <span class="math inline">\(X_3\)</span> and the combination of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> by the multiple <span class="math inline">\(R^2\)</span> value of regression of <span class="math inline">\(X_3\)</span> on <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span></p>
+<pre class="r"><code>glance(lm(midarm ~ triceps + thigh, data = body))$r.squared</code></pre>
+<pre><code>## [1] 0.9904</code></pre></li>
+<li><p>So, you cannot detect multicollinearity by just looking at pairwise correlations between predictors.</p>
+<ul>
+<li>Chapter 10 provides more sophisticated measures of multicollinearity.</li>
+</ul></li>
+<li><p>Key Takeaway: a regression coefficient does not reflect any inherent effect of a particular predictor on the response, but only a marginal or partial effect given whatever other predictors are in the model.</p></li>
+</ul>
+</div>
+<div id="extra-sums-of-squares-change" class="section level2">
+<h2>Extra Sums of Squares Change</h2>
+<pre class="r"><code>library(car)
+Anova(lm_tr)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: fat
+##           Sum Sq Df F value Pr(&gt;F)
+## triceps      352  1    44.3  3e-06
+## Residuals    143 18</code></pre>
+<pre class="r"><code>Anova(lm_tr_th)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: fat
+##           Sum Sq Df F value Pr(&gt;F)
+## triceps      3.5  1    0.54  0.474
+## thigh       33.2  1    5.13  0.037
+## Residuals  110.0 17</code></pre>
+<pre class="r"><code>Anova(lm_tr_th_m)</code></pre>
+<pre><code>## Anova Table (Type II tests)
+## 
+## Response: fat
+##           Sum Sq Df F value Pr(&gt;F)
+## triceps     12.7  1    2.07   0.17
+## thigh        7.5  1    1.22   0.28
+## midarm      11.5  1    1.88   0.19
+## Residuals   98.4 16</code></pre>
+<ul>
+<li><p>Extra sums of squares will differ based on what other predictors are in the model</p>
+<ul>
+<li><span class="math inline">\(SSR(X_1) = 352\)</span></li>
+<li><span class="math inline">\(SSR(X_1|X_2) = 3.5\)</span></li>
+<li><span class="math inline">\(SSR(X_1|X_2, X_3) = 12.7\)</span></li>
+</ul></li>
+<li><p>Recall, the extra sum of squares is how much the error sum of squares is reduced when we include a predictor in a model with other predictors already in the model.</p></li>
+<li><p>The extra sum of squares can increase or decrease depending on what other variables are in the model.</p></li>
+<li><p>Key Takeaway: there is no unique sum of squares that can be ascribed to any one predictor as reflecting its effect in reducing the total variation in <span class="math inline">\(Y\)</span> — this depends on what other predictors are in the model.</p></li>
+</ul>
+</div>
+<div id="standard-errors-are-larger" class="section level2">
+<h2>Standard Errors are Larger</h2>
+<pre class="r"><code>select(tidy(lm_tr), term, std.error)</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   term        std.error
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 (Intercept)     3.32 
+## 2 triceps         0.129</code></pre>
+<pre class="r"><code>select(tidy(lm_th), term, std.error)</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   term        std.error
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 (Intercept)     5.66 
+## 2 thigh           0.110</code></pre>
+<pre class="r"><code>select(tidy(lm_tr_th), term, std.error)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   term        std.error
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 (Intercept)     8.36 
+## 2 triceps         0.303
+## 3 thigh           0.291</code></pre>
+<pre class="r"><code>select(tidy(lm_tr_th_m), term, std.error)</code></pre>
+<pre><code>## # A tibble: 4 × 2
+##   term        std.error
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 (Intercept)     99.8 
+## 2 triceps          3.02
+## 3 thigh            2.58
+## 4 midarm           1.60</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Variables in Model</th>
+<th align="center"><span class="math inline">\(s\{\hat{\beta}_1\}\)</span></th>
+<th align="center"><span class="math inline">\(s\{\hat{\beta}_2\}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(X_1\)</span></td>
+<td align="center">0.13</td>
+<td align="center">-</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(X_2\)</span></td>
+<td align="center">-</td>
+<td align="center">0.11</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(X_1, X_2\)</span></td>
+<td align="center">0.30</td>
+<td align="center">0.29</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(X_1, X_2, X_3\)</span></td>
+<td align="center">3.02</td>
+<td align="center">2.58</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Standard error increases as you include correlated predictors in the model.</p></li>
+<li><p>Why? Consider the case of perfectly correlated variables where <span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span class="math inline">\(i\)</span>. Then for an number <span class="math inline">\(a\)</span> <span class="math display">\[\begin{align}
+  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
+  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+  \end{align}\]</span></p>
+<ul>
+<li><p>So it is impossible to tell <span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span> apart.</p></li>
+<li><p>We don’t know what effect to attribute to <span class="math inline">\(X_1\)</span> and what to attribute to <span class="math inline">\(X_2\)</span>.</p></li>
+</ul></li>
+</ul>
+</div>
+<div id="fitted-values-predictions-and-mse-are-relatively-stable" class="section level2">
+<h2>Fitted Values, Predictions, and MSE are Relatively Stable</h2>
+<ul>
+<li><p>The major issue with multicollinearity is that we can’t tell what effect comes from which predictor.</p></li>
+<li><p>But the effect of multicollinearity on fitted values, predictions, and MSE is much more models.</p></li>
+<li><p>Confidence intervals for mean have about the same width (predictor levels chosen to have about the same mean estimate in each model)</p>
+<pre class="r"><code>df1 &lt;- data.frame(triceps = 25)
+df2 &lt;- data.frame(triceps = 25, thigh = 50)
+df3 &lt;- data.frame(triceps = 25, thigh = 50, midarm = 28.8)
+predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 19.93 18.61 21.26</code></pre>
+<pre class="r"><code>predict(lm_tr_th, newdata = df2, interval = &quot;confidence&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 19.36 18.04 20.67</code></pre>
+<pre class="r"><code>predict(lm_tr_th_m, newdata = df3, interval = &quot;confidence&quot;)</code></pre>
+<pre><code>##     fit   lwr upr
+## 1 19.64 18.27  21</code></pre></li>
+<li><p>Prediction intervals have about the same width</p>
+<pre class="r"><code>predict(lm_tr, newdata = df1, interval = &quot;prediction&quot;)</code></pre>
+<pre><code>##     fit   lwr upr
+## 1 19.93 13.86  26</code></pre>
+<pre class="r"><code>predict(lm_tr_th, newdata = df2, interval = &quot;prediction&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 19.36 13.83 24.88</code></pre>
+<pre class="r"><code>predict(lm_tr_th_m, newdata = df3, interval = &quot;prediction&quot;)</code></pre>
+<pre><code>##     fit   lwr   upr
+## 1 19.64 14.21 25.07</code></pre></li>
+<li><p>Residual standard deviation (square root of MSE) is about the same in all models</p>
+<pre class="r"><code>glance(lm_tr)$sigma</code></pre>
+<pre><code>## [1] 2.82</code></pre>
+<pre class="r"><code>glance(lm_tr_th)$sigma</code></pre>
+<pre><code>## [1] 2.543</code></pre>
+<pre class="r"><code>glance(lm_tr_th_m)$sigma</code></pre>
+<pre><code>## [1] 2.48</code></pre></li>
+<li><p>Why? Consider the case of perfectly correlated variables where <span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span class="math inline">\(i\)</span>. Then for an number <span class="math inline">\(a\)</span> <span class="math display">\[\begin{align}
+  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
+  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+  \end{align}\]</span></p>
+<ul>
+<li><p>The estimated mean value does not change no matter what value of <span class="math inline">\(a\)</span> is provided (so predictions would also be robust to change).</p></li>
+<li><p>This means the residuals would also not change no matter what value of <span class="math inline">\(a\)</span> is provided (so the MSE would be more robust to change).</p></li>
+</ul></li>
+<li><p>This is not to say that you should just include every predictor in the model. This is called “overfitting” and can cause bad issues (machine learning will discuss this).</p>
+<ul>
+<li>The point is just that predictions are more <em>robust</em> to issues of multicollinearity.</li>
+</ul></li>
+</ul>
+</div>
+<div id="masking-significance" class="section level2">
+<h2>Masking Significance</h2>
+<ul>
+<li><p>The <span class="math inline">\(p\)</span>-values for all three variables are all large, indicating a lack of evidence to include any of them.</p>
+<pre class="r"><code>tidy(lm_tr_th_m)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   117.       99.8       1.17   0.258
+## 2 triceps         4.33      3.02      1.44   0.170
+## 3 thigh          -2.86      2.58     -1.11   0.285
+## 4 midarm         -2.19      1.60     -1.37   0.190</code></pre></li>
+<li><p>But the overall <span class="math inline">\(F\)</span>-test indicates strong evidence that we should include at least one of them:</p>
+<pre class="r"><code>glance(lm_tr_th_m)$p.value</code></pre>
+<pre><code>##     value 
+## 7.343e-06</code></pre></li>
+<li><p>The <span class="math inline">\(t\)</span>-test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> compares the two models:</p>
+<ul>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
+</ul>
+<p>and if <span class="math inline">\(X_2\)</span> is highly correlated with <span class="math inline">\(X_1\)</span>, and <span class="math inline">\(X_2\)</span> is already in the model, then why do we also need to have <span class="math inline">\(X_1\)</span> in the model?</p></li>
+<li><p>The overall <span class="math inline">\(F\)</span>-test compares the two models:</p>
+<ul>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
+</ul>
+<p>So this test says that we should have at least one of these variables in the model.</p></li>
+<li><p>Key point: Just because the <span class="math inline">\(p\)</span>-values from the <span class="math inline">\(t\)</span>-tests are large does <em>not</em> mean that none of the predictors are associated with <span class="math inline">\(Y\)</span>.</p></li>
+</ul>
+</div>
+<div id="the-difficulty-of-interpretation" class="section level2">
+<h2>The Difficulty of Interpretation</h2>
 <ul>
 <li><p>Sometimes, no data points exist that are one unit larger <span class="math inline">\(X_1\)</span> but the same <span class="math inline">\(X_2\)</span>, because of multicollinearity. Thus, this interpretation is suspect.</p></li>
+<li><p>E.g.</p></li>
 <li><p>Multicollinearity therefore also messes with interpretation.</p></li>
+</ul>
+</div>
+<div id="remedies-for-multicollinearity" class="section level2">
+<h2>Remedies for Multicollinearity</h2>
+<ol style="list-style-type: decimal">
+<li><p>Drop some of the correlated predictor variables.</p></li>
+<li><p>Develop “composite” predictors that combine the correlated predictors.</p>
+<ul>
+<li>Do this manually.</li>
+<li>Use <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal component analysis</a> (PCA).</li>
+</ul></li>
+<li><p>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</p></li>
+</ol>
+</div>
+<div id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity" class="section level2">
+<h2>OK, that sucked, but what about when there is no multicollinearity</h2>
+<ul>
+<li></li>
 </ul>
 </div>
 </div>
@@ -578,7 +909,7 @@ earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earni
 earnings &lt;- mutate(earnings, log_earn = log(earn))
 earnings &lt;- filter(earnings, is.finite(log_earn))
 qplot(x = height, y = log_earn, data = earnings)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
 <pre class="r"><code>library(broom)
 tidy(lm_earn)</code></pre>

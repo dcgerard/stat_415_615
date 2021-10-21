@@ -1274,6 +1274,56 @@ anova(lmout)</code></pre>
 </ol></li>
 </ul>
 </div>
+<div id="statistical-versus-practical-significance" class="section level1">
+<h1>Statistical versus Practical significance</h1>
+<ul>
+<li><p>Recall: a relationship can be <em>statistically</em> significant without having any practical importance (because the effect size is small).</p>
+<ul>
+<li>it is very common to see this in studies with large sample sizes.</li>
+</ul></li>
+<li><p>Coefficients of determination are useful for determining practical significance.</p></li>
+<li><p>Another tool to do this is to compare the effect sizes to the residual standard error.</p>
+<ul>
+<li>Recall: Residual standard error is the estimated population standard deviation.</li>
+<li>Recall: Residual standard error is the square root of the MSE.</li>
+</ul></li>
+<li><p><strong>Example</strong>: Recall the <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">earnings data</a>. Let’s read it in and fit a model for log-earnings on height:</p>
+<pre class="r"><code>library(tidyverse)
+earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earnings.csv&quot;)
+earnings &lt;- mutate(earnings, log_earn = log(earn))
+earnings &lt;- filter(earnings, is.finite(log_earn))
+qplot(x = height, y = log_earn, data = earnings)</code></pre>
+<p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-49-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
+<pre class="r"><code>library(broom)
+tidy(lm_earn)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   5.91     0.376        15.7 6.70e-52
+## 2 height        0.0570   0.00562      10.1 1.65e-23</code></pre>
+<p>The <span class="math inline">\(p\)</span>-value is <strong>tiny</strong>. So is this a huge effect? Not really. Let’s discuss.</p>
+<p>Individuals that are a whole foot taller earn about <span class="math inline">\(0.05704 \times 12 = 0.6845\)</span> log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let’s look at the residual standard deviation.</p>
+<pre class="r"><code>glance(lm_earn)$sigma</code></pre>
+<pre><code>## [1] 0.8772</code></pre>
+<p>The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.</p>
+<p>If we compare prediction intervals between a 5’2’’ individual and a 6’2’’ individual (ignoring the appropriateness of the normal model for now), we have</p>
+<pre class="r"><code>predict(object = lm_earn, 
+        newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
+        interval = &quot;prediction&quot;) %&gt;%
+  exp()</code></pre>
+<pre><code>##     fit  lwr    upr
+## 1 12938 2312  72387
+## 2 25652 4579 143718</code></pre>
+<p>So it is true that the taller individual is expected to make twice as much money ($12,938 versus $25,652), but the range of individuals at each level is huge ($2312 to $72,387 and $4579 to $143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).</p>
+<p>A simpler measure would be to look a the <span class="math inline">\(R^2\)</span>.</p>
+<pre class="r"><code>glance(lm_earn)$r.squared</code></pre>
+<pre><code>## [1] 0.05954</code></pre>
+<p>So only 5% of the variation in log-earnings can be explained by height. This is probably a good thing.</p></li>
+<li><p>Conclusion: A small <span class="math inline">\(p\)</span>-value does <strong>not</strong> mean there is a big effect.</p></li>
+<li><p>Make plots, look at residual standard deviations, look at the <span class="math inline">\(R^2\)</span> values, to determine if an effect is practically significant.</p></li>
+</ul>
+</div>
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 <p>From the <code>estate</code> data, let’s consider the association between log-price, the number of beds, and the number of baths.</p>
@@ -1293,14 +1343,15 @@ glimpse(estate)</code></pre>
 <li><p>Calculate the SSTO from this output.</p></li>
 <li><p>What proportion of variation in <span class="math inline">\(Y\)</span> can be explained by <span class="math inline">\(X_2\)</span>?</p></li>
 <li><p>What is the proportionate decrease in variation when we add <span class="math inline">\(X_1\)</span> to the model that already contains <span class="math inline">\(X_2\)</span>?</p></li>
+<li><p>How strong is the association between log-price and the predictors?</p></li>
 <li><p>For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.</p></li>
 <li><p>For each row of the above ANOVA table, state the conclusions of the hypothesis tests.</p></li>
 <li><p>Conduct an overall <span class="math inline">\(F\)</span>-test for the model. <span class="math display">\[
  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
  \]</span> State the hypotheses and conclusions.</p></li>
 <li><p>Is it possible to run an <span class="math inline">\(F\)</span>-test lack-of-fit for the model <span class="math display">\[
- Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
- \]</span> If so, conduct one, stating the hypotheses and conclusions.</p></li>
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
+\]</span> If so, conduct one, stating the hypotheses and conclusions.</p></li>
 </ol>
 </div>
 <div id="references" class="section level1 unnumbered">

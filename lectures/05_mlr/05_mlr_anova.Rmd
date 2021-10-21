@@ -891,6 +891,65 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
     
     It seems that $X_2$ (thigh) is a more important predictor of body fat tahn $X_1$ (triceps).
     ```
+    
+# Statistical versus Practical significance
+
+- Recall: a relationship can be *statistically* significant without having any practical importance (because the effect size is small).
+    - it is very common to see this in studies with large sample sizes.
+
+- Coefficients of determination are useful for determining practical significance.
+
+- Another tool to do this is to compare the effect sizes to the residual standard error.
+    - Recall: Residual standard error is the estimated population standard deviation.
+    - Recall: Residual standard error is the square root of the MSE.
+
+- **Example**: Recall the [earnings data](https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data). Let's read it in and fit a model for log-earnings on height:
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
+    earnings <- mutate(earnings, log_earn = log(earn))
+    earnings <- filter(earnings, is.finite(log_earn))
+    qplot(x = height, y = log_earn, data = earnings)
+    lm_earn <- lm(log_earn ~ height, data = earnings)
+    ```
+    
+    ```{r}
+    library(broom)
+    tidy(lm_earn)
+    ```
+    
+    The $p$-value is **tiny**. So is this a huge effect? Not really. Let's discuss.
+    
+    Individuals that are a whole foot taller earn about $0.05704 \times 12 = 0.6845$ log-dollars more. This corresponds to about twice as much money ($e^0.6845 = 1.98). This seems large. However, let's look at the residual standard deviation.
+    
+    ```{r}
+    glance(lm_earn)$sigma
+    ```
+    
+    The residual SD is 0.8772. This is the average variability about the regression line and is larger even when comparing folks that are a full foot different in height.
+    
+    If we compare prediction intervals between a 5'2'' individual and a 6'2'' individual (ignoring the appropriateness of the normal model for now), we have
+    
+    ```{r}
+    predict(object = lm_earn, 
+            newdata = data.frame(height = c(5.2 * 12, 6.2 * 12)),
+            interval = "prediction") %>%
+      exp()
+    ```
+    So it is true that the taller individual is expected to make twice as much money (\$12,938 versus \$25,652), but the range of individuals at each level is huge (\$2312 to \$72,387 and \$4579 to \$143,718). And this is on the larger side of comparisons between individuals (most individuals are less than a foot different).
+    
+    A simpler measure would be to look a the $R^2$.
+    
+    ```{r}
+    glance(lm_earn)$r.squared
+    ```
+    
+    So only 5\% of the variation in log-earnings can be explained by height. This is probably a good thing.
+    
+- Conclusion: A small $p$-value does **not** mean there is a big effect. 
+
+- Make plots, look at residual standard deviations, look at the $R^2$ values, to determine if an effect is practically significant.
 
 # Exercise
 
@@ -950,7 +1009,17 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     So the proportionate reduction in variation in $Y$ is tiny.
     ```
 
-6. For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.
+6. How strong is the association between log-price and the predictors?
+
+    ```{r, eval = FALSE, echo = FALSE}
+    glance(lm_est)$r.squared
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    The $R^2$ is 0.56, so quite a bit of variation in log-price can be explained by beds and baths.
+    ```
+
+7. For each row of the above ANOVA table, state the full and reduced models of the hypothesis tests.
 
     ```{block, eval = FALSE, echo = FALSE}
     Row 1
@@ -964,7 +1033,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     - Full: $Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i$
     ```
 
-7. For each row of the above ANOVA table, state the conclusions of the hypothesis tests.
+8. For each row of the above ANOVA table, state the conclusions of the hypothesis tests.
 
     ```{block, eval = FALSE, echo = FALSE}
     Row 1: we have strong evidence that bath is associated with liking ($p < 0.001$, $n = 522$).
@@ -972,7 +1041,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     Row 2: We have moderate evidence that bed is associated with liking, after adjusting for bath ($p = 0.034$, $n = 522$).
     ```
 
-8. Conduct an overall $F$-test for the model. 
+9. Conduct an overall $F$-test for the model. 
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i.
     $$
@@ -991,7 +1060,7 @@ We will consider regressing log-price ($Y$) on number of beds ($X_1$) and number
     The $p$-value is small ($p < 0.001$) indicating very strong evidence that at least one of bath or bed is associated with liking.
     ```
 
-9. Is it possible to run an $F$-test lack-of-fit for the model
+10. Is it possible to run an $F$-test lack-of-fit for the model
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i?
     $$
