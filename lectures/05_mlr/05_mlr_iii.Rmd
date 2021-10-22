@@ -136,8 +136,8 @@ klippy::klippy()
     $$
     ```
 
+# Categorical Variables
 
 # Interaction Effects
 
 
-# Categorical Variables
