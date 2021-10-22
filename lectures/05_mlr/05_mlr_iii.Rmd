@@ -1,5 +1,5 @@
 ---
-title: 'MLR III: Generality of MLR'
+title: 'MLR III: Special Predictors'
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:  
@@ -31,6 +31,113 @@ klippy::klippy()
 
 # Quadratic Terms
 
+- Consider the Muscle Mass data which explores the association between age and muscle mass. You can read about it [here](https://dcgerard.github.io/stat_415_615/data.html#Muscle_Mass).
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    library(broom)
+    muscle <- read_csv("https://dcgerard.github.io/stat_415_615/data/muscle.csv")
+    glimpse(muscle)
+    ```
+
+- These data look like a quadratic fit could help
+    ```{r}
+    qplot(x = age, y = mass, data = muscle) +
+      geom_smooth(se = FALSE)
+    
+    lm_musc <- lm(mass ~ age, data = muscle)
+    a_musc <- augment(lm_musc)
+    qplot(x = .fitted, y = .resid, data = a_musc) +
+      geom_hline(yintercept = 0, lty = 2, col = 2)
+    ```
+    
+- A quadratice regression model with one predictor variable is
+    $$
+    Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \epsilon_i
+    $$
+    with the usual assumptions on the errors.
+
+- We fit this in R by first creating a new variable, say `age2`, with contains `age` squared.
+    ```{r}
+    muscle <- mutate(muscle, age2 = age^2)
+    glimpse(muscle)
+    ```
+
+- We then fit a multiple linear regression model using `age` and `age2` as predictors.
+
+    ```{r}
+    lm_musc2 <- lm(mass ~ age + age2, data = muscle)
+    tidy(lm_musc2)
+    ```
+
+- The estimated regression surface is
+    $$
+    \hat{Y} = 207.360 - 2.964X + 0.015X^2
+    $$
+    
+- The $p$-value corresponding to `age2` is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The $p$-value in this case (0.08) says that we only have week evidence of a quadratic relationship.
+
+- **Exercise**: Write out the null and alternative models associated with the $p$-value of 0.08109.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    - $H_0: Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1 X_i + \beta_2X_i^2 + \epsilon_i$
+    ```
+
+
+- **Exercise**: What are the null and alternative models associated with the $p$-value of 0.004535?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    - $H_0: Y_i = \beta_0 + \beta_1 X_i^2 + \epsilon_i$
+    - $H_A: Y_i = \beta_0 + \beta_1 X_i + \beta_2X_i^2 + \epsilon_i$
+    ```
+
+- It's possible to fit higher order polynomials. E.g. a cubic polynomial
+    $$
+    Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \beta_3 X_{i}^3 + \epsilon_i
+    $$
+    We would do this via
+    
+    ```{r}
+    muscle <- mutate(muscle, age3 = age^3)
+    lm_m3 <- lm(mass ~ age + age2 + age3, data = muscle)
+    tidy(lm_m3)
+    ```
+    However, it is rarely a good idea to fit terms higher than quadratic. This is because
+    
+    1. They tend to be sensative to overfitting and
+    2. They are hard to interpret.
+    
+    So at that point, you should just fit a cubic spline to these data, since it will be equally uninterpretable.
+    
+- If you include a quadratic term you should **always** include the linear term as well.
+
+- That is, you should **never** fit the model
+    $$
+    Y_i = \beta_0 + \beta_1 X_i^2 + \epsilon_i$
+    $$
+    even if the $p$-value is very high.
+    
+- Why? This follows the same logic as always including the intercept term in the model. Lower order terms are thought to provide more basic information on the relationship, so you should include them.
+
+- More generally, if you do end up using a cubic term, you should always include both linear and quadratic terms in the model, etc...
+
+
+- When there are multiple predictors in the model, it is usual to denote quadratic coefficients with repeat indices. E.g.
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \beta_{22}X_{i2}^2 + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+    $$
+    
+- **Exericse**: Write out a model that contains two predictors, $X_{i1}$ and $X_{i2}$, where only $X_{i2}$ is quadratic (and so the model is linear in $X_{i2}$). Use the repeated indexing that we just introduced.
+
+    ```{block, eval = FALSE, echo = FALSE}
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \epsilon_i
+    $$
+    ```
+
+
 # Interaction Effects
+
 
 # Categorical Variables

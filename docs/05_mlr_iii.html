@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-15" />
+<meta name="date" content="2021-10-22" />
 
-<title>MLR III: Generality of MLR</title>
+<title>MLR III: Special Predictors</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -343,9 +343,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">MLR III: Generality of MLR</h1>
+<h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-15</h4>
+<h4 class="date">2021-10-22</h4>
 
 </div>
 
@@ -365,6 +365,82 @@ div.tocify {
 </div>
 <div id="quadratic-terms" class="section level1">
 <h1>Quadratic Terms</h1>
+<ul>
+<li><p>Consider the Muscle Mass data which explores the association between age and muscle mass. You can read about it <a href="https://dcgerard.github.io/stat_415_615/data.html#Muscle_Mass">here</a>.</p>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+muscle &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/muscle.csv&quot;)
+glimpse(muscle)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 2
+## $ mass &lt;dbl&gt; 106, 106, 97, 113, 96, 119, 92, 112, 92, 102, 107, 107, 102, 115,…
+## $ age  &lt;dbl&gt; 43, 41, 47, 46, 45, 41, 47, 41, 48, 48, 42, 47, 43, 44, 42, 55, 5…</code></pre></li>
+<li><p>These data look like a quadratic fit could help</p>
+<pre class="r"><code>qplot(x = age, y = mass, data = muscle) +
+  geom_smooth(se = FALSE)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>lm_musc &lt;- lm(mass ~ age, data = muscle)
+a_musc &lt;- augment(lm_musc)
+qplot(x = .fitted, y = .resid, data = a_musc) +
+  geom_hline(yintercept = 0, lty = 2, col = 2)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>A quadratice regression model with one predictor variable is <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \epsilon_i
+  \]</span> with the usual assumptions on the errors.</p></li>
+<li><p>We fit this in R by first creating a new variable, say <code>age2</code>, with contains <code>age</code> squared.</p>
+<pre class="r"><code>muscle &lt;- mutate(muscle, age2 = age^2)
+glimpse(muscle)</code></pre>
+<pre><code>## Rows: 60
+## Columns: 3
+## $ mass &lt;dbl&gt; 106, 106, 97, 113, 96, 119, 92, 112, 92, 102, 107, 107, 102, 115,…
+## $ age  &lt;dbl&gt; 43, 41, 47, 46, 45, 41, 47, 41, 48, 48, 42, 47, 43, 44, 42, 55, 5…
+## $ age2 &lt;dbl&gt; 1849, 1681, 2209, 2116, 2025, 1681, 2209, 1681, 2304, 2304, 1764,…</code></pre></li>
+<li><p>We then fit a multiple linear regression model using <code>age</code> and <code>age2</code> as predictors.</p>
+<pre class="r"><code>lm_musc2 &lt;- lm(mass ~ age + age2, data = muscle)
+tidy(lm_musc2)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic       p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+## 1 (Intercept) 207.      29.2          7.09 0.00000000221
+## 2 age          -2.96     1.00        -2.96 0.00453      
+## 3 age2          0.0148   0.00836      1.78 0.0811</code></pre></li>
+<li><p>The estimated regression surface is <span class="math display">\[
+  \hat{Y} = 207.360 - 2.964X + 0.015X^2
+  \]</span></p></li>
+<li><p>The <span class="math inline">\(p\)</span>-value corresponding to <code>age2</code> is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The <span class="math inline">\(p\)</span>-value in this case (0.08) says that we only have week evidence of a quadratic relationship.</p></li>
+<li><p><strong>Exercise</strong>: Write out the null and alternative models associated with the <span class="math inline">\(p\)</span>-value of 0.08109.</p></li>
+<li><p><strong>Exercise</strong>: What are the null and alternative models associated with the <span class="math inline">\(p\)</span>-value of 0.004535?</p></li>
+<li><p>It’s possible to fit higher order polynomials. E.g. a cubic polynomial <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \beta_3 X_{i}^3 + \epsilon_i
+  \]</span> We would do this via</p>
+<pre class="r"><code>muscle &lt;- mutate(muscle, age3 = age^3)
+lm_m3 &lt;- lm(mass ~ age + age2 + age3, data = muscle)
+tidy(lm_m3)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term          estimate  std.error statistic p.value
+##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept) 140.       188.          0.748    0.458
+## 2 age           0.565      9.82        0.0575   0.954
+## 3 age2         -0.0456     0.168      -0.272    0.786
+## 4 age3          0.000337   0.000933    0.361    0.719</code></pre>
+<p>However, it is rarely a good idea to fit terms higher than quadratic. This is because</p>
+<ol style="list-style-type: decimal">
+<li>They tend to be sensative to overfitting and</li>
+<li>They are hard to interpret.</li>
+</ol>
+<p>So at that point, you should just fit a cubic spline to these data, since it will be equally uninterpretable.</p></li>
+<li><p>If you include a quadratic term you should <strong>always</strong> include the linear term as well.</p></li>
+<li><p>That is, you should <strong>never</strong> fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1 X_i^2 + \epsilon_i$
+  \]</span> even if the <span class="math inline">\(p\)</span>-value is very high.</p></li>
+<li><p>Why? This follows the same logic as always including the intercept term in the model. Lower order terms are thought to provide more basic information on the relationship, so you should include them.</p></li>
+<li><p>More generally, if you do end up using a cubic term, you should always include both linear and quadratic terms in the model, etc…</p></li>
+<li><p>When there are multiple predictors in the model, it is usual to denote quadratic coefficients with repeat indices. E.g. <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \beta_{22}X_{i2}^2 + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p><strong>Exericse</strong>: Write out a model that contains two predictors, <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(X_{i2}\)</span>, where only <span class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is linear in <span class="math inline">\(X_{i2}\)</span>). Use the repeated indexing that we just introduced.</p></li>
+</ul>
 </div>
 <div id="interaction-effects" class="section level1">
 <h1>Interaction Effects</h1>
