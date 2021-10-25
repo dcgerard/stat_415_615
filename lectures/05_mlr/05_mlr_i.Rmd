@@ -140,6 +140,10 @@ klippy::klippy()
     
 - In the `mtcars` dataset example, a car that weighs 1000 pounds more but has the same drat will on average have 4.8 worse mpg.
 
+- Visualization for interpretation:
+
+    ![](./figs/mlr_interp/mlr_interp.gif)\ 
+
 # The model
 
 - The multiple linear regression (MLR) model is of the form
