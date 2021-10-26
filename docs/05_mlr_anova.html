@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-21" />
+<meta name="date" content="2021-10-26" />
 
 <title>ANOVA View of Linear Models</title>
 
@@ -367,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-21</h4>
+<h4 class="date">2021-10-26</h4>
 
 </div>
 
@@ -457,7 +457,7 @@ lm_mid_thigh</code></pre>
 ##     -25.997        0.096        0.851</code></pre>
 <p>The estimated regression function is <span class="math display">\[
   y = -26.00 + 0.10x_1 + 0.85x_2
-  \]</span> and the error sum of sqquare is</p>
+  \]</span> and the error sum of squares is</p>
 <pre class="r"><code>a_mt &lt;- augment(lm_mid_thigh)
 sum(a_mt$.resid^2)</code></pre>
 <pre><code>## [1] 111.1</code></pre>
