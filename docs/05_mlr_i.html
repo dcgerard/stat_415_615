@@ -871,7 +871,7 @@ predict(object = lmout, newdata = newdf)</code></pre>
 <li><p>Recall, <em>prediction intervals depend strongly on the normality assumption</em>.</p></li>
 <li><p>Be careful about hidden extrapolations in multiple linear regression. Looking at marginal ranges is not enough.</p></li>
 <li><p>In the below plot, the red dot is in the range of <span class="math inline">\(x_1\)</span> = <code>young</code> and in the range of <span class="math inline">\(x_2\)</span> = <code>disp</code>, but is not in the range of the joint distribution of <code>young</code> and <code>disp</code>.</p>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="diagnostics" class="section level1">
@@ -899,15 +899,15 @@ predict(object = lmout, newdata = newdf)</code></pre>
 <li><p>Obtain residuals in MLR using the same code as in SLR:</p>
 <pre class="r"><code>aout &lt;- augment(x = lmout)
 qplot(x = .fitted, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = young, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-2.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = disp, y = .resid, data = aout)</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-3.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Everything looks good for our portrait example. Even the QQ-plot looks good.</p>
 <pre class="r"><code>qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
   geom_qq_line()</code></pre>
-<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_i_files/figure-html/unnamed-chunk-33-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: Recall the real estate data that you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales">here</a> and download here: <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/estate.csv</a></p>
 <ol style="list-style-type: decimal">
 <li><p>Fit a linear model of price on area and lot size.</p></li>

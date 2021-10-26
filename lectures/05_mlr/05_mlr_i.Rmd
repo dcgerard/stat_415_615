@@ -696,7 +696,7 @@ $$
     4. Provide an interpretation for the coefficient on `rank`.
     
     ```{block, eval = FALSE, echo = FALSE}
-    Students that are 10 percent higher in their class tend to have a GPA 0.1 higher, after adjusting for ACT scores and year of of admission.
+    Students that are 10 percent higher in their class tend to have a GPA 0.1 higher, after adjusting for ACT scores and year of admission.
     ```
     
     5. Write out the two models that the $p$-value for `year` is testing.
@@ -706,6 +706,11 @@ $$
     ```
     
     6. What is the residual standard deviation?
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    glance(lmout_gpa)$sigma
+    ```
+    
     
 # Estimating mean responses and making predictions.
 
