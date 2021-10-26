@@ -508,13 +508,14 @@ $$
 - This sampling distribution can also be used to test
     - $H_0: \beta_i = 0$ versus
     - $H_A: \beta_i \neq 0$.
+    
     Under the null, we have
     $$
     t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}} \sim t(n-p).
     $$
     So to test against $H_0$, we can compare $t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}$ to a $t(n-p)$ distribution and see how extreme it is.
     $$
-    p-\text{value} = 2*\text{pt}(-|t^*|, n-p).
+    \text{$p$-value} = 2*\text{pt}(-|t^*|, n-p).
     $$
 
     ```{r, echo=FALSE, message = FALSE}
@@ -586,7 +587,7 @@ $$
     There seems to be a strong linear relationship between portrait and disp and portrait and young.
     
 - A shortcut to making these plots is the `ggpairs()` function from the `{GGally}` package. It creates what's called a **scatterplot matrix**.
-    ```{r}
+    ```{r, message = FALSE}
     library(GGally)
     ggpairs(data = portrait)
     ```
@@ -735,7 +736,7 @@ $$
 
 
 - Standard errors for the fitted values can be obtained using matrix notation in the same way as in SLR
-    \end{align}
+    \begin{align}
     var(\hat{\mathbf{y}}_h) &= var(\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
     &= \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tvar(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
     &= \sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
