@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-26" />
+<meta name="date" content="2021-10-27" />
 
 <title>ANOVA View of Linear Models</title>
 
@@ -367,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-26</h4>
+<h4 class="date">2021-10-27</h4>
 
 </div>
 
@@ -417,16 +417,19 @@ div.tocify {
 <li><code>fat</code>: Body fat.</li>
 </ul>
 <p>The goal is to predict body fat from the other variables. You can load these data into R using:</p>
-<pre class="r"><code>library(tidyverse)
-library(broom)
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.1</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.1</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.1</code></pre>
+<pre class="r"><code>library(broom)
 body &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/body.csv&quot;)
 glimpse(body)</code></pre>
 <pre><code>## Rows: 20
 ## Columns: 4
-## $ triceps &lt;dbl&gt; 19.5, 24.7, 30.7, 29.8, 19.1, 25.6, 31.4, 27.9, 22.1, 25.5, 31…
-## $ thigh   &lt;dbl&gt; 43.1, 49.8, 51.9, 54.3, 42.2, 53.9, 58.5, 52.1, 49.9, 53.5, 56…
-## $ midarm  &lt;dbl&gt; 29.1, 28.2, 37.0, 31.1, 30.9, 23.7, 27.6, 30.6, 23.2, 24.8, 30…
-## $ fat     &lt;dbl&gt; 11.9, 22.8, 18.7, 20.1, 12.9, 21.7, 27.1, 25.4, 21.3, 19.3, 25…</code></pre>
+## $ triceps &lt;dbl&gt; 19.5, 24.7, 30.7, 29.8, 19.1, 25.6, 31.4, 27.9, 22.1, 25.5, 31~
+## $ thigh   &lt;dbl&gt; 43.1, 49.8, 51.9, 54.3, 42.2, 53.9, 58.5, 52.1, 49.9, 53.5, 56~
+## $ midarm  &lt;dbl&gt; 29.1, 28.2, 37.0, 31.1, 30.9, 23.7, 27.6, 30.6, 23.2, 24.8, 30~
+## $ fat     &lt;dbl&gt; 11.9, 22.8, 18.7, 20.1, 12.9, 21.7, 27.1, 25.4, 21.3, 19.3, 25~</code></pre>
 <p>Then if we regress body fat on midarm, we obtain</p>
 <pre class="r"><code>lmmid &lt;- lm(fat ~ midarm, data = body)
 lmmid</code></pre>
@@ -471,8 +474,8 @@ sum(a_mt$.resid^2)</code></pre>
   \]</span></p></li>
 <li><p>But looking at SSE reductions can tell us how much more variability can be explained by adding predictors.</p></li>
 <li><p>The <strong>extra sum of squares</strong> <span class="math display">\[
-  SSR(X_1|X_2) = SSE(X_1) - SSE(X_1, X_2)\\
-  SSR(X_2|X_1) = SSE(X_2) - SSE(X_1, X_2)\\
+  SSR(X_1|X_2) = SSE(X_2) - SSE(X_1, X_2)\\
+  SSR(X_2|X_1) = SSE(X_1) - SSE(X_1, X_2)\\
   SSR(X_1, X_2|X_3) = SSE(X_3) - SSE(X_1, X_2, X_3)\\
   \text{ etc...}
   \]</span></p></li>
@@ -485,15 +488,15 @@ sum(a_mt$.resid^2)</code></pre>
 <p><img src="figs/ss.png" /> </p></li>
 <li><p>We can use this to show that the extra sum of squares is also how much the regression sum of squares improves</p>
 <p><span class="math display">\[
-  SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_1)\\
-  SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_2)\\
+  SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_2)\\
+  SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_1)\\
   SSR(X_1, X_2|X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
   \text{ etc...}
   \]</span></p></li>
 <li><p>Proof: <span class="math display">\[\begin{align}
-  SSR(X_1|X_2) &amp;= SSE(X_1) - SSE(X_1, X_2)\\
-  &amp;= [SSTO - SSR(X_1)] - [SSTO - SSR(X_1, X_2)]\\
-  &amp;= SSR(X_1, X_2) - SSR(X_1).
+  SSR(X_1|X_2) &amp;= SSE(X_2) - SSE(X_1, X_2)\\
+  &amp;= [SSTO - SSR(X_2)] - [SSTO - SSR(X_1, X_2)]\\
+  &amp;= SSR(X_1, X_2) - SSR(X_2).
   \end{align}\]</span></p></li>
 <li><p><strong>Exercise</strong>: True/False and explain: The regression sum of squares never decreases as you include more covariates in a model.</p></li>
 <li><p><strong>Exercise</strong>: Express <span class="math inline">\(SSR(X_1, X_3 | X_2, X_4)\)</span> both in terms of error sums of squares and in terms of regression sums of squares.</p></li>
@@ -573,8 +576,10 @@ sum((body$fat - mean(body$fat))^2)</code></pre>
 </tbody>
 </table></li>
 <li><p>The easiest way to get Type II Sum of Squares is through the <code>Anova()</code> function in the <code>{car}</code> package</p>
-<pre class="r"><code>library(car)
-Anova(lm_all)</code></pre>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Warning: package &#39;car&#39; was built under R version 4.1.1</code></pre>
+<pre><code>## Warning: package &#39;carData&#39; was built under R version 4.1.1</code></pre>
+<pre class="r"><code>Anova(lm_all)</code></pre>
 <pre><code>## Anova Table (Type II tests)
 ## 
 ## Response: fat
@@ -651,11 +656,11 @@ Anova(lm_all)</code></pre>
 <li><p>In R, the overall <span class="math inline">\(F\)</span> test is done automatically and is included in the output of <code>glance()</code> from the <code>{broom}</code> package. It is the <code>p.value</code> term. The <code>statistic</code> term is <span class="math inline">\(F^*\)</span>.</p>
 <pre class="r"><code>lm_all &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 glance(lm_all)</code></pre>
-<pre><code>## # A tibble: 1 × 12
+<pre><code>## # A tibble: 1 x 12
 ##   r.squared adj.r.squared sigma statistic    p.value    df logLik   AIC   BIC
 ##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0.801         0.764  2.48      21.5 0.00000734     3  -44.3  98.6  104.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
 <li><p>We can verify this manually</p>
 <pre class="r"><code>a_all &lt;- augment(lm_all)
 
@@ -767,7 +772,7 @@ f_star</code></pre>
 </ul></li>
 <li><p>Recall, we already came up with a way to test against the null of <span class="math inline">\(H_0: \beta_k = 0\)</span> using <span class="math inline">\(t\)</span>-statistics.</p>
 <pre class="r"><code>tidy(lm_all)</code></pre>
-<pre><code>## # A tibble: 4 × 5
+<pre><code>## # A tibble: 4 x 5
 ##   term        estimate std.error statistic p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
 ## 1 (Intercept)   117.       99.8       1.17   0.258
@@ -791,10 +796,10 @@ estate &lt;- select(estate, log_price, log_area, log_lot, bed)
 glimpse(estate)</code></pre>
 <pre><code>## Rows: 522
 ## Columns: 4
-## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
-## $ log_area  &lt;dbl&gt; 8.017, 7.629, 7.484, 7.401, 7.694, 7.584, 7.703, 7.376, 7.39…
-## $ log_lot   &lt;dbl&gt; 10.009, 10.039, 9.969, 9.761, 9.989, 9.847, 9.833, 10.004, 9…
-## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …</code></pre></li>
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1~
+## $ log_area  &lt;dbl&gt; 8.017, 7.629, 7.484, 7.401, 7.694, 7.584, 7.703, 7.376, 7.39~
+## $ log_lot   &lt;dbl&gt; 10.009, 10.039, 9.969, 9.761, 9.989, 9.847, 9.833, 10.004, 9~
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, ~</code></pre></li>
 <li><p>We want to regress log-price (<span class="math inline">\(Y\)</span>) on log-area (<span class="math inline">\(X_1\)</span>), log-lot (<span class="math inline">\(X_2\)</span>), and bed number (<span class="math inline">\(X_3\)</span>). Suppose we have already decided to include bed number, and we want to ask if we should include one of log-price and log-area. Then the two models that we care considering</p>
 <ul>
 <li>Reduced: <span class="math inline">\(Y_i = \beta_0 + \beta_3 X_{3i} + \epsilon_i\)</span></li>
@@ -895,14 +900,14 @@ earnings &lt;- filter(earnings, is.finite(log_earn))
 glimpse(earnings)</code></pre>
 <pre><code>## Rows: 1,629
 ## Columns: 3
-## $ log_earn  &lt;dbl&gt; 10.820, 11.002, 10.309, 10.127, 10.820, 11.035, 10.840, 9.10…
-## $ ethnicity &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Other&quot;, &quot;Black&quot;, &quot;White…
-## $ height    &lt;dbl&gt; 74, 66, 64, 65, 63, 68, 63, 64, 62, 73, 72, 72, 72, 70, 68, …</code></pre></li>
+## $ log_earn  &lt;dbl&gt; 10.820, 11.002, 10.309, 10.127, 10.820, 11.035, 10.840, 9.10~
+## $ ethnicity &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Other&quot;, &quot;Black&quot;, &quot;White~
+## $ height    &lt;dbl&gt; 74, 66, 64, 65, 63, 68, 63, 64, 62, 73, 72, 72, 72, 70, 68, ~</code></pre></li>
 <li><p>Recall that we can encode a categorical variable with <span class="math inline">\(c\)</span> classes in terms of <span class="math inline">\(c-1\)</span> indicator variables.</p></li>
 <li><p>For example, the variable <code>ethnicity</code> with <span class="math inline">\(c = 4\)</span> values</p>
 <pre><code>## [1] &quot;White&quot;    &quot;Other&quot;    &quot;Black&quot;    &quot;Hispanic&quot;</code></pre>
 <p>can be encoded with with variables</p>
-<pre><code>## # A tibble: 4 × 5
+<pre><code>## # A tibble: 4 x 5
 ##   `(Intercept)` ethnicityHispanic ethnicityOther ethnicityWhite race    
 ##           &lt;dbl&gt;             &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;   
 ## 1             1                 0              0              1 White   
@@ -927,7 +932,7 @@ glimpse(earnings)</code></pre>
 <li><p>In R, when you use a categorical variable in <code>lm()</code>, it will automatically convert the variable to indicators.</p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ ethnicity + height, data = earnings)
 tidy(lm_earn)</code></pre>
-<pre><code>## # A tibble: 5 × 5
+<pre><code>## # A tibble: 5 x 5
 ##   term              estimate std.error statistic  p.value
 ##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)         5.82     0.380      15.3   1.52e-49
@@ -987,12 +992,13 @@ f_star</code></pre>
 glimpse(textile)</code></pre>
 <pre><code>## Rows: 56
 ## Columns: 3
-## $ count    &lt;dbl&gt; 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 2…
-## $ length   &lt;dbl&gt; 2.70, 2.70, 2.70, 2.70, 2.74, 2.74, 2.74, 2.74, 2.80, 2.80, 2…
-## $ strength &lt;dbl&gt; 7.90, 7.86, 7.85, 7.91, 7.38, 7.32, 7.37, 7.33, 7.30, 7.22, 7…</code></pre></li>
+## $ count    &lt;dbl&gt; 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 2~
+## $ length   &lt;dbl&gt; 2.70, 2.70, 2.70, 2.70, 2.74, 2.74, 2.74, 2.74, 2.80, 2.80, 2~
+## $ strength &lt;dbl&gt; 7.90, 7.86, 7.85, 7.91, 7.38, 7.32, 7.37, 7.33, 7.30, 7.22, 7~</code></pre></li>
 <li><p>The goal for these data is to study the effects of yarn-count and and stitch-length on fabric’s bursting strength.</p>
-<pre class="r"><code>library(GGally)
-ggpairs(textile)</code></pre>
+<pre class="r"><code>library(GGally)</code></pre>
+<pre><code>## Warning: package &#39;GGally&#39; was built under R version 4.1.1</code></pre>
+<pre class="r"><code>ggpairs(textile)</code></pre>
 <p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-39-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>The notation for a lack-of-fit <span class="math inline">\(F\)</span>-test is kind of clunky, so we’ll just discuss this test in intuitive terms.</p></li>
 <li><p>The full model assumes that there is a separate mean bursting strength for each unique combination of yard-count and stitch length.</p></li>
@@ -1306,7 +1312,7 @@ qplot(x = height, y = log_earn, data = earnings)</code></pre>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
 <pre class="r"><code>library(broom)
 tidy(lm_earn)</code></pre>
-<pre><code>## # A tibble: 2 × 5
+<pre><code>## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)   5.91     0.376        15.7 6.70e-52
@@ -1342,9 +1348,9 @@ estate &lt;- select(estate, log_price, bed, bath)
 glimpse(estate)</code></pre>
 <pre><code>## Rows: 522
 ## Columns: 3
-## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1…
-## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, …
-## $ bath      &lt;dbl&gt; 4, 2, 3, 2, 3, 3, 2, 1, 2, 3, 5, 4, 4, 4, 3, 5, 2, 4, 3, 3, …</code></pre>
+## $ log_price &lt;dbl&gt; 12.79, 12.74, 12.43, 12.23, 12.53, 12.42, 12.35, 11.92, 12.1~
+## $ bed       &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 3, 2, 3, 3, 7, 3, 5, 5, 3, 5, 2, 3, 4, 3, ~
+## $ bath      &lt;dbl&gt; 4, 2, 3, 2, 3, 3, 2, 1, 2, 3, 5, 4, 4, 4, 3, 5, 2, 4, 3, 3, ~</code></pre>
 <p>We will consider regressing log-price (<span class="math inline">\(Y\)</span>) on number of beds (<span class="math inline">\(X_1\)</span>) and number of baths (<span class="math inline">\(X_2\)</span>).</p>
 <ol style="list-style-type: decimal">
 <li><p>Make a pairs plot and explore the association between these variables. What do you conclude?</p></li>
