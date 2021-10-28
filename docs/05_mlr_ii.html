@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-21" />
+<meta name="date" content="2021-10-28" />
 
 <title>MLR: Practical Considerations</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-21</h4>
+<h4 class="date">2021-10-28</h4>
 
 </div>
 
@@ -854,20 +854,73 @@ predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
 <h2>The Difficulty of Interpretation</h2>
 <ul>
 <li><p>Sometimes, no data points exist that are one unit larger <span class="math inline">\(X_1\)</span> but the same <span class="math inline">\(X_2\)</span>, because of multicollinearity. Thus, this interpretation is suspect.</p></li>
-<li><p>E.g.</p></li>
-<li><p>Multicollinearity therefore also messes with interpretation.</p></li>
+<li><p><strong>Example</strong>: Researchers were interested in studying the association between energy expenditure (<span class="math inline">\(Y\)</span>) on body mass (<span class="math inline">\(X_1\)</span>) and echolocation type. Echolocation type is a categorical variable with levels “non-echolocating bats”, “non-echolocating birds”, and “echolocating bats”. The idea is that echolocation consumes a lot of energy, and so researchers were interested in if evolution found a way to correct for this, so that the sum of energy expenditure was not higher in echolocating bats than what would be expected based on their mass. You can load these data into R with</p>
+<pre class="r"><code>library(Sleuth3)
+data(&quot;case1002&quot;)
+echo &lt;- case1002
+glimpse(echo)</code></pre>
+<pre><code>## Rows: 20
+## Columns: 3
+## $ Mass   &lt;dbl&gt; 779.0, 628.0, 258.0, 315.0, 24.3, 35.0, 72.8, 120.0, 213.0, 275…
+## $ Type   &lt;fct&gt; non-echolocating bats, non-echolocating bats, non-echolocating …
+## $ Energy &lt;dbl&gt; 43.70, 34.80, 23.30, 22.40, 2.46, 3.93, 9.15, 13.80, 14.60, 22.…</code></pre></li>
+<li><p>Since echolocation type is a categorical variable, we define two new indicator variables</p>
+<p><span class="math display">\[\begin{align}
+  X_{i2} &amp;= \begin{cases}
+  1 &amp; \text{ if individual $i$ is a non-echolocating bird}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}\\
+  X_{i3} &amp;= \begin{cases}
+  1 &amp; \text{ if individual $i$ is an echolocating bat}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}
+  \end{align}\]</span></p></li>
+<li><p>It turns out that the best model is one that includes a log-transformation on both energy and mass.</p>
+<pre class="r"><code>echo &lt;- mutate(echo, l_energy = log(Energy), l_mass = log(Mass))
+echo &lt;- mutate(echo, Type = fct_relevel(Type, &quot;non-echolocating bats&quot;, &quot;non-echolocating birds&quot;, &quot;echolocating bats&quot;))</code></pre>
+<p>The last line above changes the order of the factor levels so that non-echolocating bats are the reference level.</p></li>
+<li><p>We then fit the model</p>
+<p><span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1\log(X_{i1}) + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+  \]</span></p>
+<pre class="r"><code>lm_echo &lt;- lm(l_energy ~ l_mass + Type, data = echo)
+tidy(lm_echo, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 4 × 7
+##   term                  estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;                    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)            -1.58      0.287     -5.49  4.96e- 5   -2.19     -0.967
+## 2 l_mass                  0.815     0.0445    18.3   3.76e-12    0.721     0.909
+## 3 Typenon-echolocating…   0.102     0.114      0.896 3.84e- 1   -0.140     0.344
+## 4 Typeecholocating bats   0.0787    0.203      0.388 7.03e- 1   -0.351     0.508</code></pre></li>
+<li><p>So the fit is</p>
+<p><span class="math display">\[
+  \hat{Y} = -1.58 + 0.82 X_1 + 0.11X_2 + 0.08X_3
+  \]</span></p></li>
+<li><p>How do we interpret the 0.08 coefficient? Typically, we would say that “echolocating bats expend about 8.3% more energy (<span class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating bats of about the same mass.”</p></li>
+<li><p><strong>However</strong>, there are no echolocating bats and non-echolocating bats of the same mass.</p>
+<pre class="r"><code>echo %&gt;%
+  filter(Type != &quot;non-echolocating birds&quot;) %&gt;%
+  qplot(x = Type, y = l_mass, data = ., ylab = &quot;log(Mass)&quot;)</code></pre>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>This is an example of multicollinearity.</p>
+<p>So this interpretation is suspect.</p></li>
+<li><p>The best interpretation is to just say that we are adjusting for body size. E.g. “echolocating bats expend about 8.3% more energy (<span class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating bats, adjusting for body size”.</p></li>
+<li><p>What this means is that group differences are considered only after the best explanation for body size is taken into account.</p></li>
 </ul>
 </div>
 <div id="remedies-for-multicollinearity" class="section level2">
 <h2>Remedies for Multicollinearity</h2>
 <ol style="list-style-type: decimal">
-<li><p>Drop some of the correlated predictor variables.</p></li>
-<li><p>Develop “composite” predictors that combine the correlated predictors.</p>
+<li>If it is not extreme (Section 10.5 of KNNL), don’t do anything. Just be cognizant of it.</li>
+</ol>
+<p>2.. Drop some of the correlated predictor variables.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Develop “composite” predictors that combine the correlated predictors.
 <ul>
 <li>Do this manually.</li>
 <li>Use <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal component analysis</a> (PCA).</li>
 </ul></li>
-<li><p>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</p></li>
+<li>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</li>
 </ol>
 </div>
 <div id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity" class="section level2">
