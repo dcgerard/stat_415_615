@@ -138,6 +138,93 @@ klippy::klippy()
 
 # Categorical Variables
 
+- An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include
+    - `months`: How long, in months, it took the firm to adopt the new innovation.
+    - `size`: The amount of total assets of the insurance firm, in millions of dollars.
+    - `type`: The type of firm. Either a mutual company (`"mutual"`) or a stock company (`"stock"`).
+    
+    You can load these data into R via:
+    ```{r, message = FALSE}
+    firm <- read_csv("https://dcgerard.github.io/stat_415_615/data/firm.csv")
+    glimpse(firm)
+    ```
+
+- Recall that we deal with categorical variables by creating indicators
+    $$
+    X_{i2} =
+    \begin{cases}
+    1 & \text{ if stock company}\\
+    0 & \text{ otherwise}
+    \end{cases}
+    $$
+
+- If a categorical variable has $c$ classes, then we need to use $c-1$ indicator variables to represent this categorical variable. 
+
+- Here, $c = 2$ (for `"stock"` and `"mutual"`), so we only need $c-1=1$ indicator variable.
+
+- Let $Y_i$ be the number of months elapsed for company $i$, and $X_{i1}$ be the size of the firm in millions of dollars. Then we will fit the following model.
+
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i
+    $$
+    
+- The interpretation of $\beta_1$ is as usual. Firms that are the same type, but are 10 million dollars larger, tended to take $10 \times \beta_1$ months less to innovate.
+    
+- To interpret $\beta_2$, consider that the model for mutual companies is
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \epsilon_i
+    $$
+    while the model for stock companies is
+    $$
+    Y_i = \beta_0 + \beta_2 + \beta_1X_{i1} + \epsilon_i
+    $$
+    where $\beta_0$ and $\beta_1$ are the same in both instances.
+    
+- This means that $\beta_2$ is the expected difference in months between mutual and stock companies that are about the same size.
+
+- Let's visualize this model
+    ```{r, echo = FALSE, eval = FALSE}
+    lm(months ~ size + type, data = firm)
+    
+    firm %>%
+      rename(Type = type) %>%
+      ggplot(mapping = aes(x = size, y = months, color = Type)) +
+      geom_point() +
+      theme_classic() +
+      geom_abline(slope = -0.102, intercept = 33.874, color = "#005AB5", lwd = 1.5) +
+      geom_abline(slope = -0.102, intercept = 41.93, color = "#DC3220", lwd = 1.5) +
+      xlab("Size of Firm (millions of dollars)") +
+      ylab("Number of Months Elapsed") +
+      scale_color_manual(values = c("#005AB5", "#DC3220")) ->
+      pl
+      ## ggsave(filename = "./figs/cat_interp.pdf", plot = pl, height = 4, width = 5.5)
+    ```
+    
+    ```{r,echo = FALSE}
+    knitr::include_graphics(path = "./figs/cat_interp.png")
+    ```
+
+- In R, you fit this model by first converting the categorical variable into a **factor** with `factor()`. You specify the order of the levels by the `levels` argument, where the first level is the **reference level** (the one that does not have an indicator for it).
+    ```{r}
+    firm <- mutate(firm, type = factor(type, levels = c("mutual", "stock")))
+    ```
+    Then you can use the new factor variable in `lm()`. It will automatically create $c-1$ indicator variables to fit.
+    ```{r}
+    lm_firm <- lm(months ~ size + type, data = firm)
+    tidy(lm_firm, conf.int = TRUE)
+    ```
+    We conclude that stock companies tended to take 8 months longer than mutual companies to adopt the new innovation (95\% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had \$10 million more assets tended to take 1 fewer month to adopt the new innovation (95\% CI of 0.8 to 1.2 fewer months).
+    
+- If you wanted to change which level is the reference level of a factor variable, you could use `fct_relevel()` from the `{forcats}` package (apart of the tidyverse).
+    ```{r}
+    firm <- mutate(firm, type = fct_relevel(type, "stock", "mutual"))
+    lm_firm <- lm(months ~ size + type, data = firm)
+    tidy(lm_firm, conf.int = TRUE)
+    ```
+    
+    
+
+
 
 
 # Interaction Effects

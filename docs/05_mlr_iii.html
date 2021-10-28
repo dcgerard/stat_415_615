@@ -444,6 +444,66 @@ tidy(lm_m3)</code></pre>
 </div>
 <div id="categorical-variables" class="section level1">
 <h1>Categorical Variables</h1>
+<ul>
+<li><p>An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include</p>
+<ul>
+<li><code>months</code>: How long, in months, it took the firm to adopt the new innovation.</li>
+<li><code>size</code>: The amount of total assets of the insurance firm, in millions of dollars.</li>
+<li><code>type</code>: The type of firm. Either a mutual company (<code>"mutual"</code>) or a stock company (<code>"stock"</code>).</li>
+</ul>
+<p>You can load these data into R via:</p>
+<pre class="r"><code>firm &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/firm.csv&quot;)
+glimpse(firm)</code></pre>
+<pre><code>## Rows: 20
+## Columns: 3
+## $ months &lt;dbl&gt; 17, 26, 21, 30, 22, 0, 12, 19, 4, 16, 28, 15, 11, 38, 31, 21, 2…
+## $ size   &lt;dbl&gt; 151, 92, 175, 31, 104, 277, 210, 120, 290, 238, 164, 272, 295, …
+## $ type   &lt;chr&gt; &quot;mutual&quot;, &quot;mutual&quot;, &quot;mutual&quot;, &quot;mutual&quot;, &quot;mutual&quot;, &quot;mutual&quot;, &quot;mu…</code></pre></li>
+<li><p>Recall that we deal with categorical variables by creating indicators <span class="math display">\[
+  X_{i2} =
+  \begin{cases}
+  1 &amp; \text{ if stock company}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}
+  \]</span></p></li>
+<li><p>If a categorical variable has <span class="math inline">\(c\)</span> classes, then we need to use <span class="math inline">\(c-1\)</span> indicator variables to represent this categorical variable.</p></li>
+<li><p>Here, <span class="math inline">\(c = 2\)</span> (for <code>"stock"</code> and <code>"mutual"</code>), so we only need <span class="math inline">\(c-1=1\)</span> indicator variable.</p></li>
+<li><p>Let <span class="math inline">\(Y_i\)</span> be the number of months elapsed for company <span class="math inline">\(i\)</span>, and <span class="math inline">\(X_{i1}\)</span> be the size of the firm in millions of dollars. Then we will fit the following model.</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p>The interpretation of <span class="math inline">\(\beta_1\)</span> is as usual. Firms that are the same type, but are 10 million dollars larger, tended to take <span class="math inline">\(10 \times \beta_1\)</span> months less to innovate.</p></li>
+<li><p>To interpret <span class="math inline">\(\beta_2\)</span>, consider that the model for mutual companies is <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \epsilon_i
+  \]</span> while the model for stock companies is <span class="math display">\[
+  Y_i = \beta_0 + \beta_2 + \beta_1X_{i1} + \epsilon_i
+  \]</span> where <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are the same in both instances.</p></li>
+<li><p>This means that <span class="math inline">\(\beta_2\)</span> is the expected difference in months between mutual and stock companies that are about the same size.</p></li>
+<li><p>Let’s visualize this model</p>
+<p><img src="figs/cat_interp.png" width="264" style="display: block; margin: auto;" /></p></li>
+<li><p>In R, you fit this model by first converting the categorical variable into a <strong>factor</strong> with <code>factor()</code>. You specify the order of the levels by the <code>levels</code> argument, where the first level is the <strong>reference level</strong> (the one that does not have an indicator for it).</p>
+<pre class="r"><code>firm &lt;- mutate(firm, type = factor(type, levels = c(&quot;mutual&quot;, &quot;stock&quot;)))</code></pre>
+<p>Then you can use the new factor variable in <code>lm()</code>. It will automatically create <span class="math inline">\(c-1\)</span> indicator variables to fit.</p>
+<pre class="r"><code>lm_firm &lt;- lm(months ~ size + type, data = firm)
+tidy(lm_firm, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 3 × 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   33.9     1.81        18.7  9.15e-13   30.0     37.7   
+## 2 size          -0.102   0.00889    -11.4  2.07e- 9   -0.121   -0.0830
+## 3 typestock      8.06    1.46         5.52 3.74e- 5    4.98    11.1</code></pre>
+<p>We conclude that stock companies tended to take 8 months longer than mutual companies to adopt the new innovation (95% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had $10 million more assets tended to take 1 fewer month to adopt the new innovation (95% CI of 0.8 to 1.2 fewer months).</p></li>
+<li><p>If you wanted to change which level is the reference level of a factor variable, you could use <code>fct_relevel()</code> from the <code>{forcats}</code> package (apart of the tidyverse).</p>
+<pre class="r"><code>firm &lt;- mutate(firm, type = fct_relevel(type, &quot;stock&quot;, &quot;mutual&quot;))
+lm_firm &lt;- lm(months ~ size + type, data = firm)
+tidy(lm_firm, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 3 × 7
+##   term        estimate std.error statistic  p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   41.9     2.01        20.9  1.50e-13   37.7     46.2   
+## 2 size          -0.102   0.00889    -11.4  2.07e- 9   -0.121   -0.0830
+## 3 typemutual    -8.06    1.46        -5.52 3.74e- 5  -11.1     -4.98</code></pre></li>
+</ul>
 </div>
 <div id="interaction-effects" class="section level1">
 <h1>Interaction Effects</h1>
