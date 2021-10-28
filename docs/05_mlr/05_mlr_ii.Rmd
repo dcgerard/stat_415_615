@@ -458,19 +458,83 @@ select(tidy(lm_tr_th_m), term, std.error)
 
 - Sometimes, no data points exist that are one unit larger $X_1$ but the same $X_2$, because of multicollinearity. Thus, this interpretation is suspect. 
 
-- E.g.
+- **Example**: Researchers were interested in studying the association between energy expenditure ($Y$) on body mass ($X_1$) and echolocation type. Echolocation type is a categorical variable with levels "non-echolocating bats", "non-echolocating birds", and "echolocating bats". The idea is that echolocation consumes a lot of energy, and so researchers were interested in if evolution found a way to correct for this, so that the sum of energy expenditure was not higher in echolocating bats than what would be expected based on their mass. You can load these data into R with
 
-- Multicollinearity therefore also messes with interpretation.
+    ```{r}
+    library(Sleuth3)
+    data("case1002")
+    echo <- case1002
+    glimpse(echo)
+    ```
+
+- Since echolocation type is a categorical variable, we define two new indicator variables
+
+    \begin{align}
+    X_{i2} &= \begin{cases}
+    1 & \text{ if individual $i$ is a non-echolocating bird}\\
+    0 & \text{ otherwise}
+    \end{cases}\\
+    X_{i3} &= \begin{cases}
+    1 & \text{ if individual $i$ is an echolocating bat}\\
+    0 & \text{ otherwise}
+    \end{cases}
+    \end{align}
+
+- It turns out that the best model is one that includes a log-transformation on both energy and mass.
+
+    ```{r}
+    echo <- mutate(echo, l_energy = log(Energy), l_mass = log(Mass))
+    echo <- mutate(echo, Type = fct_relevel(Type, "non-echolocating bats", "non-echolocating birds", "echolocating bats"))
+    ```
+
+    The last line above changes the order of the factor levels so that non-echolocating bats are the reference level.
+
+- We then fit the model
+
+    $$
+    \log(Y_i) = \beta_0 + \beta_1\log(X_{i1}) + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+    $$
+
+    ```{r}
+    lm_echo <- lm(l_energy ~ l_mass + Type, data = echo)
+    tidy(lm_echo, conf.int = TRUE)
+    ```
+
+- So the fit is
+
+    $$
+    \hat{Y} = -1.58 + 0.82 X_1 + 0.11X_2 + 0.08X_3
+    $$
+
+- How do we interpret the 0.08 coefficient? Typically, we would say that "echolocating bats expend about 8.3\% more energy ($e^{0.08}$ = 1.083) than non-echolocating bats of about the same mass."
+
+- **However**, there are no echolocating bats and non-echolocating bats of the same mass.
+
+    ```{r}
+    echo %>%
+      filter(Type != "non-echolocating birds") %>%
+      qplot(x = Type, y = l_mass, data = ., ylab = "log(Mass)")
+    ```
+
+    This is an example of multicollinearity.
+
+    So this interpretation is suspect. 
+
+- The best interpretation is to just say that we are adjusting for body size. E.g. "echolocating bats expend about 8.3\% more energy ($e^{0.08}$ = 1.083) than non-echolocating bats, adjusting for body size".
+
+- What this means is that group differences are considered only after the best explanation for body size is taken into account.
 
 ## Remedies for Multicollinearity
 
-1. Drop some of the correlated predictor variables.
+1. If it is not extreme (Section 10.5 of KNNL), don't do anything. Just be cognizant of it.
 
-2. Develop "composite" predictors that combine the correlated predictors.
+2.. Drop some of the correlated predictor variables.
+
+3. Develop "composite" predictors that combine the correlated predictors.
     - Do this manually.
     - Use [principal component analysis](https://en.wikipedia.org/wiki/Principal_component_analysis) (PCA).
 
-3. Apply [ridge regression](https://en.wikipedia.org/wiki/Ridge_regression) (Chapter 10).
+4. Apply [ridge regression](https://en.wikipedia.org/wiki/Ridge_regression) (Chapter 10).
 
 ## OK, that sucked, but what about when there is no multicollinearity?
 

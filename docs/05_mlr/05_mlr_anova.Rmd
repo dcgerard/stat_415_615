@@ -113,7 +113,7 @@ klippy::klippy()
     $$
     y = -26.00 + 0.10x_1 + 0.85x_2
     $$
-    and the error sum of sqquare is
+    and the error sum of squares is
     ```{r}
     a_mt <- augment(lm_mid_thigh)
     sum(a_mt$.resid^2)
@@ -132,8 +132,8 @@ klippy::klippy()
 
 - The **extra sum of squares**
     $$
-    SSR(X_1|X_2) = SSE(X_1) - SSE(X_1, X_2)\\
-    SSR(X_2|X_1) = SSE(X_2) - SSE(X_1, X_2)\\
+    SSR(X_1|X_2) = SSE(X_2) - SSE(X_1, X_2)\\
+    SSR(X_2|X_1) = SSE(X_1) - SSE(X_1, X_2)\\
     SSR(X_1, X_2|X_3) = SSE(X_3) - SSE(X_1, X_2, X_3)\\
     \text{ etc...}
     $$
@@ -163,17 +163,17 @@ klippy::klippy()
 - We can use this to show that the extra sum of squares is also how much the regression sum of squares improves
 
     $$
-    SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_1)\\
-    SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_2)\\
+    SSR(X_1|X_2) = SSR(X_1, X_2) - SSR(X_2)\\
+    SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_1)\\
     SSR(X_1, X_2|X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
     \text{ etc...}
     $$
 
 - Proof:
     \begin{align}
-    SSR(X_1|X_2) &= SSE(X_1) - SSE(X_1, X_2)\\
-    &= [SSTO - SSR(X_1)] - [SSTO - SSR(X_1, X_2)]\\
-    &= SSR(X_1, X_2) - SSR(X_1).
+    SSR(X_1|X_2) &= SSE(X_2) - SSE(X_1, X_2)\\
+    &= [SSTO - SSR(X_2)] - [SSTO - SSR(X_1, X_2)]\\
+    &= SSR(X_1, X_2) - SSR(X_2).
     \end{align}
 
 - **Exercise**: True/False and explain: The regression sum of squares never decreases as you include more covariates in a model.

@@ -128,6 +128,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `inc_party_candidate`: The candidate of the incumbant party.
     - `other_candidate`: The candidate of the other party.
     
+# Insurance Firm
+
+- [firm.csv](./data/firm.csv): Data from Table 8.2 of KNNL. An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include
+    - `months`: How long, in months, it took the firm to adopt the new innovation.
+    - `size`: The amount of total assets of the insurance firm, in millions of dollars.
+    - `type`: The type of firm. Either a mutual company (`"mutual"`) or a stock company (`"stock"`).
+    
 # IPO
 
 - [ipo.csv](./data/ipo.csv): Dataset C.11 from KNNL. Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:

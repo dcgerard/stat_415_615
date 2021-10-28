@@ -140,6 +140,10 @@ klippy::klippy()
     
 - In the `mtcars` dataset example, a car that weighs 1000 pounds more but has the same drat will on average have 4.8 worse mpg.
 
+- Visualization for interpretation:
+
+    ![](./figs/mlr_interp/mlr_interp.gif)\ 
+
 # The model
 
 - The multiple linear regression (MLR) model is of the form
@@ -504,13 +508,14 @@ $$
 - This sampling distribution can also be used to test
     - $H_0: \beta_i = 0$ versus
     - $H_A: \beta_i \neq 0$.
+    
     Under the null, we have
     $$
     t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}} \sim t(n-p).
     $$
     So to test against $H_0$, we can compare $t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}$ to a $t(n-p)$ distribution and see how extreme it is.
     $$
-    p-\text{value} = 2*\text{pt}(-|t^*|, n-p).
+    \text{$p$-value} = 2*\text{pt}(-|t^*|, n-p).
     $$
 
     ```{r, echo=FALSE, message = FALSE}
@@ -582,7 +587,7 @@ $$
     There seems to be a strong linear relationship between portrait and disp and portrait and young.
     
 - A shortcut to making these plots is the `ggpairs()` function from the `{GGally}` package. It creates what's called a **scatterplot matrix**.
-    ```{r}
+    ```{r, message = FALSE}
     library(GGally)
     ggpairs(data = portrait)
     ```
@@ -691,7 +696,7 @@ $$
     4. Provide an interpretation for the coefficient on `rank`.
     
     ```{block, eval = FALSE, echo = FALSE}
-    Students that are 10 percent higher in their class tend to have a GPA 0.1 higher, after adjusting for ACT scores and year of of admission.
+    Students that are 10 percent higher in their class tend to have a GPA 0.1 higher, after adjusting for ACT scores and year of admission.
     ```
     
     5. Write out the two models that the $p$-value for `year` is testing.
@@ -701,6 +706,11 @@ $$
     ```
     
     6. What is the residual standard deviation?
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    glance(lmout_gpa)$sigma
+    ```
+    
     
 # Estimating mean responses and making predictions.
 
@@ -731,7 +741,7 @@ $$
 
 
 - Standard errors for the fitted values can be obtained using matrix notation in the same way as in SLR
-    \end{align}
+    \begin{align}
     var(\hat{\mathbf{y}}_h) &= var(\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
     &= \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tvar(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
     &= \sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\

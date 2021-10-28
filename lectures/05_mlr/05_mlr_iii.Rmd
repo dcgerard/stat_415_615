@@ -138,6 +138,8 @@ klippy::klippy()
 
 # Categorical Variables
 
+
+
 # Interaction Effects
 
 - An **interaction** between two variables means that the slope with respect to one variable changes with the value of the second variable.
