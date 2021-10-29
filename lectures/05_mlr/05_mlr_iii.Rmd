@@ -138,6 +138,8 @@ klippy::klippy()
 
 # Categorical Variables
 
+## Two classes
+
 - An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include
     - `months`: How long, in months, it took the firm to adopt the new innovation.
     - `size`: The amount of total assets of the insurance firm, in millions of dollars.
@@ -221,15 +223,138 @@ klippy::klippy()
     lm_firm <- lm(months ~ size + type, data = firm)
     tidy(lm_firm, conf.int = TRUE)
     ```
-    
-    
 
 
+- Why not fit two separate regressions (one for each firm)?
+    1. Enforces interpretability of $\beta_2$ parameter since otherwise $\beta_1$ would differ between firms.
+    2. Use all of the data to estimate $\beta_1$.
+    3. Use all of the data to estimate $\sigma^2$.
+    
+## More than two classes
+
+- If a categorical variable has $c$ classes, then you use $c-1$ indicator variables to represent this variable.
+
+
+- The `mpg` dataset's `drv` variable has classes `"f"`, `"4"`, and `"r"`.
+    ```{r}
+    data("mpg")
+    unique(mpg$drv)
+    ```
+
+- We can represent this categorical variable with two indicator variables:
+
+    \begin{align}
+    X_{i1} &= 
+    \begin{cases}
+    1 & \text{ if forward-wheel drive}\\
+    0 & \text{ otherwise}
+    \end{cases}\\
+    X_{i2} &= 
+    \begin{cases}
+    1 & \text{ if 4-wheel drive}\\
+    0 & \text{ otherwise}
+    \end{cases}
+    \end{align}
+    
+- Suppose we want to explore the association between log-`cty` with `displ` and `drv`. Let $Y$ be the city miles per gallon, $X_1$ and $X_2$ be the indicator variables for forward- and 4-wheel drive cars, and let $X_3$ be the car's engine displacement (in liters). Then our model is
+    $$
+    \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+    $$
+
+- The model for rear-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
+    $$
+    The model for forward-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_1 + \beta_3X_{i3} + \epsilon_i
+    $$
+    The model for 4-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_2 + \beta_3X_{i3} + \epsilon_i
+    $$
+
+- Interpretation:
+    - $\beta_1$ is the average difference in city mpg between rear-wheel and forward drive cars of about the same engine size.
+    
+    - $\beta_2$ is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.
+    
+    - $\beta_2 - \beta_1$ is the average difference in city mpg between 4-wheel and forward wheel drive cars of about the same engine size.
+    
+    - $\beta_3$ is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.
+
+- We can visualize this model below:
+
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(mpg, aes(x = displ, y = log(cty), color = drv)) +
+      xlim(range(mpg$displ)) +
+      ylim(range(log(mpg$cty))) +
+      xlab("Engine Displacement (liters)") +
+      ylab("log(City mpg)") +
+      geom_abline(slope = -0.14256, intercept = 3.37044+0.3, color = "#005AB5", lwd = 1.5) +
+      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.1, color = "#DC3220", lwd = 1.5) +
+      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.3, color = "#FFC107", lwd = 1.5) +
+      theme_classic() +
+      theme(axis.text.y = element_blank(),
+            axis.ticks.y = element_blank()) ->
+      pl
+    # ggsave(filename = "./figs/cat_interp_3.pdf", plot = pl, height = 4, width = 5.5)
+    ```
+
+    ```{r,echo = FALSE}
+    knitr::include_graphics(path = "./figs/cat_interp3.png")
+    ```
+
+- We fit this model in R by first selecting the order of the levels of `drv` to include rear-wheel drive cars as the reference class.
+    ```{r}
+    mpg <- mutate(mpg, 
+                  l_cty = log(cty),
+                  drv = factor(drv, levels = c("r", "f", "4")))
+    ```
+    Then we run `lm()`.
+    ```{r}
+    lm_mpg <- lm(l_cty ~ drv + displ, data = mpg)
+    tidy(lm_mpg, conf.int = TRUE)
+    ```
+
+- The estimated regression surface is
+    $$
+    \log(\text{city mpg}) = 3.37 - 0.026\times \text{forward} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
+    $$
+
+- We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for $\beta_2 - \beta_1$ (the difference in average mpg between forward- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference
+
+    ```{r, message=FALSE}
+    mpg <- mutate(mpg, drv = fct_relevel(drv, "f", "r", "4"))
+    lm_mpg_2 <- lm(l_cty ~ drv + displ, data = mpg)
+    tidy(lm_mpg_2, conf.int = TRUE)
+    ```
+    So this confidence interval is -0.175 to -0.089.
 
 
 # Interaction Effects
 
 - An **interaction** between two variables means that the slope with respect to one variable changes with the value of the second variable.
 
+- The way we represent this is by multiplying the two variables together.
+    $$
+    Y_{i} = \beta_0 + \beta_1X_{i1} + \beta_{2}X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+    $$
 
+- The slope with respect to $X_1$ when $X_2$ is fixed is $\beta_1 + \beta_{12}X_2$
 
+- The slope with respect to $X_2$ when $X_1$ is fixed is $\beta_2 + \beta_{12}X_1$
+
+- NOTE: $\beta_1$ and $\beta_2$ **no longer** represent the expected difference in $Y$ given a difference of $X_1$ or $X_2$, respectively.
+
+- The association between $X_1$ and $Y$ depends on the level of $X_2$. Likewise, the association between $X_2$ and $Y$ depends on the level of $X_1$.
+
+- When $\beta_{12}$ is positive, this is called an interaction of the **reinforcement** or **synergistic** type. The slope is more positive for more positive levels of $X_1$ or $X_2$.
+
+- When $\beta_{12}$ is negative, this is called an interaction of the **interference** or **antagonistic** type. The slope is less positive for more positive levels of $X_1$ or $X_2$.
+
+- XYZ Plots demonstrating synergistic and antagonistic interactions.
+
+- XYZ Demonstrating difficulty in interpretation.
+
+- XYZ Interactions and categorical variables.

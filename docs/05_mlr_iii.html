@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-28" />
+<meta name="date" content="2021-10-29" />
 
 <title>MLR III: Special Predictors</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-28</h4>
+<h4 class="date">2021-10-29</h4>
 
 </div>
 
@@ -444,6 +444,8 @@ tidy(lm_m3)</code></pre>
 </div>
 <div id="categorical-variables" class="section level1">
 <h1>Categorical Variables</h1>
+<div id="two-classes" class="section level2">
+<h2>Two classes</h2>
 <ul>
 <li><p>An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include</p>
 <ul>
@@ -503,12 +505,102 @@ tidy(lm_firm, conf.int = TRUE)</code></pre>
 ## 1 (Intercept)   41.9     2.01        20.9  1.50e-13   37.7     46.2   
 ## 2 size          -0.102   0.00889    -11.4  2.07e- 9   -0.121   -0.0830
 ## 3 typemutual    -8.06    1.46        -5.52 3.74e- 5  -11.1     -4.98</code></pre></li>
+<li><p>Why not fit two separate regressions (one for each firm)?</p>
+<ol style="list-style-type: decimal">
+<li>Enforces interpretability of <span class="math inline">\(\beta_2\)</span> parameter since otherwise <span class="math inline">\(\beta_1\)</span> would differ between firms.</li>
+<li>Use all of the data to estimate <span class="math inline">\(\beta_1\)</span>.</li>
+<li>Use all of the data to estimate <span class="math inline">\(\sigma^2\)</span>.</li>
+</ol></li>
 </ul>
+</div>
+<div id="more-than-two-classes" class="section level2">
+<h2>More than two classes</h2>
+<ul>
+<li><p>If a categorical variable has <span class="math inline">\(c\)</span> classes, then you use <span class="math inline">\(c-1\)</span> indicator variables to represent this variable.</p></li>
+<li><p>The <code>mpg</code> dataset’s <code>drv</code> variable has classes <code>"f"</code>, <code>"4"</code>, and <code>"r"</code>.</p>
+<pre class="r"><code>data(&quot;mpg&quot;)
+unique(mpg$drv)</code></pre>
+<pre><code>## [1] &quot;f&quot; &quot;4&quot; &quot;r&quot;</code></pre></li>
+<li><p>We can represent this categorical variable with two indicator variables:</p>
+<p><span class="math display">\[\begin{align}
+  X_{i1} &amp;= 
+  \begin{cases}
+  1 &amp; \text{ if forward-wheel drive}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}\\
+  X_{i2} &amp;= 
+  \begin{cases}
+  1 &amp; \text{ if 4-wheel drive}\\
+  0 &amp; \text{ otherwise}
+  \end{cases}
+  \end{align}\]</span></p></li>
+<li><p>Suppose we want to explore the association between log-<code>cty</code> with <code>displ</code> and <code>drv</code>. Let <span class="math inline">\(Y\)</span> be the city miles per gallon, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> be the indicator variables for forward- and 4-wheel drive cars, and let <span class="math inline">\(X_3\)</span> be the car’s engine displacement (in liters). Then our model is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+  \]</span></p></li>
+<li><p>The model for rear-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
+  \]</span> The model for forward-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1 + \beta_3X_{i3} + \epsilon_i
+  \]</span> The model for 4-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_2 + \beta_3X_{i3} + \epsilon_i
+  \]</span></p></li>
+<li><p>Interpretation:</p>
+<ul>
+<li><p><span class="math inline">\(\beta_1\)</span> is the average difference in city mpg between rear-wheel and forward drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_2 - \beta_1\)</span> is the average difference in city mpg between 4-wheel and forward wheel drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span> is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.</p></li>
+</ul></li>
+<li><p>We can visualize this model below:</p>
+<p><img src="figs/cat_interp3.png" width="825" style="display: block; margin: auto;" /></p></li>
+<li><p>We fit this model in R by first selecting the order of the levels of <code>drv</code> to include rear-wheel drive cars as the reference class.</p>
+<pre class="r"><code>mpg &lt;- mutate(mpg, 
+              l_cty = log(cty),
+              drv = factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)))</code></pre>
+<p>Then we run <code>lm()</code>.</p>
+<pre class="r"><code>lm_mpg &lt;- lm(l_cty ~ drv + displ, data = mpg)
+tidy(lm_mpg, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 4 × 7
+##   term        estimate std.error statistic   p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   3.37     0.0534     63.2   2.55e-147   3.27      3.48  
+## 2 drvf         -0.0263   0.0370     -0.712 4.77e-  1  -0.0992    0.0466
+## 3 drv4         -0.158    0.0304     -5.20  4.48e-  7  -0.218    -0.0981
+## 4 displ        -0.143    0.00905   -15.8   2.01e- 38  -0.160    -0.125</code></pre></li>
+<li><p>The estimated regression surface is <span class="math display">\[
+  \log(\text{city mpg}) = 3.37 - 0.026\times \text{forward} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
+  \]</span></p></li>
+<li><p>We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for <span class="math inline">\(\beta_2 - \beta_1\)</span> (the difference in average mpg between forward- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference</p>
+<pre class="r"><code>mpg &lt;- mutate(mpg, drv = fct_relevel(drv, &quot;f&quot;, &quot;r&quot;, &quot;4&quot;))
+lm_mpg_2 &lt;- lm(l_cty ~ drv + displ, data = mpg)
+tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
+<pre><code>## # A tibble: 4 × 7
+##   term        estimate std.error statistic   p.value conf.low conf.high
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   3.34     0.0263    127.    3.11e-215   3.29      3.40  
+## 2 drvr          0.0263   0.0370      0.712 4.77e-  1  -0.0466    0.0992
+## 3 drv4         -0.132    0.0220     -6.00  7.66e-  9  -0.175    -0.0884
+## 4 displ        -0.143    0.00905   -15.8   2.01e- 38  -0.160    -0.125</code></pre>
+<p>So this confidence interval is -0.175 to -0.089.</p></li>
+</ul>
+</div>
 </div>
 <div id="interaction-effects" class="section level1">
 <h1>Interaction Effects</h1>
 <ul>
-<li>An <strong>interaction</strong> between two variables means that the slope with respect to one variable changes with the value of the second variable.</li>
+<li><p>An <strong>interaction</strong> between two variables means that the slope with respect to one variable changes with the value of the second variable.</p></li>
+<li><p>The way we represent this is by multiplying the two variables together. <span class="math display">\[
+  Y_{i} = \beta_0 + \beta_1X_{i1} + \beta_{2}X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p>The slope with respect to <span class="math inline">\(X_1\)</span> when <span class="math inline">\(X_2\)</span> is fixed is <span class="math inline">\(\beta_1 + \beta_{12}X_2\)</span></p></li>
+<li><p>The slope with respect to <span class="math inline">\(X_2\)</span> when <span class="math inline">\(X_1\)</span> is fixed is <span class="math inline">\(\beta_2 + \beta_{12}X_1\)</span></p></li>
+<li><p>NOTE: <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> <strong>no longer</strong> represent the expected difference in <span class="math inline">\(Y\)</span> given a difference of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>, respectively.</p></li>
+<li><p>The association between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> depends on the level of <span class="math inline">\(X_2\)</span>. Likewise, the association between <span class="math inline">\(X_2\)</span> and <span class="math inline">\(Y\)</span> depends on the level of <span class="math inline">\(X_1\)</span>.</p></li>
+<li><p>When <span class="math inline">\(\beta_{12}\)</span> is positive, this is called an interaction of the <strong>reinforcement</strong> or <strong>synergistic</strong> type. The slope is more positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
+<li><p>When <span class="math inline">\(\beta_{12}\)</span> is negative, this is called an interaction of the <strong>interference</strong> or <strong>antagonistic</strong> type. The slope is less positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
+<li><p>XYZ Plots demonstrating synergistic and antagonistic interactions.</p></li>
+<li><p>XYZ Demonstrating difficulty in interpretation.</p></li>
+<li><p>XYZ Interactions and categorical variables.</p></li>
 </ul>
 </div>
 
