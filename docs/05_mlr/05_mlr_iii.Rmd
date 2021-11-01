@@ -657,3 +657,17 @@ From the *Statistical Sleuth*:
 
 
 # Exercise
+
+- Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include
+    - `scrap`: Amount of scrap (coded).
+    - `speed`: Line production speed (coded).
+    - `line`: Production line. Either `"line1"` or `"line2"`.
+
+
+```{r}
+library(tidyverse)
+library(broom)
+soap <- read_csv("https://dcgerard.github.io/stat_415_615/data/soap.csv")
+glimpse(soap)
+```
+

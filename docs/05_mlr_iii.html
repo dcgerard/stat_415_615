@@ -358,8 +358,8 @@ div.tocify {
 <h1>Learning Objectives</h1>
 <ul>
 <li>Incorporating/interpreting quadratic terms.</li>
+<li>Incorporating/interpreting categorical variables (through indicators).</li>
 <li>Incorporating/interpreting interaction effects.</li>
-<li>Incorporationg/interpreting categorical variables (through incators).</li>
 <li>Chapter 8 of KNNL.</li>
 </ul>
 </div>
@@ -385,7 +385,7 @@ a_musc &lt;- augment(lm_musc)
 qplot(x = .fitted, y = .resid, data = a_musc) +
   geom_hline(yintercept = 0, lty = 2, col = 2)</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-2.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>A quadratice regression model with one predictor variable is <span class="math display">\[
+<li><p>A quadratic regression model with one predictor variable is <span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \epsilon_i
   \]</span> with the usual assumptions on the errors.</p></li>
 <li><p>We fit this in R by first creating a new variable, say <code>age2</code>, with contains <code>age</code> squared.</p>
@@ -439,11 +439,11 @@ tidy(lm_m3)</code></pre>
 <li><p>When there are multiple predictors in the model, it is usual to denote quadratic coefficients with repeat indices. E.g. <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \beta_{22}X_{i2}^2 + \beta_{12}X_{i1}X_{i2} + \epsilon_i
   \]</span></p></li>
-<li><p><strong>Exericse</strong>: Write out a model that contains two predictors, <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(X_{i2}\)</span>, where only <span class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is linear in <span class="math inline">\(X_{i1}\)</span>). Use the repeated indexing that we just introduced.</p></li>
+<li><p><strong>Exercise</strong>: Write out a model that contains two predictors, <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(X_{i2}\)</span>, where only <span class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is linear in <span class="math inline">\(X_{i1}\)</span>). Use the repeated indexing that we just introduced.</p></li>
 </ul>
 <div id="practical-considerations-for-using-quadratic-terms" class="section level2">
 <h2>Practical considerations for using quadratic terms</h2>
-<p>From the <em>Statisitcal Sleuth</em>: - Quadratic terms should not routinely be included.</p>
+<p>From the <em>Statistical Sleuth</em>: - Quadratic terms should not routinely be included.</p>
 <ul>
 <li>Use in four situations:
 <ol style="list-style-type: decimal">
@@ -583,7 +583,7 @@ tidy(lm_mpg, conf.int = TRUE)</code></pre>
 <li><p>The estimated regression surface is <span class="math display">\[
   \log(\text{city mpg}) = 3.37 - 0.026\times \text{front} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
   \]</span></p></li>
-<li><p>We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for <span class="math inline">\(\beta_2 - \beta_1\)</span> (the difference in average mpg between front- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference</p>
+<li><p>We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for <span class="math inline">\(\beta_2 - \beta_1\)</span> (the difference in average mpg between front- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just change which class is the reference</p>
 <pre class="r"><code>mpg &lt;- mutate(mpg, drv = fct_relevel(drv, &quot;f&quot;, &quot;r&quot;, &quot;4&quot;))
 lm_mpg_2 &lt;- lm(l_cty ~ drv + displ, data = mpg)
 tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
@@ -624,9 +624,9 @@ tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
   Y_i = \beta_0 + \beta_{12}X_{i1}X_{i2}
   \]</span></p>
 <ul>
-<li>Why? The above model says that the effect of <span class="math inline">\(X_1\)</span> depends on the level of <span class="math inline">\(X_2\)</span>, but there is no effect of <span class="math inline">\(X_1\)</span>. This is a logical inconsistancy.</li>
+<li>Why? The above model says that the effect of <span class="math inline">\(X_1\)</span> depends on the level of <span class="math inline">\(X_2\)</span>, but there is no effect of <span class="math inline">\(X_1\)</span>. This is a logical inconsistency.</li>
 </ul></li>
-<li><p>For the <code>mtcars</code> dataset, suppose we are fitting a model for mpg (<span class="math inline">\(Y\)</span>) on the rear-axel ration (<span class="math inline">\(X_1\)</span>) and weight (<span class="math inline">\(X_2\)</span>). The model with interactions is: <span class="math display">\[
+<li><p>For the <code>mtcars</code> dataset, suppose we are fitting a model for mpg (<span class="math inline">\(Y\)</span>) on the rear-axle ration (<span class="math inline">\(X_1\)</span>) and weight (<span class="math inline">\(X_2\)</span>). The model with interactions is: <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
   \]</span></p></li>
 <li><p>We don’t need to make transformations ahead of time. In <code>lm()</code>, we just multiply the variables together. It will automatically include all lower-order terms.</p>
@@ -754,8 +754,8 @@ anova(lm_mpg_no_int, lm_mpg_int)</code></pre>
 </ul>
 </div>
 </div>
-<div id="example" class="section level1">
-<h1>Example</h1>
+<div id="comparing-a-saturated-second-order-model-for-lack-of-fit" class="section level1">
+<h1>Comparing a Saturated Second-Order Model for Lack-of-fit</h1>
 <ul>
 <li><p>If you only have a few predictors, it is often a good idea to fit a saturated second-order model and compare the fully linear model to it as a type of lack-of-fit test.</p>
 <ul>
@@ -766,7 +766,7 @@ anova(lm_mpg_no_int, lm_mpg_int)</code></pre>
   H_A: Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{11}X_{i1}^2 + \beta_{22}X_{i2}^2  + \beta_{12}X_{i1}X_{i2} + \epsilon_i
   \end{align}\]</span></p></li>
 <li><p>Rejecting the null here indicates that we have evidence of a lack-of-fit and should include some quadratic or interaction terms.</p></li>
-<li><p>Let’s look at a case example studying the effects of temperature (<span class="math inline">\(X_1\)</span>) in celsius and charge rate (<span class="math inline">\(X_2\)</span>) in amperes on life expectancy of a batter (<span class="math inline">\(Y\)</span>) in the number of cycles before death. Data can be read into R via</p>
+<li><p>Let’s look at a case example studying the effects of temperature (<span class="math inline">\(X_1\)</span>) in Celsius and charge rate (<span class="math inline">\(X_2\)</span>) in amperes on life expectancy of a batter (<span class="math inline">\(Y\)</span>) in the number of cycles before death. Data can be read into R via</p>
 <pre class="r"><code>power &lt;- tibble::tribble(
   ~cycles, ~charge, ~temp,
       150,     0.6,    10,
@@ -830,6 +830,31 @@ qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot
 </div>
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
+<ul>
+<li><p>Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include</p>
+<ul>
+<li><code>scrap</code>: Amount of scrap (coded). This is the response variable.</li>
+<li><code>speed</code>: Line production speed (coded).</li>
+<li><code>line</code>: Production line. Either <code>"line1"</code> or <code>"line2"</code>.</li>
+</ul>
+<p>You can load these data into R via:</p>
+<pre class="r"><code>library(tidyverse)
+library(broom)
+soap &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/soap.csv&quot;)
+glimpse(soap)</code></pre>
+<pre><code>## Rows: 27
+## Columns: 3
+## $ scrap &lt;dbl&gt; 218, 248, 360, 351, 470, 394, 332, 321, 410, 260, 241, 331, 275,…
+## $ speed &lt;dbl&gt; 100, 125, 220, 205, 300, 255, 225, 175, 270, 170, 155, 190, 140,…
+## $ line  &lt;chr&gt; &quot;line1&quot;, &quot;line1&quot;, &quot;line1&quot;, &quot;line1&quot;, &quot;line1&quot;, &quot;line1&quot;, &quot;line1&quot;, &quot;…</code></pre></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>Run an exploratory data analysis. Does one line seem to produce less scrap than the other, controlling for speed? Does the association between scrap and speed differ between the different lines?</p></li>
+<li><p>Define appropriate variables and write out a model that includes an interaction between the production line and the speed of production.</p></li>
+<li><p>Fit the interaction model from part 2 in R. Does the model seem appropriate?</p></li>
+<li><p>Do the two production lines have the same slope for the relationship between scrap and speed?</p></li>
+<li><p>Formally answer the question on whether one line produces less scrap than the other.</p></li>
+</ol>
 </div>
 
 
