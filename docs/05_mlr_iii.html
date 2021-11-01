@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-29" />
+<meta name="date" content="2021-11-01" />
 
 <title>MLR III: Special Predictors</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-29</h4>
+<h4 class="date">2021-11-01</h4>
 
 </div>
 
@@ -432,15 +432,28 @@ tidy(lm_m3)</code></pre>
 <p>So at that point, you should just fit a cubic spline to these data, since it will be equally uninterpretable.</p></li>
 <li><p>If you include a quadratic term you should <strong>always</strong> include the linear term as well.</p></li>
 <li><p>That is, you should <strong>never</strong> fit the model <span class="math display">\[
-  Y_i = \beta_0 + \beta_1 X_i^2 + \epsilon_i$
-  \]</span> even if the <span class="math inline">\(p\)</span>-value is very high.</p></li>
+  Y_i = \beta_0 + \beta_{2} X_i^2 + \epsilon_i
+  \]</span> even if the <span class="math inline">\(p\)</span>-value is very high for the <span class="math inline">\(\beta_1\)</span> coefficient..</p></li>
 <li><p>Why? This follows the same logic as always including the intercept term in the model. Lower order terms are thought to provide more basic information on the relationship, so you should include them.</p></li>
 <li><p>More generally, if you do end up using a cubic term, you should always include both linear and quadratic terms in the model, etc…</p></li>
 <li><p>When there are multiple predictors in the model, it is usual to denote quadratic coefficients with repeat indices. E.g. <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \beta_{22}X_{i2}^2 + \beta_{12}X_{i1}X_{i2} + \epsilon_i
   \]</span></p></li>
-<li><p><strong>Exericse</strong>: Write out a model that contains two predictors, <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(X_{i2}\)</span>, where only <span class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is linear in <span class="math inline">\(X_{i2}\)</span>). Use the repeated indexing that we just introduced.</p></li>
+<li><p><strong>Exericse</strong>: Write out a model that contains two predictors, <span class="math inline">\(X_{i1}\)</span> and <span class="math inline">\(X_{i2}\)</span>, where only <span class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is linear in <span class="math inline">\(X_{i1}\)</span>). Use the repeated indexing that we just introduced.</p></li>
 </ul>
+<div id="practical-considerations-for-using-quadratic-terms" class="section level2">
+<h2>Practical considerations for using quadratic terms</h2>
+<p>From the <em>Statisitcal Sleuth</em>: - Quadratic terms should not routinely be included.</p>
+<ul>
+<li>Use in four situations:
+<ol style="list-style-type: decimal">
+<li>When the analyst has good reason to suspect that the response is nonlinear in some explanatory variable (through knowledge of the process or by graphical examination).</li>
+<li>When the question of interest calls for finding the values that maximize or minimize the mean response.</li>
+<li>When careful modeling of the regression is called for by the questions of interest (and presumably this is only the case if there are just a few explanatory variables).</li>
+<li>When inclusion is used to produce a rich model for assessing the fit of an inferential model.</li>
+</ol></li>
+</ul>
+</div>
 </div>
 <div id="categorical-variables" class="section level1">
 <h1>Categorical Variables</h1>
@@ -483,8 +496,8 @@ glimpse(firm)</code></pre>
 <li><p>This means that <span class="math inline">\(\beta_2\)</span> is the expected difference in months between mutual and stock companies that are about the same size.</p></li>
 <li><p>Let’s visualize this model</p>
 <p><img src="figs/cat_interp.png" width="264" style="display: block; margin: auto;" /></p></li>
-<li><p>In R, you fit this model by first converting the categorical variable into a <strong>factor</strong> with <code>factor()</code>. You specify the order of the levels by the <code>levels</code> argument, where the first level is the <strong>reference level</strong> (the one that does not have an indicator for it).</p>
-<pre class="r"><code>firm &lt;- mutate(firm, type = factor(type, levels = c(&quot;mutual&quot;, &quot;stock&quot;)))</code></pre>
+<li><p>In R, you fit this model by first converting the categorical variable into a <strong>factor</strong> with <code>parse_factor()</code> from the <code>{readr}</code> package. You specify the order of the levels by the <code>levels</code> argument, where the first level is the <strong>reference level</strong> (the one that does not have an indicator for it).</p>
+<pre class="r"><code>firm &lt;- mutate(firm, type = parse_factor(type, levels = c(&quot;mutual&quot;, &quot;stock&quot;)))</code></pre>
 <p>Then you can use the new factor variable in <code>lm()</code>. It will automatically create <span class="math inline">\(c-1\)</span> indicator variables to fit.</p>
 <pre class="r"><code>lm_firm &lt;- lm(months ~ size + type, data = firm)
 tidy(lm_firm, conf.int = TRUE)</code></pre>
@@ -495,7 +508,7 @@ tidy(lm_firm, conf.int = TRUE)</code></pre>
 ## 2 size          -0.102   0.00889    -11.4  2.07e- 9   -0.121   -0.0830
 ## 3 typestock      8.06    1.46         5.52 3.74e- 5    4.98    11.1</code></pre>
 <p>We conclude that stock companies tended to take 8 months longer than mutual companies to adopt the new innovation (95% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had $10 million more assets tended to take 1 fewer month to adopt the new innovation (95% CI of 0.8 to 1.2 fewer months).</p></li>
-<li><p>If you wanted to change which level is the reference level of a factor variable, you could use <code>fct_relevel()</code> from the <code>{forcats}</code> package (apart of the tidyverse).</p>
+<li><p>If you wanted to change which level is the reference level of a factor variable, you could use <code>fct_relevel()</code> from the <code>{forcats}</code> package (a part of the tidyverse).</p>
 <pre class="r"><code>firm &lt;- mutate(firm, type = fct_relevel(type, &quot;stock&quot;, &quot;mutual&quot;))
 lm_firm &lt;- lm(months ~ size + type, data = firm)
 tidy(lm_firm, conf.int = TRUE)</code></pre>
@@ -525,7 +538,7 @@ unique(mpg$drv)</code></pre>
 <p><span class="math display">\[\begin{align}
   X_{i1} &amp;= 
   \begin{cases}
-  1 &amp; \text{ if forward-wheel drive}\\
+  1 &amp; \text{ if front-wheel drive}\\
   0 &amp; \text{ otherwise}
   \end{cases}\\
   X_{i2} &amp;= 
@@ -534,29 +547,29 @@ unique(mpg$drv)</code></pre>
   0 &amp; \text{ otherwise}
   \end{cases}
   \end{align}\]</span></p></li>
-<li><p>Suppose we want to explore the association between log-<code>cty</code> with <code>displ</code> and <code>drv</code>. Let <span class="math inline">\(Y\)</span> be the city miles per gallon, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> be the indicator variables for forward- and 4-wheel drive cars, and let <span class="math inline">\(X_3\)</span> be the car’s engine displacement (in liters). Then our model is <span class="math display">\[
+<li><p>Suppose we want to explore the association between log-<code>cty</code> with <code>displ</code> and <code>drv</code>. Let <span class="math inline">\(Y\)</span> be the city miles per gallon, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> be the indicator variables for front- and 4-wheel drive cars, and let <span class="math inline">\(X_3\)</span> be the car’s engine displacement (in liters). Then our model is <span class="math display">\[
   \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
   \]</span></p></li>
 <li><p>The model for rear-wheel drive cars is <span class="math display">\[
   \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
-  \]</span> The model for forward-wheel drive cars is <span class="math display">\[
+  \]</span> The model for front-wheel drive cars is <span class="math display">\[
   \log(Y_i) = \beta_0 + \beta_1 + \beta_3X_{i3} + \epsilon_i
   \]</span> The model for 4-wheel drive cars is <span class="math display">\[
   \log(Y_i) = \beta_0 + \beta_2 + \beta_3X_{i3} + \epsilon_i
   \]</span></p></li>
 <li><p>Interpretation:</p>
 <ul>
-<li><p><span class="math inline">\(\beta_1\)</span> is the average difference in city mpg between rear-wheel and forward drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is the average difference in city mpg between rear-wheel and front drive cars of about the same engine size.</p></li>
 <li><p><span class="math inline">\(\beta_2\)</span> is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.</p></li>
-<li><p><span class="math inline">\(\beta_2 - \beta_1\)</span> is the average difference in city mpg between 4-wheel and forward wheel drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_2 - \beta_1\)</span> is the average difference in city mpg between 4-wheel and front wheel drive cars of about the same engine size.</p></li>
 <li><p><span class="math inline">\(\beta_3\)</span> is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.</p></li>
 </ul></li>
 <li><p>We can visualize this model below:</p>
 <p><img src="figs/cat_interp3.png" width="825" style="display: block; margin: auto;" /></p></li>
-<li><p>We fit this model in R by first selecting the order of the levels of <code>drv</code> to include rear-wheel drive cars as the reference class.</p>
+<li><p>We fit this model in R by first selecting the order of the levels of <code>drv</code> to include rear-wheel drive cars as the reference class. We do this using <code>parse_factor()</code> from the <code>{forcats}</code> package:</p>
 <pre class="r"><code>mpg &lt;- mutate(mpg, 
               l_cty = log(cty),
-              drv = factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)))</code></pre>
+              drv = parse_factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)))</code></pre>
 <p>Then we run <code>lm()</code>.</p>
 <pre class="r"><code>lm_mpg &lt;- lm(l_cty ~ drv + displ, data = mpg)
 tidy(lm_mpg, conf.int = TRUE)</code></pre>
@@ -568,9 +581,9 @@ tidy(lm_mpg, conf.int = TRUE)</code></pre>
 ## 3 drv4         -0.158    0.0304     -5.20  4.48e-  7  -0.218    -0.0981
 ## 4 displ        -0.143    0.00905   -15.8   2.01e- 38  -0.160    -0.125</code></pre></li>
 <li><p>The estimated regression surface is <span class="math display">\[
-  \log(\text{city mpg}) = 3.37 - 0.026\times \text{forward} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
+  \log(\text{city mpg}) = 3.37 - 0.026\times \text{front} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
   \]</span></p></li>
-<li><p>We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for <span class="math inline">\(\beta_2 - \beta_1\)</span> (the difference in average mpg between forward- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference</p>
+<li><p>We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for <span class="math inline">\(\beta_2 - \beta_1\)</span> (the difference in average mpg between front- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference</p>
 <pre class="r"><code>mpg &lt;- mutate(mpg, drv = fct_relevel(drv, &quot;f&quot;, &quot;r&quot;, &quot;4&quot;))
 lm_mpg_2 &lt;- lm(l_cty ~ drv + displ, data = mpg)
 tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
@@ -589,19 +602,234 @@ tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
 <h1>Interaction Effects</h1>
 <ul>
 <li><p>An <strong>interaction</strong> between two variables means that the slope with respect to one variable changes with the value of the second variable.</p></li>
-<li><p>The way we represent this is by multiplying the two variables together. <span class="math display">\[
+<li><p>We represent this is by multiplying the two variables together. <span class="math display">\[
   Y_{i} = \beta_0 + \beta_1X_{i1} + \beta_{2}X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
   \]</span></p></li>
 <li><p>The slope with respect to <span class="math inline">\(X_1\)</span> when <span class="math inline">\(X_2\)</span> is fixed is <span class="math inline">\(\beta_1 + \beta_{12}X_2\)</span></p></li>
 <li><p>The slope with respect to <span class="math inline">\(X_2\)</span> when <span class="math inline">\(X_1\)</span> is fixed is <span class="math inline">\(\beta_2 + \beta_{12}X_1\)</span></p></li>
-<li><p>NOTE: <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> <strong>no longer</strong> represent the expected difference in <span class="math inline">\(Y\)</span> given a difference of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>, respectively.</p></li>
+<li><p>NOTE: <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> <strong>no longer</strong> represent the expected difference in <span class="math inline">\(Y\)</span> given a unit difference of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>, respectively.</p>
+<ul>
+<li><p><span class="math inline">\(\beta_1\)</span> is the expected difference in <span class="math inline">\(Y\)</span> given a unit difference in <span class="math inline">\(X_1\)</span> if <span class="math inline">\(X_2 = 0\)</span>. This interpretation only makes sense if 0 is in the range of <span class="math inline">\(X_2\)</span>.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> is the expected difference in <span class="math inline">\(Y\)</span> given a unit difference in <span class="math inline">\(X_2\)</span> if <span class="math inline">\(X_1 = 0\)</span>. This interpretation only makes sense if 0 is in the range of <span class="math inline">\(X_1\)</span>.</p></li>
+<li><p>Generally, it is not useful to provide these interpretations of <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span>.</p></li>
+</ul></li>
 <li><p>The association between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> depends on the level of <span class="math inline">\(X_2\)</span>. Likewise, the association between <span class="math inline">\(X_2\)</span> and <span class="math inline">\(Y\)</span> depends on the level of <span class="math inline">\(X_1\)</span>.</p></li>
 <li><p>When <span class="math inline">\(\beta_{12}\)</span> is positive, this is called an interaction of the <strong>reinforcement</strong> or <strong>synergistic</strong> type. The slope is more positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
 <li><p>When <span class="math inline">\(\beta_{12}\)</span> is negative, this is called an interaction of the <strong>interference</strong> or <strong>antagonistic</strong> type. The slope is less positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
-<li><p>XYZ Plots demonstrating synergistic and antagonistic interactions.</p></li>
-<li><p>XYZ Demonstrating difficulty in interpretation.</p></li>
-<li><p>XYZ Interactions and categorical variables.</p></li>
+<li><p>Synergistic:</p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Antagonistic:</p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>If you include an interaction term, make sure that you include all lower-order terms. That is, <strong>Never</strong> fit a model like <span class="math display">\[
+  Y_i = \beta_0 + \beta_{12}X_{i1}X_{i2}
+  \]</span></p>
+<ul>
+<li>Why? The above model says that the effect of <span class="math inline">\(X_1\)</span> depends on the level of <span class="math inline">\(X_2\)</span>, but there is no effect of <span class="math inline">\(X_1\)</span>. This is a logical inconsistancy.</li>
+</ul></li>
+<li><p>For the <code>mtcars</code> dataset, suppose we are fitting a model for mpg (<span class="math inline">\(Y\)</span>) on the rear-axel ration (<span class="math inline">\(X_1\)</span>) and weight (<span class="math inline">\(X_2\)</span>). The model with interactions is: <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+  \]</span></p></li>
+<li><p>We don’t need to make transformations ahead of time. In <code>lm()</code>, we just multiply the variables together. It will automatically include all lower-order terms.</p>
+<pre class="r"><code>lm_mt &lt;- lm(mpg ~ drat * wt, data = mtcars)
+tidy(lm_mt)</code></pre>
+<pre><code>## # A tibble: 4 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)     5.55     12.6      0.439  0.664 
+## 2 drat            8.49      3.32     2.56   0.0162
+## 3 wt              3.88      3.80     1.02   0.315 
+## 4 drat:wt        -2.54      1.09    -2.33   0.0274</code></pre></li>
+<li><p>We actually have some evidence here of needing an interaction.</p></li>
+<li><p>We would still include <code>wt</code> in the model even though it has a large <span class="math inline">\(p\)</span>-value.</p></li>
+<li><p>You can provide an interpretation to a client when there are interactions via <strong>conditional effects plots</strong> that plot the relationship between <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_i\)</span> at different levels of the other <span class="math inline">\(X\)</span>’s.</p>
+<pre class="r"><code>## drat versus mpg at different levels of wt
+wt_seq &lt;- quantile(mtcars$mpg, c(0.025, 0.25, 0.5, 0.75, 0.975))
+dr_seq &lt;- seq(min(mtcars$drat), max(mtcars$drat), length.out = 100)
+newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
+newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
+newdf &lt;- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
+qplot(x = drat, y = mpg, color = wt, data = newdf, geom = &quot;line&quot;)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## wt versus mpg at different levels of drat
+wt_seq &lt;- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
+dr_seq &lt;- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
+newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
+newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
+newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
+qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-24-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
+<div id="interactions-and-categorical-variables." class="section level2">
+<h2>Interactions and categorical variables.</h2>
+<ul>
+<li><p>An interaction between a categorical and quantitative variable means that each level of the categorical variable has its own line (different intercepts and slopes).</p></li>
+<li><p>Let’s study again the association between <code>cty</code> (<span class="math inline">\(Y\)</span>) with <code>displ</code> (<span class="math inline">\(X_3\)</span>) and <code>drv</code> from the <code>mpg</code> dataset.</p>
+<pre class="r"><code>data(&quot;mpg&quot;)
+mpg_sub &lt;- select(mpg, drv, displ, cty)
+glimpse(mpg_sub)</code></pre>
+<pre><code>## Rows: 234
+## Columns: 3
+## $ drv   &lt;chr&gt; &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;f&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;, &quot;4&quot;,…
+## $ displ &lt;dbl&gt; 1.8, 1.8, 2.0, 2.0, 2.8, 2.8, 3.1, 1.8, 1.8, 2.0, 2.0, 2.8, 2.8,…
+## $ cty   &lt;int&gt; 18, 21, 20, 21, 16, 18, 18, 18, 16, 20, 19, 15, 17, 17, 15, 15, …</code></pre></li>
+<li><p>We fit the following model (recall that <span class="math inline">\(X_1\)</span> is the indicator for front-wheel drive and <span class="math inline">\(X_2\)</span> is the indicator for 4-wheel drive cars). <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \beta_{13}X_{i1}X_{i3} + \beta_{23}X_{i2}X_{i3} + \epsilon_i
+  \]</span></p></li>
+<li><p>If you include an interaction between one indicator for a categorical and a quantitative, then you should include interactions for all of the indicators with that quantitative. R will do this automatically as long as you use factors.</p></li>
+<li><p>To interpret this model, you should think about what the response surface is for each class in the categorical variable.</p>
+<ul>
+<li>The model for rear-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
+  \]</span></li>
+<li>The model for front-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_1 + (\beta_3 + \beta_{13})X_{i3} + \epsilon_i
+  \]</span></li>
+<li>The model for 4-wheel drive cars is <span class="math display">\[
+  \log(Y_i) = \beta_0 + \beta_2 + (\beta_3 + \beta_{23})X_{i3} + \epsilon_i
+  \]</span></li>
+</ul></li>
+<li><p><span class="math inline">\(\beta_{13}\)</span> is the expected difference in the slope between rear-wheel and front-wheel drive cars.</p></li>
+<li><p><span class="math inline">\(\beta_{23}\)</span> is the expected difference in the slope between rear-wheel and 4-wheel drive cars.</p></li>
+<li><p>But it is better to just interpret interactions here by making conditional effects plots. This is the default output of <code>geom_smooth()</code> when you color code by a categorical variable:</p>
+<pre class="r"><code>qplot(x = displ, y = cty, color = drv, data = mpg) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  scale_y_log10()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>To fit this in R, just make sure you have the reference level as you like via <code>parse_factor()</code> or <code>fct_relevel()</code>. Then use <code>lm()</code> the same way with interactions as before (using multiplication).</p>
+<pre class="r"><code>mpg_sub &lt;- mutate(mpg_sub, 
+                  drv = parse_factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)),
+                  l_cty = log(cty))
+lm_mpg_int &lt;- lm(l_cty ~ drv * displ, data = mpg_sub)
+tidy(lm_mpg_int)</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   3.00      0.168      17.8  4.19e-45
+## 2 drvf          0.417     0.174       2.39 1.77e- 2
+## 3 drv4          0.210     0.174       1.21 2.29e- 1
+## 4 displ        -0.0700    0.0321     -2.18 3.01e- 2
+## 5 drvf:displ   -0.0990    0.0366     -2.70 7.36e- 3
+## 6 drv4:displ   -0.0707    0.0339     -2.08 3.82e- 2</code></pre></li>
+<li><p><strong>Exercise</strong>: What is the estimated regression surface for rear-wheel drive cars? Front-wheel drive cars? 4-wheel drive cars?</p></li>
+<li><p>We obtain the same regression surface as if we fit three different models to the three different classes.</p>
+<pre class="r"><code>mpg_sub_r &lt;- filter(mpg_sub, drv == &quot;r&quot;)
+tidy(lm(l_cty ~ displ, data = mpg_sub_r))</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   3.00      0.204      14.7  3.63e-13
+## 2 displ        -0.0700    0.0390     -1.80 8.56e- 2</code></pre></li>
+<li><p>The benefit of fitting a single model is then</p>
+<ol style="list-style-type: decimal">
+<li>We can directly test for the “different lines” model using <span class="math inline">\(F\)</span>-tests</li>
+<li>We use all of the data to estimate the residual variance.</li>
+</ol></li>
+<li><p>The <span class="math inline">\(p\)</span>-values for the interaction terms in the above output are <strong>not</strong> useful. This is because they only test for the association for an interaction between <code>displ</code> and a single indicator variable. But we want to test whether there is an interaction between <code>displ</code> and <code>drv</code>.</p></li>
+<li><p>Let’s test for an interaction between <code>displ</code> and <code>drv</code>. We do so by fitting models both with and with out interactions. We then use <code>anova()</code> to run an <span class="math inline">\(F\)</span>-test.</p>
+<pre class="r"><code>lm_mpg_no_int &lt;- lm(l_cty ~ drv + displ, data = mpg_sub)
+lm_mpg_int &lt;- lm(l_cty ~ drv * displ, data = mpg_sub)
+anova(lm_mpg_no_int, lm_mpg_int)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: l_cty ~ drv + displ
+## Model 2: l_cty ~ drv * displ
+##   Res.Df  RSS Df Sum of Sq   F Pr(&gt;F)
+## 1    230 3.75                        
+## 2    228 3.64  2     0.118 3.7  0.026</code></pre>
+<p>So we have moderate evidence of an interaction effect (<span class="math inline">\(p = 0.026\)</span>).</p></li>
+</ul>
+</div>
+<div id="usage-guidelines" class="section level2">
+<h2>Usage guidelines</h2>
+<p>From the <em>Statistical Sleuth</em>:</p>
+<ul>
+<li><p>Interaction terms should not be routinely included in regression models.</p></li>
+<li><p>Use in three scenarios:</p>
+<ol style="list-style-type: decimal">
+<li>When a question of interest pertains to interaction.</li>
+<li>When good reason exists to suspect interactions (e.g. <em>a priori</em> knowledge or residual plots strongly suggest such).</li>
+<li>When interactions are proposed as a more general model for the purpose of examining the goodness of fit of a model without interaction.</li>
+</ol></li>
+</ul>
+</div>
+</div>
+<div id="example" class="section level1">
+<h1>Example</h1>
+<ul>
+<li><p>If you only have a few predictors, it is often a good idea to fit a saturated second-order model and compare the fully linear model to it as a type of lack-of-fit test.</p>
+<ul>
+<li><em>Saturated second-order model</em>: A model with all possible quadratic and interaction terms, along with lower-order terms.</li>
+</ul></li>
+<li><p>For example, with two predictors: <span class="math display">\[\begin{align}
+  H_0: Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
+  H_A: Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{11}X_{i1}^2 + \beta_{22}X_{i2}^2  + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+  \end{align}\]</span></p></li>
+<li><p>Rejecting the null here indicates that we have evidence of a lack-of-fit and should include some quadratic or interaction terms.</p></li>
+<li><p>Let’s look at a case example studying the effects of temperature (<span class="math inline">\(X_1\)</span>) in celsius and charge rate (<span class="math inline">\(X_2\)</span>) in amperes on life expectancy of a batter (<span class="math inline">\(Y\)</span>) in the number of cycles before death. Data can be read into R via</p>
+<pre class="r"><code>power &lt;- tibble::tribble(
+  ~cycles, ~charge, ~temp,
+      150,     0.6,    10,
+       86,       1,    10,
+       49,     1.4,    10,
+      288,     0.6,    20,
+      157,       1,    20,
+      131,       1,    20,
+      184,       1,    20,
+      109,     1.4,    20,
+      279,     0.6,    30,
+      235,       1,    30,
+      224,     1.4,    30
+  )</code></pre>
+<p>We fit the model <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{11}X_{i1}^2 + \beta_{22}X_{i2}^2  + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+  \]</span> and run the hypothesis tests for <span class="math display">\[
+  H_0: \beta_{11} = \beta_{22} = \beta_{12} = 0\\
+  H_A: \text{ at least one of } \beta_{11}, \beta_{22}, \beta_{12} \text{ nonzero}
+  \]</span></p></li>
+<li><p>We can run this test because the reduced model is a subset of the full model.</p></li>
+<li><p>Let’s fit the full and reduced models</p>
+<pre class="r"><code>power &lt;- mutate(power, charge2 = charge ^ 2, temp2 = temp ^ 2)
+lm_full &lt;- lm(cycles ~ charge * temp + charge2 + temp2, data = power)
+lm_reduced &lt;- lm(cycles ~ charge + temp, data = power)</code></pre></li>
+<li><p>We then run <code>anova()</code> to run the corresponding <span class="math inline">\(F\)</span>-test</p>
+<pre class="r"><code>anova(lm_reduced, lm_full)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: cycles ~ charge + temp
+## Model 2: cycles ~ charge * temp + charge2 + temp2
+##   Res.Df  RSS Df Sum of Sq    F Pr(&gt;F)
+## 1      8 7700                         
+## 2      5 5240  3      2460 0.78   0.55</code></pre></li>
+<li><p>We do not have evidence of a lack-of-fit (<span class="math inline">\(p=0.55\)</span>)</p></li>
+<li><p><strong>Exercise</strong>: What is <span class="math inline">\(SSE(F)\)</span>? <span class="math inline">\(SSE(R)\)</span>? <span class="math inline">\(dr_F\)</span>? <span class="math inline">\(df_R\)</span>?</p></li>
+<li><p>If we would have failed to reject, the best course of action for interpretation would be to come up with conditional effects plots.</p>
+<pre class="r"><code>## Conditional effects plot for charge
+charge_seq &lt;- unique(power$charge)
+temp_seq &lt;- seq(min(power$temp), max(power$temp), length.out = 200)
+expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
+  mutate(charge2 = charge^2,
+         temp2 = temp^2) -&gt;
+  newdf
+newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
+newdf &lt;- mutate(newdf, charge = as_factor(charge))
+qplot(x = temp, y = cycles, color = charge, data = newdf, geom = &quot;line&quot;)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## Conditional effects plot for temperature
+temp_seq &lt;- unique(power$temp)
+charge_seq &lt;- seq(min(power$charge), max(power$charge), length.out = 200)
+expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
+  mutate(charge2 = charge^2,
+         temp2 = temp^2) -&gt;
+  newdf
+newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
+newdf &lt;- mutate(newdf, temp = as_factor(temp))
+qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot;)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-35-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="exercise" class="section level1">
+<h1>Exercise</h1>
 </div>
 
 

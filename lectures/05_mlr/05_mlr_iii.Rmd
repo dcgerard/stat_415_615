@@ -114,9 +114,9 @@ klippy::klippy()
 
 - That is, you should **never** fit the model
     $$
-    Y_i = \beta_0 + \beta_1 X_i^2 + \epsilon_i$
+    Y_i = \beta_0 + \beta_{2} X_i^2 + \epsilon_i
     $$
-    even if the $p$-value is very high.
+    even if the $p$-value is very high for the $\beta_1$ coefficient..
     
 - Why? This follows the same logic as always including the intercept term in the model. Lower order terms are thought to provide more basic information on the relationship, so you should include them.
 
@@ -128,13 +128,24 @@ klippy::klippy()
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \beta_{22}X_{i2}^2 + \beta_{12}X_{i1}X_{i2} + \epsilon_i
     $$
     
-- **Exericse**: Write out a model that contains two predictors, $X_{i1}$ and $X_{i2}$, where only $X_{i2}$ is quadratic (and so the model is linear in $X_{i2}$). Use the repeated indexing that we just introduced.
+- **Exericse**: Write out a model that contains two predictors, $X_{i1}$ and $X_{i2}$, where only $X_{i2}$ is quadratic (and so the model is linear in $X_{i1}$). Use the repeated indexing that we just introduced.
 
     ```{block, eval = FALSE, echo = FALSE}
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \epsilon_i
     $$
     ```
+    
+## Practical considerations for using quadratic terms
+
+From the *Statisitcal Sleuth*: 
+- Quadratic terms should not routinely be included. 
+
+- Use in four situations: 
+    1. When the analyst has good reason to suspect that the response is nonlinear in some explanatory variable (through knowledge of the process or by graphical examination).
+    2. When the question of interest calls for finding the values that maximize or minimize the mean response.
+    3. When careful modeling of the regression is called for by the questions of interest (and presumably this is only the case if there are just a few explanatory variables).
+    4. When inclusion is used to produce a rich model for assessing the fit of an inferential model.
 
 # Categorical Variables
 
@@ -206,9 +217,9 @@ klippy::klippy()
     knitr::include_graphics(path = "./figs/cat_interp.png")
     ```
 
-- In R, you fit this model by first converting the categorical variable into a **factor** with `factor()`. You specify the order of the levels by the `levels` argument, where the first level is the **reference level** (the one that does not have an indicator for it).
+- In R, you fit this model by first converting the categorical variable into a **factor** with `parse_factor()` from the `{readr}` package. You specify the order of the levels by the `levels` argument, where the first level is the **reference level** (the one that does not have an indicator for it).
     ```{r}
-    firm <- mutate(firm, type = factor(type, levels = c("mutual", "stock")))
+    firm <- mutate(firm, type = parse_factor(type, levels = c("mutual", "stock")))
     ```
     Then you can use the new factor variable in `lm()`. It will automatically create $c-1$ indicator variables to fit.
     ```{r}
@@ -217,7 +228,7 @@ klippy::klippy()
     ```
     We conclude that stock companies tended to take 8 months longer than mutual companies to adopt the new innovation (95\% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had \$10 million more assets tended to take 1 fewer month to adopt the new innovation (95\% CI of 0.8 to 1.2 fewer months).
     
-- If you wanted to change which level is the reference level of a factor variable, you could use `fct_relevel()` from the `{forcats}` package (apart of the tidyverse).
+- If you wanted to change which level is the reference level of a factor variable, you could use `fct_relevel()` from the `{forcats}` package (a part of the tidyverse).
     ```{r}
     firm <- mutate(firm, type = fct_relevel(type, "stock", "mutual"))
     lm_firm <- lm(months ~ size + type, data = firm)
@@ -246,7 +257,7 @@ klippy::klippy()
     \begin{align}
     X_{i1} &= 
     \begin{cases}
-    1 & \text{ if forward-wheel drive}\\
+    1 & \text{ if front-wheel drive}\\
     0 & \text{ otherwise}
     \end{cases}\\
     X_{i2} &= 
@@ -256,7 +267,7 @@ klippy::klippy()
     \end{cases}
     \end{align}
     
-- Suppose we want to explore the association between log-`cty` with `displ` and `drv`. Let $Y$ be the city miles per gallon, $X_1$ and $X_2$ be the indicator variables for forward- and 4-wheel drive cars, and let $X_3$ be the car's engine displacement (in liters). Then our model is
+- Suppose we want to explore the association between log-`cty` with `displ` and `drv`. Let $Y$ be the city miles per gallon, $X_1$ and $X_2$ be the indicator variables for front- and 4-wheel drive cars, and let $X_3$ be the car's engine displacement (in liters). Then our model is
     $$
     \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
     $$
@@ -265,7 +276,7 @@ klippy::klippy()
     $$
     \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
     $$
-    The model for forward-wheel drive cars is
+    The model for front-wheel drive cars is
     $$
     \log(Y_i) = \beta_0 + \beta_1 + \beta_3X_{i3} + \epsilon_i
     $$
@@ -275,11 +286,11 @@ klippy::klippy()
     $$
 
 - Interpretation:
-    - $\beta_1$ is the average difference in city mpg between rear-wheel and forward drive cars of about the same engine size.
+    - $\beta_1$ is the average difference in city mpg between rear-wheel and front drive cars of about the same engine size.
     
     - $\beta_2$ is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.
     
-    - $\beta_2 - \beta_1$ is the average difference in city mpg between 4-wheel and forward wheel drive cars of about the same engine size.
+    - $\beta_2 - \beta_1$ is the average difference in city mpg between 4-wheel and front wheel drive cars of about the same engine size.
     
     - $\beta_3$ is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.
 
@@ -305,11 +316,11 @@ klippy::klippy()
     knitr::include_graphics(path = "./figs/cat_interp3.png")
     ```
 
-- We fit this model in R by first selecting the order of the levels of `drv` to include rear-wheel drive cars as the reference class.
+- We fit this model in R by first selecting the order of the levels of `drv` to include rear-wheel drive cars as the reference class. We do this using `parse_factor()` from the `{forcats}` package:
     ```{r}
     mpg <- mutate(mpg, 
                   l_cty = log(cty),
-                  drv = factor(drv, levels = c("r", "f", "4")))
+                  drv = parse_factor(drv, levels = c("r", "f", "4")))
     ```
     Then we run `lm()`.
     ```{r}
@@ -319,10 +330,10 @@ klippy::klippy()
 
 - The estimated regression surface is
     $$
-    \log(\text{city mpg}) = 3.37 - 0.026\times \text{forward} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
+    \log(\text{city mpg}) = 3.37 - 0.026\times \text{front} - 0.158 \times \text{4-wheel} - 0.142 \times \text{displacement}
     $$
 
-- We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for $\beta_2 - \beta_1$ (the difference in average mpg between forward- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference
+- We obtained confidence intervals for each of these coefficients, but how do we obtain a confidence interval for $\beta_2 - \beta_1$ (the difference in average mpg between front- and 4-wheel drive cars of the same size)? There are some third-party packages that do this. But an easy way is to just hange which class is the reference
 
     ```{r, message=FALSE}
     mpg <- mutate(mpg, drv = fct_relevel(drv, "f", "r", "4"))
@@ -336,7 +347,7 @@ klippy::klippy()
 
 - An **interaction** between two variables means that the slope with respect to one variable changes with the value of the second variable.
 
-- The way we represent this is by multiplying the two variables together.
+- We represent this is by multiplying the two variables together.
     $$
     Y_{i} = \beta_0 + \beta_1X_{i1} + \beta_{2}X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
     $$
@@ -345,7 +356,13 @@ klippy::klippy()
 
 - The slope with respect to $X_2$ when $X_1$ is fixed is $\beta_2 + \beta_{12}X_1$
 
-- NOTE: $\beta_1$ and $\beta_2$ **no longer** represent the expected difference in $Y$ given a difference of $X_1$ or $X_2$, respectively.
+- NOTE: $\beta_1$ and $\beta_2$ **no longer** represent the expected difference in $Y$ given a unit difference of $X_1$ or $X_2$, respectively.
+    
+    - $\beta_1$ is the expected difference in $Y$ given a unit difference in $X_1$ if $X_2 = 0$. This interpretation only makes sense if 0 is in the range of $X_2$.
+    
+    - $\beta_2$ is the expected difference in $Y$ given a unit difference in $X_2$ if $X_1 = 0$. This interpretation only makes sense if 0 is in the range of $X_1$.
+    
+    - Generally, it is not useful to provide these interpretations of $\beta_1$ and $\beta_2$.
 
 - The association between $X_1$ and $Y$ depends on the level of $X_2$. Likewise, the association between $X_2$ and $Y$ depends on the level of $X_1$.
 
@@ -353,8 +370,290 @@ klippy::klippy()
 
 - When $\beta_{12}$ is negative, this is called an interaction of the **interference** or **antagonistic** type. The slope is less positive for more positive levels of $X_1$ or $X_2$.
 
-- XYZ Plots demonstrating synergistic and antagonistic interactions.
+- Synergistic:
 
-- XYZ Demonstrating difficulty in interpretation.
+    ```{r, eval = TRUE, echo = FALSE}
+    library(ggthemes)
+    library(latex2exp)
+    beta0 <- 0
+    beta1 <- 2
+    beta2 <- 1.5
+    beta12 <- 2
+    x1 <- seq(0, 2, length.out = 2)
+    x2 <- seq(0, 2, length.out = 3)
+    expand.grid(x1 = x1, x2 = x2) %>%
+      mutate(y = beta0 + beta1 * x1 + beta2 * x2 + beta12 * x1 * x2,
+             x2 = as_factor(x2)) %>%
+      ggplot(aes(x = x1, y = y, color = x2)) +
+      geom_line() +
+      scale_color_colorblind(name = TeX("$X_{2}$")) +
+      ggtitle(TeX("$Y_i = \\beta_0 + \\beta_1X_{i1} + \\beta_2X_{i2} + \\beta_{12}X_{i1}X_{i2} + \\epsilon_i$")) +
+      xlab(TeX("$X_1$")) +
+      ylab(TeX("$Y$"))
+    ```
+    
+- Antagonistic:
 
-- XYZ Interactions and categorical variables.
+    ```{r, eval = TRUE, echo = FALSE}
+    library(ggthemes)
+    library(latex2exp)
+    beta0 <- 0
+    beta1 <- 2
+    beta2 <- 1.5
+    beta12 <- -0.5
+    x1 <- seq(0, 2, length.out = 2)
+    x2 <- seq(0, 2, length.out = 3)
+    expand.grid(x1 = x1, x2 = x2) %>%
+      mutate(y = beta0 + beta1 * x1 + beta2 * x2 + beta12 * x1 * x2,
+             x2 = as_factor(x2)) %>%
+      ggplot(aes(x = x1, y = y, color = x2)) +
+      geom_line() +
+      scale_color_colorblind(name = TeX("$X_{2}$")) +
+      ggtitle(TeX("$Y_i = \\beta_0 + \\beta_1X_{i1} + \\beta_2X_{i2} + \\beta_{12}X_{i1}X_{i2} + \\epsilon_i$")) +
+      xlab(TeX("$X_1$")) +
+      ylab(TeX("$Y$"))
+    ```
+
+- If you include an interaction term, make sure that you include all lower-order terms. That is, **Never** fit a model like
+    $$
+    Y_i = \beta_0 + \beta_{12}X_{i1}X_{i2}
+    $$
+    - Why? The above model says that the effect of $X_1$ depends on the level of $X_2$, but there is no effect of $X_1$. This is a logical inconsistancy.
+
+- For the `mtcars` dataset, suppose we are fitting a model for mpg ($Y$) on the rear-axel ration ($X_1$) and weight ($X_2$). The model with interactions is:
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+    $$
+
+- We don't need to make transformations ahead of time. In `lm()`, we just multiply the variables together. It will automatically include all lower-order terms.
+    ```{r}
+    lm_mt <- lm(mpg ~ drat * wt, data = mtcars)
+    tidy(lm_mt)
+    ```
+
+- We actually have some evidence here of needing an interaction. 
+
+- We would still include `wt` in the model even though it has a large $p$-value.
+
+- You can provide an interpretation to a client when there are interactions via  **conditional effects plots** that plot the relationship between $Y$ and $X_i$ at different levels of the other $X$'s.
+
+    ```{r}
+    ## drat versus mpg at different levels of wt
+    wt_seq <- quantile(mtcars$mpg, c(0.025, 0.25, 0.5, 0.75, 0.975))
+    dr_seq <- seq(min(mtcars$drat), max(mtcars$drat), length.out = 100)
+    newdf <- expand.grid(wt = wt_seq, drat = dr_seq)
+    newdf$mpg <- predict(object = lm_mt, newdata = newdf)
+    newdf <- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
+    qplot(x = drat, y = mpg, color = wt, data = newdf, geom = "line")
+    
+    ## wt versus mpg at different levels of drat
+    wt_seq <- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
+    dr_seq <- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
+    newdf <- expand.grid(wt = wt_seq, drat = dr_seq)
+    newdf$mpg <- predict(object = lm_mt, newdata = newdf)
+    newdf <- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
+    qplot(x = wt, y = mpg, color = drat, data = newdf, geom = "line")
+    ```
+
+
+## Interactions and categorical variables.
+    
+- An interaction between a categorical and quantitative variable means that each level of the categorical variable has its own line (different intercepts and slopes).
+
+- Let's study again the association between `cty` ($Y$) with `displ` ($X_3$) and `drv` from the `mpg` dataset.
+
+    ```{r}
+    data("mpg")
+    mpg_sub <- select(mpg, drv, displ, cty)
+    glimpse(mpg_sub)
+    ```
+
+- We fit the following model (recall that $X_1$ is the indicator for front-wheel drive and $X_2$ is the indicator for 4-wheel drive cars).
+    $$
+    \log(Y_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \beta_{13}X_{i1}X_{i3} + \beta_{23}X_{i2}X_{i3} + \epsilon_i
+    $$
+    
+- If you include an interaction between one indicator for a categorical and a quantitative, then you should include interactions for all of the indicators with that quantitative. R will do this automatically as long as you use factors.
+
+- To interpret this model, you should think about what the response surface is for each class in the categorical variable.
+
+    - The model for rear-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_3X_{i3} + \epsilon_i
+    $$
+    - The model for front-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_1 + (\beta_3 + \beta_{13})X_{i3} + \epsilon_i
+    $$
+    - The model for 4-wheel drive cars is
+    $$
+    \log(Y_i) = \beta_0 + \beta_2 + (\beta_3 + \beta_{23})X_{i3} + \epsilon_i
+    $$
+    
+- $\beta_{13}$ is the expected difference in the slope between rear-wheel and front-wheel drive cars.
+
+- $\beta_{23}$ is the expected difference in the slope between rear-wheel and 4-wheel drive cars.
+
+- But it is better to just interpret interactions here by making conditional effects plots. This is the default output of `geom_smooth()` when you color code by a categorical variable:
+
+    ```{r}
+    qplot(x = displ, y = cty, color = drv, data = mpg) +
+      geom_smooth(method = "lm", se = FALSE) +
+      scale_y_log10()
+    ```
+
+
+- To fit this in R, just make sure you have the reference level as you like via `parse_factor()` or `fct_relevel()`. Then use `lm()` the same way with interactions as before (using multiplication).
+    ```{r}
+    mpg_sub <- mutate(mpg_sub, 
+                      drv = parse_factor(drv, levels = c("r", "f", "4")),
+                      l_cty = log(cty))
+    lm_mpg_int <- lm(l_cty ~ drv * displ, data = mpg_sub)
+    tidy(lm_mpg_int)
+    ```
+
+- **Exercise**: What is the estimated regression surface for rear-wheel drive cars? Front-wheel drive cars? 4-wheel drive cars?
+```{block, eval = FALSE, echo = FALSE}
+- Rear-wheel:
+    $$
+    \log(\hat{Y}) = 3 - 0.07X_3
+    $$
+    
+- front-wheel:
+    $$
+    \log(\hat{Y}) = 3 + 0.42 + (-0.07 - 0.1) X_3 = 3.42 - 0.17 X_3
+    $$
+    
+- 4-wheel:
+    $$
+    \log(\hat{Y}) = 3 + 0.21 + (-0.07 - 0.07) X_3 = 3.21 - 0.14X_3
+    $$
+```
+
+- We obtain the same regression surface as if we fit three different models to the three different classes.
+
+    ```{r}
+    mpg_sub_r <- filter(mpg_sub, drv == "r")
+    tidy(lm(l_cty ~ displ, data = mpg_sub_r))
+    ```
+
+- The benefit of fitting a single model is then
+    1. We can directly test for the "different lines" model using $F$-tests
+    2. We use all of the data to estimate the residual variance.
+    
+- The $p$-values for the interaction terms in the above output are **not** useful. This is because they only test for the association for an interaction between `displ` and a single indicator variable. But we want to test whether there is an interaction between `displ` and `drv`.
+    
+- Let's test for an interaction between `displ` and `drv`. We do so by fitting models both with and with out interactions. We then use `anova()` to run an $F$-test.
+
+    ```{r}
+    lm_mpg_no_int <- lm(l_cty ~ drv + displ, data = mpg_sub)
+    lm_mpg_int <- lm(l_cty ~ drv * displ, data = mpg_sub)
+    anova(lm_mpg_no_int, lm_mpg_int)
+    ```
+    So we have moderate evidence of an interaction effect ($p = 0.026$).
+
+
+## Usage guidelines
+
+From the *Statistical Sleuth*:
+
+- Interaction terms should not be routinely included in regression models. 
+
+- Use in three scenarios:
+    1. When a question of interest pertains to interaction.
+    2. When good reason exists to suspect interactions (e.g. *a priori* knowledge or residual plots strongly suggest such).
+    3. When interactions are proposed as a more general model for the purpose of examining the goodness of fit of a model without interaction.
+
+# Example
+
+- If you only have a few predictors, it is often a good idea to fit a saturated second-order model and compare the fully linear model to it as a type of lack-of-fit test.
+    - *Saturated second-order model*: A model with all possible quadratic and interaction terms, along with lower-order terms.
+
+- For example, with two predictors:
+    \begin{align}
+    H_0: Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
+    H_A: Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{11}X_{i1}^2 + \beta_{22}X_{i2}^2  + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+    \end{align}
+    
+- Rejecting the null here indicates that we have evidence of a lack-of-fit and should include some quadratic or interaction terms.
+
+- Let's look at a case example studying the effects of temperature ($X_1$) in celsius and charge rate ($X_2$) in amperes on life expectancy of a batter ($Y$) in the number of cycles before death. Data can be read into R via
+    ```{r}
+    power <- tibble::tribble(
+      ~cycles, ~charge, ~temp,
+          150,     0.6,    10,
+           86,       1,    10,
+           49,     1.4,    10,
+          288,     0.6,    20,
+          157,       1,    20,
+          131,       1,    20,
+          184,       1,    20,
+          109,     1.4,    20,
+          279,     0.6,    30,
+          235,       1,    30,
+          224,     1.4,    30
+      )
+    ```
+
+    We fit the model
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{11}X_{i1}^2 + \beta_{22}X_{i2}^2  + \beta_{12}X_{i1}X_{i2} + \epsilon_i
+    $$
+    and run the hypothesis tests for
+    $$
+    H_0: \beta_{11} = \beta_{22} = \beta_{12} = 0\\
+    H_A: \text{ at least one of } \beta_{11}, \beta_{22}, \beta_{12} \text{ nonzero}
+    $$
+
+- We can run this test because the reduced model is a subset of the full model.
+
+- Let's fit the full and reduced models    
+    ```{r}
+    power <- mutate(power, charge2 = charge ^ 2, temp2 = temp ^ 2)
+    lm_full <- lm(cycles ~ charge * temp + charge2 + temp2, data = power)
+    lm_reduced <- lm(cycles ~ charge + temp, data = power)
+    ```
+
+- We then run `anova()` to run the corresponding $F$-test    
+    ```{r}
+    anova(lm_reduced, lm_full)
+    ```
+
+- We do not have evidence of a lack-of-fit ($p=0.55$)
+
+- **Exercise**: What is $SSE(F)$? $SSE(R)$? $dr_F$? $df_R$?
+    ```{block, eval = FALSE, echo = FALSE}
+    - $SSE(F)$: 5240
+    - $SSE(R)$: 7700
+    - $dr_F$: 5
+    - $df_R$: 8
+    ```
+
+- If we would have failed to reject, the best course of action for interpretation would be to come up with conditional effects plots.
+
+    ```{r}
+    ## Conditional effects plot for charge
+    charge_seq <- unique(power$charge)
+    temp_seq <- seq(min(power$temp), max(power$temp), length.out = 200)
+    expand.grid(charge = charge_seq, temp = temp_seq) %>%
+      mutate(charge2 = charge^2,
+             temp2 = temp^2) ->
+      newdf
+    newdf$cycles <- predict(object = lm_full, newdata = newdf)
+    newdf <- mutate(newdf, charge = as_factor(charge))
+    qplot(x = temp, y = cycles, color = charge, data = newdf, geom = "line")
+    
+    ## Conditional effects plot for temperature
+    temp_seq <- unique(power$temp)
+    charge_seq <- seq(min(power$charge), max(power$charge), length.out = 200)
+    expand.grid(charge = charge_seq, temp = temp_seq) %>%
+      mutate(charge2 = charge^2,
+             temp2 = temp^2) ->
+      newdf
+    newdf$cycles <- predict(object = lm_full, newdata = newdf)
+    newdf <- mutate(newdf, temp = as_factor(temp))
+    qplot(x = charge, y = cycles, color = temp, data = newdf, geom = "line")
+    ```
+
+
+# Exercise

@@ -219,6 +219,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `style`: Categorical variable indicating architectural style 
     - `lot`: Lot size (in square feet)
     - `highway`: `"yes"` = highway adjacent, `"no"` = highway not adjacent.
+    
+# Soap Production Line
+
+- [soap.csv](./data/soap.csv): Researchers were studying the relationship between line speed and the amount of scrap for the data for two production lines in a soap production company. The variables include
+    - `scrap`: Amount of scrap (coded).
+    - `speed`: Line production speed (coded).
+    - `line`: Production line. Either `"line1"` or `"line2"`.
  
 # Study on the Efficacy of Nosocomial Infection Control (SENIC)
 
