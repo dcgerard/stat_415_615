@@ -222,10 +222,16 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Soap Production Line
 
-- [soap.csv](./data/soap.csv): Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include
+- [soap.csv](./data/soap.csv): Table 8.5 of KNNL. Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include
     - `scrap`: Amount of scrap (coded).
     - `speed`: Line production speed (coded).
     - `line`: Production line. Either `"line1"` or `"line2"`.
+ 
+# Steroid Level
+
+- [steroid.csv](./data/steroid.csv): From problem 8.6 of KNNL. A researcher was interested in the relationship between the level of a steroid and the age in healthy female subjects between the ages of 8 and 25. Variables include
+    - `steroid`: Level of the steroid.
+    - `age`: Age in years.
  
 # Study on the Efficacy of Nosocomial Infection Control (SENIC)
 
