@@ -26,3 +26,5 @@ klippy::klippy()
 
 - Choosing what variables to include in a model.
 - Chapter 12 of Statistical Sleuth.
+- Chapter 9 of KNNL
+
