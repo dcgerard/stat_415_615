@@ -362,6 +362,123 @@ div.tocify {
 <li>Chapter 9 of KNNL</li>
 </ul>
 </div>
+<div id="steps-of-choosing-a-model" class="section level1">
+<h1>Steps of choosing a model</h1>
+<ol style="list-style-type: decimal">
+<li>Identify the key objectives.</li>
+<li>Screen the available variables, deciding on a list that is sensitive to the objectives and excludes obvious redundancies.</li>
+<li>Perform exploratory analysis, examining graphical displays and correlation coeﬃcients.</li>
+<li>Perform transformations as necessary.</li>
+<li>Examine a residual plot after fitting a rich model, performing further transformations and considering outliers.</li>
+<li>Use a computer-assisted technique for finding a suitable subset of explanatory variables, exerting enough control over the process to be sensitive to the questions of interest.</li>
+<li>Proceed with the analysis, using the selected explanatory variables.</li>
+</ol>
+</div>
+<div id="step-1-identify-objectives-and-questions-of-interest" class="section level1">
+<h1>Step 1: Identify Objectives and Questions of Interest</h1>
+<ul>
+<li><p>Example 1: Interested in association of one explanatory variable and one response.</p>
+<ul>
+<li><p>Goal is to determine that association <em>after adjusting for other variables</em>.</p></li>
+<li><p>Then want to perform variable selection with everything <em>except</em> explanatory variable of interest, then include it to test for that association.</p></li>
+</ul></li>
+<li><p>Example 2: Just want to fish for associations</p>
+<ul>
+<li><p>Then iterate through adding/removing variables, making transformations, checking residuals, until you develop a model with significant terms and no major issues.</p></li>
+<li><p><span class="math inline">\(p\)</span>-values/confidence intervals don’t have proper interpretation.</p>
+<ul>
+<li>Same problems with multiple comparisons — ran many tests and looked at data a lot to come to final model.</li>
+</ul></li>
+<li><p>You generally build a model and tell stories with it.</p></li>
+</ul></li>
+<li><p>Example 3: Prediction</p>
+<ul>
+<li>Include variables to maximize predictive power, don’t worry about interpretation.</li>
+</ul></li>
+</ul>
+</div>
+<div id="step-2-screen-available-variables" class="section level1">
+<h1>Step 2: Screen Available Variables</h1>
+<ul>
+<li><p>Choose a list of explanatory variables that are important to the objective.</p></li>
+<li><p>Screen out redundant variables</p></li>
+<li><p>Problems with Including Too Few Variables</p>
+<ul>
+<li><p>You are only picking up <strong>marginal</strong> associations.</p></li>
+<li><p>E.g., we already know that men make more money than women. We want to see if men <strong>still</strong> make more money than women when we control for other variables.</p></li>
+<li><p>Predictions are less accurate.</p>
+<p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>If you fit a model with <span class="math inline">\(X\)</span>, then this is what the model is seeing:</p>
+<p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul></li>
+<li><p>Problems with too many variables</p>
+<ul>
+<li><p>Harder to estimate more parameters.</p></li>
+<li><p>Formally, the variances of the sampling distributions of the coefficients in the model will get much larger.</p></li>
+<li><p>Including highly correlated explanatory variables will <strong>really</strong> increase the variance of the sampling distributions of the coefficient estimates.</p></li>
+<li><p>Intuitively, we are less sure if the association of <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_1\)</span> is due to that actual associate or is it mediated through <span class="math inline">\(X_2\)</span>?</p></li>
+<li><p>Predictions are less accurate.</p></li>
+</ul></li>
+<li><p>Demonstration when have too many variables</p>
+<ul>
+<li><p>True model: <span class="math inline">\(E(Y|X_1) = X_1\)</span></p></li>
+<li><p>Fit Model: <span class="math inline">\(E(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2X_2\)</span></p></li>
+<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9995.</p></li>
+<li><p>We will simulate <span class="math inline">\(Y\)</span> and plot the resulting OLS estimates.</p></li>
+<li><p>Black is truth</p>
+<p><img src="figs/sim_pred.gif" style="display: block; margin: auto;" /></p></li>
+</ul></li>
+</ul>
+</div>
+<div id="steps-3-through-5" class="section level1">
+<h1>Steps 3 through 5</h1>
+<ul>
+<li><p>Exploratory data analysis.</p>
+<ul>
+<li><p>Tons of scatterplots.</p></li>
+<li><p>Look at correlation coefficients.</p></li>
+</ul></li>
+<li><p>Transformations based on EDA.</p></li>
+<li><p>Fit a rich model and look at residuals.</p>
+<ul>
+<li>Look for curvature, non-constant variance, and outliers.</li>
+</ul></li>
+<li><p>Iterate the above steps until you don’t see any issues.</p></li>
+</ul>
+</div>
+<div id="step-6" class="section level1">
+<h1>Step 6</h1>
+<ul>
+<li><p>If appropriate, use a computer aided technique to choose a suitable subset of explanatory variables.</p></li>
+<li><p>Look at model criteria to compare final models.</p></li>
+</ul>
+<div id="criteria" class="section level2">
+<h2>Criteria</h2>
+<p>XYZ</p>
+<ul>
+<li><p>Adjusted <span class="math inline">\(R^2\)</span></p></li>
+<li><p>Mallows <span class="math inline">\(C_p\)</span></p></li>
+<li><p>AIC and SBC</p></li>
+</ul>
+</div>
+<div id="automated-procedures" class="section level2">
+<h2>Automated Procedures</h2>
+<p>XYZ</p>
+<ul>
+<li><p>“Best” subsets</p></li>
+<li><p>Forward/backward stepwise methods</p></li>
+</ul>
+</div>
+</div>
+<div id="step-7" class="section level1">
+<h1>Step 7</h1>
+<ul>
+<li><p>Proceed with analysis with chosen explanatory variables.</p></li>
+<li><p>Tell stories with the data using <span class="math inline">\(p\)</span>-values, coefficient estimates, confidence intervals, etc…</p></li>
+<li><p>Step 7 is what we’ve been discussing this whole semester.</p></li>
+</ul>
+</div>
 
 
 
