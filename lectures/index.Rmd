@@ -61,6 +61,7 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 8 of KNNL.
   - [Lecture 05-5: MLR: Model Selection](./05_mlr_selection.html).
       - Chapter 12 of Statistical Sleuth.
+      - Chapter 9 of KNNL.
   - [Lecture 05-6: MLR: More Complicated Model Diagnostics](05_mlr_diagnostics.html).
       - Chapter 10 of KNNL.
 - 06 Design
