@@ -46,6 +46,8 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 - **Optional**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
 
+- **Optional**: [The Statistical Sleuth](http://www.statisticalsleuth.com/). This is the best non-mathematical treatment of basic Statistical analysis that exists. I use some of their datasets, and reference this book for best practices. If you do not remember basic statistical concepts, this is the best book you can get to review those concepts.
+
 - I will also provide you with supplemental PDF readings as required.
 
 # Computing and Software
