@@ -326,9 +326,9 @@ klippy::klippy()
       geom_vline(xintercept = 2.5, lty = 2, col = 2)
     ```
     
-- **NOTE**: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that *all* $\beta_q,\beta_{q+1},\ldots,\beta_p$ are non-zero. So we can re-write the hypotheses as
-    - $H_0: \beta_q = \beta_{q+1} = \cdots = \beta_p = 0$
-    - $H_A:$ At least one of $\beta_q,\beta_{q+1},\ldots,\beta_p$ is non-zero.
+- **NOTE**: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that *all* $\beta_q,\beta_{q+1},\ldots,\beta_{p-1}$ are non-zero. So we can re-write the hypotheses as
+    - $H_0: \beta_q = \beta_{q+1} = \cdots = \beta_{p-1} = 0$
+    - $H_A:$ At least one of $\beta_q,\beta_{q+1},\ldots,\beta_{p-1}$ is non-zero.
     
 - **NOTE**: We can re-write the $F$-statistic in terms of extra sums of squares
     $$
@@ -343,8 +343,8 @@ klippy::klippy()
 ## Overall $F$-test
 
 - Consider the testing if at least one variable is associated with our response:
-    - $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
-    - $H_A:$ At least one $\beta_1,\beta_{2},\ldots,\beta_p$
+    - $H_0: \beta_1 = \beta_2 = \cdots = \beta_{p-1} = 0$
+    - $H_A:$ At least one $\beta_1,\beta_{2},\ldots,\beta_{p-1}$
 
 - Then under the null 
     $$
@@ -758,7 +758,6 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 
 - Reduces down to the coefficient of simple determination when $p = 2$ (SLR model).
 
-
 - Note, adding more $X$ variables can only increase $R^2$. So this cannot be used to compare two models with different number of predictors.
 
 - Adjusted coefficient of multiple determination:
@@ -800,7 +799,7 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 
 - So the proportionate reduction in the variation in $Y$ when $X_1$ is added can be a measure of the contribution of $X_1$.
     
-- Coefficient of multiple determination
+- Coefficient of partial determination
     \begin{align}
     R^2_{Y1|2} = \frac{SSE(X_2) - SSE(X_1,X_2)}{SSE(X_2)} = \frac{SSR(X_1|X_2)}{SSE(X_2)}
     \end{align}
@@ -822,6 +821,16 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 - Number to left of vertical bar (the $|$ symbol) show the $X$ variable being added.
 
 - The Numbers to the right of the vertical bar show the $X$ variables already in the model.
+
+- First index is the response variable ($Y$ in this case).
+
+- We can write out the coefficients of multiple determination using this notation as well.
+\begin{align}
+R^2_{Y1} &= \frac{SSR(X_1)}{SSTO}\\
+R^2_{Y12} &= \frac{SSR(X_1, X_2)}{SSTO}\\
+R^2_{Y123} &= \frac{SSR(X_1, X_2, X_3)}{SSTO}\\
+&\text{etc...}
+\end{align} 
 
 
 - **Example**: From the body fat example, we fit the model
@@ -855,7 +864,7 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
     
     \begin{align}
     R^2 &= \frac{SSR(X_1, X_2, X_3)}{SSTO} = \frac{397}{495} = 0.80\\
-    R^2_{Y1} = \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
+    R^2_{Y1} &= \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
     R^2_{Y2|1} &= \frac{SSR(X_2|X_1)}{SSE(X_1)} = \frac{33}{143} = 0.23\\
     R^2_{Y3|12} &= \frac{SSR(X_3|X_1,X_2)}{SSE(X_1, X_2)} = \frac{12}{110} = 0.11\\
     \end{align}
@@ -869,6 +878,7 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
     lmout <- lm(fat ~ thigh + triceps + midarm, data = body)
     anova(lmout)
     ```
+    Remember that $X_1$ is triceps, $X_2$ is thigh, and $X_3$ is midarm.
     
     1. What is SSR(X_2)?
     2. What is SSR(X_1|X_2)?
@@ -895,12 +905,15 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 # Statistical versus Practical significance
 
 - Tests can have tiny $p$-values, but the effect sizes might be small.
+
     - This can occur if we have a large sample size when two variables have a weak relationship.
 
 - Tests can have large $p$-values, but the effect sizes might be huge.
+
     - This can occur if we have a small sample size when two variables have a strong relationship.
     
 - So **never** use $p$-values to describe the strength of the relationship between two variables. 
+
     - This is what other statistics like $R^2$, partial $R^2$, sums of squares, and Cohen's $d$ are meant for.
 
 - Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
@@ -908,6 +921,7 @@ lm_estate_full <- lm(log_price ~ log_area + log_lot + bed, data = estate)
 - Coefficients of determination are useful for determining practical significance.
 
 - Another tool to do this is to compare the effect sizes to the residual standard error.
+
     - Recall: Residual standard error is the estimated population standard deviation.
     - Recall: Residual standard error is the square root of the MSE.
 

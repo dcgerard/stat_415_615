@@ -621,10 +621,10 @@ Anova(lm_all)</code></pre>
 </ul></li>
 <li><p>So we can obtain a <span class="math inline">\(p\)</span>-value via <span class="math inline">\(\text{qf}(F^*, df_r - df_f, df_f, \text{lower.tail = FALSE})\)</span>.</p>
 <p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-15-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>NOTE</strong>: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that <em>all</em> <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_p\)</span> are non-zero. So we can re-write the hypotheses as</p>
+<li><p><strong>NOTE</strong>: The null will be rejected if at least one of the unincluded variables have non-zero coefficients. That is, it is not necessarily that case that <em>all</em> <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_{p-1}\)</span> are non-zero. So we can re-write the hypotheses as</p>
 <ul>
-<li><span class="math inline">\(H_0: \beta_q = \beta_{q+1} = \cdots = \beta_p = 0\)</span></li>
-<li><span class="math inline">\(H_A:\)</span> At least one of <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_p\)</span> is non-zero.</li>
+<li><span class="math inline">\(H_0: \beta_q = \beta_{q+1} = \cdots = \beta_{p-1} = 0\)</span></li>
+<li><span class="math inline">\(H_A:\)</span> At least one of <span class="math inline">\(\beta_q,\beta_{q+1},\ldots,\beta_{p-1}\)</span> is non-zero.</li>
 </ul></li>
 <li><p><strong>NOTE</strong>: We can re-write the <span class="math inline">\(F\)</span>-statistic in terms of extra sums of squares <span class="math display">\[
   F^* = \frac{[SSR(X_q,X_{q+1},\ldots,X_{p-1}|X_1,X_2,\ldots,X_{q-1})] / (df_r - df_f)}{SSE(F) / df_f}
@@ -639,8 +639,8 @@ Anova(lm_all)</code></pre>
 <ul>
 <li><p>Consider the testing if at least one variable is associated with our response:</p>
 <ul>
-<li><span class="math inline">\(H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0\)</span></li>
-<li><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1,\beta_{2},\ldots,\beta_p\)</span></li>
+<li><span class="math inline">\(H_0: \beta_1 = \beta_2 = \cdots = \beta_{p-1} = 0\)</span></li>
+<li><span class="math inline">\(H_A:\)</span> At least one <span class="math inline">\(\beta_1,\beta_{2},\ldots,\beta_{p-1}\)</span></li>
 </ul></li>
 <li><p>Then under the null <span class="math display">\[
   F^* \sim F(p-1, n - p)
@@ -1201,7 +1201,7 @@ ggpairs(textile)</code></pre>
 <li><p><span class="math inline">\(SSE(X_1, X_2)\)</span> measures the variation in <span class="math inline">\(Y\)</span> when both <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> are included in the model.</p></li>
 <li><p><span class="math inline">\(SSE(X_1, X_2) \leq SSE(X_2)\)</span></p></li>
 <li><p>So the proportionate reduction in the variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_1\)</span> is added can be a measure of the contribution of <span class="math inline">\(X_1\)</span>.</p></li>
-<li><p>Coefficient of multiple determination <span class="math display">\[\begin{align}
+<li><p>Coefficient of partial determination <span class="math display">\[\begin{align}
   R^2_{Y1|2} = \frac{SSE(X_2) - SSE(X_1,X_2)}{SSE(X_2)} = \frac{SSR(X_1|X_2)}{SSE(X_2)}
   \end{align}\]</span></p></li>
 <li><p>Similarly, the proportionate reduction in the variation in <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_2\)</span> is added, given that <span class="math inline">\(X_1\)</span> is already in the model, is defined by <span class="math display">\[\begin{align}
@@ -1216,6 +1216,13 @@ ggpairs(textile)</code></pre>
 \end{align}\]</span></p></li>
 <li><p>Number to left of vertical bar (the <span class="math inline">\(|\)</span> symbol) show the <span class="math inline">\(X\)</span> variable being added.</p></li>
 <li><p>The Numbers to the right of the vertical bar show the <span class="math inline">\(X\)</span> variables already in the model.</p></li>
+<li><p>First index is the response variable (<span class="math inline">\(Y\)</span> in this case).</p></li>
+<li><p>We can write out the coefficients of multiple determination using this notation as well. <span class="math display">\[\begin{align}
+R^2_{Y1} &amp;= \frac{SSR(X_1)}{SSTO}\\
+R^2_{Y12} &amp;= \frac{SSR(X_1, X_2)}{SSTO}\\
+R^2_{Y123} &amp;= \frac{SSR(X_1, X_2, X_3)}{SSTO}\\
+&amp;\text{etc...}
+\end{align}\]</span></p></li>
 <li><p><strong>Example</strong>: From the body fat example, we fit the model <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i,
   \]</span> where <span class="math inline">\(Y\)</span> is fat, <span class="math inline">\(X_1\)</span> is triceps, <span class="math inline">\(X_2\)</span> is thigh, and <span class="math inline">\(X_3\)</span> is midarm. We then obtain the Type I sums of squares using <code>anova()</code>.</p>
@@ -1244,7 +1251,7 @@ anova(lmout)</code></pre>
 </ul>
 <p><span class="math display">\[\begin{align}
   R^2 &amp;= \frac{SSR(X_1, X_2, X_3)}{SSTO} = \frac{397}{495} = 0.80\\
-  R^2_{Y1} = \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
+  R^2_{Y1} &amp;= \frac{SSR(X_1)}{SSTO} = \frac{352}{495} = 0.71\\
   R^2_{Y2|1} &amp;= \frac{SSR(X_2|X_1)}{SSE(X_1)} = \frac{33}{143} = 0.23\\
   R^2_{Y3|12} &amp;= \frac{SSR(X_3|X_1,X_2)}{SSE(X_1, X_2)} = \frac{12}{110} = 0.11\\
   \end{align}\]</span></p>
@@ -1263,6 +1270,7 @@ anova(lmout)</code></pre>
 ## triceps    1      3       3    0.56    0.46
 ## midarm     1     12      12    1.88    0.19
 ## Residuals 16     98       6</code></pre>
+<p>Remember that <span class="math inline">\(X_1\)</span> is triceps, <span class="math inline">\(X_2\)</span> is thigh, and <span class="math inline">\(X_3\)</span> is midarm.</p>
 <ol style="list-style-type: decimal">
 <li>What is SSR(X_2)?</li>
 <li>What is SSR(X_1|X_2)?</li>
