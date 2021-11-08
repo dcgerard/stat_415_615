@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-01" />
+<meta name="date" content="2021-11-08" />
 
 <title>MLR III: Special Predictors</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-01</h4>
+<h4 class="date">2021-11-08</h4>
 
 </div>
 
@@ -454,6 +454,45 @@ tidy(lm_m3)</code></pre>
 </ol></li>
 </ul>
 </div>
+</div>
+<div id="splines" class="section level1">
+<h1>Splines</h1>
+<ul>
+<li><p>Splines are piece-wise cubic functions.</p></li>
+<li><p>Many curves are well-approximated <strong>locally</strong> by cubic functions, even if they are not well approximated <strong>globally</strong> by cubic functions.</p></li>
+<li><p>Think about them as kind of non-parametric curves. But because they are piecewise cubic, we can use them as components in <code>lm()</code>.</p></li>
+<li><p>You can include a non-parametric curve as a covariate in R via splines.</p></li>
+<li><p>Fit a spline in R using the <code>bs()</code> function.</p>
+<pre class="r"><code>library(splines)
+lm_mspline &lt;- lm(mass ~ bs(age, df = 5), data = muscle)</code></pre></li>
+<li><p>The <code>df</code> argument tells you how much degrees of freedom you want to give up to fit the spline. Higher means more flexible, but also possibly more unstable (if you have too small a sample size).</p></li>
+<li><p>Let’s make predictions and plot the predictions:</p>
+<pre class="r"><code>newdf &lt;- data.frame(age = seq(min(muscle$age), max(muscle$age), length.out = 100))
+newdf$mass &lt;- predict(object = lm_mspline, newdata = newdf)                    
+ggplot() +
+  geom_line(data = newdf, mapping = aes(x = age, y = mass)) +
+  geom_point(data = muscle, mapping = aes(x = age, y = mass))</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Do <strong>not</strong> interpret the coefficient estimates and <span class="math inline">\(p\)</span>-values here</p>
+<pre class="r"><code>tidy(lm_mspline)</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   term             estimate std.error statistic  p.value
+##   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)        110.        3.84    28.7   2.44e-34
+## 2 bs(age, df = 5)1    -8.49      8.70    -0.976 3.33e- 1
+## 3 bs(age, df = 5)2   -12.0       6.94    -1.72  9.05e- 2
+## 4 bs(age, df = 5)3   -44.3       8.22    -5.39  1.60e- 6
+## 5 bs(age, df = 5)4   -31.2       7.24    -4.30  7.17e- 5
+## 6 bs(age, df = 5)5   -45.6       5.09    -8.95  2.98e-12</code></pre></li>
+<li><p>But you can interpret the overall <span class="math inline">\(F\)</span>-test as testing for whether a non-parameteric association exists.</p>
+<pre class="r"><code>glance(lm_mspline) %&gt;%
+  select(p.value)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##    p.value
+##      &lt;dbl&gt;
+## 1 2.38e-16</code></pre></li>
+<li><p>Splines aren’t good for interpretation, but they are good for flexibly controlling for a variable that you can’t seem to get to behave via other transformations.</p></li>
+</ul>
 </div>
 <div id="categorical-variables" class="section level1">
 <h1>Categorical Variables</h1>
@@ -617,9 +656,9 @@ tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
 <li><p>When <span class="math inline">\(\beta_{12}\)</span> is positive, this is called an interaction of the <strong>reinforcement</strong> or <strong>synergistic</strong> type. The slope is more positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
 <li><p>When <span class="math inline">\(\beta_{12}\)</span> is negative, this is called an interaction of the <strong>interference</strong> or <strong>antagonistic</strong> type. The slope is less positive for more positive levels of <span class="math inline">\(X_1\)</span> or <span class="math inline">\(X_2\)</span>.</p></li>
 <li><p>Synergistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Antagonistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>If you include an interaction term, make sure that you include all lower-order terms. That is, <strong>Never</strong> fit a model like <span class="math display">\[
   Y_i = \beta_0 + \beta_{12}X_{i1}X_{i2}
   \]</span></p>
@@ -649,7 +688,7 @@ newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
 qplot(x = drat, y = mpg, color = wt, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## wt versus mpg at different levels of drat
 wt_seq &lt;- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
 dr_seq &lt;- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
@@ -657,7 +696,7 @@ newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
 qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-24-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="interactions-and-categorical-variables." class="section level2">
 <h2>Interactions and categorical variables.</h2>
@@ -695,7 +734,7 @@ glimpse(mpg_sub)</code></pre>
   geom_smooth(method = &quot;lm&quot;, se = FALSE) +
   scale_y_log10()</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as you like via <code>parse_factor()</code> or <code>fct_relevel()</code>. Then use <code>lm()</code> the same way with interactions as before (using multiplication).</p>
 <pre class="r"><code>mpg_sub &lt;- mutate(mpg_sub, 
                   drv = parse_factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)),
@@ -814,7 +853,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, charge = as_factor(charge))
 qplot(x = temp, y = cycles, color = charge, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-39-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Conditional effects plot for temperature
 temp_seq &lt;- unique(power$temp)
 charge_seq &lt;- seq(min(power$charge), max(power$charge), length.out = 200)
@@ -825,7 +864,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, temp = as_factor(temp))
 qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-35-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-39-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
