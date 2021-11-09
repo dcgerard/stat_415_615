@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-08" />
+<meta name="date" content="2021-11-09" />
 
 <title>MLR: Model Selection and Validation</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Model Selection and Validation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-08</h4>
+<h4 class="date">2021-11-09</h4>
 
 </div>
 
@@ -368,7 +368,7 @@ div.tocify {
 <li><p>You often have many predictor variables.</p></li>
 <li><p>Including too few and you are potentially not controlling for key variables.</p></li>
 <li><p>Including too many and your regression coefficient estimates might be unstable.</p></li>
-<li><p>Here, we talk about <strong>model selection</strong>.</p></li>
+<li><p><strong>Model selection</strong>: Choosing which variables (and transformations of these variables) to include.</p></li>
 </ul>
 </div>
 <div id="steps-of-selecting-a-model" class="section level1">
@@ -451,7 +451,7 @@ div.tocify {
 <li>Causal interpretations are not allowed, as usual, with observational studies.</li>
 <li><span class="math inline">\(p\)</span>-values are meaningless.</li>
 </ol></li>
-<li><p>If your dataset is large, then you can split your data into a training and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain <span class="math inline">\(p\)</span>-values that have the proper interpretation.</p>
+<li><p>If your dataset is large, then you can split your data into a training set and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain <span class="math inline">\(p\)</span>-values that have the proper interpretation.</p>
 <ul>
 <li>Test set could be about 25% and the training set about 75%.</li>
 <li>Splitting data is feasible if you have more than 6 observations per predictor variable in the training set.</li>
@@ -478,6 +478,7 @@ div.tocify {
 <ul>
 <li><p>Choose a list of explanatory variables that are important to the objective.</p></li>
 <li><p>Screen out redundant variables.</p></li>
+<li><p>Use your domain expertise for screening variables.</p></li>
 <li><p>Note: What variables are important will depend on the question being asked.</p></li>
 <li><p><strong>Example</strong>: Researchers were interested in what variables were associated with state average SAT scores. Possible predictors include</p>
 <ul>
@@ -531,7 +532,7 @@ glimpse(sat)</code></pre>
 <ul>
 <li><p>True model: <span class="math inline">\(E(Y|X_1) = X_1\)</span></p></li>
 <li><p>Fit Model: <span class="math inline">\(E(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2X_2\)</span></p></li>
-<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9993.</p></li>
+<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9994.</p></li>
 <li><p>We will simulate <span class="math inline">\(Y\)</span> and plot the resulting OLS estimates.</p></li>
 <li><p>Black is truth</p>
 <p><img src="figs/sim_pred.gif" style="display: block; margin: auto;" /></p></li>

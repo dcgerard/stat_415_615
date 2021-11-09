@@ -36,7 +36,7 @@ klippy::klippy()
 
 - Including too many and your regression coefficient estimates might be unstable.
 
-- Here, we talk about **model selection**.
+- **Model selection**: Choosing which variables (and transformations of these variables) to include.
 
 # Steps of Selecting a Model
 
@@ -113,7 +113,7 @@ From the Statistical Sleuth:
     2. Causal interpretations are not allowed, as usual, with observational studies.
     3. $p$-values are meaningless.
     
-- If your dataset is large, then you can split your data into a training and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain $p$-values that have the proper interpretation.
+- If your dataset is large, then you can split your data into a training set and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain $p$-values that have the proper interpretation.
     - Test set could be about 25\% and the training set about 75\%.
     - Splitting data is feasible if you have more than 6 observations per predictor variable in the training set.
     - As soon as you look at how well your method works on your test set, you can no longer do anything. 
@@ -135,6 +135,8 @@ From the Statistical Sleuth:
 - Choose a list of explanatory variables that are important to the objective.
 
 - Screen out redundant variables.
+
+- Use your domain expertise for screening variables.
 
 - Note: What variables are important will depend on the question being asked.
 
