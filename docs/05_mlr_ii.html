@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-28" />
+<meta name="date" content="2021-11-09" />
 
 <title>MLR: Practical Considerations</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-28</h4>
+<h4 class="date">2021-11-09</h4>
 
 </div>
 
@@ -513,10 +513,8 @@ glimpse(select(earnings, earn_z, height_z))</code></pre>
 ## $ height_z &lt;dbl&gt; 1.9393, -0.1484, -0.6704, -0.4094, -0.9314, 0.3735, -0.9314, …</code></pre>
 <p>Centering and scaling does not change the underlying information.</p>
 <pre class="r"><code>qplot(x = height, y = earn, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-2.png" width="384" style="display: block; margin: auto;" /> But this will make interpretation a little easier.</p>
 <pre class="r"><code>lm_earn_z &lt;- lm(earn_z ~ height_z, data = earnings)
 tidy(lm_earn_z, conf.int = TRUE)</code></pre>
@@ -529,10 +527,48 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 <li><p>If you do this to all variables in your model, you can use the following multiple regression model: <span class="math display">\[
   Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
   \]</span></p></li>
-<li><p>If we run a linear regression under this model, then the interpretation of coefficient <span class="math inline">\(\beta_i^*\)</span> is: &gt; Individuals that are 1 standard deviation larger in X_i tend to have <span class="math inline">\(\beta_1^*\)</span> higher <span class="math inline">\(Y_i\)</span> on average, adjusting for all other predictors in our model.</p></li>
-<li><p><strong>Example</strong>: XYZ Fit a multiple linear regression model, then scale. Provide interpretation in terms of model.</p></li>
+<li><p>If we run a linear regression under this model, then the interpretation of coefficient <span class="math inline">\(\beta_i^*\)</span> is:</p>
+<blockquote>
+<p>Individuals that are 1 standard deviation larger in <span class="math inline">\(X_i\)</span> tend to have <span class="math inline">\(\beta_1^*\)</span> higher <span class="math inline">\(Y_i\)</span> on average, adjusting for all other predictors in our model.</p>
+</blockquote></li>
 <li><p>Note: If <span class="math inline">\(X_i^* = \frac{X_i - a}{b}\)</span>, then <span class="math inline">\(\beta_i^* = b\beta_i\)</span> and <span class="math inline">\(\hat{\beta}_i^* = b\hat{\beta}_i\)</span>.</p></li>
-<li><p><strong>Exercise</strong>: XYZ Let them fit both with and without <span class="math inline">\(Z\)</span>-score scaling. Compare coefficients. Provide interpretation using both models. See if the coefficients of other variables change when we scale a different variable.</p></li>
+<li><p><strong>Exercise</strong>: Recall the portrait studio example where A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include</p>
+<ul>
+<li><p><code>young</code>: The number of persons aged 16 or younger in the community (thousands of persons).</p></li>
+<li><p><code>disp</code>: The per capita disposable personal income in the community (thousands of dollars).</p></li>
+<li><p><code>sales</code>: Portrait studio sales in the community (thousands of dollars).</p></li>
+<li><p>You can load these data into R with:</p>
+<pre class="r"><code>portrait &lt;- tribble(~young, ~disp, ~sales,
+                    68.5,   16.7,  174.4,
+                    45.2,   16.8,  164.4,
+                    91.3,   18.2,  244.2,
+                    47.8,   16.3,  154.6,
+                    46.9,   17.3,  181.6,
+                    66.1,   18.2,  207.5,
+                    49.5,   15.9,  152.8,
+                    52.0,   17.2,  163.2,
+                    48.9,   16.6,  145.4,
+                    38.4,   16.0,  137.2,
+                    87.9,   18.3,  241.9,
+                    72.8,   17.1,  191.1,
+                    88.4,   17.4,  232.0,
+                    42.9,   15.8,  145.3,
+                    52.5,   17.8,  161.1,
+                    85.7,   18.4,  209.7,
+                    41.3,   16.5,  146.4,
+                    51.7,   16.3,  144.0,
+                    89.6,   18.1,  232.6,
+                    82.7,   19.1,  224.1,
+                    52.3,   16.0,  166.5)</code></pre></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>Fit a linear model of sales (<span class="math inline">\(Y\)</span>) on young (<span class="math inline">\(X_1\)</span>) and disp (<span class="math inline">\(X_2\)</span>). What are the coefficient estimates?</p></li>
+<li><p>What would happen to the coefficient estimates of <code>young</code> and <code>disp</code> if you converted the units of <code>disp</code> to tens of thousands of dollars?</p></li>
+<li><p>Convert <code>disp</code> to units of tens of thousands of dollars and rerun the regression. Did what you think would happen to the coefficient happen?</p></li>
+<li><p>What about if convert <code>disp</code> to <span class="math inline">\(z\)</span>-scores? What do you think would happen to the <code>young</code> coefficient estimate? Verify your statement.</p></li>
+<li><p>Run a linear model by first converting <code>young</code> and <code>disp</code> to <span class="math inline">\(z\)</span>-scores. Interpret the coefficients.</p></li>
+</ol></li>
+<li><p><span class="math inline">\(Z\)</span>-scores make the coefficients more comparable. However, the issues of multicollinearity (next section) still might make it hard to compare the importance of various predictors. This is because, e.g. in our portrait example, there might not be any cities that are 1 standard deviation higher in disposable income but have the same number of young folks.</p></li>
 </ul>
 </div>
 </div>
@@ -540,7 +576,7 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 <h1>Multicollinearity</h1>
 <ul>
 <li><p><strong>Multicollinearity</strong>: Correlation between predictors.</p></li>
-<li><p>Multicollinearity is the rule, not the exception.</p>
+<li><p>In observational studies, multicollinearity is the rule, not the exception.</p>
 <ul>
 <li>In observational studies, you will always have some correlation between predictors.</li>
 <li>But too much correlation can be a really bad thing (how much is too much is calculated in Chapter 10).</li>
@@ -572,7 +608,7 @@ glimpse(body)</code></pre>
 <li><p>These data exhibit multicollinearity</p>
 <pre class="r"><code>library(GGally)
 ggpairs(data = body)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Notice that <span class="math inline">\(X_1\)</span> = triceps and <span class="math inline">\(X_2\)</span> = thigh are highly correlated with each other, but these are less correlated with <span class="math inline">\(X_3\)</span> = midarm.</p></li>
 <li><p>Let’s fit a bunch of models</p>
 <pre class="r"><code>lm_tr &lt;- lm(fat ~ triceps, data = body)
@@ -644,7 +680,7 @@ lm_tr_th_m &lt;- lm(fat ~ triceps + thigh + midarm, data = body)</code></pre></l
 </tbody>
 </table>
 <ul>
-<li><p>😲 Look how much they change!</p></li>
+<li><p>😱 Look how much they change!</p></li>
 <li><p><strong>Exercise</strong>: What is the model for each row in the above table?</p></li>
 <li><p>We saw that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> were highly correlated, so it makes sense that those coefficients change when they are included together in the model.</p></li>
 <li><p>But <span class="math inline">\(X_3\)</span> was not highly correlated with either <span class="math inline">\(X_1\)</span> nor <span class="math inline">\(X_2\)</span>, so why did the coefficients change so much?</p></li>
@@ -774,7 +810,7 @@ Anova(lm_tr)</code></pre>
 <h2>Fitted Values, Predictions, and MSE are Relatively Stable</h2>
 <ul>
 <li><p>The major issue with multicollinearity is that we can’t tell what effect comes from which predictor.</p></li>
-<li><p>But the effect of multicollinearity on fitted values, predictions, and MSE is much more models.</p></li>
+<li><p>But the effect of multicollinearity on fitted values, predictions, and MSE is much more modest.</p></li>
 <li><p>Confidence intervals for mean have about the same width (predictor levels chosen to have about the same mean estimate in each model)</p>
 <pre class="r"><code>df1 &lt;- data.frame(triceps = 25)
 df2 &lt;- data.frame(triceps = 25, thigh = 50)
@@ -901,7 +937,7 @@ tidy(lm_echo, conf.int = TRUE)</code></pre>
 <pre class="r"><code>echo %&gt;%
   filter(Type != &quot;non-echolocating birds&quot;) %&gt;%
   qplot(x = Type, y = l_mass, data = ., ylab = &quot;log(Mass)&quot;)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-45-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>This is an example of multicollinearity.</p>
 <p>So this interpretation is suspect.</p></li>
 <li><p>The best interpretation is to just say that we are adjusting for body size. E.g. “echolocating bats expend about 8.3% more energy (<span class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating bats, adjusting for body size”.</p></li>
@@ -911,16 +947,14 @@ tidy(lm_echo, conf.int = TRUE)</code></pre>
 <div id="remedies-for-multicollinearity" class="section level2">
 <h2>Remedies for Multicollinearity</h2>
 <ol style="list-style-type: decimal">
-<li>If it is not extreme (Section 10.5 of KNNL), don’t do anything. Just be cognizant of it.</li>
-</ol>
-<p>2.. Drop some of the correlated predictor variables.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>Develop “composite” predictors that combine the correlated predictors.
+<li><p>If it is not extreme (Section 10.5 of KNNL), don’t do anything. Just be cognizant of it.</p></li>
+<li><p>Drop some of the correlated predictor variables.</p></li>
+<li><p>Develop “composite” predictors that combine the correlated predictors.</p>
 <ul>
 <li>Do this manually.</li>
 <li>Use <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal component analysis</a> (PCA).</li>
 </ul></li>
-<li>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</li>
+<li><p>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</p></li>
 </ol>
 </div>
 <div id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity" class="section level2">
