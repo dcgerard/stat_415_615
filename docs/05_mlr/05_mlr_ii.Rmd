@@ -202,7 +202,7 @@ klippy::klippy()
     glimpse(select(earnings, earn_z, height_z))
     ```
     Centering and scaling does not change the underlying information.
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = height, y = earn, data = earnings) + geom_smooth(method = "lm", se = FALSE)
     qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = "lm", se = FALSE)
     ```
@@ -218,19 +218,88 @@ klippy::klippy()
     Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
     $$
 - If we run a linear regression under this model, then the interpretation of coefficient $\beta_i^*$ is:
-    > Individuals that are 1 standard deviation larger in X_i tend to have $\beta_1^*$ higher $Y_i$ on average, adjusting for all other predictors in our model.
 
-- **Example**: XYZ Fit a multiple linear regression model, then scale. Provide interpretation in terms of model.
-
+    > Individuals that are 1 standard deviation larger in $X_i$ tend to have $\beta_1^*$ higher $Y_i$ on average, adjusting for all other predictors in our model.
+    
 - Note: If $X_i^* = \frac{X_i - a}{b}$, then $\beta_i^* = b\beta_i$ and $\hat{\beta}_i^* = b\hat{\beta}_i$.
 
-- **Exercise**: XYZ Let them fit both with and without $Z$-score scaling. Compare coefficients. Provide interpretation using both models. See if the coefficients of other variables change when we scale a different variable.
+- **Exercise**: Recall the portrait studio example where A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include
+    - `young`: The number of persons aged 16 or younger in the community (thousands of persons).
+    - `disp`: The per capita disposable personal income in the community (thousands of dollars).
+    - `sales`: Portrait studio sales in the community (thousands of dollars).
+
+    - You can load these data into R with:
+        ```{r}
+        portrait <- tribble(~young, ~disp, ~sales,
+                            68.5,   16.7,  174.4,
+                            45.2,   16.8,  164.4,
+                            91.3,   18.2,  244.2,
+                            47.8,   16.3,  154.6,
+                            46.9,   17.3,  181.6,
+                            66.1,   18.2,  207.5,
+                            49.5,   15.9,  152.8,
+                            52.0,   17.2,  163.2,
+                            48.9,   16.6,  145.4,
+                            38.4,   16.0,  137.2,
+                            87.9,   18.3,  241.9,
+                            72.8,   17.1,  191.1,
+                            88.4,   17.4,  232.0,
+                            42.9,   15.8,  145.3,
+                            52.5,   17.8,  161.1,
+                            85.7,   18.4,  209.7,
+                            41.3,   16.5,  146.4,
+                            51.7,   16.3,  144.0,
+                            89.6,   18.1,  232.6,
+                            82.7,   19.1,  224.1,
+                            52.3,   16.0,  166.5)
+        ```
+
+    1. Fit a linear model of sales ($Y$) on young ($X_1$) and disp ($X_2$). What are the coefficient estimates?
+        ```{r, echo = FALSE, eval = FALSE}
+        lm_por <- lm(sales ~ young + disp, data = portrait)
+        tidy(lm_por)
+        ```
+        ```{block, eval = FALSE, echo = FALSE}
+        $\hat{\beta}_0$ = -68.9, $\hat{\beta}_1$ = 1.45, $\hat{\beta}_2$ = 9.37
+        ```
+    2. What would happen to the coefficient estimates of `young` and `disp` if you converted the units of `disp` to tens of thousands of dollars?
+        ```{block, eval = FALSE, echo = FALSE}
+        The coefficient for `young` will stay the same. The coefficient for `disp` will be multiplied by 10.
+        ```
+    3. Convert `disp` to units of tens of thousands of dollars and rerun the regression. Did what you think would happen to the coefficient happen?
+        ```{r, echo = FALSE, eval = FALSE}
+        portrait <- mutate(portrait, disp_ten = disp / 10)
+        tidy(lm(sales ~ young + disp_ten, data = portrait))
+        ```
+        ```{block, eval = FALSE, echo = FALSE}
+        Yes, $\hat{\beta}_0$ = -68.9, $\hat{\beta}_1$ = 1.45, $\hat{\beta}_2$ = 93.7.
+        ```
+    4. What about if convert `disp` to $z$-scores? What do you think would happen to the `young` coefficient estimate? Verify your statement.
+        ```{block, eval = FALSE, echo = FALSE}
+        It will stay the same. We can verify that $\hat{\beta}_1 = 1.45$ with the code below.
+        ```
+        ```{r, echo = FALSE, eval = FALSE}
+        portrait <- mutate(portrait, disp_z = (disp - mean(disp)) / sd(disp))
+        tidy(lm(sales ~ young + disp_z, data = portrait))
+        ```
+    5. Run a linear model by first converting `young` and `disp` to $z$-scores. Interpret the coefficients.
+        ```{r, echo = FALSE, eval = FALSE}
+        portrait <- mutate(portrait, young_z = (young - mean(young)) / sd(young))
+        tidy(lm(sales ~ young_z + disp_z, data = portrait))
+        ```
+        ```{block, eval = FALSE, echo = FALSE}
+        Cities that have the same number of young folks, but are 1 standard deviation higher in disposable income, tend to have \$9100 more in sales.
+        
+        Cities that have the same amount of disposable income, but are 1 standard deviation higher in young folks, tend to make \$27000 more in sales.
+        ```
+  
+- $Z$-scores make the coefficients more comparable. However, the issues of multicollinearity (next section) still might make it hard to compare the importance of various predictors. This is because, e.g. in our portrait example, there might not be any cities that are 1 standard deviation higher in disposable income but have the same number of young folks.
 
 # Multicollinearity
 
 - **Multicollinearity**: Correlation between predictors.
 
-- Multicollinearity is the rule, not the exception.
+- In observational studies, multicollinearity is the rule, not the exception.
     - In observational studies, you will always have some correlation between predictors.
     - But too much correlation can be a really bad thing (how much is too much is calculated in Chapter 10).
 
@@ -289,7 +358,7 @@ select(tidy(lm_tr_th_m), term, estimate)
 
 
 
-- 😲 Look how much they change!
+- 😱 Look how much they change!
 
 - **Exercise**: What is the model for each row in the above table?
 
@@ -388,7 +457,7 @@ select(tidy(lm_tr_th_m), term, std.error)
 
 - The major issue with multicollinearity is that we can't tell what effect comes from which predictor.
 
-- But the effect of multicollinearity on fitted values, predictions, and MSE is much more models.
+- But the effect of multicollinearity on fitted values, predictions, and MSE is much more modest.
 
 - Confidence intervals for mean have about the same width (predictor levels chosen to have about the same mean estimate in each model)
     ```{r}
@@ -528,7 +597,7 @@ select(tidy(lm_tr_th_m), term, std.error)
 
 1. If it is not extreme (Section 10.5 of KNNL), don't do anything. Just be cognizant of it.
 
-2.. Drop some of the correlated predictor variables.
+2. Drop some of the correlated predictor variables.
 
 3. Develop "composite" predictors that combine the correlated predictors.
     - Do this manually.

@@ -532,7 +532,7 @@ glimpse(sat)</code></pre>
 <ul>
 <li><p>True model: <span class="math inline">\(E(Y|X_1) = X_1\)</span></p></li>
 <li><p>Fit Model: <span class="math inline">\(E(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2X_2\)</span></p></li>
-<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9994.</p></li>
+<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9995.</p></li>
 <li><p>We will simulate <span class="math inline">\(Y\)</span> and plot the resulting OLS estimates.</p></li>
 <li><p>Black is truth</p>
 <p><img src="figs/sim_pred.gif" style="display: block; margin: auto;" /></p></li>
@@ -630,11 +630,11 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 <h1>Step 6: Automated Variable Selection</h1>
 <ul>
 <li><p>If appropriate, use an automatic variable selection technique to choose a suitable subset of explanatory variables.</p></li>
-<li><p>An automatic variable selection technique has a criterion where a higher value indicates a better fit.</p></li>
+<li><p>An automatic variable selection technique has a criterion where a higher or lower value indicates a better fit.</p></li>
 <li><p>The computer adds/deletes variables from the model until it reaches a point where it cannot increase the criterion any more.</p></li>
 <li><p>The selected model is considered the “best” one.</p></li>
 <li><p>You need to make sure your “rich” model has no major issues before implementing these approaches.</p></li>
-<li><p>Most statisticians dislike automatic variable selection approaches, but they can be useful to</p>
+<li><p>Most statisticians dislike automatic variable selection approaches, since they have bad sampling properties, but they can be useful to</p>
 <ol style="list-style-type: decimal">
 <li>Control for many predictors when your objective is the relationship between a couple key predictors and a response variables, and</li>
 <li>Fishing for hypotheses, as long as you don’t take your results too seriously and always hedge when you present results.</li>
@@ -647,7 +647,7 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
   AIC = n\log\left(\frac{SSE}{n}\right) + 2p
   \]</span>
 <ul>
-<li>Lower is better.</li>
+<li>Lower AIC is better.</li>
 <li>Fit (in terms of SSE) + penalty on the number of parameters.</li>
 <li>As <span class="math inline">\(p\)</span> increases, SSE decreases, but this is possibly offset by the penalty.</li>
 <li>This is the criterion base R includes by default for stepwise procedures.</li>
@@ -656,7 +656,7 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
   AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
   \]</span>
 <ul>
-<li>Lower is better.</li>
+<li>Lower BIC is better.</li>
 <li>Again, fit + penalty.</li>
 <li>As <span class="math inline">\(p\)</span> increases, SSE decreases, but this is possibly offset by the penalty.</li>
 <li>Better than AIC when you have not been as careful about deleting redundant predictors.</li>
@@ -675,15 +675,15 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
   R^2 = 1 - \frac{SSE}{SSTO}
   \]</span>
 <ul>
-<li>Higher is better (explains more variation..</li>
+<li>Higher <span class="math inline">\(R^2\)</span> is better (explains more variation..</li>
 <li>Do not use this one for variable selection.</li>
 <li>Recall that <span class="math inline">\(R^2\)</span> will decrease as we add more predictors, so we cannot use it to compare models with differen numbers of predictors.</li>
 </ul></li>
 <li>Adjusted <span class="math inline">\(R_a^2\)</span>: Look at whether there is a “plateau” when you add predictors. <span class="math display">\[
-  R^2 = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
+  R^2_a = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
   \]</span>
 <ul>
-<li>Higher is better (explains more variation).</li>
+<li>Higher <span class="math inline">\(R^2_a\)</span> is better (explains more variation).</li>
 </ul></li>
 </ul>
 </div>

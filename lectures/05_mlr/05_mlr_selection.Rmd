@@ -370,7 +370,7 @@ From the Statistical Sleuth:
 
 - If appropriate, use an automatic variable selection technique to choose a suitable subset of explanatory variables.
 
-- An automatic variable selection technique has a criterion where a higher value indicates a better fit. 
+- An automatic variable selection technique has a criterion where a higher or lower value indicates a better fit. 
 
 - The computer adds/deletes variables from the model until it reaches a point where it cannot increase the criterion any more.
 
@@ -378,7 +378,7 @@ From the Statistical Sleuth:
 
 - You need to make sure your "rich" model has no major issues before implementing these approaches.
 
-- Most statisticians dislike automatic variable selection approaches, but they can be useful to 
+- Most statisticians dislike automatic variable selection approaches, since they have bad sampling properties, but they can be useful to 
     1. Control for many predictors when your objective is the relationship between a couple key predictors and a response variables, and
     2. Fishing for hypotheses, as long as you don't take your results too seriously and always hedge when you present results.
 
@@ -388,7 +388,7 @@ From the Statistical Sleuth:
     $$
     AIC = n\log\left(\frac{SSE}{n}\right) + 2p
     $$
-    - Lower is better.
+    - Lower AIC is better.
     - Fit (in terms of SSE) + penalty on the number of parameters.
     - As $p$ increases, SSE decreases, but this is possibly offset by the penalty.
     - This is the criterion base R includes by default for stepwise procedures.
@@ -397,7 +397,7 @@ From the Statistical Sleuth:
     $$
     AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
     $$
-    - Lower is better.
+    - Lower BIC is better.
     - Again, fit + penalty.
     - As $p$ increases, SSE decreases, but this is possibly offset by the penalty.
     - Better than AIC when you have not been as careful about deleting redundant predictors.
@@ -417,15 +417,15 @@ From the Statistical Sleuth:
     $$
     R^2 = 1 - \frac{SSE}{SSTO}
     $$
-    - Higher is better (explains more variation..
+    - Higher $R^2$ is better (explains more variation..
     - Do not use this one for variable selection. 
     - Recall that $R^2$ will decrease as we add more predictors, so we cannot use it to compare models with differen numbers of predictors.
 
 - Adjusted $R_a^2$: Look at whether there is a "plateau" when you add predictors. 
     $$
-    R^2 = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
+    R^2_a = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
     $$
-    - Higher is better (explains more variation).
+    - Higher $R^2_a$ is better (explains more variation).
 
 ## Automated Procedures
 

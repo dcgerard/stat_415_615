@@ -28,43 +28,138 @@ klippy::klippy()
 - Chapter 12 of Statistical Sleuth.
 - Chapter 9 of KNNL
 
-# Steps of choosing a model
+# Motivation
+
+- You often have many predictor variables.
+
+- Including too few and you are potentially not controlling for key variables.
+
+- Including too many and your regression coefficient estimates might be unstable.
+
+- **Model selection**: Choosing which variables (and transformations of these variables) to include.
+
+# Steps of Selecting a Model
+
+From the Statistical Sleuth:
 
 1. Identify the key objectives.
 2. Screen the available variables, deciding on a list that is sensitive to the objectives and excludes obvious redundancies.
-3. Perform exploratory analysis, examining graphical displays and correlation coeﬃcients.
-4. Perform transformations as necessary.
-5. Examine a residual plot after fitting a rich model, performing further transformations and considering outliers.
+- Steps 3, 4, and 5: Repeat the following until satisfied:
+    3. Perform exploratory analysis, examining graphical displays and correlation coeﬃcients.
+    4. Perform transformations as necessary.
+    5. Examine a residual plot after fitting a rich model, performing further transformations and considering outliers.
 6. Use a computer-assisted technique for finding a suitable subset of explanatory variables, exerting enough control over the process to be sensitive to the questions of interest.
 7. Proceed with the analysis, using the selected explanatory variables.
 
 # Step 1: Identify Objectives and Questions of Interest
 
-- Example 1: Interested in association of  one explanatory variable and one response.
+## Objective: Association between X and Y controlling for Z
 
-    - Goal is to determine that association *after adjusting for other variables*.
-    
-    - Then want to perform variable selection with everything *except* explanatory variable of interest, then include it to test for that association.
+- Goal is to determine the association between a response and some interesting predictors *after adjusting for other nuisance predictors*.
 
-- Example 2: Just want to fish for associations
+- *Example*: Is there evidence of an association between salary and sex after adjusting for other, legitimate, determinants of salary?
+    - Association of interest: sex versus salary
+    - Nuisance variables to adjust for: Seniority, age, education, experience
+    
+- Generally, a good strategy is to (during steps 6 and 7 from above)
+    1. Perform automatic variable selection techniques with everything *except* the explanatory variables of interest, then
+    2. Include the explanatory variables of interest to test for associations.
+    
+- Automatic variable selection techinques destroy the interpretation of $p$-values. So
+    - Do **not** interpret what set of nuisance variables were chosen, 
+    - Do **not** interpret the p-values of the nuisance variables
+    - Do **not** interpret the the coefficients of the nuisance variables. 
+    - **Only** interpret the coefficients and *p*-values corresponding to the variables of interest.
+    
+- **Example**: Using automatic selection procedures, it was determined to include experience, seniority, and education, but not age in the final model. After adding in sex, the resulting fit to the final model was
 
-    - Then iterate through adding/removing variables, making transformations, checking residuals, until you develop a model with significant terms and no major issues.
+    ```{r, echo = FALSE, message = FALSE}
+    library(Sleuth3)
+    library(tidyverse)
+    library(broom)
+    data("case1202")
+    sdisc <- case1202
+    sdisc <- mutate(sdisc, l_bsal = log(Bsal))
+    # lm_full <- lm(l_bsal ~ Senior + Age + Educ + Exper, data = sdisc)
+    # s_out <- step(lm_full)
+    lm_final <- lm(l_bsal ~ Senior + Educ + Exper + Sex, data = sdisc)
+    tidy(lm_final)
+    ```
     
-    - $p$-values/confidence intervals don't have proper interpretation.
+    - It is tempting to say that Age is not associated with salary, adjusting for other variables, while the other variables are associated with salary, adjusting for other variables. However, **this is wrong**.
     
-        - Same problems with multiple comparisons --- ran many tests and looked at data a lot to come to final model.
+    - Since we used an automatic variable selection procedure for Age, Seniority, Education, and Experience, we cannot interpret those coefficients or $p$-values.
+    
+    - We can only interpret the coefficient and $p$-value for sex, which we did not use a automatic variable selection technique on. 
+    
+    - We estimate that females make about 89\% the salary of males, adjusting for other, legitimate, predictors of base salary. The evidence is strong that this association is not due to chance alone ($p = 3.3\times 10^{-8}$).
+    
+    - Technically, we are also adjusting for age in this statement, even though it was not in the model, because it had the chance to be in the model.
+
+## Objective: Fishing
+
+- You have a response variable and many explanatory variables, and you want to know what variables are possibly associated with your response.
+
+- Then iterate through adding/removing variables, making transformations, checking residuals, until you develop a model with significant terms and no major issues.
+    
+- $p$-values/confidence intervals don't have proper interpretation.
+    - Same problems with multiple comparisons --- ran many tests and looked at data a lot to come to final model.
         
-    - You generally build a model and tell stories with it.
+- You generally build a model and tell stories with it.
 
-- Example 3: Prediction
+- Issues:
+    1. Explanatory variables are not necessarily special. Inclusion/exclusion strongly affected by multicollinearity.
+        - I.e., You are just generating hypotheses, **not** conclusions.
+    2. Causal interpretations are not allowed, as usual, with observational studies.
+    3. $p$-values are meaningless.
+    
+- If your dataset is large, then you can split your data into a training set and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain $p$-values that have the proper interpretation.
+    - Test set could be about 25\% and the training set about 75\%.
+    - Splitting data is feasible if you have more than 6 observations per predictor variable in the training set.
+    - As soon as you look at how well your method works on your test set, you can no longer do anything. 
+    - I.e. if you cheat and redo your analysis to better fit the test set, then you are back to the problems of fishing and there was no point in splitting the data in the first place.
 
-    - Include variables to maximize predictive power, don't worry about interpretation.
+## Objective: Prediction
+
+- Include variables to maximize predictive power, don't worry about interpretation.
+
+- This lecture is not when prediction is the goal.
+
+- The automatic variable selection procedures described in this lecture are not often used when the goal is prediction.
+
+- Take the Machine Learning course for details when the goal is prediction. 
+    - Typical methods include regularization and cross validation.
 
 # Step 2: Screen Available Variables
 
 - Choose a list of explanatory variables that are important to the objective.
 
-- Screen out redundant variables
+- Screen out redundant variables.
+
+- Use your domain expertise for screening variables.
+
+- Note: What variables are important will depend on the question being asked.
+
+- **Example**: Researchers were interested in what variables were associated with state average SAT scores. Possible predictors include
+    - `Takers`: Percentage of high school seniors in the state who took the exam.
+    - `Income`: Median income of families of test-takers (hundreds of dollars).
+    - `Years`: Average number of years test-takers had formal studies.
+    - `Public`: Percentage of test-takers who attended public schools.
+    - `Expend`: Total state expenditure on secondary schools, in hundreds of dollars per student.
+    - `Rank`: Median percentile ranking of test-takers within their secondary school classes.
+
+    ```{r}
+    library(Sleuth3)
+    data("case1201")
+    sat <- case1201
+    glimpse(sat)
+    ```
+    
+    - Goal 1: Business firm looking for a place to build a new facility. They want to know if SAT scores accurately reflect educational training of the labor market in that state.
+        - Only care if SAT score is associated with `Rank` (the educational training variable) after accounting for selection bias (`Takers`).
+    
+    - Goal 2: Government wants to determine impact of state expenditures on SAT scores. Then include all variables as possible predictors to so we can see what effect expenditures has that cannot be accounted by other variables.
+
 
 - Problems with Including Too Few Variables
     
@@ -194,55 +289,210 @@ klippy::klippy()
         # }, movie.name = "sim_pred.gif", ani.height = 300, ani.width = 400)
         ```
 
-
-
 # Steps 3 through 5
 
-- Exploratory data analysis.
+3. Exploratory data analysis.
 
     - Tons of scatterplots.
     
     - Look at correlation coefficients.
     
-- Transformations based on EDA.
+4. Transformations based on EDA.
 
-- Fit a rich model and look at residuals. 
+5. Fit a rich model and look at residuals. 
 
     - Look for curvature, non-constant variance, and outliers.
     
 - Iterate the above steps until you don't see any issues.
 
-# Step 6
+## SAT Example
 
-- If appropriate, use a computer aided technique to choose a suitable subset of explanatory variables.
+- Matrix scatterplot of SAT data
 
-- Look at model criteria to compare final models.
+    ```{r, message = FALSE, fig.width=7, fig.height=7}
+    library(GGally)
+    ggpairs(sat, columns = 2:8)
+    ```
+
+- Curvature between SAT scores and percentage takers. But it looks like constant variance at first, so maybe taking a log of percentage takers would help.
+
+    ```{r}
+    sat <- mutate(sat, l_takers = log(Takers))
+    qplot(x = l_takers, y = SAT, data = sat)
+    ```
+
+- There is a huge outlier in expenditures caused by Alaska
+    ```{r}
+    arrange(sat, desc(Expend)) %>%
+      select(State, Expend) %>%
+      head()
+    ```
+    
+- Let's fit a rich model to identify any other transformations and other possible issues.
+
+    ```{r}
+    lm_rich <- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
+    a_rich <- augment(lm_rich)
+    qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = l_takers, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = Income, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = Years, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = Public, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = Expend, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    qplot(x = Rank, y = .resid, data = a_rich) + geom_hline(yintercept = 0)
+    ```
+    
+    The only worry is the expenditures residual plot where, again, we see Alaska.
+
+- In Chapter 10, we will learn about leverage values, and we see that Alaska has a very high Cook's distance (`.cooksd`) and a high leverage (`.hat`).
+    ```{r}
+    a_rich %>%
+      bind_cols(select(sat, State)) %>%
+      select(State, .cooksd, .hat) %>%
+      arrange(desc(.cooksd))
+    ```
+    
+    - A high leverage is typically above $2p/n$, or in this case $2 * 7 / 50 = 0.28$
+    
+    - A high Cook's distance is around or above 1.
+
+- Let's remove Alaska. This is probably OK since Alaska uses expenditures on things like long distance travel for teachers, and higher heating bills, which do not have a direct effect on educational attainment. Thus, this expenditure value is likely not representative of our objective.
+
+    ```{r}
+    sat <- filter(sat, State != "Alaska")
+    ```
+
+- We would go through the above steps again to see if everything looks good in our rich model.
+
+- This is also the stage where we would include quadratic terms, do other variable transformations, etc.
+
+# Step 6: Automated Variable Selection
+
+- If appropriate, use an automatic variable selection technique to choose a suitable subset of explanatory variables.
+
+- An automatic variable selection technique has a criterion where a higher or lower value indicates a better fit. 
+
+- The computer adds/deletes variables from the model until it reaches a point where it cannot increase the criterion any more.
+
+- The selected model is considered the "best" one.
+
+- You need to make sure your "rich" model has no major issues before implementing these approaches.
+
+- Most statisticians dislike automatic variable selection approaches, since they have bad sampling properties, but they can be useful to 
+    1. Control for many predictors when your objective is the relationship between a couple key predictors and a response variables, and
+    2. Fishing for hypotheses, as long as you don't take your results too seriously and always hedge when you present results.
 
 ## Criteria
 
-XYZ
+- AIC: Akaike's Information Criterion
+    $$
+    AIC = n\log\left(\frac{SSE}{n}\right) + 2p
+    $$
+    - Lower AIC is better.
+    - Fit (in terms of SSE) + penalty on the number of parameters.
+    - As $p$ increases, SSE decreases, but this is possibly offset by the penalty.
+    - This is the criterion base R includes by default for stepwise procedures.
 
-- Adjusted $R^2$
-
+- BIC (SBC): The Bayesian information Criterion (aka Schwarz's Bayesian Criterion) penalizes the parameters a little more than AIC.
+    $$
+    AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+    $$
+    - Lower BIC is better.
+    - Again, fit + penalty.
+    - As $p$ increases, SSE decreases, but this is possibly offset by the penalty.
+    - Better than AIC when you have not been as careful about deleting redundant predictors.
+    
 - Mallows $C_p$
+    $$
+    C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
+    $$
+    - $\hat{\sigma}^2$ is the MSE under the model under consideration.
+    - $\hat{\sigma}^2_{full}$ is the MSE under the model that uses all possible explanatory variables.
+    - Lower $C_p$ is better.
+    - Mallow's $C_p$ is an estimate of the "Total Mean Squared Error" which is the sum of the bias squared and the variance. Small values of Mallow's $C_p$ indicate that the model both has low bias and low variance.
+    - If there is no bias, then $C_p \approx p$ (since $\hat{\sigma}^2 \approx \hat{\sigma}^2_{full}$). So all models withere $C_p$ is near $p$ are considered "good" models.
 
-- AIC and SBC
+
+- $R^2$: 
+    $$
+    R^2 = 1 - \frac{SSE}{SSTO}
+    $$
+    - Higher $R^2$ is better (explains more variation..
+    - Do not use this one for variable selection. 
+    - Recall that $R^2$ will decrease as we add more predictors, so we cannot use it to compare models with differen numbers of predictors.
+
+- Adjusted $R_a^2$: Look at whether there is a "plateau" when you add predictors. 
+    $$
+    R^2_a = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
+    $$
+    - Higher $R^2_a$ is better (explains more variation).
 
 ## Automated Procedures
 
-XYZ
+- "Best" subsets: Look at all possible models given the set of predictors, choose the one with the best criterion.
 
-- "Best" subsets
+- Forward/Backward Selection: Start with a model with no predictors $Y_i = \beta_0 + \epsilon_i$.
+    - Fit all models where you **add** a predictor. Choose the one that improves the criterion the best.
+    - Fit all models where you **remove** a predictor. Choose the one that improves the criterion the best.    
+    - Iterate until you cannot add/remove any more predictors.
 
-- Forward/backward stepwise methods
+- The forward/backward approach is not gauranteed to find the model with the "best" criterion.
 
-# Step 7
+- When you add/subtract a categorical variable, you should add/subtract all of the indicators associated with that categorical variable.
+
+- Make sure you also include first-order terms if second order terms are kept in the model.
+
+# Step 7: Proceed with Caution
 
 - Proceed with analysis with chosen explanatory variables.
 
-- Tell stories with the data using $p$-values, coefficient estimates, confidence intervals, etc...
+- Evaluate residual plots for your final model. Perform other model checks.
+
+- Tell stories with the data using $p$-values, coefficient estimates, confidence intervals, coefficients of determination, etc...
 
 - Step 7 is what we've been discussing this whole semester.
+
+# Implementation in R
+
+- You can get AIC, BIC, $R^2$, and $R_a^2$ via `glance()` from `{broom}`
+    ```{r}
+    lm_rich <- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
+    glance(lm_rich)  %>%
+      select(AIC, BIC, r.squared, adj.r.squared)
+    ```
+
+- No easy default way in R to get $C_p$. But other software packages use it, so it is good to be aware of.
+
+- Use the `step()` function to choose a model by AIC/BIC via automated search.
+    - The `object` argument is the intial model that it will search from.
+    - The `scope` argument specifies the simplest and the most complicated models possible.
+        - If you give it a single formula, this is the most complicated model possible.
+        - If you give it a list of formulas, these are the most complicated and simplest models possible.
+    - You can use the output of `step()` like the output of `lm()` (via `tidy()`, `augment()`, etc).
+
+- To use both a lower and upper bound, do:
+    ```{r}
+    lm_init <- lm(SAT ~ Income + Years, data = sat)
+    sout <- step(object = lm_init, scope = list(upper = SAT ~ l_takers + Income + Years + Public + Expend + Rank, lower = SAT ~ Income))
+    tidy(sout)
+    ```
+
+- To use just an upper bound, do:
+    ```{r}
+    lm_init <- lm(SAT ~ Income + Years, data = sat)
+    sout <- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank)
+    tidy(sout)
+    ```
+
+- Modify the `k` argument to be $log(n)$ to fit by BIC
+
+    ```{r}
+    sout <- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank, k = log(nrow(sat)))
+    tidy(sout)
+    ```
+
+
+
 
 
 

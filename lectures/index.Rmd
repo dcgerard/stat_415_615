@@ -54,7 +54,7 @@ University by [David Gerard](https://dcgerard.github.io/).
       - ANOVA perspective of hypothesis testing in the muliple linear regression model.
       - Sections 6.5, 6.9, 7.1, 7.2, and 7.3 of KNNL
   - [Lecture 05-3: MLR: Practical Considerations](./05_mlr_ii.html).
-      - Standardizing predictors, multicollinearity, statistical versus practical significance.
+      - Standardizing predictors, multicollinearity.
       - Chapter 7 of KNNL.
       - Chapter 12 of ROS.
   - [Lecture 05-4: MLR: Quadratic Terms, Interaction Effects, and Categorical Variables](./05_mlr_iii.html).
@@ -66,7 +66,8 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 10 of KNNL.
 - 06 Design
   - [Lecture 06-1: Design of Regression Experiments](./06_design.html).
-- 07 Missing data
+- 07 Logistic Regression
+  - [Lecture 07-1: Logistic Regression](./07_logistic.html).
 - Review Sheets
   - [Equations](./rr_equations.html).
 

@@ -146,6 +146,47 @@ From the *Statistical Sleuth*:
     2. When the question of interest calls for finding the values that maximize or minimize the mean response.
     3. When careful modeling of the regression is called for by the questions of interest (and presumably this is only the case if there are just a few explanatory variables).
     4. When inclusion is used to produce a rich model for assessing the fit of an inferential model.
+    
+# Splines
+
+- Splines are piece-wise cubic functions.
+
+- Many curves are well-approximated **locally** by cubic functions, even if they are not well approximated **globally** by cubic functions.
+
+- Think about them as kind of non-parametric curves. But because they are piecewise cubic, we can use them as components in `lm()`.
+
+- You can include a non-parametric curve as a covariate in R via splines.
+
+- Fit a spline in R using the `bs()` function. 
+    ```{r}
+    library(splines)
+    lm_mspline <- lm(mass ~ bs(age, df = 5), data = muscle)
+    ```
+    
+- The `df` argument tells you how much degrees of freedom you want to give up to fit the spline. Higher means more flexible, but also possibly more unstable (if you have too small a sample size).
+
+- Let's make predictions and plot the predictions:
+    ```{r}
+    newdf <- data.frame(age = seq(min(muscle$age), max(muscle$age), length.out = 100))
+    newdf$mass <- predict(object = lm_mspline, newdata = newdf)                    
+    ggplot() +
+      geom_line(data = newdf, mapping = aes(x = age, y = mass)) +
+      geom_point(data = muscle, mapping = aes(x = age, y = mass))
+    ```
+
+- Do **not** interpret the coefficient estimates and $p$-values here
+    ```{r}
+    tidy(lm_mspline)
+    ```
+
+- But you can interpret the overall $F$-test as testing for whether a non-parameteric association exists.
+
+    ```{r}
+    glance(lm_mspline) %>%
+      select(p.value)
+    ```
+
+- Splines aren't good for interpretation, but they are good for flexibly controlling for a variable that you can't seem to get to behave via other transformations.
 
 # Categorical Variables
 
