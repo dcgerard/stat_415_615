@@ -491,8 +491,40 @@ From the Statistical Sleuth:
     tidy(sout)
     ```
 
+# Exercise
 
+The following is from the *Statistical Sleuth*.
 
+Southwestern U.S. desert wildflower enthusiasts know that a triggering rainfall between late September and early December and regular rains through March often lead to a good wildflower show in the spring. The dataset for this exercise might help with the prediction. It includes monthly rainfalls from September to March and the subjectively rated quality of the following spring wildflower display for each of a number of years at each of four desert locations in the southwestern United States (Upland Sonoran Desert near Tucson, the lower Colorado River Valley section of the Sonoran Desert, the Baja California region of the Sonoran Desert, and the Mojave Desert). The quality of the display was judged subjectively with ordered rating categories of poor, fair, good, great, and spectacular. The column labeled `Score` is a numerical representation of the rating, with `0` for poor, `1` for fair, `2` for good, `3` for great, and `4` for spectacular. Although this is a made-up number and the suitability of regression for such a discrete response is questionable, an informal regression analysis might nevertheless be helpful for casual prediction. Variables include
 
+- `Year`: year of observed wildflower season
+- `Region`: a factor variable with 4 levels: "baja", "colorado", "mojave", and "upland"
+- `Sep`: the September rainfall, in inches
+- `Oct`: the October rainfall, in inches
+- `Nov`: the November rainfall, in inches
+- `Dec`: the December rainfall, in inches
+- `Jan`: the January rainfall, in inches
+- `Feb`: the February rainfall, in inches
+- `Mar`: the March rainfall, in inches
+- `Total`: the total rainfall from September through March, in inches
+- `Rating`: a factor with a subjective assessment of the quality of wildflower bloom with levels "FAIR", "GOOD", "GREAT", "POOR", and "SPECTACULAR"
+- `Score`: a numerical variable corresponding to the order of rating categories, with Poor=0, Fair=1, Good=2, Great=3, and Spectacular=4
 
+You can load these data into R via
+
+```{r}
+library(Sleuth3)
+data("ex1221")
+flower <- ex1221
+glimpse(ex1221)
+```
+
+1. Peform an exploratory data analysis on these data. What do you see?
+2. Fit a rich model to these data, determine what variable transformations might be necessary.
+3. Apply these variable transformations until you obtain a rich model that appears to meet the assumptions of the linear model.
+4. Use an automatic variable selection technique to come up with a (or a couple) model(s) from which to choose a final predictive model.
+5. State your final predictive model, and state any conclusions.
+6. What is the predicted quality score for a season with these rainfall amounts in the Upland region: Sep: 0.45, Oct: 0.02, Nov: 0.80, Dec: 0.76, Jan: 0.17, Feb: 1.22, and Mar: 0.37? Appropriately quantify your uncertainty in these predictions.
+
+Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, "Wildflower Flourishes and Flops—a 50-Year History," <www.desertmuseum.org/programs/flw wildflwrbloom.html> (July 25, 2011).)
 
