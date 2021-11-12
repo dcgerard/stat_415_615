@@ -11,6 +11,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
+set.seed(1)
 library(latex2exp)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center",
@@ -113,6 +114,10 @@ From the Statistical Sleuth:
     2. Causal interpretations are not allowed, as usual, with observational studies.
     3. $p$-values are meaningless.
     
+- This is a strict interpretation, but folks in the real world typically fudge a little bit. How bad this is depends on how much fudging you do. My opinion:
+  - If you have many variables, a small sample size, and use automatic variable selection to come up with a model with a few predictors, then you are out of luck.
+  - If you have a large sample size, a small number of predictors, and you use some automatic procedures to come up with a couple models that you are going to use your expertise to choose between, then you are only fudging a little bit.
+
 - If your dataset is large, then you can split your data into a training set and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain $p$-values that have the proper interpretation.
     - Test set could be about 25\% and the training set about 75\%.
     - Splitting data is feasible if you have more than 6 observations per predictor variable in the training set.
@@ -519,7 +524,7 @@ flower <- ex1221
 glimpse(ex1221)
 ```
 
-1. Peform an exploratory data analysis on these data. What do you see?
+1. Perform an exploratory data analysis on these data. What do you see?
 2. Fit a rich model to these data, determine what variable transformations might be necessary.
 3. Apply these variable transformations until you obtain a rich model that appears to meet the assumptions of the linear model.
 4. Use an automatic variable selection technique to come up with a (or a couple) model(s) from which to choose a final predictive model.
