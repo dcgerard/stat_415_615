@@ -158,7 +158,7 @@ Here is a list of the equations I want you to have memorized on the top of your 
     $$
     C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
     $$
-
+    - $\hat{\sigma}^2$ is the MSE for the model under consideration. $\hat{\sigma}^2_{full}$ is the MSE for the model with every predictor in it.
 
 - The leverage value: $h_{ii}$ is the $i$th diagonal element of the hat matrix.
 

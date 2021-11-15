@@ -383,7 +383,10 @@ $(document).ready(function () {
   \]</span></p></li>
 <li><p>Mallows <span class="math inline">\(C_p\)</span>: <span class="math display">\[
   C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
-  \]</span></p></li>
+  \]</span></p>
+<ul>
+<li><span class="math inline">\(\hat{\sigma}^2\)</span> is the MSE for the model under consideration. <span class="math inline">\(\hat{\sigma}^2_{full}\)</span> is the MSE for the model with every predictor in it.</li>
+</ul></li>
 <li><p>The leverage value: <span class="math inline">\(h_{ii}\)</span> is the <span class="math inline">\(i\)</span>th diagonal element of the hat matrix.</p></li>
 <li><p>The studentized residual <span class="math display">\[
   r_i = \frac{e_i}{\sqrt{MSE(1 - h_{ii})}}
