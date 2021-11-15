@@ -11,6 +11,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
+set.seed(1)
 library(latex2exp)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center",
@@ -41,7 +42,7 @@ klippy::klippy()
     ```
 
 - These data look like a quadratic fit could help
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = age, y = mass, data = muscle) +
       geom_smooth(se = FALSE)
     

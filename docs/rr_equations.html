@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-07" />
+<meta name="date" content="2021-11-15" />
 
 <title>Equation Review</title>
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Equation Review</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-07</h4>
+<h4 class="date">2021-11-15</h4>
 
 </div>
 
@@ -332,7 +332,6 @@ $(document).ready(function () {
 <li><p>Bonferroni corrected <span class="math inline">\(p\)</span>-values: unadjusted <span class="math inline">\(p\)</span>-value <span class="math inline">\(\times\)</span> number of tests.</p></li>
 <li><p>Matrix stuff</p>
 <ul>
-<li>For the midterm, I just want you to be able to give me the matrix form of the SLR model.</li>
 <li><span class="math inline">\(x_{ij}\)</span> is the <span class="math inline">\((i, j)\)</span>th element of the matrix <span class="math inline">\(\mathbf{X}\)</span>.</li>
 <li>Matrix transpose definition <span class="math inline">\(\mathbf{X}^T\)</span></li>
 <li>Identity matrix, <span class="math inline">\(\mathbf{I}_n\)</span>.</li>
@@ -342,6 +341,63 @@ $(document).ready(function () {
 <li>Matrix form of coefficient estimates: <span class="math inline">\(\hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\)</span></li>
 <li>Hat matrix, <span class="math inline">\(\mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\)</span>, and why it is called the hat matrix.</li>
 </ul></li>
+<li><p>Multiple linear regression model: <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+  E[\epsilon_i] &amp;= 0\\
+  var(\epsilon_i) &amp;= \sigma^2\\
+  cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
+  \end{align}\]</span></p></li>
+<li><p>Quadratic Regression.</p></li>
+<li><p>Indicator variables, how they show up in a design matrix.</p></li>
+<li><p>Interaction Effects.</p></li>
+<li><p>The <em>error sum of squares</em> given predictors <span class="math inline">\(X_1, X_2, \ldots, X_{p-1}\)</span>. <span class="math display">\[
+  SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} + \cdots + \hat{\beta}_{p-1}X_{i,p-1})\right]^2
+  \]</span></p></li>
+<li><p>The <strong>extra sum of squares</strong> <span class="math display">\[\begin{align}
+  SSR(X_1|X_2) &amp;= SSE(X_2) - SSE(X_1, X_2) = SSR(X_1, X_2) - SSR(X_2)\\
+  SSR(X_2|X_1) &amp;= SSE(X_1) - SSE(X_1, X_2) = SSR(X_1, X_2) - SSR(X_1)\\
+  SSR(X_1, X_2|X_3) &amp;= SSE(X_3) - SSE(X_1, X_2, X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
+  \text{ etc...}
+  \end{align}\]</span></p></li>
+<li><p>Decomposing sum of squares (with corresponding degrees of freedom), e.g.  <img src="decomp.png" width="50%" style="display: block; margin: auto;" /></p></li>
+<li><p>Type I versus Type II sums of squares.</p></li>
+<li><p>How the <span class="math inline">\(F\)</span>-test can be used for different hypothesis tests.</p></li>
+<li><p>Adjusted coefficient of multiple determination: <span class="math display">\[\begin{align}
+  R^2_a = 1 - \left(\frac{n-1}{n-p}\right)\frac{SSE}{SSTO}.
+  \end{align}\]</span></p></li>
+<li><p>Coefficients of partial determination <span class="math display">\[\begin{align}
+  R^2_{Y1|23} &amp;= \frac{SSR(X_1|X_2, X_3)}{SSE(X_2, X_3)}\\
+  R^2_{Y2|13} &amp;= \frac{SSR(X_2|X_1, X_3)}{SSE(X_1, X_3)}\\
+  R^2_{Y3|12} &amp;= \frac{SSR(X_3|X_1, X_2)}{SSE(X_1, X_2)}\\
+  R^2_{Y4|123} &amp;= \frac{SSR(X_4|X_1, X_2, X_3)}{SSE(X_1, X_2, X_3)}\\
+  &amp;\text{etc...}
+  \end{align}\]</span></p></li>
+<li><p><span class="math inline">\(Z\)</span>-score <span class="math display">\[
+  Z_i = \frac{X_i - \bar{X}}{s_x}
+  \]</span></p></li>
+<li><p>AIC: Akaike’s Information Criterion <span class="math display">\[
+  AIC = n\log\left(\frac{SSE}{n}\right) + 2p
+  \]</span></p></li>
+<li><p>BIC: Bayesian information Criterion <span class="math display">\[
+  AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+  \]</span></p></li>
+<li><p>Mallows <span class="math inline">\(C_p\)</span>: <span class="math display">\[
+  C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
+  \]</span></p></li>
+<li><p>The leverage value: <span class="math inline">\(h_{ii}\)</span> is the <span class="math inline">\(i\)</span>th diagonal element of the hat matrix.</p></li>
+<li><p>The studentized residual <span class="math display">\[
+  r_i = \frac{e_i}{\sqrt{MSE(1 - h_{ii})}}
+  \]</span></p>
+<ul>
+<li><span class="math inline">\(e_i\)</span> is the residual for individual <span class="math inline">\(i\)</span>, and <span class="math inline">\(h_{ii}\)</span> is the <span class="math inline">\(i\)</span>th diagonal element of the hat matrix.</li>
+</ul></li>
+<li><p>Cook’s Distance: <span class="math display">\[
+  D_i = \frac{\sum_{j=1}^n\left(\hat{Y}_j - \hat{Y}_{j(i)}\right)^2}{pMSE}
+  \]</span></p>
+<ul>
+<li><span class="math inline">\(\hat{Y}_{j(i)}\)</span>: The fit of observation <span class="math inline">\(j\)</span> when observation <span class="math inline">\(i\)</span> is not in the data.</li>
+</ul></li>
+<li><p>What are good values of leverage, studentized residuals, and cook’s distance?</p></li>
 </ul>
 </div>
 
