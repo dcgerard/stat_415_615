@@ -25,7 +25,8 @@ klippy::klippy()
 
 - 10/07/2021: Project Proposal Due
 - 11/11/2021: Progress Report Due.
-- 12/14/2021 or 12/15/2021: Group project presentations, and final reports due.
+- 12/07/2021 or 12/08/2021: Group project presentations. Submit slides on Canvas **before class**.
+- 12/16/2021: Final reports due. Graduate student project presentation recordings due.
 
 # General Description
 

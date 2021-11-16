@@ -11,6 +11,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
+set.seed(1)
 library(latex2exp)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center",
@@ -41,7 +42,7 @@ klippy::klippy()
     ```
 
 - These data look like a quadratic fit could help
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = age, y = mass, data = muscle) +
       geom_smooth(se = FALSE)
     
@@ -356,7 +357,7 @@ From the *Statistical Sleuth*:
     ```{r,echo = FALSE}
     knitr::include_graphics(path = "./figs/cat_interp3.png")
     ```
-    
+
 - Of course, we would want to interpret these on the original scale.
     - Front wheel cars have $e^{\beta_1}$ times higher mpg than rear wheal cars on average, adjusting for engine size.
     
@@ -555,7 +556,7 @@ From the *Statistical Sleuth*:
 
 - But it is better to just interpret interactions here by making conditional effects plots. This is the default output of `geom_smooth()` when you color code by a categorical variable:
 
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = displ, y = cty, color = drv, data = mpg) +
       geom_smooth(method = "lm", se = FALSE) +
       scale_y_log10()

@@ -378,7 +378,6 @@ glimpse(muscle)</code></pre>
 <li><p>These data look like a quadratic fit could help</p>
 <pre class="r"><code>qplot(x = age, y = mass, data = muscle) +
   geom_smooth(se = FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_musc &lt;- lm(mass ~ age, data = muscle)
 a_musc &lt;- augment(lm_musc)
@@ -748,7 +747,6 @@ glimpse(mpg_sub)</code></pre>
 <pre class="r"><code>qplot(x = displ, y = cty, color = drv, data = mpg) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE) +
   scale_y_log10()</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as you like via <code>parse_factor()</code> or <code>fct_relevel()</code>. Then use <code>lm()</code> the same way with interactions as before (using multiplication).</p>
 <pre class="r"><code>mpg_sub &lt;- mutate(mpg_sub, 
