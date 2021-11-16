@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-08" />
+<meta name="date" content="2021-11-16" />
 
 <title>MLR III: Special Predictors</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-08</h4>
+<h4 class="date">2021-11-16</h4>
 
 </div>
 
@@ -598,13 +598,20 @@ unique(mpg$drv)</code></pre>
   \]</span></p></li>
 <li><p>Interpretation:</p>
 <ul>
-<li><p><span class="math inline">\(\beta_1\)</span> is the average difference in city mpg between rear-wheel and front drive cars of about the same engine size.</p></li>
-<li><p><span class="math inline">\(\beta_2\)</span> is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.</p></li>
-<li><p><span class="math inline">\(\beta_2 - \beta_1\)</span> is the average difference in city mpg between 4-wheel and front wheel drive cars of about the same engine size.</p></li>
-<li><p><span class="math inline">\(\beta_3\)</span> is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is the average difference in city log-mpg between rear-wheel and front drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> is the average difference in city log-mpg between rear-wheel and 4-wheel drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_2 - \beta_1\)</span> is the average difference in city log-mpg between 4-wheel and front wheel drive cars of about the same engine size.</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span> is the average difference in city log-mpg between cars that are of the same type, but have 1 liter different engine displacement.</p></li>
 </ul></li>
 <li><p>We can visualize this model below:</p>
 <p><img src="figs/cat_interp3.png" width="825" style="display: block; margin: auto;" /></p></li>
+<li><p>Of course, we would want to interpret these on the original scale.</p>
+<ul>
+<li><p>Front wheel cars have <span class="math inline">\(e^{\beta_1}\)</span> times higher mpg than rear wheal cars on average, adjusting for engine size.</p></li>
+<li><p>4-wheel cars have <span class="math inline">\(e^{\beta_2}\)</span> times higher mpg than rear wheel cars on average, adjusting for engine size.</p></li>
+<li><p>4-wheel cars have <span class="math inline">\(e^{\beta_2 - \beta_1}\)</span> times higher mpg than front wheel cars, adjusting for engine size.</p></li>
+<li><p>Cars that have 1 liter higher engine displacement tend to have <span class="math inline">\(e^{\beta_3}\)</span> times higher mpg on average, adjusting for car type.</p></li>
+</ul></li>
 <li><p>We fit this model in R by first selecting the order of the levels of <code>drv</code> to include rear-wheel drive cars as the reference class. We do this using <code>parse_factor()</code> from the <code>{forcats}</code> package:</p>
 <pre class="r"><code>mpg &lt;- mutate(mpg, 
               l_cty = log(cty),
@@ -633,7 +640,7 @@ tidy(lm_mpg_2, conf.int = TRUE)</code></pre>
 ## 2 drvr          0.0263   0.0370      0.712 4.77e-  1  -0.0466    0.0992
 ## 3 drv4         -0.132    0.0220     -6.00  7.66e-  9  -0.175    -0.0884
 ## 4 displ        -0.143    0.00905   -15.8   2.01e- 38  -0.160    -0.125</code></pre>
-<p>So this confidence interval is -0.175 to -0.089.</p></li>
+<p>So 4-wheel cars have (<span class="math inline">\(1-e^{-0.132} = 0.12\)</span>) 12% worse MPG than front-wheel cars of the same engine size (95% confidence interval of (<span class="math inline">\(1-e^{-0.0884} = 0.12\)</span>) 8% worse to (<span class="math inline">\(1-e^{-0.175} = 0.16\)</span>) 16% worse).</p></li>
 </ul>
 </div>
 </div>
@@ -682,7 +689,7 @@ tidy(lm_mt)</code></pre>
 <li><p>We would still include <code>wt</code> in the model even though it has a large <span class="math inline">\(p\)</span>-value.</p></li>
 <li><p>You can provide an interpretation to a client when there are interactions via <strong>conditional effects plots</strong> that plot the relationship between <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_i\)</span> at different levels of the other <span class="math inline">\(X\)</span>’s.</p>
 <pre class="r"><code>## drat versus mpg at different levels of wt
-wt_seq &lt;- quantile(mtcars$mpg, c(0.025, 0.25, 0.5, 0.75, 0.975))
+wt_seq &lt;- quantile(mtcars$wt, c(0.025, 0.25, 0.5, 0.75, 0.975))
 dr_seq &lt;- seq(min(mtcars$drat), max(mtcars$drat), length.out = 100)
 newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
@@ -697,6 +704,14 @@ newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
 qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>So we could tell a client something like:</p>
+<ol style="list-style-type: decimal">
+<li>In general, higher weight tends to decrease fuel-mileage.</li>
+<li>The effect of rear-axle ratio depends on the weight of the car. Smaller cars have better fuel-mileage with higher rear axle ratios, but larger cars tend to have better fuel-mileage with smaller rear axle ratios”</li>
+</ol></li>
+<li><p>BUT, we have to be emphasize the scope of our conclusions. E.g. there are no cars with a rear-axle ratio of 3 and a weight of 2.</p>
+<pre class="r"><code>qplot(x = wt, y = drat, data = mtcars)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="interactions-and-categorical-variables." class="section level2">
 <h2>Interactions and categorical variables.</h2>
@@ -734,7 +749,7 @@ glimpse(mpg_sub)</code></pre>
   geom_smooth(method = &quot;lm&quot;, se = FALSE) +
   scale_y_log10()</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as you like via <code>parse_factor()</code> or <code>fct_relevel()</code>. Then use <code>lm()</code> the same way with interactions as before (using multiplication).</p>
 <pre class="r"><code>mpg_sub &lt;- mutate(mpg_sub, 
                   drv = parse_factor(drv, levels = c(&quot;r&quot;, &quot;f&quot;, &quot;4&quot;)),
@@ -853,7 +868,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, charge = as_factor(charge))
 qplot(x = temp, y = cycles, color = charge, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-39-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-40-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Conditional effects plot for temperature
 temp_seq &lt;- unique(power$temp)
 charge_seq &lt;- seq(min(power$charge), max(power$charge), length.out = 200)
@@ -864,7 +879,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, temp = as_factor(temp))
 qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-39-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-40-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
