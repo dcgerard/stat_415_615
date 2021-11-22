@@ -236,9 +236,15 @@ ipo %>%
 
 # Copier Maintenance
 copier <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%201%20Data%20Sets/CH01PR20.txt", col_names = FALSE)
+small <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%208%20Data%20Sets/CH08PR15.txt", col_names = FALSE)
+colnames(small) <- "model"
 copier %>%
+  bind_cols(small) %>%
   rename(copiers = X2,
          minutes = X1) %>%
+  mutate(model = recode(model,
+                        "1" = "S",
+                        "0" = "L")) %>%
   write_csv("./copiers.csv")
 
 # Earnings

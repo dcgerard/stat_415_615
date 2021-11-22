@@ -11,6 +11,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
+set.seed(1)
 library(latex2exp)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center",
@@ -41,7 +42,7 @@ klippy::klippy()
     ```
 
 - These data look like a quadratic fit could help
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = age, y = mass, data = muscle) +
       geom_smooth(se = FALSE)
     
@@ -327,13 +328,13 @@ From the *Statistical Sleuth*:
     $$
 
 - Interpretation:
-    - $\beta_1$ is the average difference in city mpg between rear-wheel and front drive cars of about the same engine size.
+    - $\beta_1$ is the average difference in city log-mpg between rear-wheel and front drive cars of about the same engine size.
     
-    - $\beta_2$ is the average difference in city mpg between rear-wheel and 4-wheel drive cars of about the same engine size.
+    - $\beta_2$ is the average difference in city log-mpg between rear-wheel and 4-wheel drive cars of about the same engine size.
     
-    - $\beta_2 - \beta_1$ is the average difference in city mpg between 4-wheel and front wheel drive cars of about the same engine size.
+    - $\beta_2 - \beta_1$ is the average difference in city log-mpg between 4-wheel and front wheel drive cars of about the same engine size.
     
-    - $\beta_3$ is the average difference in city mpg between cars that are of the same type, but have 1 liter different engine displacement.
+    - $\beta_3$ is the average difference in city log-mpg between cars that are of the same type, but have 1 liter different engine displacement.
 
 - We can visualize this model below:
 
@@ -356,6 +357,15 @@ From the *Statistical Sleuth*:
     ```{r,echo = FALSE}
     knitr::include_graphics(path = "./figs/cat_interp3.png")
     ```
+
+- Of course, we would want to interpret these on the original scale.
+    - Front wheel cars have $e^{\beta_1}$ times higher mpg than rear wheal cars on average, adjusting for engine size.
+    
+    - 4-wheel cars have $e^{\beta_2}$ times higher mpg than rear wheel cars on average, adjusting for engine size.
+    
+    - 4-wheel cars have $e^{\beta_2 - \beta_1}$ times higher mpg than front wheel cars, adjusting for engine size.
+    
+    - Cars that have 1 liter higher engine displacement tend to have $e^{\beta_3}$ times higher mpg on average, adjusting for car type.
 
 - We fit this model in R by first selecting the order of the levels of `drv` to include rear-wheel drive cars as the reference class. We do this using `parse_factor()` from the `{forcats}` package:
     ```{r}
@@ -381,8 +391,7 @@ From the *Statistical Sleuth*:
     lm_mpg_2 <- lm(l_cty ~ drv + displ, data = mpg)
     tidy(lm_mpg_2, conf.int = TRUE)
     ```
-    So this confidence interval is -0.175 to -0.089.
-
+    So 4-wheel cars have ($1-e^{-0.132} = 0.12$) 12\% worse MPG than front-wheel cars of the same engine size (95\% confidence interval of ($1-e^{-0.0884} = 0.12$) 8\% worse to ($1-e^{-0.175} = 0.16$) 16\% worse).
 
 # Interaction Effects
 
@@ -480,7 +489,7 @@ From the *Statistical Sleuth*:
 
     ```{r}
     ## drat versus mpg at different levels of wt
-    wt_seq <- quantile(mtcars$mpg, c(0.025, 0.25, 0.5, 0.75, 0.975))
+    wt_seq <- quantile(mtcars$wt, c(0.025, 0.25, 0.5, 0.75, 0.975))
     dr_seq <- seq(min(mtcars$drat), max(mtcars$drat), length.out = 100)
     newdf <- expand.grid(wt = wt_seq, drat = dr_seq)
     newdf$mpg <- predict(object = lm_mt, newdata = newdf)
@@ -494,6 +503,16 @@ From the *Statistical Sleuth*:
     newdf$mpg <- predict(object = lm_mt, newdata = newdf)
     newdf <- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
     qplot(x = wt, y = mpg, color = drat, data = newdf, geom = "line")
+    ```
+
+- So we could tell a client something like:
+    1. In general, higher weight tends to decrease fuel-mileage.
+    2. The effect of rear-axle ratio depends on the weight of the car. Smaller cars have better fuel-mileage with higher rear axle ratios, but larger cars tend to have better fuel-mileage with smaller rear axle ratios"
+
+- BUT, we have to be emphasize the scope of our conclusions. E.g. there are no cars with a rear-axle ratio of 3 and a weight of 2.
+
+    ```{r}
+    qplot(x = wt, y = drat, data = mtcars)
     ```
 
 
@@ -537,12 +556,11 @@ From the *Statistical Sleuth*:
 
 - But it is better to just interpret interactions here by making conditional effects plots. This is the default output of `geom_smooth()` when you color code by a categorical variable:
 
-    ```{r}
+    ```{r, message = FALSE}
     qplot(x = displ, y = cty, color = drv, data = mpg) +
       geom_smooth(method = "lm", se = FALSE) +
       scale_y_log10()
     ```
-
 
 - To fit this in R, just make sure you have the reference level as you like via `parse_factor()` or `fct_relevel()`. Then use `lm()` the same way with interactions as before (using multiplication).
     ```{r}

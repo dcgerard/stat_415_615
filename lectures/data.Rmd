@@ -39,6 +39,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
 - [copiers.csv](./data/copiers.csv): Dataset from exercise 1.20 of KNNL. A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
     - `copiers`: The number of copiers serviced during a single call.
     - `minutes`: The total number of minutes spend by the service person.
+    - `model`: The model of the copiers. Either small (`"S"`) or large (`"L"`).
 
 # County Demographic Information
 

@@ -80,7 +80,6 @@ Here is a list of the equations I want you to have memorized on the top of your 
 - Bonferroni corrected $p$-values: unadjusted $p$-value $\times$ number of tests.
 
 - Matrix stuff
-    - For the midterm, I just want you to be able to give me the matrix form of the SLR model.
     - $x_{ij}$ is the $(i, j)$th element of the matrix $\mathbf{X}$.
     - Matrix transpose definition $\mathbf{X}^T$
     - Identity matrix, $\mathbf{I}_n$.
@@ -89,3 +88,90 @@ Here is a list of the equations I want you to have memorized on the top of your 
     - Matrix form of linear model: $\mathbf{y} = \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}$
     - Matrix form of coefficient estimates: $\hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
     - Hat matrix, $\mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T$, and why it is called the hat matrix.
+
+- Multiple linear regression model: 
+    \begin{align}
+    Y_i &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+    E[\epsilon_i] &= 0\\
+    var(\epsilon_i) &= \sigma^2\\
+    cov(\epsilon_i, \epsilon_j) &= 0 \text{ for all } i \neq j
+    \end{align}
+    
+- Quadratic Regression.
+
+- Indicator variables, how they show up in a design matrix.
+
+- Interaction Effects.
+
+- The *error sum of squares* given predictors $X_1, X_2, \ldots, X_{p-1}$.
+    $$
+    SSE(X_1,X_2,\ldots,X_{p-1}) = \sum_{i=1}^n\left[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2} + \cdots + \hat{\beta}_{p-1}X_{i,p-1})\right]^2
+    $$
+
+- The **extra sum of squares**
+    \begin{align}
+    SSR(X_1|X_2) &= SSE(X_2) - SSE(X_1, X_2) = SSR(X_1, X_2) - SSR(X_2)\\
+    SSR(X_2|X_1) &= SSE(X_1) - SSE(X_1, X_2) = SSR(X_1, X_2) - SSR(X_1)\\
+    SSR(X_1, X_2|X_3) &= SSE(X_3) - SSE(X_1, X_2, X_3) = SSR(X_1, X_2, X_3) - SSR(X_3)\\
+    \text{ etc...}
+    \end{align}
+ 
+- Decomposing sum of squares (with corresponding degrees of freedom), e.g. 
+    ```{r,echo = FALSE,out.width="50%"}
+    knitr::include_graphics(path = "./decomp.png")
+    ```
+    
+- Type I versus Type II sums of squares.
+
+- How the $F$-test can be used for different hypothesis tests.
+
+- Adjusted coefficient of multiple determination:
+    \begin{align}
+    R^2_a = 1 - \left(\frac{n-1}{n-p}\right)\frac{SSE}{SSTO}.
+    \end{align}
+    
+- Coefficients of partial determination
+    \begin{align}
+    R^2_{Y1|23} &= \frac{SSR(X_1|X_2, X_3)}{SSE(X_2, X_3)}\\
+    R^2_{Y2|13} &= \frac{SSR(X_2|X_1, X_3)}{SSE(X_1, X_3)}\\
+    R^2_{Y3|12} &= \frac{SSR(X_3|X_1, X_2)}{SSE(X_1, X_2)}\\
+    R^2_{Y4|123} &= \frac{SSR(X_4|X_1, X_2, X_3)}{SSE(X_1, X_2, X_3)}\\
+    &\text{etc...}
+    \end{align}
+    
+- $Z$-score
+    $$
+    Z_i = \frac{X_i - \bar{X}}{s_x}
+    $$
+    
+- AIC: Akaike's Information Criterion
+    $$
+    AIC = n\log\left(\frac{SSE}{n}\right) + 2p
+    $$
+    
+- BIC: Bayesian information Criterion 
+    $$
+    AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+    $$
+    
+- Mallows $C_p$:
+    $$
+    C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
+    $$
+    - $\hat{\sigma}^2$ is the MSE for the model under consideration. $\hat{\sigma}^2_{full}$ is the MSE for the model with every predictor in it.
+
+- The leverage value: $h_{ii}$ is the $i$th diagonal element of the hat matrix.
+
+- The studentized residual
+    $$
+    r_i = \frac{e_i}{\sqrt{MSE(1 - h_{ii})}}
+    $$
+    - $e_i$ is the residual for individual $i$, and $h_{ii}$ is the $i$th diagonal element of the hat matrix.
+    
+- Cook's Distance: 
+    $$
+    D_i = \frac{\sum_{j=1}^n\left(\hat{Y}_j - \hat{Y}_{j(i)}\right)^2}{pMSE}
+    $$
+    - $\hat{Y}_{j(i)}$: The fit of observation $j$ when observation $i$ is not in the data.
+    
+- What are good values of leverage, studentized residuals, and cook's distance?
