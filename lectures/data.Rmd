@@ -159,6 +159,15 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `comorbidities`: Number of other diseases that the subscriber had during period.
     - `duration`: Number of days of duration of treatment condition.
     
+# Job Profficiency
+
+- [job.csv](./data/job.csv): Data from exercise 9.10 of KNNL. A personnel officer in a governmental agency administered four newly developed aptitude tests to each of 25 applicants for entry-level clerical positions in the agency. For purpose of the study, all 25 applicants were accepted for positions irrespective of their test scores. After a probationary period, each applicant was rated for proficiency on the job. Variables include
+    - `proficiency`: Job proficiency score.
+    - `test1`: Score on the first aptitude test.
+    - `test2`: Score on the second aptitude test.
+    - `test3`: Score on the third aptitude test.
+    - `test4`: Score on the fourth aptitude test.
+
 # Kleiber's law
 
 - [kleiber.csv](./data/kleiber.csv): [Kleiber's law](https://en.wikipedia.org/wiki/Kleiber%27s_law) states that animals' metabolic rates follow a power law to their masses. Data are from @savage2004predominance, where they collected data on mammals to study this power law. Variables include

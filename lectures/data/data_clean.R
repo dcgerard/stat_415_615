@@ -274,3 +274,10 @@ muscle %>%
   rename(mass = X1,
          age = X2) %>%
   write_csv("./muscle.csv", x = .)
+
+# Job profficiency
+library(tidyverse)
+job <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Chapter%20%209%20Data%20Sets/CH09PR10.txt", col_names = FALSE)
+names(job) <- c("proficiency", "test1", "test2", "test3", "test4")
+write_csv("./job.csv", x = job)
+
