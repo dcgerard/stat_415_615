@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-15" />
+<meta name="date" content="2021-11-30" />
 
 <title>MLR: More Complicated Model Diagnostics</title>
 
@@ -367,7 +367,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: More Complicated Model Diagnostics</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-15</h4>
+<h4 class="date">2021-11-30</h4>
 
 </div>
 
@@ -498,7 +498,7 @@ avPlot(lm_man, variable = &quot;income&quot;)</code></pre>
 <li>They are well in the range of typical <span class="math inline">\(X\)</span> values. This is since many other <span class="math inline">\(X\)</span> values are there to keep the OLS line from getting too displaced. This is Case 3 above.</li>
 <li>They are consistent with the general trend between the predictors and <span class="math inline">\(Y\)</span>. This is Case 2 above.</li>
 </ol></li>
-<li><p>Outliers can have huge effects if they both (i) have atypical <span class="math inline">\(X\)</span> values and (ii) are not consistent with the general trend. This is Case 3 above.</p></li>
+<li><p>Outliers can have huge effects if they both (i) have atypical <span class="math inline">\(X\)</span> values and (ii) are not consistent with the general trend. This is Case 1 above.</p></li>
 <li><p>Recall that outliers are hard to detect when there is multicollinearity</p>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
@@ -547,20 +547,21 @@ qplot(x = .fitted, y = .std.resid, data = a_bod) +
  \]</span></li>
 </ol></li>
 <li><p>The intuition is that a real outlier might have undue influence on the OLS line, so we should standardize when it is not used to calculate the OLS line. See Chapter 10 of KNNL for a deeper discussion.</p></li>
-<li><p>R calls the studentized deleted residuals just “studentized residuals.” You can get them via the base function <code>rstudent()</code>.</p>
+<li><p>You can get the studentized deleted residuals via the base R function <code>rstudent()</code>.</p>
 <pre class="r"><code>a_bod$.dstd.resid &lt;- rstudent(lm_bod)
 qplot(x = .fitted, y = .dstd.resid, data = a_bod) +
       geom_hline(yintercept = 0) +
       geom_hline(yintercept = -2, lty = 2)  +
       geom_hline(yintercept = 2, lty = 2)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>In this case, the studentized and deleted studentized residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.</p></li>
+<li><p>In this case, the studentized and studentized deleted residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.</p></li>
+<li><p>R terminology NOTE: R calls the studentized residuals “standardized residuals” and uses the base R function <code>rstandard()</code>. R calls the studentized deleted residuals just “studentized residuals” and uses the base R function <code>rstudent()</code>. I’m sorry.</p></li>
 </ul>
 </div>
 <div id="detect-extreme-x-values-leverage-values" class="section level2">
 <h2>Detect Extreme <span class="math inline">\(X\)</span> values: Leverage Values</h2>
 <ul>
-<li><p><strong>Goal</strong>: Numerically quantify how outlying an observation is.</p></li>
+<li><p><strong>Goal</strong>: Numerically quantify how outlying an observation’s predictor values are.</p></li>
 <li><p>The diagonal elements of the hat matrix <span class="math inline">\(h_{ii}\)</span> are called <strong>leverage values</strong>.</p></li>
 <li><p><span class="math inline">\(h_{ii}\)</span> is a measure of the distance between the <span class="math inline">\(X\)</span> values for the <span class="math inline">\(i\)</span>th case and the means of the <span class="math inline">\(X\)</span> values for all <span class="math inline">\(n\)</span> cases.</p>
 <ul>
@@ -694,13 +695,13 @@ a_bod %&gt;%
   scale_x_continuous(breaks = 1:nrow(a_bod)) +
   xlab(&quot;Case Index Number&quot;) +
   ylab(&quot;Value&quot;)</code></pre>
-<p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>If you have some unusual values, go through this pipeline:</p>
 <ol style="list-style-type: decimal">
 <li>Do the conclusions change when the case is deleted? If No, then proceed with the case included.</li>
 <li>If Yes, is there reason to believe the case belongs to a population other than the one under consideration? E.g., was it a numerical error, is there some expectation that this point would behave differently (e.g. DC versus states). If Yes, then omit the case.</li>
-<li>If No, then does the case have an unusually distant explanatory variable (measured by leverage value)? If yes, then omit the case and report conclusions based, limiting the scope of the study to the range of predictor variables.</li>
-<li>If Yes, then you can try a more robust approach.</li>
+<li>If No, then does the case have an unusually distant explanatory variable (measured by leverage value)? If yes, then omit the case and report conclusions based on the subset of data, limiting the scope of the study to the range of predictor variables.</li>
+<li>If Yes, then you can try a more robust approach (e.g. quantile regression).</li>
 </ol></li>
 </ul>
 </div>
@@ -722,13 +723,18 @@ a_bod %&gt;%
   \]</span> where <span class="math inline">\(R_k^2\)</span> is the coefficient of multiple determination using <span class="math inline">\(X_k\)</span> as the response and every other <span class="math inline">\(X\)</span> as the predictor.</p></li>
 <li><p><span class="math inline">\((VIF)_k\)</span> is equal to 1 when there is no multicollinearity.</p></li>
 <li><p><span class="math inline">\((VIF)_k\)</span> is greater than 1 when there is multicollinearity.</p></li>
-<li><p>If the maximum VIF value is greater than 10, then this is an indication of extreme multicollinearity.</p></li>
+<li><p>If the maximum VIF value is greater than 10, then this is an indication of extreme multicollinearity (I have no idea where this rule-of-thumb comes from).</p></li>
 <li><p>You can get the variance inflation factors by the <code>vif()</code> function from the <code>{car}</code> package.</p>
 <pre class="r"><code>library(car)
 vif(lm_bod)</code></pre>
 <pre><code>## triceps   thigh  midarm 
 ##   708.8   564.3   104.6</code></pre>
-<p>This indicates tons of multicollinearity.</p></li>
+<p>This indicates tons of multicollinearity.</p>
+<p>If we get rid of midarm, how much multicollinearity is there?</p>
+<pre class="r"><code>lm_tt &lt;- lm(fat ~ triceps + thigh, data = body)
+vif(lm_tt)</code></pre>
+<pre><code>## triceps   thigh 
+##   6.825   6.825</code></pre></li>
 <li><p>Condition Numbers: Ratio of the maximum singular value of <span class="math inline">\(X\)</span> divided by minimum singular value of <span class="math inline">\(X\)</span>.</p>
 <ul>
 <li>Intuition: If <span class="math inline">\(X\)</span> is almost singular than <span class="math inline">\((\mathbf{X}^{\intercal}\mathbf{X})^{-1}\)</span> will blow up.</li>
