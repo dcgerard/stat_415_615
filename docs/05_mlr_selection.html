@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-12" />
+<meta name="date" content="2021-11-30" />
 
 <title>MLR: Model Selection and Validation</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Model Selection and Validation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-12</h4>
+<h4 class="date">2021-11-30</h4>
 
 </div>
 
@@ -658,7 +658,7 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 <li>This is the criterion base R includes by default for stepwise procedures.</li>
 </ul></li>
 <li>BIC (SBC): The Bayesian information Criterion (aka Schwarz’s Bayesian Criterion) penalizes the parameters a little more than AIC. <span class="math display">\[
-  AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+  BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
   \]</span>
 <ul>
 <li>Lower BIC is better.</li>
@@ -721,7 +721,7 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 <div id="implementation-in-r" class="section level1">
 <h1>Implementation in R</h1>
 <ul>
-<li><p>You can get AIC, BIC, <span class="math inline">\(R^2\)</span>, and <span class="math inline">\(R_a^2\)</span> via <code>glance()</code> from <code>{broom}</code></p>
+<li><p>You can get a version of AIC, a version of BIC, <span class="math inline">\(R^2\)</span>, and <span class="math inline">\(R_a^2\)</span> via <code>glance()</code> from <code>{broom}</code></p>
 <pre class="r"><code>lm_rich &lt;- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
 glance(lm_rich)  %&gt;%
   select(AIC, BIC, r.squared, adj.r.squared)</code></pre>
@@ -729,7 +729,49 @@ glance(lm_rich)  %&gt;%
 ##     AIC   BIC r.squared adj.r.squared
 ##   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
 ## 1  453.  468.     0.913         0.900</code></pre></li>
-<li><p>No easy default way in R to get <span class="math inline">\(C_p\)</span>. But other software packages use it, so it is good to be aware of.</p></li>
+<li><p>AIC Note:</p>
+<ul>
+<li><p><code>{broom}</code> uses the base <code>AIC()</code> function which returns <span class="math display">\[
+  AIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + 2(p+1)
+  \]</span> (the “<span class="math inline">\(p+1\)</span>” comes from including estimation of <span class="math inline">\(\sigma^2\)</span> as a parameter).</p></li>
+<li><p>Use <code>extractAIC()</code> to get the book’s definition of AIC <span class="math display">\[
+  AIC = n\log\left(\frac{SSE}{n}\right) + 2p
+  \]</span></p></li>
+<li><p>We can verify the equivalence manually</p>
+<pre class="r"><code>n &lt;- nrow(sat)
+AIC(lm_rich) - n - n * log(2 * pi) - 2</code></pre>
+<pre><code>## [1] 311.9</code></pre>
+<pre class="r"><code>extractAIC(lm_rich)[[2]]</code></pre>
+<pre><code>## [1] 311.9</code></pre></li>
+</ul></li>
+<li><p>BIC Note:</p>
+<ul>
+<li><p>Similarly, <code>{broom}</code> uses the <code>AIC()</code> function to get a different version of BIC. <span class="math display">\[
+  BIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + \log(n)(p+1)
+  \]</span></p></li>
+<li><p>Use <code>extractAIC()</code> to get the book’s definition of BIC <span class="math display">\[
+  BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+  \]</span></p></li>
+<li><p>For both functions, to get BIC, set the <code>k</code> argument to be <span class="math inline">\(\log(n)\)</span>.</p></li>
+<li><p>We can verify the equivalence manually</p>
+<pre class="r"><code>n &lt;- nrow(sat)
+AIC(lm_rich, k = log(n)) - n - n * log(2 * pi) - log(n)</code></pre>
+<pre><code>## [1] 325.1</code></pre>
+<pre class="r"><code>extractAIC(lm_rich, k = log(n))[[2]]</code></pre>
+<pre><code>## [1] 325.1</code></pre></li>
+</ul></li>
+<li><p>You can get Mallow’s <span class="math inline">\(C_p\)</span> by using <code>extractAIC()</code> and specifying the <code>scale</code> argument to be the estimated residual variance under the <strong>biggest</strong> model.</p>
+<pre class="r"><code>sigma_full &lt;- sigma(lm_rich)
+lm_smaller &lt;- lm(SAT ~ l_takers + Years + Expend + Rank, data = sat)
+extractAIC(fit = lm_smaller, scale = sigma_full^2)[[2]]</code></pre>
+<pre><code>## [1] 4.031</code></pre>
+<p>We can verify this manually</p>
+<pre class="r"><code>p &lt;- ncol(model.matrix(lm_smaller))
+n &lt;- nrow(model.matrix(lm_smaller))
+sigma_full &lt;- sigma(lm_rich)
+sigma_reduced &lt;- sigma(lm_smaller)
+p + (n - p) * (sigma_reduced^2 - sigma_full^2) / sigma_full^2</code></pre>
+<pre><code>## [1] 4.031</code></pre></li>
 <li><p>Use the <code>step()</code> function to choose a model by AIC/BIC via automated search.</p>
 <ul>
 <li>The <code>object</code> argument is the intial model that it will search from.</li>
@@ -937,6 +979,78 @@ sout &lt;- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Publ
 ## 3 Rank            4.40     1.90       2.32 0.0252    
 ## 4 Expend          4.00     0.764      5.23 0.00000452
 ## 5 l_takers      -38.1     11.9       -3.20 0.00257</code></pre></li>
+<li><p>Modify the <code>scale</code> argument to fit by <span class="math inline">\(C_p\)</span></p>
+<pre class="r"><code>lm_rich &lt;- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
+sigma_full &lt;- sigma(lm_rich)
+sout &lt;- step(object = lm_init, scale = sigma_full^2, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank)</code></pre>
+<pre><code>## Start:  AIC=220.6
+## SAT ~ Income + Years
+## 
+##            Df Sum of Sq    RSS    Cp
+## + Rank      1     99984  34294  26.3
+## + l_takers  1     94604  39674  36.9
+## + Public    1     23088 111190 177.3
+## &lt;none&gt;                  134278 220.6
+## + Expend    1        14 134264 222.6
+## - Years     1      9072 143350 236.4
+## - Income    1     84760 219038 384.9
+## 
+## Step:  AIC=26.32
+## SAT ~ Income + Years + Rank
+## 
+##            Df Sum of Sq    RSS     Cp
+## + Expend    1     10326  23968   8.05
+## &lt;none&gt;                   34294  26.32
+## + Public    1       759  33535  26.83
+## + l_takers  1       412  33882  27.51
+## - Income    1      3322  37616  30.84
+## - Years     1     13581  47876  50.98
+## - Rank      1     99984 134278 220.58
+## 
+## Step:  AIC=8.05
+## SAT ~ Income + Years + Rank + Expend
+## 
+##            Df Sum of Sq    RSS     Cp
+## + l_takers  1      2552  21417   5.04
+## &lt;none&gt;                   23968   8.05
+## + Public    1       422  23547   9.22
+## - Income    1      3048  27016  12.03
+## - Years     1      7353  31322  20.48
+## - Expend    1     10326  34294  26.32
+## - Rank      1    110295 134264 222.55
+## 
+## Step:  AIC=5.04
+## SAT ~ Income + Years + Rank + Expend + l_takers
+## 
+##            Df Sum of Sq   RSS    Cp
+## - Income    1       505 21922  4.03
+## &lt;none&gt;                  21417  5.04
+## + Public    1        20 21397  7.00
+## - l_takers  1      2552 23968  8.05
+## - Years     1      3011 24428  8.95
+## - Rank      1      3162 24578  9.25
+## - Expend    1     12465 33882 27.51
+## 
+## Step:  AIC=4.03
+## SAT ~ Years + Rank + Expend + l_takers
+## 
+##            Df Sum of Sq   RSS    Cp
+## &lt;none&gt;                  21922  4.03
+## + Income    1       505 21417  5.04
+## + Public    1       185 21737  5.67
+## - Rank      1      2676 24598  7.28
+## - Years     1      2870 24792  7.67
+## - l_takers  1      5094 27016 12.03
+## - Expend    1     13620 35542 28.77</code></pre>
+<pre class="r"><code>tidy(sout)</code></pre>
+<pre><code>## # A tibble: 5 × 5
+##   term        estimate std.error statistic    p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+## 1 (Intercept)   399.     232.         1.72 0.0929    
+## 2 Years          13.1      5.48       2.40 0.0207    
+## 3 Rank            4.40     1.90       2.32 0.0252    
+## 4 Expend          4.00     0.764      5.23 0.00000452
+## 5 l_takers      -38.1     11.9       -3.20 0.00257</code></pre></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
@@ -984,7 +1098,7 @@ glimpse(ex1221)</code></pre>
 <li>State your final predictive model, and state any conclusions.</li>
 <li>What is the predicted quality score for a season with these rainfall amounts in the Upland region: Sep: 0.45, Oct: 0.02, Nov: 0.80, Dec: 0.76, Jan: 0.17, Feb: 1.22, and Mar: 0.37? Appropriately quantify your uncertainty in these predictions.</li>
 </ol>
-<p>Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, “Wildflower Flourishes and Flops—a 50-Year History,” &lt;www.desertmuseum.org/programs/flw wildflwrbloom.html&gt; (July 25, 2011).)</p>
+<p>Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, “Wildflower Flourishes and Flops—a 50-Year History,”)</p>
 </div>
 
 

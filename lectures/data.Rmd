@@ -251,9 +251,9 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `age`: Average age of patients (years).
     - `risk`: Average estimated probability of acquiring infection in hospital (percent).
     - `culturing_ratio`: Ratio of number of cultures performed to number of patients without signs or symptoms of hospital-acquired infection, times 100.
-    - `xray_ratio`: Ratio of number of X-rays perfromed to number of patients without signs or symptom sof pneumonia, times 100.
+    - `xray_ratio`: Ratio of number of X-rays perfromed to number of patients without signs or symptoms of pneumonia, times 100.
     - `beds`: Average number of beds in hospital during study period.
-    - `med_school`: Whether a hospital was aviliated with a medical school (`yes` or `no`).
+    - `med_school`: Whether a hospital was affiliated with a medical school (`yes` or `no`).
     - `region`: Geographic region, Northeast (`"NE"`), North-central (`"NC"`), South (`"S"`), or West (`"W"`).
     - `patients`: Average number of patients in hospital per day during study period.
     - `nurses`: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).
