@@ -40,7 +40,7 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 # Textbooks
 
-- **Required**: Free PDF version of [Applied Linear Statistical Models (Fifth Edition)](http://users.stat.ufl.edu/~winner/sta4211/ALSM_5Ed_Kutner.pdf) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book. I will generally abbreviate this book as KNNL.
+- **Required**: Applied Linear Statistical Models (Fifth Edition) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book, and this is fine too. I will generally abbreviate this book as KNNL.
 
 - **Supplemental**: The *free* [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
 

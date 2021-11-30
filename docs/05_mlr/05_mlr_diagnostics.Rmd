@@ -235,7 +235,7 @@ klippy::klippy()
     1. They are well in the range of typical $X$ values. This is since many other $X$ values are there to keep the OLS line from getting too displaced. This is Case 3 above.
     2. They are consistent with the general trend between the predictors and $Y$. This is Case 2 above.
     
-- Outliers can have huge effects if they both (i) have atypical $X$ values and (ii) are not consistent with the general trend. This is Case 3 above.
+- Outliers can have huge effects if they both (i) have atypical $X$ values and (ii) are not consistent with the general trend. This is Case 1 above.
     
 - Recall that outliers are hard to detect when there is multicollinearity
 
@@ -350,7 +350,7 @@ klippy::klippy()
     
 - The intuition is that a real outlier might have undue influence on the OLS line, so we should standardize when it is not used to calculate the OLS line. See Chapter 10 of KNNL for a deeper discussion.
 
-- R calls the studentized deleted residuals just "studentized residuals". You can get them via the base function `rstudent()`.
+- You can get the studentized deleted residuals via the base R function `rstudent()`.
 
     ```{r}
     a_bod$.dstd.resid <- rstudent(lm_bod)
@@ -360,11 +360,13 @@ klippy::klippy()
           geom_hline(yintercept = 2, lty = 2)
     ```
     
-- In this case, the studentized and deleted studentized residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.
+- In this case, the studentized and studentized deleted residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.
+
+- R terminology NOTE: R calls the studentized residuals "standardized residuals" and uses the base R function `rstandard()`. R calls the studentized deleted residuals just "studentized residuals" and uses the base R function `rstudent()`. I'm sorry.
 
 ## Detect Extreme $X$ values: Leverage Values
 
-- **Goal**: Numerically quantify how outlying an observation is.
+- **Goal**: Numerically quantify how outlying an observation's predictor values are.
 
 - The diagonal elements of the hat matrix $h_{ii}$ are called **leverage values**.
 
@@ -493,7 +495,7 @@ klippy::klippy()
 
 - It is common to make an "Index Influence Plot" to see what cases are most influential.
 
-    ```{r, fig.height = 5}
+    ```{r, fig.height = 5, fig.width = 7}
     lm_bod <- lm(fat ~ triceps + thigh + midarm, data = body)
     a_bod <- augment(lm_bod)
     a_bod %>%
@@ -516,8 +518,8 @@ klippy::klippy()
 - If you have some unusual values, go through this pipeline:
     1. Do the conclusions change when the case is deleted? If No, then proceed with the case included.
     2. If Yes, is there reason to believe the case belongs to a population other than the one under consideration? E.g., was it a numerical error, is there some expectation that this point would behave differently (e.g. DC versus states). If Yes, then omit the case.
-    3. If No, then does the case have an unusually distant explanatory variable (measured by leverage value)? If yes, then omit the case and report conclusions based, limiting the scope of the study to the range of predictor variables.
-    4. If Yes, then you can try a more robust approach.
+    3. If No, then does the case have an unusually distant explanatory variable (measured by leverage value)? If yes, then omit the case and report conclusions based on the subset of data, limiting the scope of the study to the range of predictor variables.
+    4. If Yes, then you can try a more robust approach (e.g. quantile regression).
 
 # Multicollinearity: Variance Inflation Factor
 
@@ -540,7 +542,7 @@ klippy::klippy()
 
 - $(VIF)_k$ is greater than 1 when there is multicollinearity.
 
-- If the maximum VIF value is greater than 10, then this is an indication of extreme multicollinearity.
+- If the maximum VIF value is greater than 10, then this is an indication of extreme multicollinearity (I have no idea where this rule-of-thumb comes from).
 
 - You can get the variance inflation factors by the `vif()` function from the `{car}` package.
 
@@ -550,7 +552,14 @@ klippy::klippy()
     ```
     
     This indicates tons of multicollinearity.
-  
+    
+    If we get rid of midarm, how much multicollinearity is there?
+    ```{r}
+    lm_tt <- lm(fat ~ triceps + thigh, data = body)
+    vif(lm_tt)
+    ```
+    
+
 - Condition Numbers: Ratio of the maximum singular value of $X$ divided by minimum singular value of $X$. 
     - Intuition: If $X$ is almost singular than $(\mathbf{X}^{\intercal}\mathbf{X})^{-1}$ will blow up.
     ```{r}

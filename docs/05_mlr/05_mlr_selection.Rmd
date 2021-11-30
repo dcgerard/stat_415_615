@@ -400,7 +400,7 @@ From the Statistical Sleuth:
 
 - BIC (SBC): The Bayesian information Criterion (aka Schwarz's Bayesian Criterion) penalizes the parameters a little more than AIC.
     $$
-    AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+    BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
     $$
     - Lower BIC is better.
     - Again, fit + penalty.
@@ -459,15 +459,63 @@ From the Statistical Sleuth:
 
 # Implementation in R
 
-- You can get AIC, BIC, $R^2$, and $R_a^2$ via `glance()` from `{broom}`
+- You can get a version of AIC, a version of BIC, $R^2$, and $R_a^2$ via `glance()` from `{broom}`
     ```{r}
     lm_rich <- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
     glance(lm_rich)  %>%
       select(AIC, BIC, r.squared, adj.r.squared)
     ```
 
-- No easy default way in R to get $C_p$. But other software packages use it, so it is good to be aware of.
+- AIC Note:
+    - `{broom}` uses the base `AIC()` function which returns
+        $$
+        AIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + 2(p+1)
+        $$
+        (the "$p+1$" comes from including estimation of $\sigma^2$ as a parameter).
+    - Use `extractAIC()` to get the book's definition of AIC
+        $$
+        AIC = n\log\left(\frac{SSE}{n}\right) + 2p
+        $$
+    - We can verify the equivalence manually
+        ```{r}
+        n <- nrow(sat)
+        AIC(lm_rich) - n - n * log(2 * pi) - 2
+        extractAIC(lm_rich)[[2]]
+        ```
 
+- BIC Note:
+    - Similarly, `{broom}` uses the `AIC()` function to get a different version of BIC.
+        $$
+        BIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + \log(n)(p+1)
+        $$
+    - Use `extractAIC()` to get the book's definition of BIC
+        $$
+        BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+        $$
+    - For both functions, to get BIC, set the `k` argument to be $\log(n)$.
+    - We can verify the equivalence manually
+        ```{r}
+        n <- nrow(sat)
+        AIC(lm_rich, k = log(n)) - n - n * log(2 * pi) - log(n)
+        extractAIC(lm_rich, k = log(n))[[2]]
+        ```
+        
+- You can get Mallow's $C_p$ by using `extractAIC()` and specifying the `scale` argument to be the estimated residual variance under the **biggest** model.
+
+    ```{r}
+    sigma_full <- sigma(lm_rich)
+    lm_smaller <- lm(SAT ~ l_takers + Years + Expend + Rank, data = sat)
+    extractAIC(fit = lm_smaller, scale = sigma_full^2)[[2]]
+    ```
+    We can verify this manually
+    ```{r}
+    p <- ncol(model.matrix(lm_smaller))
+    n <- nrow(model.matrix(lm_smaller))
+    sigma_full <- sigma(lm_rich)
+    sigma_reduced <- sigma(lm_smaller)
+    p + (n - p) * (sigma_reduced^2 - sigma_full^2) / sigma_full^2
+    ```
+    
 - Use the `step()` function to choose a model by AIC/BIC via automated search.
     - The `object` argument is the intial model that it will search from.
     - The `scope` argument specifies the simplest and the most complicated models possible.
@@ -495,6 +543,15 @@ From the Statistical Sleuth:
     sout <- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank, k = log(nrow(sat)))
     tidy(sout)
     ```
+    
+- Modify the `scale` argument to fit by $C_p$
+    ```{r}
+    lm_rich <- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
+    sigma_full <- sigma(lm_rich)
+    sout <- step(object = lm_init, scale = sigma_full^2, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank)
+    tidy(sout)
+    ```
+
 
 # Exercise
 
@@ -531,5 +588,5 @@ glimpse(ex1221)
 5. State your final predictive model, and state any conclusions.
 6. What is the predicted quality score for a season with these rainfall amounts in the Upland region: Sep: 0.45, Oct: 0.02, Nov: 0.80, Dec: 0.76, Jan: 0.17, Feb: 1.22, and Mar: 0.37? Appropriately quantify your uncertainty in these predictions.
 
-Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, "Wildflower Flourishes and Flops—a 50-Year History," <www.desertmuseum.org/programs/flw wildflwrbloom.html> (July 25, 2011).)
+Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, "Wildflower Flourishes and Flops—a 50-Year History,")
 

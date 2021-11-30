@@ -151,7 +151,7 @@ Here is a list of the equations I want you to have memorized on the top of your 
     
 - BIC: Bayesian information Criterion 
     $$
-    AIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
+    BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
     $$
     
 - Mallows $C_p$:
