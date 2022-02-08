@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-22" />
+<meta name="date" content="2022-02-08" />
 
 <title>MLR III: Special Predictors</title>
 
@@ -345,7 +345,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-22</h4>
+<h4 class="date">2022-02-08</h4>
 
 </div>
 
@@ -407,7 +407,7 @@ tidy(lm_musc2)</code></pre>
 <li><p>The estimated regression surface is <span class="math display">\[
   \hat{Y} = 207.360 - 2.964X + 0.015X^2
   \]</span></p></li>
-<li><p>The <span class="math inline">\(p\)</span>-value corresponding to <code>age2</code> is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The <span class="math inline">\(p\)</span>-value in this case (0.08) says that we only have week evidence of a quadratic relationship.</p></li>
+<li><p>The <span class="math inline">\(p\)</span>-value corresponding to <code>age2</code> is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The <span class="math inline">\(p\)</span>-value in this case (0.08) says that we only have weak evidence of a quadratic relationship.</p></li>
 <li><p><strong>Exercise</strong>: Write out the null and alternative models associated with the <span class="math inline">\(p\)</span>-value of 0.08109.</p></li>
 <li><p><strong>Exercise</strong>: What are the null and alternative models associated with the <span class="math inline">\(p\)</span>-value of 0.004535?</p></li>
 <li><p>It’s possible to fit higher order polynomials. E.g. a cubic polynomial <span class="math display">\[
@@ -706,7 +706,7 @@ qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</cod
 <li><p>So we could tell a client something like:</p>
 <ol style="list-style-type: decimal">
 <li>In general, higher weight tends to decrease fuel-mileage.</li>
-<li>The effect of rear-axle ratio depends on the weight of the car. Smaller cars have better fuel-mileage with higher rear axle ratios, but larger cars tend to have better fuel-mileage with smaller rear axle ratios"</li>
+<li>The effect of rear-axle ratio depends on the weight of the car. Smaller cars have better fuel-mileage with higher rear axle ratios, but larger cars tend to have better fuel-mileage with smaller rear axle ratios”</li>
 </ol></li>
 <li><p>BUT, we have to be emphasize the scope of our conclusions. E.g. there are no cars with a rear-axle ratio of 3 and a weight of 2.</p>
 <pre class="r"><code>qplot(x = wt, y = drat, data = mtcars)</code></pre>

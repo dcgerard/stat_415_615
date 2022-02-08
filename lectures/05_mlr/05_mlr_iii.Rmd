@@ -76,7 +76,7 @@ klippy::klippy()
     \hat{Y} = 207.360 - 2.964X + 0.015X^2
     $$
     
-- The $p$-value corresponding to `age2` is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The $p$-value in this case (0.08) says that we only have week evidence of a quadratic relationship.
+- The $p$-value corresponding to `age2` is a test for the quadratic term (linear regression as the null versus quadratic regression as the alternative). The $p$-value in this case (0.08) says that we only have weak evidence of a quadratic relationship.
 
 - **Exercise**: Write out the null and alternative models associated with the $p$-value of 0.08109.
 
