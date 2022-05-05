@@ -20,11 +20,11 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw())
 ```
 
-- **Time**: Tuesdays or Wednesdays, 5:30 PM to 8:00 PM
+- **Time**: TBD
 - **Instructor**: Dr. David Gerard
 - **Email**: <dgerard@american.edu>
 - **Office**: DMTI 106E
-- **Office Hours**: Tuesdays and Wednesdays, 4:00 PM to 5:00 PM
+- **Office Hours**: TBD
 
 # Overview of Topics and Course Objectives
 
@@ -44,7 +44,7 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 - **Supplemental**: The *free* [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
 
-- **Optional**: [Regression and Other Stories](https://avehtari.github.io/ROS-Examples/) (ROS). The paperback for this book should only be about \$40, and it's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
+- **Optional**: The **free** [Regression and Other Stories](https://users.aalto.fi/~ave/ROS.pdf) (ROS). Code and data for this book are available [here](https://avehtari.github.io/ROS-Examples/) as well. It's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
 
 - **Optional**: [The Statistical Sleuth](http://www.statisticalsleuth.com/). This is the best non-mathematical treatment of basic Statistical analysis that exists. I use some of their datasets, and reference this book for best practices. If you do not remember basic statistical concepts, this is the best book you can get to review those concepts.
 
@@ -67,7 +67,7 @@ We will use the R computing language to complete assignments. R is free and may 
   - Status update: 5%
   - Final Report: 5%
   - Final Presentation: 10%
-  
+
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
 curve_df <- data.frame(Grade = c("A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"),
@@ -77,6 +77,12 @@ knitr::kable(curve_df)
 ```
 
 Individual assignments will not be curved. However, at the discretion of the instructor, the overall course grade at the end of the semester may be curved.
+
+# Capstone Project
+
+This is an AU capstone course, where the final project is a vital component to the AU core curriculum. As such, **if you fail the final project, then you fail the course**, even if your aggregate grade is above the fail level.
+
+Your final project grade will also be adjusted based on anonymous peer assessment of your contribution to the project. If all your colleagues say that you didn't do anything, then you will get no credit for the project.
 
 # List of Topics
 
@@ -119,9 +125,10 @@ The learning objective of this course is to give you the main concepts and a wor
 - Interpret and summarize the results of regression analysis results in the context of the study.
 - Understand limitations of the regression analysis.
 - Design and conduct a study to investigate a research problem using real-world data and regression analysis.
-- Derive the least squares estimators for linear regression.
-- Write the linear regression model in matrix form.
-- Understand matrix derivations for estimation, testing, and model building in multiple linear regression.
+- For STAT 615 Students only: 
+    - Derive the least squares estimators for linear regression.
+    - Write the linear regression model in matrix form.
+    - Understand matrix derivations for estimation, testing, and model building in multiple linear regression.
     
 # Late Work Policy
 
@@ -158,95 +165,3 @@ Students are not permitted to make visual or audio recordings (including livestr
 - All solutions that I provide are under my copyright. These solutions are for personal use only and may not be distributed to anyone else. Giving these solutions to others, including other students or posting them on the internet, is a violation of my copyright and a violation of the student code of conduct.
 
 A [short guide for students](https://american0.sharepoint.com/sites/ctrl-allstaff/Shared%20Documents/Content%20Management/Academic%20Integrity%20Advice%202019.pdf) on how to meet the expectations of the AU’s Academic Integrity Code
-
-# University-wide Policies
-
-## Defining and Reporting Discrimination and Non-Title IX Sexual Misconduct Policy
-
-American University is an equal opportunity, affirmative action institution that operates in compliance with applicable laws and regulations. The University does not discriminate on the basis of race, color, national origin, religion, sex, pregnancy or parenting, age, sexual orientation, disability, marital status, personal appearance, gender identity and expression, family responsibilities, political affiliation, source of income, veteran status, an individual’s genetic information or any other bases under applicable federal and local laws and regulations (collectively “Protected Bases”) in its programs and activities. The University expressly prohibits any form of discriminatory harassment including sexual harassment, dating and domestic violence, rape, sexual assault, sexual exploitation and stalking.
-
-As a faculty member, I am required to report discriminatory or harassing conduct to the university if I witness it or become aware of it – regardless of the location of the incident. There are four confidential resource on campus if you wish to speak to someone who is not required to report: Counseling Center, victim advocates in OASIS, medical providers in the Student Health Center, and ordained clergy in the Kay Spiritual Life Center. If you experience any of the above, you have the option of filing a report with [University Police](http://www.american.edu/finance/publicsafety/index.cfm) (202-885-2527), the [Office of the Dean of Students](http://www.american.edu/ocl/dos/) (<dos@american.edu> or 202-885-3300), or the [Title IX Office](http://www.american.edu/ocl/TitleIX/index.cfm) (202-885-8080 or <TitleIX@american.edu>). For more information, including a list of supportive resources on and off-campus, contact [OASIS](https://www.american.edu/ocl/promote-health/OASIS.cfm) (<oasis@american.edu> or 202-885-7070) or check out the [Support Guide on the Title IX webpage](https://www.american.edu/ocl/TitleIX/support.cfm).
-
-Review the complete [Discrimination and Non-Title IX Sexual Misconduct Policy](https://www.american.edu/policies/au-community/discrimination-and-non-title-ix-sexual-misconduct.cfm).
-
-## Defining and Reporting Title IX Sexual Harassment Policy
-
-American University does not discriminate on the basis of sex in the education program or activity that it operates, which includes admission and employment. Consistent with the procedures set forth and referenced in this Policy, the University will take steps to eliminate Title IX Sexual 2 Harassment, prevent its recurrence, and remedy any discriminatory effects for members of the AU Community.
-
-It is the responsibility of every member of the AU Community to foster an environment free of Title IX Sexual Harassment. All members of the AU Community are encouraged to take reasonable and prudent actions to prevent or stop an act of Title IX Sexual Harassment. Taking action may include direct intervention when safe to do so, enlisting the assistance of friends, contacting law enforcement, or seeking assistance from a person in authority.
-
-AU Community members employed by the University (including student employees, such as teaching assistants, resident assistants, and orientation leaders) and individuals covered by the University’s Out-of-State Staffing Policy have a duty to report Title IX Sexual Harassment to the [Title IX Coordinator](TitleIX@american.edu) (202-885-8080), when they become aware of such conduct.
-
-Review the complete [Title IX Sexual Harassment Policy](https://www.american.edu/policies/au-community/title-ix-sexual-harassment-policy.cfm).
-
-## Emergency Preparedness
-
-In the event of an emergency, American University will implement a plan for meeting the needs of all members of the university community. Should the University be required to close for a period of time, we are committed to ensuring that all aspects of our educational programs will be delivered to our students. These may include altering and extending the duration of the traditional term schedule to complete essential instruction in the traditional format and/or the use of distance instructional methods. Specific strategies will vary from class to class, depending on the format of the course and the timing of the emergency. Faculty will communicate class-specific information to students via AU email and Blackboard, while students must inform their faculty immediately of any emergency-related absence. Students are responsible for checking their AU email regularly and keeping themselves informed of emergencies. In the event of an emergency, students should refer to the AU Student Portal, the [AU website](http://www.prepared.american.edu/), and the AU information line at (202) 885-1100 for general university-wide information, as well as contact their faculty and/or respective dean’s office for course and school/college specific information.
-
-## Student Code of Conduct
-
-The central commitment of American University is the development of thoughtful, responsible human beings in the context of a challenging yet supportive academic community. The [Student Code of Conduct](http://www.american.edu/ocl/sccrs/) is designed to benefit the American University community and to assist in forming the highest standards of ethics and morals among its members. By registering for this course, students have acknowledged their awareness of the Student Code of Conduct and they are obliged to become familiar with their rights and responsibilities as defined by the Code.
-
-## Religious Observances
-
-Students will be provided the opportunity to make up any examination, study, or work requirements that may be missed due to a religious observance, provided they notify their instructors before the end of the second week of classes. Please send this notification through email to the professor. For additional information, see American University’s [religious observances policy](http://www.american.edu/ocl/kay/Major-Religious-Holy-Days.cfm).
-
-## Use of Student Work
-
-The professor will use academic work that you complete for educational purposes in this course during this semester. Your registration and continued enrollment constitute your consent.
-
-# Academic Support Services
-
-## Academic Success Coaching
-
-[Academic Success Coaching](https://www.american.edu/provost/academic-access/academic-success-coaching.cfm) is a free one-on-one meeting between a student and a professional academic coach to build or enhance time management, organizational, reading, notetaking, test taking and study skills.  Students can work with an academic coach to develop an academic action plan, better understand how to break down large assignments, and discuss overcoming procrastination.  Coaching services are open to all students. (Location in Clark Hall Rooms 106/113 – Schedule appointments on the [Academic Coaching You Can Book Me](https://auacademiccoaching.youcanbook.me/) – <academiccoaching@american.edu>).
-
-## International Student & Scholar Services
-
-[International Student & Scholar Services](https://www.american.edu/ocl/isss/index.cfm) has resources to support academic success and participation in campus life including academic counseling, support for second language learners, response to questions about visas, immigration status and employment and intercultural programs, clubs and other campus resources. (202-885-3350, Butler Pavilion 410).
-
-## Mathematics and Statistics Tutoring Lab
-
-The [Mathematics & Statistics Tutoring Lab](https://www.american.edu/provost/academic-access/mathstat.cfm) provides free drop-in tutoring and scheduled one-on-one tutoring appointments to American University students for exam review, homework assignments, and understanding concepts. The Lab tutors Mathematics concepts up to Calculus II and Statistics concepts up to Intermediate Statistics. (Drop-in to Don Myers Building Room 103 or [Schedule tutoring appointments on WC Online](https://american.mywconline.net/))
-
-## Writing Center
-
-[Writing Center](https://www.american.edu/provost/academic-access/writing-center.cfm) offers free, individual coaching sessions to all AU students. In your 45-minute session, a student writing consultant can help you address your assignments, understand the conventions of academic writing, and learn how to revise and edit your own work. (Bender Library – 1st Floor Commons – [Schedule tutoring appointments on WC Online](https://american.mywconline.net/) – 202-885-2991)
-
-# Student Support Services
-
-## Center for Diversity & Inclusion (CDI)
-
-[CDI](http://www.american.edu/ocl/cdi/) is dedicated to enhancing LGBTQ, multicultural, first-generation, and women’s experiences on campus and to advancing AU’s commitment to respecting and valuing diversity by serving as a resource and liaison to students, staff, and faculty on issues of equity through education, outreach, and advocacy. It is located on the 2nd floor of Mary Graydon Center (202-885-3651, MGC 201 & 202).
-
-## Counseling Center
-
-The Counseling Center offers a variety of psychological services, online resources, and referrals to off-campus mental health care. Please visit the Center’s website for more information: <www.american.edu/counseling>.
-
-## Dean of Students Office
-
-The Office of the Dean of Students offers individual meetings to discuss issues that impact the student experience including academic, social, and personal matters.  Staff work with students and make referrals to appropriate campus resources for resolution.
-
-Additionally, while academic regulations state that medical absences are to be excused, if faculty require correspondence to verify the student’s explanation, medical documentation should be submitted to the Office of the Dean of Students ("DOS").  The DOS staff will review the documentation and verify the medical excuse.  Faculty have the discretion to approve absences and do not need permission from the Office of the Dean of Students to excuse absences.  Students should be referred to the Office of the Dean of Students only if faculty require further proof or if they have concerns about the impact of absences on the student’s ability to succeed (202-885-3300; Butler Pavilion 408; <www.american.edu/dos>)
-
-## Food and Housing Insecurity Statement
-
-Students facing challenges securing food or housing should be referred to the Office of the Dean of Students (<www.american.edu/dos> or 202-885-3300) for support and referral to resources.
-
-## Office of Advocacy Services for Interpersonal and Sexual Violence
-
-[OASIS](https://www.american.edu/ocl/promote-health/oasis.cfm), which is housed within the Health Promotion & Advocacy Center (HPAC), provides free and confidential advocacy services for students who have experienced sexual assault, dating or domestic violence, sexual harassment, and/or stalking. These services are available ​during office hours, Monday through Friday to all students and to friends and family members of survivors. To schedule an appointment with one of the two confidential victim advocates, book via <http://auhpac.youcanbook.me>. The advocates are also available via email (<oasis@american.edu>) or by phone (202-885-7070). HPAC/OASIS is located in Hughes Hall, Suite 105.
-
-## Respect for Diversity
-
-As stated in the [American University Discrimination and Non-Title IX Sexual Misconduct Policy](https://www.american.edu/policies/au-community/upload/discrimination-and-non-title-ix-sexual-misconduct-policy-web.pdf):
-
-“American University is an equal opportunity, affirmative action institution that operates in compliance with applicable laws and regulations. The University does not discriminate on the basis of race, color, national origin, religion, sex, pregnancy or parenting, age, sexual orientation, disability, marital status, personal appearance, gender identity and expression, family responsibilities, political affiliation, source of income, veteran status, an individual’s genetic information or any other bases under applicable federal and local laws and regulations (collectively “Protected Bases”) in its programs and activities. The University expressly prohibits any form of discriminatory harassment including sexual harassment, dating and domestic violence, rape, sexual assault, sexual exploitation and stalking.”
-
-The above website includes further details, including how to report instances of discrimination and your responsibilities as a member of the campus community in relation to the policy; you are strongly encouraged to familiarize yourself further with this policy.
-
-Class rosters and University data systems are provided to faculty with the student’s legal name and legal gender marker. As a student, you are able to change how your name shows up through email and on your AU ID Card. This option is helpful for various student populations, including but not limited to: students who abbreviate their first name; students who use their middle name; international students; and transgender students. As a faculty member, I am committed to using your name and pronouns. We will take time during our first class together to do introductions, at which point you can share with all members of our learning community what name and pronouns you use, as you are comfortable. Additionally, if these change at any point during the semester, please let me know and we can develop a plan to share this information with others in a way that is safe for you. Should you want to update your name, you can do so by looking at the [guidelines and frequently asked questions](https://www.american.edu/ocl/cdi/TRG.cfm) from the Center for Diversity and Inclusion.
-
-## Students with Disabilities
-
-If you wish to receive accommodations for a disability, please notify me with a memo from the Academic Support and Access Center. As accommodations are not retroactive, timely notification at the beginning of the semester, if possible, is strongly recommended. To register with a disability or for questions about disability accommodations, contact the Academic Support and Access Center at 202-885-3360 or <asac@american.edu>. For more information, visit AU’s [Disability Accommodations web page](https://www.american.edu/provost/academic-access/documentation-and-eligibility.cfm).

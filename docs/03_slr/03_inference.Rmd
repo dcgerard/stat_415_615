@@ -630,8 +630,8 @@ We will go through these three intervals in turn.
                              newdata = newdata, 
                              se.fit = TRUE, 
                              interval = "none")
-      n <- nrow(stats::model.frame(object))
-      p <- ncol(stats::model.frame(object))
+      n <- nrow(stats::model.matrix(object))
+      p <- ncol(stats::model.matrix(object))
       w <- sqrt(p * stats::qf(p = level, df1 = p, df2 = n - p))
       lwr <- pout$fit - w * pout$se.fit
       upr <- pout$fit + w * pout$se.fit
