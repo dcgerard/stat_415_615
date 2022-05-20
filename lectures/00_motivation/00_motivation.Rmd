@@ -162,73 +162,10 @@ grViz(diagram = "digraph flowchart {
 
 - Understanding linear regression really well will give you a deeper understanding of statistics in general.
 
-## One sample $t$-test
-
-- $H_0$: Average MPG = 20
-- $H_A$: Average MPG $\neq$ 20
-
-```{r, echo = FALSE}
-mtcars %>%
-  qplot(x = mpg, data = ., geom = "histogram", bins = 10) +
-  geom_vline(xintercept = 20, lty = 2, col = 2)
-```
-
-```{r}
-## t-test p-value
-t.test(mtcars$mpg, mu = 20)$p.value
-
-## linear regression p-value
-lmout <- lm(mpg - 20 ~ 1, data = mtcars)
-coef(summary(lmout))[, "Pr(>|t|)"]
-```
-
-## Two-sample $t$-test
-
-```{r, echo = FALSE}
-mtcars %>%
-  mutate(am = as.factor(am)) %>%
-  qplot(x = am, y = mpg, data = ., geom = "boxplot")
-```
-
-```{r}
-## t-test p-value
-t.test(mpg ~ am, data = mtcars, var.equal = TRUE)$p.value
-
-## linear regression p-value
-lmout <- lm(mpg ~ am, data = mtcars)
-coef(summary(lmout))["am", "Pr(>|t|)"]
-```
-
-## One-way ANOVA
-
-```{r, echo = FALSE}
-mtcars %>%
-  mutate(gear = as.factor(gear)) %>%
-  qplot(y = mpg, x = gear, data = ., geom = "boxplot")
-```
-
-```{r}
-## F-test p-value from ANOVA
-mtcars %>%
-  mutate(gear = as.factor(gear)) %>%
-  aov(mpg ~ gear, data = .) %>%
-  anova()
-
-## F-test p-value from linear model
-mtcars %>%
-  mutate(gear = as.factor(gear)) %>%
-  model.matrix(~gear, data = .) %>%
-  as_tibble() %>%
-  mutate(mpg = mtcars$mpg) ->
-  lmdat
-head(lmdat)
-
-lmout <- lm(mpg ~ 1 + gear4 + gear5, data = lmdat)
-summary(lmout)
-```
-
-- $p$-value for the $F$-tests in both cases was about 0.000295
-
-## Many other connections
-
-- Correlation tests, rank tests, chi-square tests, and many others can be seen as approximations of linear regression.
+- Procedures that are special cases of linear regression, or can be well approximated by linear regression:
+    - One/two sample $t$-test.
+    - ANOVA
+    - Correlation tests
+    - Rank tests
+    - Chi-square tests
+    - Many others
