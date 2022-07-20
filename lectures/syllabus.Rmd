@@ -88,30 +88,23 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
 
 1. R basics.
 2. Mathematical and Statistical Prerequisites.
-3. Simple Linear Regression (Chapters 1-5 of KNNL).
+3. Simple Linear Regression (Chapters 1-3 of KNNL).
     a. The model and interpretation.
     b. Inference (estimation/hypothesis testing).
     c. Diagnostics and remedial measures.
-4. Multiple Linear Regression (Chapters 6-8 of KNNL).
+4. 615 Only: Linear Algebra (Chapter 5)
+5. Multiple Linear Regression (Chapters 6-8 of KNNL).
     a. The model and interpretation.
     b. Inference (estimation/hypothesis testing).
     c. Diagnostics and remedial measures.
-5. Model Building (Chapters 9-11 of KNNL).
+6. Model Building (Chapters 9-10 of KNNL).
     a. Theoretical considerations.
     b. The limited usability of automated procedures.
-6. Experimental Design.
-    a. Simulation as a general tool.
-    b. Sample size calculation.
-7. Dealing with Missing data.
-    a. Imputation.
+7. Logisitic Regression Models (Chapter 14)
+8. Mixed Effects Models
+
     
 # Important Dates
-
-- 10/12/2021--10/13/2021: Tentative dates for midterm exam.
-- 11/23/2021: Tuesday classes cancelled; Friday classes meet.
-- 11/24/2021: Wednesday classes cancelled; Thanksgiving holiday.
-- 12/14/2021: Final exam for Tuesday section at 5:30 PM.
-- 12/15/2021: Final exam for Wednesday section at 5:30 PM.
 
 # Course Learning Outcomes
 
