@@ -42,9 +42,9 @@ Criteria for an appropriate journal article are:
   
 I will let you propose a journal article with a dataset, but I retain the right to choose if the dataset is "relatively complicated".
 
-[PLOS](https://journals.plos.org) Journals are all required to have a data availability statement, so this is a good place to start searching.
+[PLoS](https://journals.plos.org) Journals are all required to have a data availability statement, so this is a good place to start searching.
 
-You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLOS](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467).
+You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLoS One](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467). These aren't necessarily good or interesting articles, just ones that satisfy the above requirements and were released in July 2022 when I checked for the newest releases in PLoS One.
 
 - @karat2022estimating
 - @goli2022estimates
@@ -54,18 +54,55 @@ You can get a sense of the type of articles I am looking for (or use one of thes
 - @haile2022predictors
 - @taillie2022developing
 
-# Progress Report
+# Progress Report (5 pts)
 
-# Presentation
+- You should turn in 1 page written report affirming:
 
-# Final Written Report
+    1. That you have downloaded the data and have successfully loaded it into R.
+    2. That you have checked that all variables described in the paper are available in the dataset.
+    3. That you have made scatterplots and histograms of the variables in the dataset.
+    4. If a new method is needed (e.g. PCA), that you have downloaded a tutorial from the web and can now implement the new method in R code.
+    
+- I want to see evidence that all of the above has been accomplished.
 
-- Describe analysis.
-- State model
-- Check assumptions
-- Provide interpretation
-- Critiques (expand on analysis if so).
+# Presentation/Written Report (10 pts)
 
-# Grade Breakdown
+You will provide a presentation and a written report. They should both follow this outline:
+
+- Introduce the problem/paper.
+- Describe the data.
+- State the model(s)/method(s)
+- Check assumptions.
+- Provide interpretation of results.
+- Critiques / expansion of analyses.
+- Summary/Conclusion
+
+## Presentation
+
+- Your presentation should be 15 minutes long.
+
+- All group members should speak.
+
+- I will ask questions at the end of the presentation.
+
+## Final Written Report (10 pts)
+
+- The text of your final written report should be max 4 pages, double spaced, 12 point font. This does not include figures/tables/references/code.
+
+# Code (5 pts)
+
+- You should turn in all of your code to reproduce the results of the paper in a single zipped folder. 
+
+- I should be able to run your code without modification and obtain your results.
+
+- There should be no errors in your code. 
+
+- You should use the methods/packages we've learned in class.
+
+# Peer Assessment (2 pts)
+
+At the end of the project, I will have your teammates rate your contribution to the project. I will adjust your grade according to their comments. If they all say that you didn't do anything, I will give you a failing grade.
+
+You will get 2 points for filling out the assessment.
 
 # References
