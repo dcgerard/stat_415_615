@@ -104,7 +104,7 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
 
 - If you are taking this class for graduate credit, I am going to require you to learn the linear algebra behind linear regression.
 
-- I am going to make an optional lecture outside of class time that you can attend where I will teach an introduction to linear algebra. You can learn this on your own if you want.
+- I am going to have an optional Zoom lecture outside of class time that you can attend where I will teach an introduction to linear algebra. This will be recorded, so you can learn this on your own if you want.
 
 - I will give you separate homework and exam questions that use linear algebra in linear regression (e.g. create design matrices, implement linear regression in R using matrix algebra, etc)
 

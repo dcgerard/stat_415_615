@@ -24,6 +24,13 @@ klippy::klippy()
 
 # Important Dates
 
+- 11/02/2022: Journal article selected.
+- 11/16/2022: Progress report due.
+- 12/14/2022: 
+    - Final project presentations. 
+    - Written report due.
+    - Code due.
+
 # General Description
 
 - For the final project you will work in teams of 2--3 to select a journal article from 2022 and reproduce their results. 
@@ -40,13 +47,13 @@ Criteria for an appropriate journal article are:
     a. There are at $\gtrapprox$ 20 predictor variables, or
     b. The authors use a method not taught in this class (e.g. principal components regression, lasso, etc).
   
-I will let you propose a journal article with a dataset, but I retain the right to choose if the dataset is "relatively complicated".
+I will let you propose a journal article with a dataset, but I retain the right to decide if the dataset is "relatively complicated".
 
 [PLoS](https://journals.plos.org) Journals are all required to have a data availability statement, so this is a good place to start searching.
 
 You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLoS One](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467). These aren't necessarily good or interesting articles, just ones that satisfy the above requirements and were released in July 2022 when I checked for the newest releases in PLoS One.
 
-If the data is in a weird format (like "sav" or "dta"), then try to use the [`{haven}`](https://cran.r-project.org/package=haven) package to load it into R.
+If the data are in a weird format (like "sav" or "dta"), then try to use the [`{haven}`](https://cran.r-project.org/package=haven) package to load it into R.
 
 - @goli2022estimates: 
     - This project seems to require a lot of data download and data munging to obtain the same variables as in the study.
@@ -67,6 +74,9 @@ If the data is in a weird format (like "sav" or "dta"), then try to use the [`{h
     - The data are sav.
 - @tekle2022length
     - The data are sav.
+- @hettich2022conspiracy
+- @lu2022emojis
+    - Only do this one if you have had some machine learning experience.
 
 # Progress Report (5 pts)
 

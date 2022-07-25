@@ -24,6 +24,13 @@ klippy::klippy()
 
 # Important Dates
 
+- 11/02/2022: Journal article selected.
+- 11/16/2022: Progress report due.
+- 12/14/2022: 
+    - Final project presentations. 
+    - Written report due.
+    - Code due.
+
 # General Description
 
 - For the final project you will work in teams of 2--3 to select a journal article from 2022 and reproduce their results. 
