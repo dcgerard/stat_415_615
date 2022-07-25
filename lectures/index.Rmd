@@ -64,10 +64,8 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 9 of KNNL.
   - [Lecture 05-6: MLR: More Complicated Model Diagnostics](05_mlr_diagnostics.html).
       - Chapter 10 of KNNL.
-<!-- - 06 Design -->
-<!--   - [Lecture 06-1: Design of Regression Experiments](./06_design.html). -->
-<!-- - 07 Logistic Regression -->
-<!--   - [Lecture 07-1: Logistic Regression](./07_logistic.html). -->
+- 06 Logistic Regression
+  - [Lecture 06-1: Logistic Regression](./06_logistic.html).
 - Review Sheets
   - [Equations](./rr_equations.html).
 
