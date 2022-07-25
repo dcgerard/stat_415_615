@@ -37,7 +37,7 @@ Criteria for an appropriate journal article are:
 3. Authors used regression for analysis.
 4. You have not used these data before.
 5. It is a relatively complicated dataset. Ways that a dataset can be "relatively complicated" are:
-    a. There are at least 20 predictor variables, or
+    a. There are at $\gtrapprox$ 20 predictor variables, or
     b. The authors use a method not taught in this class (e.g. principal components regression, lasso, etc).
   
 I will let you propose a journal article with a dataset, but I retain the right to choose if the dataset is "relatively complicated".
@@ -46,17 +46,31 @@ I will let you propose a journal article with a dataset, but I retain the right 
 
 You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLoS One](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467). These aren't necessarily good or interesting articles, just ones that satisfy the above requirements and were released in July 2022 when I checked for the newest releases in PLoS One.
 
-- @karat2022estimating
-- @goli2022estimates
-- @dey2022prediction
+If the data is in a weird format (like "sav" or "dta"), then try to use the [`{haven}`](https://cran.r-project.org/package=haven) package to load it into R.
+
+- @goli2022estimates: 
+    - This project seems to require a lot of data download and data munging to obtain the same variables as in the study.
+    - You don't need to do the spatial stuff in this paper (a little too advanced). But let me know if you want to try!
 - @eseta2022factors
+    - They perform principal components analysis (PCA) to extract features.
+    - The data are sav.
 - @yin2022does
+    - They use factor analysis (related to PCA).
+    - No need to do the path analysis.
 - @haile2022predictors
+    - The data are dta.
 - @taillie2022developing
+    - One of their analyses uses mixed-effects modeling.
+    - The data are dta.
+- @karnaze2022association
+    - They do both logistic and linear regressions here.
+    - The data are sav.
+- @tekle2022length
+    - The data are sav.
 
 # Progress Report (5 pts)
 
-- You should turn in 1 page written report affirming:
+- You should turn in a 1 page written report affirming:
 
     1. That you have downloaded the data and have successfully loaded it into R.
     2. That you have checked that all variables described in the paper are available in the dataset.

@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-07-23" />
+<meta name="date" content="2022-07-25" />
 
 <title>Final Project</title>
 
@@ -371,7 +371,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Final Project</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-07-23</h4>
+<h4 class="date">2022-07-25</h4>
 
 </div>
 
@@ -402,13 +402,14 @@ available.</li>
 <li>It is a relatively complicated dataset. Ways that a dataset can be
 “relatively complicated” are:
 <ol style="list-style-type: lower-alpha">
-<li>There are at least 20 predictor variables, or</li>
+<li>There are at <span class="math inline">\(\gtrapprox\)</span> 20
+predictor variables, or</li>
 <li>The authors use a method not taught in this class (e.g. principal
 components regression, lasso, etc).</li>
 </ol></li>
 </ol>
 <p>I will let you propose a journal article with a dataset, but I retain
-the right to choose if the dataset is “relatively complicated”.</p>
+the right to decide if the dataset is “relatively complicated”.</p>
 <p><a href="https://journals.plos.org">PLoS</a> Journals are all
 required to have a data availability statement, so this is a good place
 to start searching.</p>
@@ -416,46 +417,130 @@ to start searching.</p>
 one of these) based on the following that I picked out of a <a
 href="https://journals.plos.org/plosone/search?filterJournals=PLoSONE&amp;q=%22linear%20regression%22&amp;sortOrder=DATE_NEWEST_FIRST&amp;page=1&amp;utm_content=a&amp;utm_campaign=ENG-467">search
 from PLoS One</a>. These aren’t necessarily good or interesting
-articles, just ones that satisfy the above requirements.</p>
+articles, just ones that satisfy the above requirements and were
+released in July 2022 when I checked for the newest releases in PLoS
+One.</p>
+<p>If the data are in a weird format (like “sav” or “dta”), then try to
+use the <a
+href="https://cran.r-project.org/package=haven"><code>{haven}</code></a>
+package to load it into R.</p>
 <ul>
-<li><span class="citation">Karat (2022)</span></li>
-<li><span class="citation">Goli (2022)</span></li>
-<li><span class="citation">Dey (2022)</span></li>
-<li><span class="citation">Eseta (2022)</span></li>
-<li><span class="citation">Yin (2022)</span></li>
-<li><span class="citation">Haile (2022)</span></li>
-<li><span class="citation">Taillie (2022)</span></li>
+<li><span class="citation">Goli (2022)</span>:
+<ul>
+<li>This project seems to require a lot of data download and data
+munging to obtain the same variables as in the study.</li>
+<li>You don’t need to do the spatial stuff in this paper (a little too
+advanced). But let me know if you want to try!</li>
+</ul></li>
+<li><span class="citation">Eseta (2022)</span>
+<ul>
+<li>They perform principal components analysis (PCA) to extract
+features.</li>
+<li>The data are sav.</li>
+</ul></li>
+<li><span class="citation">Yin (2022)</span>
+<ul>
+<li>They use factor analysis (related to PCA).</li>
+<li>No need to do the path analysis.</li>
+</ul></li>
+<li><span class="citation">Haile (2022)</span>
+<ul>
+<li>The data are dta.</li>
+</ul></li>
+<li><span class="citation">Taillie (2022)</span>
+<ul>
+<li>One of their analyses uses mixed-effects modeling.</li>
+<li>The data are dta.</li>
+</ul></li>
+<li><span class="citation">Karnaze (2022)</span>
+<ul>
+<li>They do both logistic and linear regressions here.</li>
+<li>The data are sav.</li>
+</ul></li>
+<li><span class="citation">Tigabe Tekle (2022)</span>
+<ul>
+<li>The data are sav.</li>
+</ul></li>
+<li><span class="citation">Hettich (2022)</span></li>
+<li><span class="citation">Lu (2022)</span>
+<ul>
+<li>Only do this one if you have had some machine learning
+experience.</li>
+</ul></li>
 </ul>
 </div>
-<div id="progress-report" class="section level1">
-<h1>Progress Report</h1>
-</div>
-<div id="presentation" class="section level1">
-<h1>Presentation</h1>
-</div>
-<div id="final-written-report" class="section level1">
-<h1>Final Written Report</h1>
+<div id="progress-report-5-pts" class="section level1">
+<h1>Progress Report (5 pts)</h1>
 <ul>
-<li>Describe analysis.</li>
-<li>State model</li>
-<li>Check assumptions</li>
-<li>Provide interpretation</li>
-<li>Critiques (expand on analysis if so).</li>
+<li><p>You should turn in a 1 page written report affirming:</p>
+<ol style="list-style-type: decimal">
+<li>That you have downloaded the data and have successfully loaded it
+into R.</li>
+<li>That you have checked that all variables described in the paper are
+available in the dataset.</li>
+<li>That you have made scatterplots and histograms of the variables in
+the dataset.</li>
+<li>If a new method is needed (e.g. PCA), that you have downloaded a
+tutorial from the web and can now implement the new method in R
+code.</li>
+</ol></li>
+<li><p>I want to see evidence that all of the above has been
+accomplished.</p></li>
 </ul>
 </div>
-<div id="grade-breakdown" class="section level1">
-<h1>Grade Breakdown</h1>
+<div id="presentationwritten-report-10-pts" class="section level1">
+<h1>Presentation/Written Report (10 pts)</h1>
+<p>You will provide a presentation and a written report. They should
+both follow this outline:</p>
+<ul>
+<li>Introduce the problem/paper.</li>
+<li>Describe the data.</li>
+<li>State the model(s)/method(s)</li>
+<li>Check assumptions.</li>
+<li>Provide interpretation of results.</li>
+<li>Critiques / expansion of analyses.</li>
+<li>Summary/Conclusion</li>
+</ul>
+<div id="presentation" class="section level2">
+<h2>Presentation</h2>
+<ul>
+<li><p>Your presentation should be 15 minutes long.</p></li>
+<li><p>All group members should speak.</p></li>
+<li><p>I will ask questions at the end of the presentation.</p></li>
+</ul>
+</div>
+<div id="final-written-report-10-pts" class="section level2">
+<h2>Final Written Report (10 pts)</h2>
+<ul>
+<li>The text of your final written report should be max 4 pages, double
+spaced, 12 point font. This does not include
+figures/tables/references/code.</li>
+</ul>
+</div>
+</div>
+<div id="code-5-pts" class="section level1">
+<h1>Code (5 pts)</h1>
+<ul>
+<li><p>You should turn in all of your code to reproduce the results of
+the paper in a single zipped folder.</p></li>
+<li><p>I should be able to run your code without modification and obtain
+your results.</p></li>
+<li><p>There should be no errors in your code.</p></li>
+<li><p>You should use the methods/packages we’ve learned in
+class.</p></li>
+</ul>
+</div>
+<div id="peer-assessment-2-pts" class="section level1">
+<h1>Peer Assessment (2 pts)</h1>
+<p>At the end of the project, I will have your teammates rate your
+contribution to the project. I will adjust your grade according to their
+comments. If they all say that you didn’t do anything, I will give you a
+failing grade.</p>
+<p>You will get 2 points for filling out the assessment.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-dey2022prediction" class="csl-entry">
-Dey, Md. Mahbubur AND Howlader, Samrat Kumar AND Rahman. 2022.
-<span>“Prediction of Dengue Incidents Using Hospitalized Patients,
-Metrological and Socio-Economic Data in Bangladesh: A Machine Learning
-Approach.”</span> <em>PLOS ONE</em> 17 (7): 1–17. <a
-href="https://doi.org/10.1371/journal.pone.0270933">https://doi.org/10.1371/journal.pone.0270933</a>.
-</div>
 <div id="ref-eseta2022factors" class="csl-entry">
 Eseta, Shimeles Ololo, Wakuma Akafu AND Sinkie. 2022. <span>“Factors
 Affecting Households’ Trust in the Community Based Health Insurance
@@ -476,19 +561,39 @@ South Ethiopia: Application of Theory of Planned Behavior.”</span>
 <em>PLOS ONE</em> 17 (6): 1–18. <a
 href="https://doi.org/10.1371/journal.pone.0270738">https://doi.org/10.1371/journal.pone.0270738</a>.
 </div>
-<div id="ref-karat2022estimating" class="csl-entry">
-Karat, Nicky AND Baisley, Aaron S. AND McCreesh. 2022. <span>“Estimating
-Waiting Times, Patient Flow, and Waiting Room Occupancy Density as Part
-of Tuberculosis Infection Prevention and Control Research in South
-African Primary Health Care Clinics.”</span> <em>PLOS Global Public
-Health</em> 2 (7): 1–19. <a
-href="https://doi.org/10.1371/journal.pgph.0000684">https://doi.org/10.1371/journal.pgph.0000684</a>.
+<div id="ref-hettich2022conspiracy" class="csl-entry">
+Hettich, Manfred E. AND Ernst, Nora AND Beutel. 2022. <span>“Conspiracy
+Endorsement and Its Associations with Personality Functioning, Anxiety,
+Loneliness, and Sociodemographic Characteristics During the COVID-19
+Pandemic in a Representative Sample of the German Population.”</span>
+<em>PLOS ONE</em> 17 (1): 1–15. <a
+href="https://doi.org/10.1371/journal.pone.0263301">https://doi.org/10.1371/journal.pone.0263301</a>.
+</div>
+<div id="ref-karnaze2022association" class="csl-entry">
+Karnaze, John AND Bloss, Melissa M. AND Bellettiere. 2022.
+<span>“Association of Compassion and Empathy with Prosocial Health
+Behaviors and Attitudes in a Pandemic.”</span> <em>PLOS ONE</em> 17 (7):
+1–16. <a
+href="https://doi.org/10.1371/journal.pone.0271829">https://doi.org/10.1371/journal.pone.0271829</a>.
+</div>
+<div id="ref-lu2022emojis" class="csl-entry">
+Lu, Wei AND Chen, Xuan AND Ai. 2022. <span>“Emojis Predict Dropouts of
+Remote Workers: An Empirical Study of Emoji Usage on GitHub.”</span>
+<em>PLOS ONE</em> 17 (1): 1–21. <a
+href="https://doi.org/10.1371/journal.pone.0261262">https://doi.org/10.1371/journal.pone.0261262</a>.
 </div>
 <div id="ref-taillie2022developing" class="csl-entry">
 Taillie, Carmen E. AND Hall, Lindsey Smith AND Prestemon. 2022.
 <span>“Developing Health and Environmental Warning Messages about Red
 Meat: An Online Experiment.”</span> <em>PLOS ONE</em> 17 (6): 1–23. <a
 href="https://doi.org/10.1371/journal.pone.0268121">https://doi.org/10.1371/journal.pone.0268121</a>.
+</div>
+<div id="ref-tekle2022length" class="csl-entry">
+Tigabe Tekle, Abaynesh Fentahun AND Tefera, Masho AND Bekalu. 2022.
+<span>“Length of Hospital Stay and Associated Factors Among Heart
+Failure Patients Admitted to the University Hospital in Northwest
+Ethiopia.”</span> <em>PLOS ONE</em> 17 (7): 1–15. <a
+href="https://doi.org/10.1371/journal.pone.0270809">https://doi.org/10.1371/journal.pone.0270809</a>.
 </div>
 <div id="ref-yin2022does" class="csl-entry">
 Yin, Hai-ying AND Zeng, Jing-hua AND Song. 2022. <span>“Does a Smart

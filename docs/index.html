@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-22" />
+<meta name="date" content="2022-07-25" />
 
 <title>Regression</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -62,6 +62,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -82,6 +83,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -234,7 +238,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -265,14 +269,16 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-22</h4>
+<h4 class="date">2022-07-25</h4>
 
 </div>
 
 
 <div id="synopsis" class="section level1">
 <h1>Synopsis</h1>
-<p>This website contains the teaching materials for STAT 415/615 Regression, taught at American University by <a href="https://dcgerard.github.io/">David Gerard</a>.</p>
+<p>This website contains the teaching materials for STAT 415/615
+Regression, taught at American University by <a
+href="https://dcgerard.github.io/">David Gerard</a>.</p>
 </div>
 <div id="administrative" class="section level1">
 <h1>Administrative</h1>
@@ -285,19 +291,24 @@ $(document).ready(function () {
 <ul>
 <li>00 Motivation
 <ul>
-<li><a href="./00_motivation.html">Lecture 00-1: Linear Regression Overview</a>.</li>
+<li><a href="./00_motivation.html">Lecture 00-1: Linear Regression
+Overview</a>.</li>
 </ul></li>
 <li>01 Crash Course in R
 <ul>
 <li><a href="./01_r_intro.html">Lecture 01-1: R introduction</a>.</li>
-<li><a href="01_r_markdown.html">Lecture 01-2: R markdown introduction</a>.</li>
-<li><a href="./01_qplot.html">Lecture 01-3: R graphics with <code>qplot()</code></a>.</li>
+<li><a href="01_r_markdown.html">Lecture 01-2: R markdown
+introduction</a>.</li>
+<li><a href="./01_qplot.html">Lecture 01-3: R graphics with
+<code>qplot()</code></a>.</li>
 <li><a href="./01_r_lab.html">Lab 01-1: R Lab</a>.</li>
 </ul></li>
 <li>02 Review
 <ul>
-<li><a href="./02_math_prereq.html">Lecture 02-1: Mathematical prerequisites</a>.</li>
-<li><a href="./02_prob_sim.html">Lecture 02-2: Probability and simulation</a>.</li>
+<li><a href="./02_math_prereq.html">Lecture 02-1: Mathematical
+prerequisites</a>.</li>
+<li><a href="./02_prob_sim.html">Lecture 02-2: Probability and
+simulation</a>.</li>
 </ul></li>
 <li>03 Simple linear regression
 <ul>
@@ -309,17 +320,20 @@ $(document).ready(function () {
 <ul>
 <li>Chapter 2 of KNNL.</li>
 </ul></li>
-<li><a href="./03_diagnostics.html">Lecture 03-3: Diagnostics and Remedial Measures</a>.
+<li><a href="./03_diagnostics.html">Lecture 03-3: Diagnostics and
+Remedial Measures</a>.
 <ul>
 <li>Chapter 3 of KNNL.</li>
 </ul></li>
 <li><a href="./03_slr_case.html">Lecture 03-4: SLR Case Study</a>.</li>
-<li><a href="./03_other_topics.html">Lecture 03-5: Other Topics in SLR</a>.
+<li><a href="./03_other_topics.html">Lecture 03-5: Other Topics in
+SLR</a>.
 <ul>
 <li>Chapter 4 of KNNL.</li>
 </ul></li>
 <li><a href="./03_inference_lab.html">Lab 03-1: Inference Lab</a>.</li>
-<li><a href="./03_diagnostics_lab.html">Lab 03-2: Diagnostics Lab</a>.</li>
+<li><a href="./03_diagnostics_lab.html">Lab 03-2: Diagnostics
+Lab</a>.</li>
 </ul></li>
 <li>04 Linear algebra
 <ul>
@@ -327,38 +341,49 @@ $(document).ready(function () {
 <ul>
 <li>Chapter 5 of KNNL.</li>
 </ul></li>
-<li><a href="./04_linear_algebra_lab.html">Lab 04-1: Linear Algebra Lab</a>.</li>
+<li><a href="./04_linear_algebra_lab.html">Lab 04-1: Linear Algebra
+Lab</a>.</li>
 </ul></li>
 <li>05 Multiple linear regression
 <ul>
-<li><a href="./05_mlr_i.html">Lecture 05-1: Multiple Linear Regression</a>.
+<li><a href="./05_mlr_i.html">Lecture 05-1: Multiple Linear
+Regression</a>.
 <ul>
-<li>Model definition, interpretation, estimation, inference, assumptions.</li>
+<li>Model definition, interpretation, estimation, inference,
+assumptions.</li>
 <li>Chapter 6 of KNNL.</li>
 </ul></li>
 <li><a href="./05_mlr_anova.html">Lecture 05-2: MLR and ANOVA</a>
 <ul>
-<li>ANOVA perspective of hypothesis testing in the muliple linear regression model.</li>
+<li>ANOVA perspective of hypothesis testing in the muliple linear
+regression model.</li>
 <li>Sections 6.5, 6.9, 7.1, 7.2, and 7.3 of KNNL</li>
 </ul></li>
-<li><a href="./05_mlr_ii.html">Lecture 05-3: MLR: Practical Considerations</a>.
+<li><a href="./05_mlr_ii.html">Lecture 05-3: MLR: Practical
+Considerations</a>.
 <ul>
 <li>Standardizing predictors, multicollinearity.</li>
 <li>Chapter 7 of KNNL.</li>
 <li>Chapter 12 of ROS.</li>
 </ul></li>
-<li><a href="./05_mlr_iii.html">Lecture 05-4: MLR: Quadratic Terms, Interaction Effects, and Categorical Variables</a>.
+<li><a href="./05_mlr_iii.html">Lecture 05-4: MLR: Quadratic Terms,
+Interaction Effects, and Categorical Variables</a>.
 <ul>
 <li>Chapter 8 of KNNL.</li>
 </ul></li>
-<li><a href="./05_mlr_selection.html">Lecture 05-5: MLR: Model Selection</a>.
+<li><a href="./05_mlr_selection.html">Lecture 05-5: MLR: Model
+Selection</a>.
 <ul>
 <li>Chapter 12 of Statistical Sleuth.</li>
 <li>Chapter 9 of KNNL.</li>
 </ul></li>
-<li><a href="05_mlr_diagnostics.html">Lecture 05-6: MLR: More Complicated Model Diagnostics</a>.
+<li><a href="05_mlr_diagnostics.html">Lecture 05-6: MLR: More
+Complicated Model Diagnostics</a>.
 <ul>
-<li>Chapter 10 of KNNL. <!-- - 06 Design --> <!--   - [Lecture 06-1: Design of Regression Experiments](./06_design.html). --> <!-- - 07 Logistic Regression --> <!--   - [Lecture 07-1: Logistic Regression](./07_logistic.html). --></li>
+<li>Chapter 10 of KNNL. <!-- - 06 Design -->
+<!--   - [Lecture 06-1: Design of Regression Experiments](./06_design.html). -->
+<!-- - 07 Logistic Regression -->
+<!--   - [Lecture 07-1: Logistic Regression](./07_logistic.html). --></li>
 </ul></li>
 </ul></li>
 <li>Review Sheets
@@ -370,7 +395,7 @@ $(document).ready(function () {
 <div id="final-project" class="section level1">
 <h1>Final Project</h1>
 <ul>
-<li><a href="./pp_description.html">Final Project Description</a>.</li>
+<li><a href="./pp_new.html">Final Project Description</a>.</li>
 </ul>
 </div>
 
