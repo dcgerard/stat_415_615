@@ -2,7 +2,7 @@
 title: "STAT 415/615 Regression"
 author: "David Gerard"
 date: "Updated: `r Sys.Date()`"
-output:  
+output:
   html_document:
     toc: true
     toc_depth: 4

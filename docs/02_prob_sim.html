@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-05-20" />
+<meta name="date" content="2022-08-31" />
 
 <title>Probability and Simulation</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -146,11 +146,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -345,7 +349,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Probability and Simulation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-05-20</h4>
+<h4 class="date">2022-08-31</h4>
 
 </div>
 
@@ -359,76 +363,138 @@ div.tocify {
 <li>Appendix A of KNNL.</li>
 </ul>
 </div>
-<div id="probability-the-normal-and-t-distributions." class="section level1">
-<h1>Probability, the normal and <span class="math inline">\(t\)</span> distributions.</h1>
+<div id="probability-the-normal-and-t-distributions."
+class="section level1">
+<h1>Probability, the normal and <span class="math inline">\(t\)</span>
+distributions.</h1>
 <ul>
-<li><p>A <strong>random variable</strong> is a variable whose value is a numerical outcome of a random process. We denote random variables with letters, like <span class="math inline">\(Y\)</span>.</p></li>
-<li><p>In practice, this “random process” is sampling a unit from a population of units and observing that unit’s value of the variable. E.g., we sample birth weights of babies born in the United States, then birth weight a random variable.</p></li>
-<li><p>The <strong>mean</strong> of a random variable is average value of a very large sample of individuals. The notation for the mean of a random variable is <span class="math inline">\(E[Y]\)</span>.</p></li>
+<li><p>A <strong>random variable</strong> is a variable whose value is a
+numerical outcome of a random process. We denote random variables with
+letters, like <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>In practice, this “random process” is sampling a unit from a
+population of units and observing that unit’s value of the variable.
+E.g., we sample birth weights of babies born in the United States, then
+birth weight a random variable.</p></li>
+<li><p>The <strong>mean</strong> of a random variable is average value
+of a very large sample of individuals. The notation for the mean of a
+random variable is <span class="math inline">\(E[Y]\)</span>.</p></li>
 <li><p>Properties:</p>
 <ul>
-<li>If <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants (not random variables), then <span class="math inline">\(E[a + bY] = a + bE[Y]\)</span>.</li>
-<li>If <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are both random variables, then <span class="math inline">\(E[X + Y] = E[X] + E[Y]\)</span>.</li>
+<li>If <span class="math inline">\(a\)</span> and <span
+class="math inline">\(b\)</span> are constants (not random variables),
+then <span class="math inline">\(E[a + bY] = a + bE[Y]\)</span>.</li>
+<li>If <span class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span> are both random variables, then <span
+class="math inline">\(E[X + Y] = E[X] + E[Y]\)</span>.</li>
 </ul></li>
-<li><p>The <strong>variance</strong> of a random variable is the average squared deviation from the mean of this random variable. It measures how spread out the values are in a population. The notation for the variance of a random variable is <span class="math inline">\(var(Y)\)</span>. Specifically <span class="math display">\[
+<li><p>The <strong>variance</strong> of a random variable is the average
+squared deviation from the mean of this random variable. It measures how
+spread out the values are in a population. The notation for the variance
+of a random variable is <span class="math inline">\(var(Y)\)</span>.
+Specifically <span class="math display">\[
   var(Y) = E[(Y - E[Y])^2]
   \]</span></p></li>
 <li><p>Properties:</p>
 <ul>
-<li>If <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants, then <span class="math inline">\(var(a + bY) = b^2var(Y)\)</span></li>
+<li>If <span class="math inline">\(a\)</span> and <span
+class="math inline">\(b\)</span> are constants, then <span
+class="math inline">\(var(a + bY) = b^2var(Y)\)</span></li>
 </ul></li>
-<li><p>The standard deviation of a random variable is the square root of its variance. <span class="math display">\[
+<li><p>The standard deviation of a random variable is the square root of
+its variance. <span class="math display">\[
   sd(Y) = \sqrt{var(Y)}
   \]</span></p></li>
-<li><p>The <strong>distribution</strong> of a random variable is possible values of a random variable and how often it takes those values.</p></li>
-<li><p>A <strong>density</strong> describes the distribution of a <em>quantitative</em> variable. You can think of it as approximating a histogram. It is a curve where</p>
+<li><p>The <strong>distribution</strong> of a random variable is the
+possible values of a random variable and how often it takes those
+values.</p></li>
+<li><p>A <strong>density</strong> describes the distribution of a
+<em>quantitative</em> variable. You can think of it as approximating a
+histogram. It is a curve where</p>
 <ul>
-<li>The area under the curve between any two points is approximately the probability of being between those two points.</li>
+<li>The area under the curve between any two points is approximately the
+probability of being between those two points.</li>
 <li>The total area under the curve is 1 (something must happen).</li>
-<li>The curve is never negative (can’t have negative probabilities).</li>
+<li>The curve is never negative (can’t have negative
+probabilities).</li>
 </ul></li>
 <li><p>The density of birth weights in America:</p>
 <p><img src="02_figs/birthweights.png" /> </p></li>
-<li><p>The distribution of many variables in Statistics approximate the <strong>normal distribution</strong>.</p>
+<li><p>The distribution of many variables in Statistics approximate the
+<strong>normal distribution</strong>.</p>
 <ul>
-<li>If you know the mean and standard deviation of a normal distribution, then you know the whole distribution.</li>
-<li>Larger standard deviation implies more spread out (larger and smaller values are both more likely).</li>
+<li>If you know the mean and standard deviation of a normal
+distribution, then you know the whole distribution.</li>
+<li>Larger standard deviation implies more spread out (larger and
+smaller values are both more likely).</li>
 <li>Mean determines where the data are centered.</li>
 </ul></li>
-<li><p>Normal densities with different means. <img src="02_prob_sim_files/figure-html/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Normal densities with different standard deviations <img src="02_prob_sim_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Density Function (height of curve, <strong>NOT</strong> probability of a value).</p>
+<li><p>Normal densities with different means.
+<img src="02_prob_sim_files/figure-html/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Normal densities with different standard deviations
+<img src="02_prob_sim_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Density Function (height of curve, <strong>NOT</strong>
+probability of a value).</p>
 <pre class="r"><code>dnorm(x = 2, mean = 1, sd = 1)</code></pre>
 <pre><code>## [1] 0.242</code></pre>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Random Generation (generate samples from a given normal distribution).</p>
+<li><p>Random Generation (generate samples from a given normal
+distribution).</p>
 <pre class="r"><code>samp &lt;- rnorm(n = 1000, mean = 1, sd = 1)
 head(samp)</code></pre>
 <pre><code>## [1]  0.03807  0.70747  1.25879 -0.15213  1.19578  1.03012</code></pre>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Cumulative Distribution Function (probability of being less than or equal to some value).</p>
+<li><p>Cumulative Distribution Function (probability of being less than
+or equal to some value).</p>
 <pre class="r"><code>pnorm(q = 2, mean = 1, sd = 1)</code></pre>
 <pre><code>## [1] 0.8413</code></pre>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Quantile function (find value that has a given the probability of being less than or equal to it).</p>
+<li><p>Quantile function (find value that has a given the probability of
+being less than or equal to it).</p>
 <pre class="r"><code>qnorm(p = 0.8413, mean = 1, sd = 1)</code></pre>
 <pre><code>## [1] 2</code></pre>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> to generate 10,000 random draws from a normal distribution with mean 5 and standard deviation 2. What proportion are less than 3? Can you think up a way to approximate this proportion using a different function?</p></li>
-<li><p><strong>Exercise</strong>: In Hong Kong, human male height is approximately normally distributed with mean 171.5 cm and standard deviation 5.5 cm. What proportion of the Hong Kong population is between 170 cm and 180 cm?</p></li>
-<li><p>A property of the normal distribution is that if <span class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> and <span class="math inline">\(Z = (X - \mu) / \sigma\)</span>, then <span class="math inline">\(Z \sim N(0, 1)\)</span>.</p></li>
-<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> and <code>qqplot()</code> to demonstrate this property. That is, simulate 1000 values of <span class="math inline">\(X\)</span> with some mean different than 0 and some variance different than 1. Then transform those <span class="math inline">\(X\)</span> values to <span class="math inline">\(Z\)</span>. Then simulate some other variable <span class="math inline">\(W\)</span> from <span class="math inline">\(N(0, 1)\)</span>. Use <code>qqplot()</code> to show that <span class="math inline">\(W\)</span> and <span class="math inline">\(Z\)</span> follow the same distribution.</p></li>
-<li><p>The <span class="math inline">\(t\)</span>-distribution shows up a lot in Statistics.</p>
+<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> to generate
+10,000 random draws from a normal distribution with mean 5 and standard
+deviation 2. What proportion are less than 3? Can you think up a way to
+approximate this proportion using a different function?</p></li>
+<li><p><strong>Exercise</strong>: In Hong Kong, human male height is
+approximately normally distributed with mean 171.5 cm and standard
+deviation 5.5 cm. What proportion of the Hong Kong population is between
+170 cm and 180 cm?</p></li>
+<li><p>A property of the normal distribution is that if <span
+class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> and <span
+class="math inline">\(Z = (X - \mu) / \sigma\)</span>, then <span
+class="math inline">\(Z \sim N(0, 1)\)</span>.</p></li>
+<li><p><strong>Exercise</strong>: Use <code>rnorm()</code> and
+<code>qqplot()</code> to demonstrate this property. That is, simulate
+1000 values of <span class="math inline">\(X\)</span> with some mean
+different than 0 and some variance different than 1. Then transform
+those <span class="math inline">\(X\)</span> values to <span
+class="math inline">\(Z\)</span>. Then simulate some other variable
+<span class="math inline">\(W\)</span> from <span
+class="math inline">\(N(0, 1)\)</span>. Use <code>qqplot()</code> to
+show that <span class="math inline">\(W\)</span> and <span
+class="math inline">\(Z\)</span> follow the same distribution.</p></li>
+<li><p>The <span class="math inline">\(t\)</span>-distribution shows up
+a lot in Statistics.</p>
 <ul>
-<li>It is also bell-curved but has “thicker tails” (more extreme observations are more likely).</li>
+<li>It is also bell-curved but has “thicker tails” (more extreme
+observations are more likely).</li>
 <li>It is always centered at 0.</li>
-<li>It only has one parameter, called the “degrees of freedom”, which determines how thick the tails are.</li>
-<li>Smaller degrees of freedom mean thicker tails, larger degrees of freedom means thinner tails.</li>
-<li>If the degrees of freedom is large enough, the <span class="math inline">\(t\)</span>-distribution is approximately the same as a normal distribution with mean 0 and variance 1.</li>
+<li>It only has one parameter, called the “degrees of freedom”, which
+determines how thick the tails are.</li>
+<li>Smaller degrees of freedom mean thicker tails, larger degrees of
+freedom means thinner tails.</li>
+<li>If the degrees of freedom is large enough, the <span
+class="math inline">\(t\)</span>-distribution is approximately the same
+as a normal distribution with mean 0 and variance 1.</li>
 </ul></li>
-<li><p><span class="math inline">\(t\)</span>-distributions with different degrees of freedom:</p>
+<li><p><span class="math inline">\(t\)</span>-distributions with
+different degrees of freedom:</p>
 <p><img src="02_prob_sim_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Density, distribution, quantile, and random generation functions also exist for the <span class="math inline">\(t\)</span>-distribution.</p>
+<li><p>Density, distribution, quantile, and random generation functions
+also exist for the <span
+class="math inline">\(t\)</span>-distribution.</p>
 <pre class="r"><code>dt()
 pt()
 qt()
@@ -438,10 +504,15 @@ rt()</code></pre></li>
 <div id="covariancecorrelation" class="section level1">
 <h1>Covariance/correlation</h1>
 <ul>
-<li><p>The covariance between two random variables, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, is a measure of the strength of the linear association between these variables. It is defined as <span class="math display">\[
+<li><p>The covariance between two random variables, <span
+class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span>, is a measure of the strength of the
+linear association between these variables. It is defined as <span
+class="math display">\[
   cov(X, Y) = E[(X - E[X])(Y-E[Y])]
   \]</span></p></li>
-<li><p>Covariance is related to correlation by <span class="math display">\[
+<li><p>Covariance is related to correlation by <span
+class="math display">\[
   cor(X, Y) = \frac{cov(X, Y)}{sd(X)sd(Y)}
   \]</span></p></li>
 </ul>

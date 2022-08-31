@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-30" />
+<meta name="date" content="2022-08-31" />
 
 <title>Introduction to R</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -314,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Introduction to R</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-30</h4>
+<h4 class="date">2022-08-31</h4>
 
 </div>
 
@@ -357,35 +365,56 @@ div.tocify {
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <ul>
-<li><p>R is a statistical programming language designed to analyze data.</p></li>
-<li><p>This is not an R course. But you need to know some tools to summarize/plot/model data.</p></li>
-<li><p>R is free, widely used, more generally applicable (beyond linear regression), and a useful tool for reproducibility. So this is what we will use.</p></li>
-<li><p>Python would have been a good choice too, but you can learn that in the machine learning course (STAT 427/627).</p></li>
+<li><p>R is a statistical programming language designed to analyze
+data.</p></li>
+<li><p>This is not an R course. But you need to know some tools to
+summarize/plot/model data.</p></li>
+<li><p>R is free, widely used, more generally applicable (beyond linear
+regression), and a useful tool for reproducibility. So this is what we
+will use.</p></li>
+<li><p>Python would have been a good choice too, but you can learn that
+in the machine learning course (STAT 427/627).</p></li>
 </ul>
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
 <ul>
-<li><p>Install here R : <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a></p></li>
-<li><p>Install R Studio here: <a href="https://www.rstudio.com/" class="uri">https://www.rstudio.com/</a></p></li>
-<li><p>NOTE: R is a programming language. R Studio is an <a href="https://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a>, a program for interacting with programming language (specifically R in this case). Thus, on your resume, you should say that you know R, <em>not</em> R Studio.</p></li>
+<li><p>Install here R : <a href="https://cran.r-project.org/"
+class="uri">https://cran.r-project.org/</a></p></li>
+<li><p>Install R Studio here: <a href="https://www.rstudio.com/"
+class="uri">https://www.rstudio.com/</a></p></li>
+<li><p>NOTE: R is a programming language. R Studio is an <a
+href="https://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a>,
+a program for interacting with programming language (specifically R in
+this case). Thus, on your resume, you should say that you know R,
+<em>not</em> R Studio.</p></li>
 </ul>
 </div>
 <div id="before-we-begin" class="section level1">
 <h1>Before we begin</h1>
 <ul>
-<li><p>I cannot teach you everything there is to know in R. When you know the name of a function, but don’t know the commands, use the <code>help()</code> function. For example, to learn more about <code>log()</code> type</p>
+<li><p>I cannot teach you everything there is to know in R. When you
+know the name of a function, but don’t know the commands, use the
+<code>help()</code> function. For example, to learn more about
+<code>log()</code> type</p>
 <pre class="r"><code>help(log)</code></pre></li>
-<li><p>Alternatively, if you do not know the name of the function, you can Google the functionality you want. Googling coding solutions is a lot of what real data scientists do. Just append what you are Googling with “in R”. So, for example, “linear mixed effects models in R”.</p></li>
+<li><p>Alternatively, if you do not know the name of the function, you
+can Google the functionality you want. Googling coding solutions is a
+lot of what real data scientists do. Just append what you are Googling
+with “in R”. So, for example, “linear mixed effects models in
+R”.</p></li>
 </ul>
 </div>
 <div id="r-basics" class="section level1">
 <h1>R Basics</h1>
 <ul>
-<li><p>When you first open up R Studio, it should look something like this</p>
+<li><p>When you first open up R Studio, it should look something like
+this</p>
 <p><img src="01_figures/rstudio_1.png" /> </p></li>
-<li><p>The area to the right of the carrot “<code>&gt;</code>” is called a <strong>prompt</strong>. You insert commands into the prompt.</p></li>
-<li><p>You can use R as a powerful calculator. Try typing some of the following into the command prompt:</p>
+<li><p>The area to the right of the carrot “<code>&gt;</code>” is called
+a <strong>prompt</strong>. You insert commands into the prompt.</p></li>
+<li><p>You can use R as a powerful calculator. Try typing some of the
+following into the command prompt:</p>
 <pre class="r"><code>3 * 7
 9 / 3
 4 + 6
@@ -393,28 +422,39 @@ div.tocify {
 (3 + 5) * 6
 3 ^ 2
 4 ^ 2</code></pre></li>
-<li><p><strong>Exercise</strong>: What do you think the following will evaluate to? Try to guess before running it in R:</p>
+<li><p><strong>Exercise</strong>: What do you think the following will
+evaluate to? Try to guess before running it in R:</p>
 <pre class="r"><code>8 / 4 + 3 * 2 ^ 2</code></pre></li>
-<li><p>R consists of two things: variables and functions (computer scientists would probably disagree with this categorization).</p></li>
+<li><p>R consists of two things: variables and functions (computer
+scientists would probably disagree with this categorization).</p></li>
 </ul>
 <div id="variables" class="section level2">
 <h2>Variables</h2>
 <ul>
-<li><p>A variable stores a value. You use the <strong>assignment operator</strong> “<code>&lt;-</code>” to assign values to variables. For example, we can assign the value of <code>10</code> to the variable <code>x</code>.</p>
+<li><p>A variable stores a value. You use the <strong>assignment
+operator</strong> “<code>&lt;-</code>” to assign values to variables.
+For example, we can assign the value of <code>10</code> to the variable
+<code>x</code>.</p>
 <pre class="r"><code>x &lt;- 10</code></pre>
 <ul>
-<li>It is possible to use <code>=</code>, and I think there is nothing wrong with that. But for some reason the field has decided to only use <code>&lt;-</code>, so you should too.</li>
+<li>It is possible to use <code>=</code>, and I think there is nothing
+wrong with that. But for some reason the field has decided to only use
+<code>&lt;-</code>, so you should too.</li>
 </ul></li>
-<li><p>Whenever we use <code>x</code> later, it will use the value of 10</p>
+<li><p>Whenever we use <code>x</code> later, it will use the value of
+10</p>
 <pre class="r"><code>x</code></pre>
 <pre><code>## [1] 10</code></pre></li>
-<li><p>This is useful because you can reuse this value over and over again:</p>
+<li><p>This is useful because you can reuse this value over and over
+again:</p>
 <pre class="r"><code>y &lt;- 0
 x + y
 x * y
 x / y
 x - y</code></pre></li>
-<li><p>To assign a “string” (a fancy way to say a word) to <code>x</code>, put the string in quotes. For example, we can assign the value of <code>"Hello World"</code> to <code>x</code>.</p>
+<li><p>To assign a “string” (a fancy way to say a word) to
+<code>x</code>, put the string in quotes. For example, we can assign the
+value of <code>"Hello World"</code> to <code>x</code>.</p>
 <pre class="r"><code>x &lt;- &quot;Hello World&quot;
 x</code></pre>
 <pre><code>## [1] &quot;Hello World&quot;</code></pre></li>
@@ -423,33 +463,46 @@ x</code></pre>
 <div id="functions" class="section level2">
 <h2>Functions</h2>
 <ul>
-<li><p>Functions take objects (such as numbers or variables) as input and output new objects. Let’s look at a simple function that takes the log of a number:</p>
+<li><p>Functions take objects (such as numbers or variables) as input
+and output new objects. Let’s look at a simple function that takes the
+log of a number:</p>
 <pre class="r"><code>log(x = 4, base = 2)</code></pre></li>
-<li><p>The inputs are called “arguments”. Generally, every function will be for the form:</p>
+<li><p>The inputs are called “arguments”. Generally, every function will
+be for the form:</p>
 <pre class="r"><code>function_name(arg1 = val1, arg2 = val2, ...)</code></pre></li>
-<li><p>If you do not specify the name of the argument, R will assume you are assigning in their order.</p>
+<li><p>If you do not specify the name of the argument, R will assume you
+are assigning in their order.</p>
 <pre class="r"><code>log(4, 2)</code></pre></li>
-<li><p>You can change the order of the arguments if you specify them.</p>
+<li><p>You can change the order of the arguments if you specify
+them.</p>
 <pre class="r"><code>log(base = 2, x = 4)</code></pre></li>
-<li><p>To see the list of all possible arguments of a function, use the <code>help()</code> function:</p>
+<li><p>To see the list of all possible arguments of a function, use the
+<code>help()</code> function:</p>
 <pre class="r"><code>help(log)</code></pre></li>
-<li><p>In the help file, there are often <strong>default</strong> values for an argument. For example, the following indicates the the default value of <code>base</code> is <code>exp(1)</code>.</p>
+<li><p>In the help file, there are often <strong>default</strong> values
+for an argument. For example, the following indicates the the default
+value of <code>base</code> is <code>exp(1)</code>.</p>
 <pre class="r"><code>log(x, base = exp(1))</code></pre></li>
-<li><p>This indicates that you can omit the <code>base</code> argument and R will assume that it should be <code>exp(1)</code>.</p>
+<li><p>This indicates that you can omit the <code>base</code> argument
+and R will assume that it should be <code>exp(1)</code>.</p>
 <pre class="r"><code>log(x = 4, base = exp(1))</code></pre>
 <pre><code>## [1] 1.386</code></pre>
 <pre class="r"><code>log(x = 4)</code></pre>
 <pre><code>## [1] 1.386</code></pre></li>
-<li><p>If an argument does not have a default, then it must be specified when calling a function.</p></li>
+<li><p>If an argument does not have a default, then it must be specified
+when calling a function.</p></li>
 <li><p>Type this:</p>
 <pre class="r"><code>log(x = 4,</code></pre></li>
-<li><p>The “<code>+</code>” indicates that R is expecting more input (you forgot either a parentheses or a quotation mark). You can get back to the prompt by hitting the ESCAPE key.</p></li>
+<li><p>The “<code>+</code>” indicates that R is expecting more input
+(you forgot either a parentheses or a quotation mark). You can get back
+to the prompt by hitting the ESCAPE key.</p></li>
 </ul>
 </div>
 <div id="useful-functions" class="section level2">
 <h2>Useful Functions</h2>
 <ul>
-<li><p><code>c()</code> creates a <em>vector</em> (sequence of values)</p>
+<li><p><code>c()</code> creates a <em>vector</em> (sequence of
+values)</p>
 <pre class="r"><code>y &lt;- c(8, 1, 3, 4, 2)
 y</code></pre>
 <pre><code>## [1] 8 1 3 4 2</code></pre></li>
@@ -460,7 +513,8 @@ y</code></pre>
 <pre><code>## [1] 4.0 0.5 1.5 2.0 1.0</code></pre>
 <pre class="r"><code>y - 2</code></pre>
 <pre><code>## [1]  6 -1  1  2  0</code></pre></li>
-<li><p><code>exp()</code>: Exponentiation. This is the inverse of <code>log()</code>.</p>
+<li><p><code>exp()</code>: Exponentiation. This is the inverse of
+<code>log()</code>.</p>
 <pre class="r"><code>exp(10)</code></pre>
 <pre><code>## [1] 22026</code></pre>
 <pre class="r"><code>log(exp(10))</code></pre>
@@ -477,30 +531,46 @@ y</code></pre>
 <li><p><code>seq()</code>: Create a sequence of numbers</p>
 <pre class="r"><code>seq(from = 1, to = 10)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre></li>
-<li><p><strong>Exercise</strong>: What does the <code>by</code> argument do in <code>seq()</code>? Read the help file and modify it to <code>2</code> in the example code above.</p></li>
-<li><p><code>head()</code>: Show the first six values of an object.</p></li>
+<li><p><strong>Exercise</strong>: What does the <code>by</code> argument
+do in <code>seq()</code>? Read the help file and modify it to
+<code>2</code> in the example code above.</p></li>
+<li><p><code>head()</code>: Show the first six values of an
+object.</p></li>
 </ul>
 </div>
 <div id="r-packages" class="section level2">
 <h2>R Packages</h2>
 <ul>
-<li><p>A <strong>package</strong> is a collection of functions that don’t come with R by default.</p></li>
-<li><p>There are <strong>many many</strong> packages available. If you need to do any data analysis, there is probably an R package for it.</p></li>
-<li><p>Using <code>install.packages()</code>, you can install packages that contain functions and datasets that are not available by default. Do this now with the tidyverse package:</p>
+<li><p>A <strong>package</strong> is a collection of functions that
+don’t come with R by default.</p></li>
+<li><p>There are <strong>many many</strong> packages available. If you
+need to do any data analysis, there is probably an R package for
+it.</p></li>
+<li><p>Using <code>install.packages()</code>, you can install packages
+that contain functions and datasets that are not available by default.
+Do this now with the tidyverse package:</p>
 <pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre></li>
-<li><p>You will only need to install a package once per computer. Once it is installed you can gain access to all of the functions and datasets in a package by using the <code>library()</code> function.</p>
+<li><p>You will only need to install a package once per computer. Once
+it is installed you can gain access to all of the functions and datasets
+in a package by using the <code>library()</code> function.</p>
 <pre class="r"><code>library(tidyverse)</code></pre></li>
-<li><p>You will need to run <code>library()</code> at the start of every R session if you want to use the functions in a package.</p></li>
-<li><p>When I want to write the name of a function, I will write it like <code>this()</code>.</p></li>
+<li><p>You will need to run <code>library()</code> at the start of every
+R session if you want to use the functions in a package.</p></li>
+<li><p>When I want to write the name of a function, I will write it like
+<code>this()</code>.</p></li>
 </ul>
 </div>
 <div id="data-frames" class="section level2">
 <h2>Data Frames</h2>
 <ul>
-<li><p>The fundamental unit object of data analysis is the <strong>data frame</strong>.</p></li>
-<li><p>A data frame has variables in the columns, and observations in the rows.</p>
-<p><img src="01_figures/dataframe.png" style="width:50.0%" /> </p></li>
-<li><p>R comes with a bunch of famous datasets in the form of a data frame. Such as the <code>mtcars</code> dataset.</p>
+<li><p>The fundamental unit object of data analysis is the <strong>data
+frame</strong>.</p></li>
+<li><p>A data frame has variables in the columns, and observations in
+the rows.</p>
+<p><img src="01_figures/dataframe.png"
+style="width:50.0%" /> </p></li>
+<li><p>R comes with a bunch of famous datasets in the form of a data
+frame. Such as the <code>mtcars</code> dataset.</p>
 <pre class="r"><code>data(&quot;mtcars&quot;)
 mtcars</code></pre>
 <pre><code>##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
@@ -536,52 +606,74 @@ mtcars</code></pre>
 ## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
 ## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
 ## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</code></pre></li>
-<li><p>You can extract individual variables from a data frame using <code>$</code></p>
+<li><p>You can extract individual variables from a data frame using
+<code>$</code></p>
 <pre class="r"><code>mtcars$mpg</code></pre>
 <pre><code>##  [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4 17.3 15.2 10.4
 ## [16] 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3 19.2 27.3 26.0 30.4 15.8 19.7
 ## [31] 15.0 21.4</code></pre></li>
-<li><p>You can explore these in a spreadsheet format using <code>View()</code> (note the capital “V”).</p>
+<li><p>You can explore these in a spreadsheet format using
+<code>View()</code> (note the capital “V”).</p>
 <pre class="r"><code>View(mtcars)</code></pre></li>
 </ul>
 </div>
 <div id="reading-in-data-frames" class="section level2">
 <h2>Reading in Data Frames</h2>
 <ul>
-<li><p>Most datasets will nead to be loaded into R. To do so, we will use the <code>{readr}</code> package.</p>
+<li><p>Most datasets will nead to be loaded into R. To do so, we will
+use the <code>{readr}</code> package.</p>
 <pre class="r"><code>library(readr)</code></pre></li>
-<li><p>The only function I will require you to know from this package is <code>read_csv()</code>, which loads in data from a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a> (“Comma-separated values”), a very popular format for storing data.</p></li>
-<li><p>If you have the CSV file somewhere on your computer, then specify the path from the current working directory, and assign the data frame to a variable.</p></li>
-<li><p>For other file formats, you need to use other functions, such as <code>read_tsv()</code>, <code>read_table()</code>, <code>read_fwf()</code>, etc. I will try to make sure <code>read_csv()</code> works for all datasets in this course.</p></li>
-<li><p>I will typicaly post course datasets at <a href="https://dcgerard.github.io/stat_415_615/data.html" class="uri">https://dcgerard.github.io/stat_415_615/data.html</a>. You can load those data into R by pasting their URL’s into <code>read_csv()</code>.</p>
+<li><p>The only function I will require you to know from this package is
+<code>read_csv()</code>, which loads in data from a <a
+href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>
+(“Comma-separated values”), a very popular format for storing
+data.</p></li>
+<li><p>If you have the CSV file somewhere on your computer, then specify
+the path from the current working directory, and assign the data frame
+to a variable.</p></li>
+<li><p>For other file formats, you need to use other functions, such as
+<code>read_tsv()</code>, <code>read_table()</code>,
+<code>read_fwf()</code>, etc. I will try to make sure
+<code>read_csv()</code> works for all datasets in this course.</p></li>
+<li><p>I will typicaly post course datasets at <a
+href="https://dcgerard.github.io/stat_415_615/data.html"
+class="uri">https://dcgerard.github.io/stat_415_615/data.html</a>. You
+can load those data into R by pasting their URL’s into
+<code>read_csv()</code>.</p>
 <pre class="r"><code>copiers &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/copiers.csv&quot;)</code></pre>
-<pre><code>## Rows: 45 Columns: 2</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+<pre><code>## Rows: 45 Columns: 3
+## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
-## dbl (2): minutes, copiers</code></pre>
-<pre><code>## 
+## chr (1): model
+## dbl (2): minutes, copiers
+## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>head(copiers)</code></pre>
-<pre><code>## # A tibble: 6 × 2
-##   minutes copiers
-##     &lt;dbl&gt;   &lt;dbl&gt;
-## 1      20       2
-## 2      60       4
-## 3      46       3
-## 4      41       2
-## 5      12       1
-## 6     137      10</code></pre></li>
-<li><p><strong>Exercise</strong>: Load in the County Demographic Information data into R and print out the first six rows.</p></li>
+<pre><code>## # A tibble: 6 × 3
+##   minutes copiers model
+##     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;
+## 1      20       2 S    
+## 2      60       4 L    
+## 3      46       3 L    
+## 4      41       2 L    
+## 5      12       1 L    
+## 6     137      10 L</code></pre></li>
+<li><p><strong>Exercise</strong>: Load in the County Demographic
+Information data into R and print out the first six rows.</p></li>
 </ul>
 </div>
 <div id="basic-data-frame-manipulations" class="section level2">
 <h2>Basic Data Frame Manipulations</h2>
 <ul>
-<li><p>You will need to know just a few data frame manipulations, which we will perform using the <code>{dplyr}</code> package.</p>
+<li><p>You will need to know just a few data frame manipulations, which
+we will perform using the <code>{dplyr}</code> package.</p>
 <pre class="r"><code>library(dplyr)</code></pre></li>
-<li><p>The first argument for <code>{dplyr}</code> functions is always the data frame you are modifying. The following arguments typically involve the columns of that data frame.</p></li>
-<li><p>Use the <code>mutate()</code> function from the <code>{dplyr}</code> package to make variable transformations.</p>
+<li><p>The first argument for <code>{dplyr}</code> functions is always
+the data frame you are modifying. The following arguments typically
+involve the columns of that data frame.</p></li>
+<li><p>Use the <code>mutate()</code> function from the
+<code>{dplyr}</code> package to make variable transformations.</p>
 <pre class="r"><code>mtcars &lt;- mutate(mtcars, kpg = mpg * 1.61)
 head(mtcars)</code></pre>
 <pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb   kpg
@@ -591,7 +683,8 @@ head(mtcars)</code></pre>
 ## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 34.45
 ## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 30.11
 ## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 29.14</code></pre></li>
-<li><p>Use <code>glimpse()</code> to get a brief look at the data frame.</p>
+<li><p>Use <code>glimpse()</code> to get a brief look at the data
+frame.</p>
 <pre class="r"><code>glimpse(mtcars)</code></pre>
 <pre><code>## Rows: 32
 ## Columns: 12
@@ -607,7 +700,8 @@ head(mtcars)</code></pre>
 ## $ gear &lt;dbl&gt; 4, 4, 4, 3, 3, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 3, 3,…
 ## $ carb &lt;dbl&gt; 4, 4, 1, 1, 2, 1, 4, 2, 2, 4, 4, 3, 3, 3, 4, 4, 4, 1, 2, 1, 1, 2,…
 ## $ kpg  &lt;dbl&gt; 33.81, 33.81, 36.71, 34.45, 30.11, 29.14, 23.02, 39.28, 36.71, 30…</code></pre></li>
-<li><p>Use <code>View()</code> to see a spreadsheet of the data frame (never put this in an R Markdown file). Note the capital “V”.</p>
+<li><p>Use <code>View()</code> to see a spreadsheet of the data frame
+(never put this in an R Markdown file). Note the capital “V”.</p>
 <pre class="r"><code>View(mtcars)</code></pre></li>
 <li><p>Use <code>rename()</code> to rename variables.</p>
 <pre class="r"><code>mtcars &lt;- rename(mtcars, auto_man = am)
@@ -629,8 +723,10 @@ head(mtcars)</code></pre>
 <li><p>Use <code>filter()</code> to remove rows.</p>
 <ul>
 <li>Use <code>==</code> to select rows based on equality</li>
-<li>Use <code>&lt;</code> and <code>&gt;</code> to select rows based on inequality</li>
-<li>Use <code>&lt;=</code> and <code>&gt;=</code> to select rows based on inequality/equality.</li>
+<li>Use <code>&lt;</code> and <code>&gt;</code> to select rows based on
+inequality</li>
+<li>Use <code>&lt;=</code> and <code>&gt;=</code> to select rows based
+on inequality/equality.</li>
 </ul>
 <pre class="r"><code>filter(mtcars, auto_man == 1)</code></pre>
 <pre><code>##                 mpg cyl  disp  hp drat    wt  qsec vs auto_man gear carb   kpg
@@ -660,21 +756,29 @@ head(mtcars)</code></pre>
 ## Lincoln Continental 16.74
 ## Chrysler Imperial   23.67
 ## Camaro Z28          21.41</code></pre></li>
-<li><p><strong>Exercise</strong>: Calculate the log-displacement, add this to the <code>mtcars</code> data frame.</p></li>
-<li><p><strong>Exercise</strong>: Filter out cars with only one carborator (keep cars with more than 1 carborator).</p></li>
-<li><p><strong>Exercise</strong>: Rename the <code>hp</code> variable to <code>horse</code>.</p></li>
+<li><p><strong>Exercise</strong>: Calculate the log-displacement, add
+this to the <code>mtcars</code> data frame.</p></li>
+<li><p><strong>Exercise</strong>: Filter out cars with only one
+carborator (keep cars with more than 1 carborator).</p></li>
+<li><p><strong>Exercise</strong>: Rename the <code>hp</code> variable to
+<code>horse</code>.</p></li>
 </ul>
 </div>
 </div>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
-<p>Here is the list of basic R stuff I expect you to know off the top of your head. We will add to this list throughout the semester.</p>
+<p>Here is the list of basic R stuff I expect you to know off the top of
+your head. We will add to this list throughout the semester.</p>
 <ul>
 <li><code>help()</code>: Open help file.</li>
-<li><code>install.packages()</code>: Install an external R package. Do this once per computer for each package.</li>
-<li><code>library()</code>: Load the functions of an external R package so you can use them. Do this each time you start up R for each package.</li>
+<li><code>install.packages()</code>: Install an external R package. Do
+this once per computer for each package.</li>
+<li><code>library()</code>: Load the functions of an external R package
+so you can use them. Do this each time you start up R for each
+package.</li>
 <li><code>&lt;-</code>: Variable assignment.</li>
-<li><code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>: Arithmetic operations.</li>
+<li><code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>:
+Arithmetic operations.</li>
 <li><code>^</code>: Powers.</li>
 <li><code>sqrt()</code>: Square root.</li>
 <li><code>log()</code>: Log (base e).</li>
@@ -694,7 +798,8 @@ head(mtcars)</code></pre>
 </ul></li>
 <li>From <code>{ggplot2}</code>
 <ul>
-<li><code>qplot()</code>: Make a histogram or scatterplot (see <a href="./01_qplot.html">01_qplot</a>).</li>
+<li><code>qplot()</code>: Make a histogram or scatterplot (see <a
+href="./01_qplot.html">01_qplot</a>).</li>
 </ul></li>
 </ul>
 </div>

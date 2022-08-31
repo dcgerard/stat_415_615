@@ -237,20 +237,28 @@ $$
 - $A$ has 50 percent more gas mileage than $B$. 
     - $A = B(1 + 0.5) = B + 0.5B = B + 50\% B$
     - Thus, $A$ is $B$ plus 50 percent of $B$'s value. This is why we say "50 percent more".
+    - In general, $A$ is $\frac{A - B}{B} \times 100\%$ larger than $B$
     
 - $B$ has 66.7 percent the value of $A$.
     - This is since $B / A = 2/3 \approx 0.667 = 66.7\%$.
+    - In general, $B$ has $\frac{B}{A}\times 100\%$ the value of $A$.
+    
+- $A$ has 150 percent the value of $B$.
+    - This is since $A / B = 3/2 = 1.5 = 150\%$
+    - In general, $A$ has $\fra{A}{B}\times 100\%$ the value of $B$.
     
 - $B$ has 33.3 percent less gas mileage than $A$.
     - $B = A(1 - 1/3) = A - (1/3)A \approx A - 0.333A = A - 33.3\%A$
     - Thus, $B$ is $A$ minus 33.3 percent of $A$'s value. This is why we say "33.3 percent less".
+    - In general, $B$ is $\frac{A-B}{A}\times 100\%$ smaller than $A$.
     
-- **Exercise**: Suppose John makes \$40,000 a year and Alina makes \$50,000 a year. Provide three different ways to describe the multiplicative difference between John's and Alina's salaries.
+- **Exercise**: Suppose John makes \$40,000 a year and Alina makes \$50,000 a year. Provide four different ways to describe the multiplicative difference between John's and Alina's salaries.
 
     ```{block, eval = FALSE, echo = FALSE}
     - Alina makes 25\% more money than John.
     - John makes 20\% less money than Alina.
     - John's salary is 80\% that of Alina's.
+    - Anlina's salary is 125\% that of John's.
     ```
 
 - Sometimes we have additive differences for a varaible whose scale is percent.
@@ -390,7 +398,7 @@ $$
       geom_line(data = df, mapping = aes(x = x, y = y))
     ```
     
-    So that means that early on in the pandemic, each day positive tests were multiplicatively increasing by about $e^{\beta_1} = e^{`r beta1`} = `r exp(beta1)`$. Or, about a 24\% increase each day.
+    So that means that early on in the pandemic, each day positive tests were multiplicatively larger by about $e^{\beta_1} = e^{`r beta1`} = `r exp(beta1)`$. Or, about a 24\% larger each day.
     
 - **Exercise**: Consider the population growth of DC from 1800 to 1950, taken from [Wikipedia](https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics).
     ```{r}
@@ -576,7 +584,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
     2. Interpret `r beta0` (the value of $\beta_0$).
     
     ```{block, eval = FALSE, echo = FALSE}
-    The y-intercept of the line of log(Mortality) on log(Wine). You can kind of interpret $exp(\beta_0) = 12.88$ as the average mortality rate of countries that don't drink, since the data are near there, but it is a stretch since no countries are at 0.
+    The y-intercept of the line of log(Mortality) on log(Wine). You can interpret $exp(\beta_0) = 12.88$ as the average mortality rate of countries that drink 1 liter per year, but this is a stretch since the minimum wine consumption is 2.8 liters per year.
     ```
         
     3. If one country drinks 50\% more wine per person per year than another country, what is the expected difference in mortality rates?

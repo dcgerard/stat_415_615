@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-05" />
+<meta name="date" content="2022-08-31" />
 
 <title>R Graphics with qplot</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -314,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">R Graphics with <code>qplot</code></h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-05</h4>
+<h4 class="date">2022-08-31</h4>
 
 </div>
 
@@ -357,16 +365,21 @@ div.tocify {
 <div id="learning-objectives" class="section level1">
 <h1>Learning objectives</h1>
 <ul>
-<li>Basic plotting in R using <code>qplot()</code> from the <code>{ggplot2}</code> package.</li>
+<li>Basic plotting in R using <code>qplot()</code> from the
+<code>{ggplot2}</code> package.</li>
 </ul>
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <ul>
-<li><p><code>{ggplot2}</code> is very powerful, so I am just going to show you the most important and basic plots that are necessary for data analysis.</p></li>
-<li><p>Before using <code>qplot()</code> in a new R session, always first load the <code>{ggplot2}</code> library.</p>
+<li><p><code>{ggplot2}</code> is very powerful, so I am just going to
+show you the most important and basic plots that are necessary for data
+analysis.</p></li>
+<li><p>Before using <code>qplot()</code> in a new R session, always
+first load the <code>{ggplot2}</code> library.</p>
 <pre class="r"><code>library(ggplot2)</code></pre></li>
-<li><p>In this vignette, we’ll also make some variable transformations, so we will need the <code>{dplyr}</code> package.</p>
+<li><p>In this vignette, we’ll also make some variable transformations,
+so we will need the <code>{dplyr}</code> package.</p>
 <pre class="r"><code>library(dplyr)</code></pre></li>
 <li><p>I will use the <code>mpg</code> dataset to demonstrate plots</p>
 <pre class="r"><code>data(mpg, package = &quot;ggplot2&quot;)
@@ -390,10 +403,15 @@ glimpse(mpg)</code></pre>
 <h1><code>qplot()</code></h1>
 <ul>
 <li><p>All plots will be created with <code>qplot()</code>.</p></li>
-<li><p>You specify the type of plot with the <code>geom</code> argument (for “geometry”).</p></li>
-<li><p>You specify which variables map to features of this plot via the other arguments.</p></li>
-<li><p>E.g. to say that <code>hwy</code> maps to the x-axis, use <code>x = hwy</code>. To say that it maps to the color, use <code>color = hwy</code>, etc.</p></li>
-<li><p>To map a constant to a feature (e.g. “red” to the color), wrap “red” in <code>I()</code>. E.g. <code>color = I("red")</code>.</p></li>
+<li><p>You specify the type of plot with the <code>geom</code> argument
+(for “geometry”).</p></li>
+<li><p>You specify which variables map to features of this plot via the
+other arguments.</p></li>
+<li><p>E.g. to say that <code>hwy</code> maps to the x-axis, use
+<code>x = hwy</code>. To say that it maps to the color, use
+<code>color = hwy</code>, etc.</p></li>
+<li><p>To map a constant to a feature (e.g. “red” to the color), wrap
+“red” in <code>I()</code>. E.g. <code>color = I("red")</code>.</p></li>
 </ul>
 </div>
 <div id="one-variable" class="section level1">
@@ -412,7 +430,12 @@ glimpse(mpg)</code></pre>
       color = I(&quot;black&quot;),
       fill = I(&quot;white&quot;))</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Load in the <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv">estate</a> data (see <a href="https://dcgerard.github.io/stat_415_615/data.html#real-estate-sales">here</a> for a description) and make a histogram of price with 20 bins. Make the bins red.</p></li>
+<li><p><strong>Exercise</strong>: Load in the <a
+href="https://dcgerard.github.io/stat_415_615/data/estate.csv">estate</a>
+data (see <a
+href="https://dcgerard.github.io/stat_415_615/data.html#real-estate-sales">here</a>
+for a description) and make a histogram of price with 20 bins. Make the
+bins red.</p></li>
 </ul>
 </div>
 <div id="discrete" class="section level2">
@@ -421,7 +444,9 @@ glimpse(mpg)</code></pre>
 <li><p>Barplot</p>
 <pre class="r"><code>qplot(x = drv, data = mpg, geom = &quot;bar&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: What variables from the <code>estate</code> data are appropriately plotted using a bar plot? Plot them.</p></li>
+<li><p><strong>Exercise</strong>: What variables from the
+<code>estate</code> data are appropriately plotted using a bar plot?
+Plot them.</p></li>
 </ul>
 </div>
 </div>
@@ -440,7 +465,9 @@ glimpse(mpg)</code></pre>
 <pre class="r"><code>qplot(x = cty, y = hwy, data = mpg, geom = &quot;jitter&quot;) + 
   geom_smooth()</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, make a scatterplot of number of bedrooms versus number of bathrooms. Adjust for any overplotting.</p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data,
+make a scatterplot of number of bedrooms versus number of bathrooms.
+Adjust for any overplotting.</p></li>
 </ul>
 </div>
 <div id="discrete-x-continuous-y" class="section level2">
@@ -449,17 +476,21 @@ glimpse(mpg)</code></pre>
 <li><p>Boxplot</p>
 <pre class="r"><code>qplot(x = class, y = hwy, data = mpg, geom = &quot;boxplot&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, plot sales price versus style. (<em>hint</em>: you need to first convert <code>style</code> to a factor using <code>as.factor()</code>)</p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data,
+plot sales price versus style. (<em>hint</em>: you need to first convert
+<code>style</code> to a factor using <code>as.factor()</code>)</p></li>
 </ul>
 </div>
 </div>
 <div id="color-coding-and-legends" class="section level1">
 <h1>Color Coding and Legends</h1>
 <ul>
-<li><p>Color code a scatterplot by a categorical variable and add a legend.</p>
+<li><p>Color code a scatterplot by a categorical variable and add a
+legend.</p>
 <pre class="r"><code>qplot(x = cty, y = hwy, color = drv, data = mpg, geom = &quot;jitter&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, create a boxplot of price versus ac, color coding by pool.</p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data,
+create a boxplot of price versus ac, color coding by pool.</p></li>
 </ul>
 </div>
 <div id="changing-a-legend-title" class="section level1">
@@ -477,15 +508,20 @@ glimpse(mpg)</code></pre>
 <div id="faceting" class="section level1">
 <h1>Faceting</h1>
 <ul>
-<li><p>You can facet by a categorical variable using the <code>facets</code> argument.</p></li>
-<li><p>The variable to the left of the tilde (“<code>~</code>”) indexes the row facets, the variable to the right of the tilde indexes the column facets. Using a dot (“<code>.</code>”) in place of a variable means that there will only be one row/column facet.</p>
+<li><p>You can facet by a categorical variable using the
+<code>facets</code> argument.</p></li>
+<li><p>The variable to the left of the tilde (“<code>~</code>”) indexes
+the row facets, the variable to the right of the tilde indexes the
+column facets. Using a dot (“<code>.</code>”) in place of a variable
+means that there will only be one row/column facet.</p>
 <pre class="r"><code>qplot(cty, hwy, data = mpg, facets = . ~ drv, geom = &quot;point&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(cty, hwy, data = mpg, facets = drv ~ ., geom = &quot;point&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-19-2.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(cty, hwy, data = mpg, facets = fl ~ drv, geom = &quot;point&quot;)</code></pre>
 <p><img src="01_qplot_files/figure-html/unnamed-chunk-20-1.png" width="336" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Using the <code>estate</code> data, plot price versus area, faceting by ac, color coding by pool.</p></li>
+<li><p><strong>Exercise</strong>: Using the <code>estate</code> data,
+plot price versus area, faceting by ac, color coding by pool.</p></li>
 </ul>
 </div>
 <div id="change-theme" class="section level1">
@@ -508,27 +544,40 @@ glimpse(mpg)</code></pre>
 <li><code>"histogram"</code>: Makes a histogram.</li>
 <li><code>"boxplot"</code>: Makes a boxplot.</li>
 <li><code>"density"</code>: Makes the density plot.</li>
-<li><code>"bar"</code>: First tabulates frequencies of each value, then makes a barplot.</li>
-<li><code>"smooth"</code>: Fits a smooth line to a cloud of points and plots the output.</li>
+<li><code>"bar"</code>: First tabulates frequencies of each value, then
+makes a barplot.</li>
+<li><code>"smooth"</code>: Fits a smooth line to a cloud of points and
+plots the output.</li>
 <li><code>"dotplot"</code>: Makes a dotplot.</li>
 </ul></li>
 </ul>
-<p><code>qplot</code> has other arguments that control the way the plot looks. You should read about these arguments. In particular, read carefully the help page <code>?qplot</code>. Useful ones are:</p>
+<p><code>qplot</code> has other arguments that control the way the plot
+looks. You should read about these arguments. In particular, read
+carefully the help page <code>?qplot</code>. Useful ones are:</p>
 <ul>
-<li><code>data</code>: Specify the dataframe that all variables belong to.</li>
+<li><code>data</code>: Specify the dataframe that all variables belong
+to.</li>
 <li><code>main</code>: This controls the title.</li>
-<li><code>xlab</code>, <code>ylab</code>: These control the x and y axis labels.</li>
+<li><code>xlab</code>, <code>ylab</code>: These control the x and y axis
+labels.</li>
 <li><code>color</code>: Controls the color of the lines/points.</li>
-<li><code>fill</code>: Controls the color of areas (e.g. for histograms).</li>
+<li><code>fill</code>: Controls the color of areas (e.g. for
+histograms).</li>
 <li><code>size</code>: Controls the size of points.</li>
-<li><code>shape</code>: The shape of points (<code>"circle"</code>, <code>"square"</code>, <code>"triangle"</code>, etc…)</li>
-<li><code>alpha</code>: Controls the level of transparency of points/lines/fills.</li>
+<li><code>shape</code>: The shape of points (<code>"circle"</code>,
+<code>"square"</code>, <code>"triangle"</code>, etc…)</li>
+<li><code>alpha</code>: Controls the level of transparency of
+points/lines/fills.</li>
 <li><code>lwd</code>: Line width.</li>
-<li><code>lty</code>: Line type (<code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, etc…).</li>
+<li><code>lty</code>: Line type (<code>"solid"</code>,
+<code>"dashed"</code>, <code>"dotted"</code>, etc…).</li>
 <li><code>facets</code>: Split up the data into multiple plots.</li>
 </ul>
-<p>If you want to make all points the same shape/size/color, you need to enclose the size/shape/color using the function <code>I()</code>.</p>
-<p>If a variable is being treated as continuous rather than categorical, you need to enclose that variable in a <code>factor()</code> function call.</p>
+<p>If you want to make all points the same shape/size/color, you need to
+enclose the size/shape/color using the function <code>I()</code>.</p>
+<p>If a variable is being treated as continuous rather than categorical,
+you need to enclose that variable in a <code>factor()</code> function
+call.</p>
 </div>
 
 

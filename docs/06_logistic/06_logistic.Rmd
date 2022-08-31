@@ -8,6 +8,7 @@ output:
     toc_depth: 4
     toc_float: true
 urlcolor: "blue"
+bibliography: "../data.bib"
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
@@ -28,4 +29,39 @@ klippy::klippy()
 
 - Logistic Regression for Binary Response Variables
 - Sections 14.1 to 14.12 of KNNL
+
+```{r}
+library(broom)
+```
+
+# Motivation
+
+# Model
+
+# Interpretation (odds ratios)
+
+# Two ways to input data
+
+# Bias reduction
+
+- For small sample sizes, the MLE's of the logistic regression coefficients can be biased. A quick way to reduce this bias is through the [`{brglm2}`](https://cran.r-project.org/package=brglm2) package, which uses the method of @firth1993bias.
+
+Their example:
+
+```{r}
+## The lizards example from ?brglm::brglm
+data("lizards", package = "brglm2")
+# Fit the model using maximum likelihood
+lizardsML <- glm(cbind(grahami, opalinus) ~ height + diameter +
+                   light + time, family = binomial(logit), data = lizards)
+# Mean bias-reduced fit:
+lizardsBR <- glm(cbind(grahami, opalinus) ~ height + diameter +
+                   light + time, family = binomial(logit), data = lizards,
+                 method = brglm2::brglmFit)
+tidy(lizardsML)
+tidy(lizardsBR)
+```
+
+
+# References
 

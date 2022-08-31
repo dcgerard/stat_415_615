@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-05-20" />
+<meta name="date" content="2022-08-31" />
 
 <title>Math Prerequisites</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -150,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -349,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-05-20</h4>
+<h4 class="date">2022-08-31</h4>
 
 </div>
 
@@ -365,15 +369,19 @@ div.tocify {
 <li>Summations/averages</li>
 <li>Equations for lines</li>
 <li>Logarithms/exponentials</li>
-<li>Chapter 3 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a></li>
+<li>Chapter 3 of <a
+href="https://avehtari.github.io/ROS-Examples/">ROS</a></li>
 </ul>
 </div>
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
 <ul>
-<li><p>Mathematics are the building blocks of linear regression.</p></li>
-<li><p>You must be proficient with linear equations and summations to implement and understand linear models.</p></li>
-<li><p>Log/exponential transformations are important for the practice and interpretation of many types of linear models.</p></li>
+<li><p>Mathematics are the building blocks of linear
+regression.</p></li>
+<li><p>You must be proficient with linear equations and summations to
+implement and understand linear models.</p></li>
+<li><p>Log/exponential transformations are important for the practice
+and interpretation of many types of linear models.</p></li>
 <li><p>Here, we will provide a brief mathematical review.</p></li>
 </ul>
 </div>
@@ -408,10 +416,15 @@ div.tocify {
 </tbody>
 </table></li>
 <li><p>What is the average age for these three countries?</p></li>
-<li><p>Proportion USA: <span class="math inline">\(\frac{310}{310 + 112 + 34} = 0.68\)</span>.</p></li>
-<li><p>Proportion Mexico: <span class="math inline">\(\frac{112}{310 + 112 + 34} = 0.25\)</span>.</p></li>
-<li><p>Proportion Canada: <span class="math inline">\(\frac{34}{310 + 112 + 34} = 0.07\)</span>.</p></li>
-<li><p>So the USA contributes 68% of the population, mexico contributes 25% of the population, and Canada contributes 7% of the population. To find the overall average age, we calculate:</p></li>
+<li><p>Proportion USA: <span class="math inline">\(\frac{310}{310 + 112
++ 34} = 0.68\)</span>.</p></li>
+<li><p>Proportion Mexico: <span class="math inline">\(\frac{112}{310 +
+112 + 34} = 0.25\)</span>.</p></li>
+<li><p>Proportion Canada: <span class="math inline">\(\frac{34}{310 +
+112 + 34} = 0.07\)</span>.</p></li>
+<li><p>So the USA contributes 68% of the population, mexico contributes
+25% of the population, and Canada contributes 7% of the population. To
+find the overall average age, we calculate:</p></li>
 </ul>
 <p><span class="math display">\[
 0.68 \times 36.8 + 0.25 \times 26.7 + 0.07 \times 40.7 = 34.6
@@ -420,17 +433,26 @@ div.tocify {
 <li>We can equivalently write this as</li>
 </ul>
 <p><span class="math display">\[
-\frac{310 \times 36.8 + 112 \times 26.7 + 34 \times 40.7}{310 + 112 + 34} = \frac{310}{456}\times 36.8 + \frac{112}{456}\times 26.7 + \frac{34}{456}\times 40.7
+\frac{310 \times 36.8 + 112 \times 26.7 + 34 \times 40.7}{310 + 112 +
+34} = \frac{310}{456}\times 36.8 + \frac{112}{456}\times 26.7 +
+\frac{34}{456}\times 40.7
 \]</span></p>
 <ul>
-<li><p>The proportions 0.68, 0.25, and 0.07 are called the <strong>weights</strong>. When the weights sum to one, the overall sumation is called a <strong>weighted average</strong>.</p></li>
-<li><p>In <strong>summation notation</strong> (using the capital-sigma), we would write:</p>
+<li><p>The proportions 0.68, 0.25, and 0.07 are called the
+<strong>weights</strong>. When the weights sum to one, the overall
+sumation is called a <strong>weighted average</strong>.</p></li>
+<li><p>In <strong>summation notation</strong> (using the capital-sigma),
+we would write:</p>
 <p><span class="math display">\[\begin{align}
   \text{weighted average} &amp;= \sum_{j=1}^n w_j y_j\\
   &amp;= w_1y_1 + w_2y_2 + \cdots w_ny_n
   \end{align}\]</span></p>
-<p>where <span class="math inline">\(w_j\)</span> is the <span class="math inline">\(j\)</span>th weight and <span class="math inline">\(y_j\)</span> is the <span class="math inline">\(j\)</span>th value.</p></li>
-<li><p>What would be an “unweighted” average? This is where each <span class="math inline">\(w_j = \frac{1}{n}\)</span> since</p>
+<p>where <span class="math inline">\(w_j\)</span> is the <span
+class="math inline">\(j\)</span>th weight and <span
+class="math inline">\(y_j\)</span> is the <span
+class="math inline">\(j\)</span>th value.</p></li>
+<li><p>What would be an “unweighted” average? This is where each <span
+class="math inline">\(w_j = \frac{1}{n}\)</span> since</p>
 <p><span class="math display">\[\begin{align}
   \sum_{j=1}^n w_j y_j &amp;= \sum_{j=1}^n \frac{1}{n} y_j\\
   &amp;= \frac{1}{n}y_1 + \frac{1}{n}y_2 + \cdots + \frac{1}{n}y_n\\
@@ -440,12 +462,22 @@ div.tocify {
   \end{align}\]</span></p></li>
 <li><p>Properties of summations:</p>
 <ul>
-<li><span class="math inline">\(\sum_{i=1}^n c a_i = c\sum_{i=1}^na_i\)</span></li>
-<li><span class="math inline">\(\sum_{i=1}^n a_i + \sum_{i=1}^nb_i = \sum_{i=1}^n(a_i + b_i)\)</span></li>
+<li><span class="math inline">\(\sum_{i=1}^n c a_i =
+c\sum_{i=1}^na_i\)</span></li>
+<li><span class="math inline">\(\sum_{i=1}^n a_i + \sum_{i=1}^nb_i =
+\sum_{i=1}^n(a_i + b_i)\)</span></li>
 </ul></li>
-<li><p><strong>Exercise</strong>: 51% of Americans are female while 49% of Americans are male. 79% of teachers are female while 21% of teachers are male. Female teachers make on average $45,865, while male teachers make on average $49,207. What is the average salary for all teachers?</p></li>
-<li><p><strong>Exercise</strong>: What is <span class="math inline">\(\sum_{i=0}^4 i\)</span>?</p></li>
-<li><p><strong>Exercise</strong>: Prove that it is not generally true that <span class="math inline">\(\left(\sum_{i=1}^n y_i\right)^2 = \sum_{i=1}^n y_i^2\)</span> (<em>hint</em>: provide a counterexample).</p></li>
+<li><p><strong>Exercise</strong>: 51% of Americans are female while 49%
+of Americans are male. 79% of teachers are female while 21% of teachers
+are male. Female teachers make on average $45,865, while male teachers
+make on average $49,207. What is the average salary for all
+teachers?</p></li>
+<li><p><strong>Exercise</strong>: What is <span
+class="math inline">\(\sum_{i=0}^4 i\)</span>?</p></li>
+<li><p><strong>Exercise</strong>: Prove that it is not generally true
+that <span class="math inline">\(\left(\sum_{i=1}^n y_i\right)^2 =
+\sum_{i=1}^n y_i^2\)</span> (<em>hint</em>: provide a
+counterexample).</p></li>
 </ul>
 <div id="products" class="section level2">
 <h2>Products</h2>
@@ -463,14 +495,26 @@ div.tocify {
 <li><p>All lines are of the form <span class="math display">\[
   y = \beta_0 + \beta_1 x
   \]</span></p></li>
-<li><p><span class="math inline">\(\beta_1\)</span> is the <strong>slope</strong>, the amount <span class="math inline">\(y\)</span> is larger by when <span class="math inline">\(x\)</span> is 1 unit larger.</p></li>
-<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>negative</em>, the line slopes <em>down</em>.</p>
+<li><p><span class="math inline">\(\beta_1\)</span> is the
+<strong>slope</strong>, the amount <span
+class="math inline">\(y\)</span> is larger by when <span
+class="math inline">\(x\)</span> is 1 unit larger.</p></li>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is
+<em>negative</em>, the line slopes <em>down</em>.</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-4-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>positive</em>, the line slopes <em>up</em>.</p>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is
+<em>positive</em>, the line slopes <em>up</em>.</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>0</em>, the line is <em>horizontal</em>. In this case, <span class="math inline">\(y\)</span> is the same for every value of <span class="math inline">\(x\)</span> (in other words, <span class="math inline">\(x\)</span> does not affect <span class="math inline">\(y\)</span>).</p>
+<li><p>When <span class="math inline">\(\beta_1\)</span> is <em>0</em>,
+the line is <em>horizontal</em>. In this case, <span
+class="math inline">\(y\)</span> is the same for every value of <span
+class="math inline">\(x\)</span> (in other words, <span
+class="math inline">\(x\)</span> does not affect <span
+class="math inline">\(y\)</span>).</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Example</strong>: The progression of mile world records during the 20th century is well approximated by the line <span class="math inline">\(y = 1007 - 0.393x\)</span></p>
+<li><p><strong>Example</strong>: The progression of mile world records
+during the 20th century is well approximated by the line <span
+class="math inline">\(y = 1007 - 0.393x\)</span></p>
 <pre class="r"><code>library(readr)
 library(ggplot2)
 mile &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/mile.csv&quot;)
@@ -479,11 +523,23 @@ qplot(x = year, y = seconds, data = mile) +
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>The world record in 1950 was about <span class="math display">\[
   y = 1007 - 0.393 * 1950 = 240.6 \text{ seconds},
-  \]</span> which is actually between the two world record values of 241.4 seconds in 1946 and 239.4 seconds in 1954.</p></li>
-<li><p>Interpretation of <span class="math inline">\(\beta_0\)</span>: Can we interpret 1007 seconds (16.8 minutes) as the approximate world record in ancient times? No! Our data are only from 1913 to 1999, so this is an obviously improper extrapolation. It is just the <span class="math inline">\(y\)</span>-intercept, with no other interpretation.</p></li>
-<li><p>Interpretation of <span class="math inline">\(\beta_1\)</span>: For two adjacent years, the world record is about 0.393 seconds less for the more recent year.</p></li>
-<li><p>Do <em>not</em> say “the world record decreases by about 0.393 seconds each year” as this creates an implicit causal connection.</p></li>
-<li><p><strong>Exercise</strong>: Year versus maximum life expectancy (where maximum was taken over country) is well approximated by the line <span class="math inline">\(y = -296 + 0.189 x\)</span>.</p>
+  \]</span> which is actually between the two world record values of
+241.4 seconds in 1946 and 239.4 seconds in 1954.</p></li>
+<li><p>Interpretation of <span class="math inline">\(\beta_0\)</span>:
+Can we interpret 1007 seconds (16.8 minutes) as the approximate world
+record in ancient times? No! Our data are only from 1913 to 1999, so
+this is an obviously improper extrapolation. It is just the <span
+class="math inline">\(y\)</span>-intercept, with no other
+interpretation.</p></li>
+<li><p>Interpretation of <span class="math inline">\(\beta_1\)</span>:
+For two adjacent years, the world record is about 0.393 seconds less for
+the more recent year.</p></li>
+<li><p>Do <em>not</em> say “the world record decreases by about 0.393
+seconds each year” as this creates an implicit causal
+connection.</p></li>
+<li><p><strong>Exercise</strong>: Year versus maximum life expectancy
+(where maximum was taken over country) is well approximated by the line
+<span class="math inline">\(y = -296 + 0.189 x\)</span>.</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ol style="list-style-type: lower-alpha">
 <li><p>What is the expected life expectancy in 1990?</p></li>
@@ -495,39 +551,94 @@ qplot(x = year, y = seconds, data = mile) +
 <div id="additivemultiplicative-differences" class="section level1">
 <h1>Additive/Multiplicative differences</h1>
 <ul>
-<li><p>This semester, we will spend a lot of time talking about differences in one variable associated with differences in another variable.</p></li>
-<li><p>We need to know how to properly speak about “differences”.</p></li>
-<li><p>Suppose car <span class="math inline">\(A\)</span> has a gas mileage of 30 mpg, and car <span class="math inline">\(B\)</span> has a gas mileage of 20 mpg. Then obviously car <span class="math inline">\(A\)</span> has 10 mpg better gas mileage. This is called an <em>additive</em> difference since we can write it as <span class="math inline">\(A + -B = 10\)</span>.</p></li>
-<li><p>We can also describe this difference as <em>multiplicative</em>. Here are some common ways to describe multiplicative differences.</p></li>
-<li><p><span class="math inline">\(A\)</span> has 50 percent more gas mileage than <span class="math inline">\(B\)</span>.</p>
+<li><p>This semester, we will spend a lot of time talking about
+differences in one variable associated with differences in another
+variable.</p></li>
+<li><p>We need to know how to properly speak about
+“differences”.</p></li>
+<li><p>Suppose car <span class="math inline">\(A\)</span> has a gas
+mileage of 30 mpg, and car <span class="math inline">\(B\)</span> has a
+gas mileage of 20 mpg. Then obviously car <span
+class="math inline">\(A\)</span> has 10 mpg better gas mileage. This is
+called an <em>additive</em> difference since we can write it as <span
+class="math inline">\(A + -B = 10\)</span>.</p></li>
+<li><p>We can also describe this difference as <em>multiplicative</em>.
+Here are some common ways to describe multiplicative
+differences.</p></li>
+<li><p><span class="math inline">\(A\)</span> has 50 percent more gas
+mileage than <span class="math inline">\(B\)</span>.</p>
 <ul>
-<li><span class="math inline">\(A = B(1 + 0.5) = B + 0.5B = B + 50\% B\)</span></li>
-<li>Thus, <span class="math inline">\(A\)</span> is <span class="math inline">\(B\)</span> plus 50 percent of <span class="math inline">\(B\)</span>’s value. This is why we say “50 percent more”.</li>
+<li><span class="math inline">\(A = B(1 + 0.5) = B + 0.5B = B + 50\%
+B\)</span></li>
+<li>Thus, <span class="math inline">\(A\)</span> is <span
+class="math inline">\(B\)</span> plus 50 percent of <span
+class="math inline">\(B\)</span>’s value. This is why we say “50 percent
+more”.</li>
+<li>In general, <span class="math inline">\(A\)</span> is <span
+class="math inline">\(\frac{A - B}{B} \times 100\%\)</span> larger than
+<span class="math inline">\(B\)</span></li>
 </ul></li>
-<li><p><span class="math inline">\(B\)</span> has 66.7 percent the value of <span class="math inline">\(A\)</span>.</p>
+<li><p><span class="math inline">\(B\)</span> has 66.7 percent the value
+of <span class="math inline">\(A\)</span>.</p>
 <ul>
-<li>This is since <span class="math inline">\(B / A = 2/3 \approx 0.667 = 66.7\%\)</span>.</li>
+<li>This is since <span class="math inline">\(B / A = 2/3 \approx 0.667
+= 66.7\%\)</span>.</li>
+<li>In general, <span class="math inline">\(B\)</span> has <span
+class="math inline">\(\frac{B}{A}\times 100\%\)</span> the value of
+<span class="math inline">\(A\)</span>.</li>
 </ul></li>
-<li><p><span class="math inline">\(B\)</span> has 33.3 percent less gas mileage than <span class="math inline">\(A\)</span>.</p>
+<li><p><span class="math inline">\(A\)</span> has 150 percent the value
+of <span class="math inline">\(B\)</span>.</p>
 <ul>
-<li><span class="math inline">\(B = A(1 - 1/3) = A - (1/3)A \approx A - 0.333A = A - 33.3\%A\)</span></li>
-<li>Thus, <span class="math inline">\(B\)</span> is <span class="math inline">\(A\)</span> minus 33.3 percent of <span class="math inline">\(A\)</span>’s value. This is why we say “33.3 percent less”.</li>
+<li>This is since <span class="math inline">\(A / B = 3/2 = 1.5 =
+150\%\)</span></li>
+<li>In general, <span class="math inline">\(A\)</span> has <span
+class="math inline">\(\fra{A}{B}\times 100\%\)</span> the value of <span
+class="math inline">\(B\)</span>.</li>
 </ul></li>
-<li><p><strong>Exercise</strong>: Suppose John makes $40,000 a year and Alina makes $50,000 a year. Provide three different ways to describe the multiplicative difference between John’s and Alina’s salaries.</p></li>
-<li><p>Sometimes we have additive differences for a varaible whose scale is percent.</p></li>
-<li><p>For example, candidate <span class="math inline">\(A\)</span> won 40% of the vote, and candidate <span class="math inline">\(B\)</span> won 30% of the vote.</p></li>
-<li><p>If we want to describe the <em>additive</em> difference between these two candidates, we cannot say “percent” because that would imply a mulitiplicative difference.</p></li>
-<li><p>To describe additive differences of a variable whose units are percent, we say <strong>percentage point</strong>.</p></li>
-<li><p>Thus, candidate <span class="math inline">\(A\)</span>’s vote share is 10 percentage points higher than candidate <span class="math inline">\(B\)</span>’s.</p></li>
-<li><p>We can still describe multiplicative differences for these variables. E.g. Candidate <span class="math inline">\(A\)</span>’s vote share is 33.3 percent higher than candidate <span class="math inline">\(B\)</span>’s.</p></li>
+<li><p><span class="math inline">\(B\)</span> has 33.3 percent less gas
+mileage than <span class="math inline">\(A\)</span>.</p>
+<ul>
+<li><span class="math inline">\(B = A(1 - 1/3) = A - (1/3)A \approx A -
+0.333A = A - 33.3\%A\)</span></li>
+<li>Thus, <span class="math inline">\(B\)</span> is <span
+class="math inline">\(A\)</span> minus 33.3 percent of <span
+class="math inline">\(A\)</span>’s value. This is why we say “33.3
+percent less”.</li>
+<li>In general, <span class="math inline">\(B\)</span> is <span
+class="math inline">\(\frac{A-B}{A}\times 100\%\)</span> smaller than
+<span class="math inline">\(A\)</span>.</li>
+</ul></li>
+<li><p><strong>Exercise</strong>: Suppose John makes $40,000 a year and
+Alina makes $50,000 a year. Provide four different ways to describe the
+multiplicative difference between John’s and Alina’s salaries.</p></li>
+<li><p>Sometimes we have additive differences for a varaible whose scale
+is percent.</p></li>
+<li><p>For example, candidate <span class="math inline">\(A\)</span> won
+40% of the vote, and candidate <span class="math inline">\(B\)</span>
+won 30% of the vote.</p></li>
+<li><p>If we want to describe the <em>additive</em> difference between
+these two candidates, we cannot say “percent” because that would imply a
+mulitiplicative difference.</p></li>
+<li><p>To describe additive differences of a variable whose units are
+percent, we say <strong>percentage point</strong>.</p></li>
+<li><p>Thus, candidate <span class="math inline">\(A\)</span>’s vote
+share is 10 percentage points higher than candidate <span
+class="math inline">\(B\)</span>’s.</p></li>
+<li><p>We can still describe multiplicative differences for these
+variables. E.g. Candidate <span class="math inline">\(A\)</span>’s vote
+share is 33.3 percent higher than candidate <span
+class="math inline">\(B\)</span>’s.</p></li>
 </ul>
 </div>
 <div id="logarithms-and-exponentials" class="section level1">
 <h1>Logarithms and Exponentials</h1>
 <ul>
-<li><p>Often, we consider linear relationships on the log-scale. So we need to know something about logarithms and exponentials.</p></li>
+<li><p>Often, we consider linear relationships on the log-scale. So we
+need to know something about logarithms and exponentials.</p></li>
 <li><p>Let’s start with exponentials: <span class="math display">\[
-  \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\, \textrm{times}}
+  \exp(x) = e^x = \underbrace{e \times \dots \times e}_{x\,
+\textrm{times}}
   \]</span>.</p>
 <pre class="r"><code>## Define e
 e &lt;- exp(1)
@@ -538,11 +649,18 @@ exp(3) </code></pre>
 <pre><code>## [1] 20.09</code></pre>
 <pre class="r"><code>e * e * e</code></pre>
 <pre><code>## [1] 20.09</code></pre></li>
-<li><p>Recall that <span class="math inline">\(e\)</span> is <a href="https://en.wikipedia.org/wiki/E_(mathematical_constant)">Euler’s number</a>, which is about 2.7183.</p></li>
-<li><p>The last equality in the above equation for <code>exp()</code> only follows if <span class="math inline">\(x\)</span> is positive integer, but exponentiation can be extended to any real number.</p>
+<li><p>Recall that <span class="math inline">\(e\)</span> is <a
+href="https://en.wikipedia.org/wiki/E_(mathematical_constant)">Euler’s
+number</a>, which is about 2.7183.</p></li>
+<li><p>The last equality in the above equation for <code>exp()</code>
+only follows if <span class="math inline">\(x\)</span> is positive
+integer, but exponentiation can be extended to any real number.</p>
 <pre class="r"><code>exp(1.414)</code></pre>
 <pre><code>## [1] 4.112</code></pre></li>
-<li><p><span class="math inline">\(\log(x)\)</span> is the <strong>natural</strong> logarithm of <span class="math inline">\(x\)</span> (<strong>not</strong> base 10). This is the inverse of exponentiation <span class="math display">\[
+<li><p><span class="math inline">\(\log(x)\)</span> is the
+<strong>natural</strong> logarithm of <span
+class="math inline">\(x\)</span> (<strong>not</strong> base 10). This is
+the inverse of exponentiation <span class="math display">\[
   \log(\exp(x)) = \exp(\log(x)) = x
   \]</span></p></li>
 <li><p>You can verify this in R</p>
@@ -550,18 +668,35 @@ exp(3) </code></pre>
 <pre><code>## [1] 31</code></pre>
 <pre class="r"><code>log(exp(31))</code></pre>
 <pre><code>## [1] 31</code></pre></li>
-<li><p>You can also interpret <span class="math inline">\(\log(x)\)</span> as the number of times you have to divide <span class="math inline">\(x\)</span> by <span class="math inline">\(e\)</span> to obtain 1. For example, since you would have to divide <span class="math inline">\(e^4\)</span> by <span class="math inline">\(e\)</span> 4 times to get 1 (<span class="math inline">\(1 = \frac{e^4}{e \times e \times e \times e}\)</span>), we have that <span class="math inline">\(\log(e^4) = 4\)</span>.</p></li>
-<li><p>A useful property of logs/exponents is how it can convert multiplication to summation and vice versa.</p>
+<li><p>You can also interpret <span
+class="math inline">\(\log(x)\)</span> as the number of times you have
+to divide <span class="math inline">\(x\)</span> by <span
+class="math inline">\(e\)</span> to obtain 1. For example, since you
+would have to divide <span class="math inline">\(e^4\)</span> by <span
+class="math inline">\(e\)</span> 4 times to get 1 (<span
+class="math inline">\(1 = \frac{e^4}{e \times e \times e \times
+e}\)</span>), we have that <span class="math inline">\(\log(e^4) =
+4\)</span>.</p></li>
+<li><p>A useful property of logs/exponents is how it can convert
+multiplication to summation and vice versa.</p>
 <ul>
-<li><span class="math inline">\(\exp(a + b) = \exp(a)\exp(b)\)</span>.</li>
-<li><span class="math inline">\(\log(ab) = \log(a) + \log(b)\)</span>.</li>
+<li><span class="math inline">\(\exp(a + b) =
+\exp(a)\exp(b)\)</span>.</li>
+<li><span class="math inline">\(\log(ab) = \log(a) +
+\log(b)\)</span>.</li>
 </ul></li>
-<li><p>Why do we care about exponentials and logarithms? Because many relationships in the real world follow <strong>exponential</strong> or <strong>power</strong> laws.</p></li>
+<li><p>Why do we care about exponentials and logarithms? Because many
+relationships in the real world follow <strong>exponential</strong> or
+<strong>power</strong> laws.</p></li>
 </ul>
 <div id="exponential-growthdecline" class="section level2">
 <h2>Exponential growth/decline</h2>
 <ul>
-<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span> represents <strong>exponential growth</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>exponential decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p></li>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1
+x\)</span> represents <strong>exponential growth</strong> if <span
+class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>exponential
+decline</strong> if <span class="math inline">\(\beta_1 &lt;
+0\)</span>.</p></li>
 <li><p>Exponentiating both sides, we get <span class="math display">\[
   y = e^{\beta_0}e^{\beta_1 x}
   \]</span></p></li>
@@ -569,9 +704,19 @@ exp(3) </code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Exponential decline:</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p><span class="math inline">\(e^{\beta_0}\)</span> is the value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p></li>
-<li><p><span class="math inline">\(\beta_1\)</span> determines the rate of growth or decline.</p></li>
-<li><p>A 1-unit difference in <span class="math inline">\(x\)</span> corresponds to a multiplicative factor of <span class="math inline">\(e^{\beta_1}\)</span> in <span class="math inline">\(y\)</span>. (you multiply the old <span class="math inline">\(y\)</span> value by <span class="math inline">\(e^{\beta_1}\)</span> to figure out the new <span class="math inline">\(y\)</span> value when you have an <span class="math inline">\(x\)</span> value that is 1 larger).</p></li>
+<li><p><span class="math inline">\(e^{\beta_0}\)</span> is the value of
+<span class="math inline">\(y\)</span> when <span
+class="math inline">\(x = 0\)</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> determines the rate
+of growth or decline.</p></li>
+<li><p>A 1-unit difference in <span class="math inline">\(x\)</span>
+corresponds to a multiplicative factor of <span
+class="math inline">\(e^{\beta_1}\)</span> in <span
+class="math inline">\(y\)</span>. (you multiply the old <span
+class="math inline">\(y\)</span> value by <span
+class="math inline">\(e^{\beta_1}\)</span> to figure out the new <span
+class="math inline">\(y\)</span> value when you have an <span
+class="math inline">\(x\)</span> value that is 1 larger).</p></li>
 <li><p>This follows from: <span class="math display">\[\begin{align}
   y_{old} &amp;= e^{\beta_0}e^{\beta_1 x}\\
   y_{new} &amp;= e^{\beta_0}e^{\beta_1 (x + 1)}\\
@@ -579,22 +724,31 @@ exp(3) </code></pre>
           &amp;= e^{\beta_0}e^{\beta_1 x} e^{\beta_1}\\
           &amp;= y_{old}e^{\beta_1}
   \end{align}\]</span></p></li>
-<li><p><strong>Example</strong>: The early growth of <a href="https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests">COVID-19 in DC</a> looked exponential:</p>
+<li><p><strong>Example</strong>: The early growth of <a
+href="https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests">COVID-19
+in DC</a> looked exponential:</p>
 <pre class="r"><code>dc &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/dccovid.csv&quot;)
 dc &lt;- select(dc, day, positives)
 dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
 qplot(x = day, y = positives, data = dc)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>We determine if an exponential growth model is appropriate by seeing if day versus log-positives is approximately linear:</p>
+<p>We determine if an exponential growth model is appropriate by seeing
+if day versus log-positives is approximately linear:</p>
 <pre class="r"><code>dc &lt;- mutate(dc, 
              lpos = log(positives),
              daysin = as.numeric(day) - as.numeric(day[[1]]))
 qplot(x = daysin, y = lpos, data = dc)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>A curve that fits this growth well is <span class="math inline">\(y = 8.8815e^{0.218x}\)</span>.</p>
+<p>A curve that fits this growth well is <span class="math inline">\(y =
+8.8815e^{0.218x}\)</span>.</p>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>So that means that early on in the pandemic, each day positive tests were multiplicatively increasing by about <span class="math inline">\(e^{\beta_1} = e^{0.218} = 1.2436\)</span>. Or, about a 24% increase each day.</p></li>
-<li><p><strong>Exercise</strong>: Consider the population growth of DC from 1800 to 1950, taken from <a href="https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics">Wikipedia</a>.</p>
+<p>So that means that early on in the pandemic, each day positive tests
+were multiplicatively larger by about <span
+class="math inline">\(e^{\beta_1} = e^{0.218} = 1.2436\)</span>. Or,
+about a 24% larger each day.</p></li>
+<li><p><strong>Exercise</strong>: Consider the population growth of DC
+from 1800 to 1950, taken from <a
+href="https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics">Wikipedia</a>.</p>
 <pre class="r"><code>dcpop &lt;- tribble(~year,   ~pop,
                  1800L,   8144,
                  1810L,  15471,
@@ -614,7 +768,8 @@ qplot(x = daysin, y = lpos, data = dc)</code></pre>
                  1950L, 802178)
 qplot(x = year, y = pop, data = dcpop)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>A researcher has determined that the following relationship approximates this growth well:</p>
+<p>A researcher has determined that the following relationship
+approximates this growth well:</p>
 <p><span class="math display">\[
   \log(y) = -44.409 + 0.0299 x
   \]</span></p>
@@ -627,11 +782,18 @@ qplot(x = year, y = pop, data = dcpop)</code></pre>
 </ul>
 </div>
 <div id="why-use-e-and-not-some-other-base" class="section level2">
-<h2>Why use <span class="math inline">\(e\)</span> and not some other base?</h2>
+<h2>Why use <span class="math inline">\(e\)</span> and not some other
+base?</h2>
 <ul>
 <li><p>Tradition.</p></li>
-<li><p>For small values of <span class="math inline">\(\beta_1\)</span> (say, <span class="math inline">\(-0.1 \leq \beta_1 \leq 0.1\)</span>), we can interpret <span class="math inline">\(\beta_1\)</span> as the proportion change for a 1 unit difference in <span class="math inline">\(x\)</span>.</p></li>
-<li><p>This is because for small <span class="math inline">\(\beta_1\)</span>, we have <span class="math inline">\(e^{\beta_1} \approx 1 + \beta_1\)</span>.</p></li>
+<li><p>For small values of <span class="math inline">\(\beta_1\)</span>
+(say, <span class="math inline">\(-0.1 \leq \beta_1 \leq 0.1\)</span>),
+we can interpret <span class="math inline">\(\beta_1\)</span> as the
+proportion change for a 1 unit difference in <span
+class="math inline">\(x\)</span>.</p></li>
+<li><p>This is because for small <span
+class="math inline">\(\beta_1\)</span>, we have <span
+class="math inline">\(e^{\beta_1} \approx 1 + \beta_1\)</span>.</p></li>
 </ul>
 <table>
 <thead>
@@ -700,29 +862,55 @@ qplot(x = year, y = pop, data = dcpop)</code></pre>
 </tbody>
 </table>
 <ul>
-<li><p>In many real world applications, <span class="math inline">\(\beta_1\)</span> is typically small.</p></li>
-<li><p>This relationship does not hold with other bases. E.g. <span class="math inline">\(10^{0.02} = 1.0471 \not\approx 1 + 0.02\)</span>.</p></li>
-<li><p><strong>Example</strong>: From the DC population example above, we had <span class="math inline">\(\beta_1 = 0.0299\)</span> and <span class="math inline">\(e^{\beta_1} = 1.0303\)</span>. So, a 3% increase in population each year, and you can get that either from <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(e^{\beta_1}\)</span>.</p></li>
+<li><p>In many real world applications, <span
+class="math inline">\(\beta_1\)</span> is typically small.</p></li>
+<li><p>This relationship does not hold with other bases. E.g. <span
+class="math inline">\(10^{0.02} = 1.0471 \not\approx 1 +
+0.02\)</span>.</p></li>
+<li><p><strong>Example</strong>: From the DC population example above,
+we had <span class="math inline">\(\beta_1 = 0.0299\)</span> and <span
+class="math inline">\(e^{\beta_1} = 1.0303\)</span>. So, a 3% increase
+in population each year, and you can get that either from <span
+class="math inline">\(\beta_1\)</span> or <span
+class="math inline">\(e^{\beta_1}\)</span>.</p></li>
 </ul>
 </div>
 <div id="power-law-growthdecline" class="section level2">
 <h2>Power-law growth/decline</h2>
 <ul>
-<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span> represents <strong>power-law growth</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>power-law decline</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span>.</p>
+<li><p><span class="math inline">\(\log(y) = \beta_0 + \beta_1
+\log(x)\)</span> represents <strong>power-law growth</strong> if <span
+class="math inline">\(\beta_1 &gt; 0\)</span> and <strong>power-law
+decline</strong> if <span class="math inline">\(\beta_1 &lt;
+0\)</span>.</p>
 <ul>
-<li>Sub-linear growth if <span class="math inline">\(0 &lt; \beta_1 &lt; 1\)</span>.</li>
-<li>Super-linear growth if <span class="math inline">\(\beta_1 &gt; 1\)</span>.</li>
+<li>Sub-linear growth if <span class="math inline">\(0 &lt; \beta_1 &lt;
+1\)</span>.</li>
+<li>Super-linear growth if <span class="math inline">\(\beta_1 &gt;
+1\)</span>.</li>
 </ul></li>
-<li><p>Exponentiating both sides, we get the relationship <span class="math display">\[
+<li><p>Exponentiating both sides, we get the relationship <span
+class="math display">\[
   y = e^{\beta_0}x^{\beta_1}
   \]</span></p></li>
-<li><p>Interpret <span class="math inline">\(\beta_0\)</span>: The value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 1\)</span> is <span class="math inline">\(e^{\beta_0}\)</span>.</p></li>
+<li><p>Interpret <span class="math inline">\(\beta_0\)</span>: The value
+of <span class="math inline">\(y\)</span> when <span
+class="math inline">\(x = 1\)</span> is <span
+class="math inline">\(e^{\beta_0}\)</span>.</p></li>
 <li><p>Interpret <span class="math inline">\(\beta_1\)</span>:</p>
 <ul>
-<li>When you double <span class="math inline">\(x\)</span>, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(2^{\beta_1}\)</span>.</li>
-<li>When you multiply <span class="math inline">\(x\)</span> by 10, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(10^{\beta_1}\)</span>.</li>
-<li>When you multiply <span class="math inline">\(x\)</span> by 1.1 (10% increase), you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(1.1^{\beta_1}\)</span>.</li>
-<li>Choose a multiplier that makes sense for the range of your data. E.g., if it is never the case that one value is 10 times larger than another, don’t use that as the interpretation.</li>
+<li>When you double <span class="math inline">\(x\)</span>, you multiply
+<span class="math inline">\(y\)</span> by <span
+class="math inline">\(2^{\beta_1}\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 10, you
+multiply <span class="math inline">\(y\)</span> by <span
+class="math inline">\(10^{\beta_1}\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 1.1 (10%
+increase), you multiply <span class="math inline">\(y\)</span> by <span
+class="math inline">\(1.1^{\beta_1}\)</span>.</li>
+<li>Choose a multiplier that makes sense for the range of your data.
+E.g., if it is never the case that one value is 10 times larger than
+another, don’t use that as the interpretation.</li>
 </ul></li>
 <li><p>This follows from:</p>
 <p><span class="math display">\[\begin{align}
@@ -732,30 +920,47 @@ qplot(x = year, y = pop, data = dcpop)</code></pre>
           &amp;= 2^{\beta_1}e^{\beta_0}x^{\beta_1}\\
           &amp;= 2^{\beta_1}y_{old}
   \end{align}\]</span></p></li>
-<li><p><strong>Example</strong>: From the <code>{Sleuth3}</code> R package, we have a dataset on 7 islands measuring their land area and the number of species on each island. The goal is to estimate the relationship between these two variables, which has applications in conservation.</p>
+<li><p><strong>Example</strong>: From the <code>{Sleuth3}</code> R
+package, we have a dataset on 7 islands measuring their land area and
+the number of species on each island. The goal is to estimate the
+relationship between these two variables, which has applications in
+conservation.</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;case0801&quot;)
 qplot(x = Area, y = Species, data = case0801)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li>This relationship is well-approximated by the curve <span class="math inline">\(y = 6.9345x^{0.2497}\)</span>.</li>
+<li>This relationship is well-approximated by the curve <span
+class="math inline">\(y = 6.9345x^{0.2497}\)</span>.</li>
 </ul>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li><p>So islands that are twice as large tend to have <span class="math inline">\(2^{\beta_1} = 2^{0.2497} = 1.1889\)</span> times as many species. Or, islands that are twice as large tend to have 19% more species.</p></li>
-<li><p>Notice that I didn’t use the language “change” or “increase”, because those would imply causal connections.</p></li>
+<li><p>So islands that are twice as large tend to have <span
+class="math inline">\(2^{\beta_1} = 2^{0.2497} = 1.1889\)</span> times
+as many species. Or, islands that are twice as large tend to have 19%
+more species.</p></li>
+<li><p>Notice that I didn’t use the language “change” or “increase”,
+because those would imply causal connections.</p></li>
 </ul></li>
-<li><p><strong>Exercise</strong>: Prove that the interpretation “when you multiply <span class="math inline">\(x\)</span> by 10, you multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(10^{\beta_1}\)</span>” is correct.</p></li>
-<li><p><strong>Exercise</strong>: Consider the wine consumption and heart disease data from the <code>{Sleuth3}</code> package. The observational units are the counties and the variables are</p>
+<li><p><strong>Exercise</strong>: Prove that the interpretation “when
+you multiply <span class="math inline">\(x\)</span> by 10, you multiply
+<span class="math inline">\(y\)</span> by <span
+class="math inline">\(10^{\beta_1}\)</span>” is correct.</p></li>
+<li><p><strong>Exercise</strong>: Consider the wine consumption and
+heart disease data from the <code>{Sleuth3}</code> package. The
+observational units are the counties and the variables are</p>
 <ul>
-<li><code>Wine</code>: consumption of wine (liters per person per year)</li>
-<li><code>Mortality</code>: heart disease mortality rate (deaths per 1,000)</li>
+<li><code>Wine</code>: consumption of wine (liters per person per
+year)</li>
+<li><code>Mortality</code>: heart disease mortality rate (deaths per
+1,000)</li>
 </ul>
 <pre class="r"><code>data(&quot;ex0823&quot;)
 qplot(x = Wine, y = Mortality, data = ex0823)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li>Researchers have determined that this relationship is well-approximated by the following equation.</li>
+<li>Researchers have determined that this relationship is
+well-approximated by the following equation.</li>
 </ul>
 <p><span class="math display">\[
   y = 12.8784x^{-0.3556}
@@ -763,23 +968,36 @@ qplot(x = Wine, y = Mortality, data = ex0823)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ol style="list-style-type: decimal">
 <li><p>Interpret -0.3556.</p></li>
-<li><p>Interpret 2.5556 (the value of <span class="math inline">\(\beta_0\)</span>).</p></li>
-<li><p>If one country drinks 50% more wine per person per year than another country, what is the expected difference in mortality rates?</p></li>
+<li><p>Interpret 2.5556 (the value of <span
+class="math inline">\(\beta_0\)</span>).</p></li>
+<li><p>If one country drinks 50% more wine per person per year than
+another country, what is the expected difference in mortality
+rates?</p></li>
 </ol></li>
 </ul>
 </div>
 <div id="logging-just-the-predictor-variable" class="section level2">
 <h2>Logging just the predictor variable</h2>
 <ul>
-<li><p>Sometimes, the relationship is of the form <span class="math display">\[
+<li><p>Sometimes, the relationship is of the form <span
+class="math display">\[
   y = \beta_0 + \beta_1 \log(x)
   \]</span></p></li>
-<li><p>You intrepret <span class="math inline">\(\beta_1\)</span> with the following:</p>
+<li><p>You intrepret <span class="math inline">\(\beta_1\)</span> with
+the following:</p>
 <ul>
-<li>When you double <span class="math inline">\(x\)</span>, you add <span class="math inline">\(\beta_1\log(2)\)</span> to <span class="math inline">\(y\)</span>.</li>
-<li>When you multiply <span class="math inline">\(x\)</span> by 10, you add <span class="math inline">\(\beta_1\log(10)\)</span> to <span class="math inline">\(y\)</span>.</li>
-<li>When you multiply <span class="math inline">\(x\)</span> by 1.1 (10% increase), you add <span class="math inline">\(\beta_1\log(1.1)\)</span> to <span class="math inline">\(y\)</span>.</li>
-<li>Choose a multiplier that makes sense for the range of your data. E.g. if it is never the case that one value is 10 times larger than another, don’t use that as the interpretation.</li>
+<li>When you double <span class="math inline">\(x\)</span>, you add
+<span class="math inline">\(\beta_1\log(2)\)</span> to <span
+class="math inline">\(y\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 10, you
+add <span class="math inline">\(\beta_1\log(10)\)</span> to <span
+class="math inline">\(y\)</span>.</li>
+<li>When you multiply <span class="math inline">\(x\)</span> by 1.1 (10%
+increase), you add <span class="math inline">\(\beta_1\log(1.1)\)</span>
+to <span class="math inline">\(y\)</span>.</li>
+<li>Choose a multiplier that makes sense for the range of your data.
+E.g. if it is never the case that one value is 10 times larger than
+another, don’t use that as the interpretation.</li>
 </ul></li>
 <li><p>This follows from <span class="math display">\[\begin{align}
   y_{old} &amp;= \beta_0 + \beta_1\log(x)\\
@@ -788,23 +1006,47 @@ qplot(x = Wine, y = Mortality, data = ex0823)</code></pre>
           &amp;=  \beta_0 + \beta_1\log(x) + \beta_1\log(2)\\
           &amp;= y_{old} + \beta_1\log(2).
   \end{align}\]</span></p></li>
-<li><p>Example: From the <code>mtcars</code> dataset, it was determined that the relationship between <code>mpg</code> and <code>wt</code> was well approximated by the curve <span class="math inline">\(y = 39.2565 + -17.0859\log(x)\)</span>.</p>
+<li><p>Example: From the <code>mtcars</code> dataset, it was determined
+that the relationship between <code>mpg</code> and <code>wt</code> was
+well approximated by the curve <span class="math inline">\(y = 39.2565 +
+-17.0859\log(x)\)</span>.</p>
 <pre class="r"><code>df &lt;- data.frame(x = seq(min(mtcars$wt), max(mtcars$wt), length.out = 100))
 df$y &lt;- beta0 + beta1 * log(df$x)
 ggplot() +
   geom_point(data = mtcars, mapping = aes(x = wt, y = mpg)) +
   geom_line(data = df, mapping = aes(x = x, y = y))</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>So cars that are 50% heavier tend to have <span class="math inline">\(-17.0 \times \log(1.5) = -6.9\)</span> worse miles per gallon.</p></li>
+<li><p>So cars that are 50% heavier tend to have <span
+class="math inline">\(-17.0 \times \log(1.5) = -6.9\)</span> worse miles
+per gallon.</p></li>
 </ul>
 </div>
-<div id="summary-of-relationships-on-different-scales" class="section level2">
+<div id="summary-of-relationships-on-different-scales"
+class="section level2">
 <h2>Summary of relationships on different scales</h2>
 <ul>
-<li><p>If relationship is <span class="math inline">\(y = \beta_0 + \beta_1x\)</span>, then add <span class="math inline">\(c\)</span> to <span class="math inline">\(x\)</span> means add <span class="math inline">\(c\beta_1\)</span> to <span class="math inline">\(y\)</span>.</p></li>
-<li><p>If relationship is <span class="math inline">\(y = \beta_0 + \beta_1 \log(x)\)</span>, then multiply <span class="math inline">\(x\)</span> by <span class="math inline">\(c\)</span> means add <span class="math inline">\(\beta_1\log(c)\)</span> to <span class="math inline">\(y\)</span>.</p></li>
-<li><p>If relationship is <span class="math inline">\(\log(y) = \beta_0 + \beta_1 x\)</span>, then add <span class="math inline">\(c\)</span> to <span class="math inline">\(x\)</span> means multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(\exp(c\beta_1)\)</span>.</p></li>
-<li><p>If relationship is <span class="math inline">\(\log(y) = \beta_0 + \beta_1 \log(x)\)</span>, then multiply <span class="math inline">\(x\)</span> by <span class="math inline">\(c\)</span> means multiply <span class="math inline">\(y\)</span> by <span class="math inline">\(c^{\beta_1}\)</span>.</p></li>
+<li><p>If relationship is <span class="math inline">\(y = \beta_0 +
+\beta_1x\)</span>, then add <span class="math inline">\(c\)</span> to
+<span class="math inline">\(x\)</span> means add <span
+class="math inline">\(c\beta_1\)</span> to <span
+class="math inline">\(y\)</span>.</p></li>
+<li><p>If relationship is <span class="math inline">\(y = \beta_0 +
+\beta_1 \log(x)\)</span>, then multiply <span
+class="math inline">\(x\)</span> by <span
+class="math inline">\(c\)</span> means add <span
+class="math inline">\(\beta_1\log(c)\)</span> to <span
+class="math inline">\(y\)</span>.</p></li>
+<li><p>If relationship is <span class="math inline">\(\log(y) = \beta_0
++ \beta_1 x\)</span>, then add <span class="math inline">\(c\)</span> to
+<span class="math inline">\(x\)</span> means multiply <span
+class="math inline">\(y\)</span> by <span
+class="math inline">\(\exp(c\beta_1)\)</span>.</p></li>
+<li><p>If relationship is <span class="math inline">\(\log(y) = \beta_0
++ \beta_1 \log(x)\)</span>, then multiply <span
+class="math inline">\(x\)</span> by <span
+class="math inline">\(c\)</span> means multiply <span
+class="math inline">\(y\)</span> by <span
+class="math inline">\(c^{\beta_1}\)</span>.</p></li>
 </ul>
 </div>
 </div>
