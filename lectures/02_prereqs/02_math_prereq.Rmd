@@ -245,7 +245,7 @@ $$
     
 - $A$ has 150 percent the value of $B$.
     - This is since $A / B = 3/2 = 1.5 = 150\%$
-    - In general, $A$ has $\fra{A}{B}\times 100\%$ the value of $B$.
+    - In general, $A$ has $\frac{A}{B}\times 100\%$ the value of $B$.
     
 - $B$ has 33.3 percent less gas mileage than $A$.
     - $B = A(1 - 1/3) = A - (1/3)A \approx A - 0.333A = A - 33.3\%A$
