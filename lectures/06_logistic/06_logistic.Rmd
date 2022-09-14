@@ -201,6 +201,12 @@ library(lmtest)
 
 # Estimation
 
+## Maximum Likelihood Estimation
+
+
+
+## Practical Use in R
+
 - Let $Y_i$ be an indicator for survival for individual $i$, let $X_{i1}$ be the age of individual $i$, and let $X_{i2}$ be an indicator for male Then we fit the model
     \begin{align}
     Y_i &\sim Bern(p_i)\\
