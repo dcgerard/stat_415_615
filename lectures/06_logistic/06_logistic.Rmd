@@ -199,6 +199,44 @@ library(lmtest)
     
 - In [log-linear models](https://en.wikipedia.org/wiki/Poisson_regression) (which we might later), we model counts with $Y_i \sim Poi(\mu_i)$ ([Poisson Distribution](https://en.wikipedia.org/wiki/Poisson_distribution)) and $g(\mu_i) = \log(\mu_i)$.
 
+# Estimation
+
+- Let $Y_i$ be an indicator for survival for individual $i$, let $X_{i1}$ be the age of individual $i$, and let $X_{i2}$ be an indicator for male Then we fit the model
+    \begin{align}
+    Y_i &\sim Bern(p_i)\\
+    \text{logit}(p_i) &= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2}
+    \end{align}
+    
+- We fit all generalized linear models in R with `glm()`. The arguments are
+    - `formula`: The same idea as in `lm()`. Response variable on the left of the tilde, explanatory variables on the right of the tilde.
+    - `data`: The data frame where the variables are.
+    - `family`: The distribution of $Y_i$. 
+        - `gaussian` will assume normal errors (like in `lm()`).
+        - `binomial` in this case will fit the bernoulli model since $Bern(p_i) = Bin(1, p_i)$.
+    - You can specify the link function here as well. So for probit models you would do `binomial(link = "probit")`.
+    
+- Let's fit the model
+    ```{r}
+    glm_out <- glm(Survived ~ Age + Sex, data = donner, family = binomial)
+    ```
+
+- You again use `tidy()` from the `{broom}` package to get estimates / standard errors
+
+    ```{r}
+    tidy(glm_out)
+    ```
+    
+- So the estimated regression surface is
+    $$
+    \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
+    $$
+    
+- **Exercise**: What if $X_2$ would have been an indicator for female? What would the coefficient estimate of $\beta_2$ be?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    1.60 instead of -1.60
+    ```
+
 # Interpretation
 
 ## Odds
@@ -243,6 +281,15 @@ library(lmtest)
 - Thus, the odds of the second individual are $e^{\beta_1}$ times as large as the odds of the first individual.
 
 - Different way to say this: The odds ratio for the two individuals is $e^{\beta_1}$.
+
+- Recall the estimated regression relationship from the Donner party example:
+    $$
+    \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
+    $$
+    
+- So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.08} \times 10} = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
+
+- **Exercise**: 
 
 # Bias reduction
 

@@ -281,3 +281,37 @@ job <- read_table("http://users.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/
 names(job) <- c("proficiency", "test1", "test2", "test3", "test4")
 write_csv("./job.csv", x = job)
 
+# Nocturia
+nocturia <- read_csv("../../raw_data/nocturia.csv", skip = 1)
+nocturia <- janitor::clean_names(nocturia)
+rename(nocturia,
+       id = patients_no,
+       smoking = smoking_frequency_pack_year,
+       alcohol = alcohol_intake_g_week,
+       caffeine = caffeine_intake_cups_day,
+       bmi = body_mass_index_kg_m2,
+       diabetes = diabetes_mellitus,
+       diuretics = use_of_diuretics,
+       parkinsons = parkinson_disease,
+       kidney_disease = chronic_kidney_disease,
+       kbdiii = k_bdi_ii,
+       bed_time = time_in_bed_min,
+       sleep_time = total_sleep_time_min,
+       sleep_latency = sleep_latency_min,
+       rem_latency = rem_sleep_latency_min,
+       waso = waso_percent,
+       N1 = n1_tst_percent,
+       N2 = n2_tst_percent,
+       N3 = n3_tst_percent,
+       rem = rem_tst_percent,
+       arousal = aroual_index_h,
+       sleep_efficiency = sleep_efficiency_percent,
+       apnea = apnea_index_h,
+       hypopnea = hypopnea_index_h,
+       ahi = apnea_hyponea_index_h,
+       low_sa02 = lowest_sa_o2_percent,
+       odi90 = x90_percent_odi) %>%
+  mutate(psqi = if_else(psqi >= 22, NA_real_, psqi),
+         isi = if_else(isi >= 29, NA_real_, isi)) %>%
+  write_csv("./nocturia.csv")
+

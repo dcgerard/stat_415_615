@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-22" />
+<meta name="date" content="2022-09-14" />
 
 <title>Data</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -57,6 +57,7 @@ if (window.hljs) {
   }
 }
 </script>
+
 
 
 
@@ -107,6 +108,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -164,11 +168,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -332,7 +340,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -363,7 +371,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-22</h4>
+<h4 class="date">2022-09-14</h4>
 
 </div>
 
@@ -371,7 +379,10 @@ div.tocify {
 <div id="body-fat" class="section level1">
 <h1>Body Fat</h1>
 <ul>
-<li><a href="./data/body.csv">body.csv</a>: Dataset from Section 7.1 of KNNL. Data were collected from 20 healthy females, 25–34 years old, to study the relationship between body fat and three predictors. Variables include
+<li><a href="./data/body.csv">body.csv</a>: Dataset from Section 7.1 of
+KNNL. Data were collected from 20 healthy females, 25–34 years old, to
+study the relationship between body fat and three predictors. Variables
+include
 <ul>
 <li><code>triceps</code>: Triceps skinfold thickness.</li>
 <li><code>thigh</code>: Thigh circumference.</li>
@@ -383,57 +394,86 @@ div.tocify {
 <div id="brand-preference" class="section level1">
 <h1>Brand Preference</h1>
 <ul>
-<li><a href="./data/brand.csv">brand.csv</a>: Dataset from problem 6.5 of KNNL. An experiment was performed on various characteristics of a brand. Variables include
+<li><a href="./data/brand.csv">brand.csv</a>: Dataset from problem 6.5
+of KNNL. An experiment was performed on various characteristics of a
+brand. Variables include
 <ul>
-<li><code>like</code>: The degree of brand liking, on a 0-100 scale.</li>
-<li><code>moisture</code>: The moisture content (higher is more moisture).</li>
-<li><code>sweetness</code>: The sweetness content (higher is sweeter).</li>
+<li><code>like</code>: The degree of brand liking, on a 0-100
+scale.</li>
+<li><code>moisture</code>: The moisture content (higher is more
+moisture).</li>
+<li><code>sweetness</code>: The sweetness content (higher is
+sweeter).</li>
 </ul></li>
 </ul>
 </div>
 <div id="copiers" class="section level1">
 <h1>Copiers</h1>
 <ul>
-<li><a href="./data/copiers.csv">copiers.csv</a>: Dataset from exercise 1.20 of KNNL. A copier repair company wants to study the the amount of time it takes per copier on a service call. Variables include:
+<li><a href="./data/copiers.csv">copiers.csv</a>: Dataset from exercise
+1.20 of KNNL. A copier repair company wants to study the the amount of
+time it takes per copier on a service call. Variables include:
 <ul>
-<li><code>copiers</code>: The number of copiers serviced during a single call.</li>
-<li><code>minutes</code>: The total number of minutes spend by the service person.</li>
-<li><code>model</code>: The model of the copiers. Either small (<code>"S"</code>) or large (<code>"L"</code>).</li>
+<li><code>copiers</code>: The number of copiers serviced during a single
+call.</li>
+<li><code>minutes</code>: The total number of minutes spend by the
+service person.</li>
+<li><code>model</code>: The model of the copiers. Either small
+(<code>"S"</code>) or large (<code>"L"</code>).</li>
 </ul></li>
 </ul>
 </div>
 <div id="county-demographic-information" class="section level1">
 <h1>County Demographic Information</h1>
 <ul>
-<li><a href="./data/cdi.csv">cdi.csv</a>: Dataset C.2 from KNNL. Demographic information on counties in 1990 and 1992. Variables include:
+<li><a href="./data/cdi.csv">cdi.csv</a>: Dataset C.2 from KNNL.
+Demographic information on counties in 1990 and 1992. Variables include:
 <ul>
 <li><code>id</code>: Identification number of the county.</li>
 <li><code>county</code>: County name.</li>
 <li><code>state</code>: Two-letter state abbreviation.</li>
 <li><code>area</code>: Land area (square miles)</li>
 <li><code>pop</code>: Estimated 1990 population.</li>
-<li><code>percent_18_34</code>: Percent of 1990 population aged 18-34</li>
-<li><code>percent_65</code>: Percent of 1990 population aged 65 or older.</li>
-<li><code>physicians</code>: Number of professionally active non-federal physicians during 1990.</li>
-<li><code>beds</code>: Total number of hospital beds, cribs, and bassinets during 1990.</li>
-<li><code>crimes</code>: Total number of serious crimes in 1990, including murder, rape, robbery, aggravated assault, burglary, larceny-theft, and motor vehicle theft, as reported by law enforcement agencies.</li>
-<li><code>high_school</code>: Percent of adult population (25 and older) who completed 12 or more years of school.</li>
-<li><code>bachelors</code>: Percent of adult population (25 and older) with bachelor’s degree.</li>
-<li><code>poverty</code>: Percent of 1990 population with income below poverty level.</li>
-<li><code>unemployment</code>: Percent of 1990 labor force that is unemployed.</li>
+<li><code>percent_18_34</code>: Percent of 1990 population aged
+18-34</li>
+<li><code>percent_65</code>: Percent of 1990 population aged 65 or
+older.</li>
+<li><code>physicians</code>: Number of professionally active non-federal
+physicians during 1990.</li>
+<li><code>beds</code>: Total number of hospital beds, cribs, and
+bassinets during 1990.</li>
+<li><code>crimes</code>: Total number of serious crimes in 1990,
+including murder, rape, robbery, aggravated assault, burglary,
+larceny-theft, and motor vehicle theft, as reported by law enforcement
+agencies.</li>
+<li><code>high_school</code>: Percent of adult population (25 and older)
+who completed 12 or more years of school.</li>
+<li><code>bachelors</code>: Percent of adult population (25 and older)
+with bachelor’s degree.</li>
+<li><code>poverty</code>: Percent of 1990 population with income below
+poverty level.</li>
+<li><code>unemployment</code>: Percent of 1990 labor force that is
+unemployed.</li>
 <li><code>capita_income</code>: Per capita income (dollars).</li>
-<li><code>total_income</code>: Total person income (millions of dollars).</li>
-<li><code>region</code>: Geographic region, Northeast (<code>"NE"</code>), North-central (<code>"NC"</code>), South (<code>"S"</code>), or West (<code>"W"</code>).</li>
+<li><code>total_income</code>: Total person income (millions of
+dollars).</li>
+<li><code>region</code>: Geographic region, Northeast
+(<code>"NE"</code>), North-central (<code>"NC"</code>), South
+(<code>"S"</code>), or West (<code>"W"</code>).</li>
 </ul></li>
 </ul>
 </div>
 <div id="dc-covid-tests" class="section level1">
 <h1>DC COVID Tests</h1>
 <ul>
-<li><a href="./data/dccovid.csv">dccovid.csv</a>: Test data taken (and cleaned) from the <a href="https://coronavirus.dc.gov/data">COVID-19 surveillance website</a> run by the DC government. These data were downloaded on 2021-07-21. Variables include:
+<li><a href="./data/dccovid.csv">dccovid.csv</a>: Test data taken (and
+cleaned) from the <a href="https://coronavirus.dc.gov/data">COVID-19
+surveillance website</a> run by the DC government. These data were
+downloaded on 2021-07-21. Variables include:
 <ul>
 <li><code>day</code>: The day of the measurements.</li>
-<li><code>cleared</code>: Number of individuals cleared from isolation.</li>
+<li><code>cleared</code>: Number of individuals cleared from
+isolation.</li>
 <li><code>lost</code>: Total number of COVID deaths.</li>
 <li><code>dctested</code>: Total number of DC residents tested.</li>
 <li><code>tested</code>: Total overall number of tests.</li>
@@ -444,36 +484,71 @@ div.tocify {
 <div id="disease-outbreak" class="section level1">
 <h1>Disease Outbreak</h1>
 <ul>
-<li><a href="./data/disease.csv">disease.csv</a>: Dataset C.10 from KNNL. Data were collected on a probability sample of 196 individuals during a disease outbreak. Variables include:
+<li><a href="./data/disease.csv">disease.csv</a>: Dataset C.10 from
+KNNL. Data were collected on a probability sample of 196 individuals
+during a disease outbreak. Variables include:
 <ul>
 <li><code>id</code>: Identification number.</li>
 <li><code>age</code>: Age of the individual.</li>
-<li><code>socioeconomic</code>: Socioeconomic status of the individual. <code>1</code> = upper, <code>2</code> = middle, <code>3</code> = lower.</li>
-<li><code>sector</code>: Sector of the city sampled. Either <code>"s1"</code> or <code>"s2"</code>.</li>
-<li><code>disease</code>: Disease status indicator. <code>1</code> = with disease, <code>0</code> = without disease.</li>
-<li><code>savings</code>: Savings account status indicator. <code>1</code> = has savings account, <code>0</code> = does not have savings account.</li>
+<li><code>socioeconomic</code>: Socioeconomic status of the individual.
+<code>1</code> = upper, <code>2</code> = middle, <code>3</code> =
+lower.</li>
+<li><code>sector</code>: Sector of the city sampled. Either
+<code>"s1"</code> or <code>"s2"</code>.</li>
+<li><code>disease</code>: Disease status indicator. <code>1</code> =
+with disease, <code>0</code> = without disease.</li>
+<li><code>savings</code>: Savings account status indicator.
+<code>1</code> = has savings account, <code>0</code> = does not have
+savings account.</li>
 </ul></li>
 </ul>
 </div>
 <div id="earnings-data" class="section level1">
 <h1>Earnings Data</h1>
 <ul>
-<li><a href="./data/earnings.csv">earnings.csv</a>: Data from <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> exploring the relationship between demographic variables and earnings. Data were originally from the “Work, Family, and Well-being in the United States, 1990” survey. Variables include:
+<li><a href="./data/earnings.csv">earnings.csv</a>: Data from <a
+href="https://avehtari.github.io/ROS-Examples/">ROS</a> exploring the
+relationship between demographic variables and earnings. Data were
+originally from the “Work, Family, and Well-being in the United States,
+1990” survey. Variables include:
 <ul>
 <li><code>height</code>: Height of the individual (inches).</li>
 <li><code>weight</code>: Weight of the individual (lbs).</li>
-<li><code>sex</code>: Sex of individual (either <code>"male"</code> or <code>"female"</code>).</li>
+<li><code>sex</code>: Sex of individual (either <code>"male"</code> or
+<code>"female"</code>).</li>
 <li><code>earn</code>: Personal income (in dollars)</li>
 <li><code>earnk</code>: Personal income (in thousands of dollars).</li>
-<li><code>ethnicity</code>: Ethnicity of the individual. Either <code>"Black"</code>, <code>"Hispanic"</code>, <code>"White"</code>, or <code>"Other"</code>.</li>
-<li><code>education</code>: Years of education completed by the individual. <code>17</code> means “some graduate school” and <code>18</code> means “graduate or professional degree.”</li>
-<li><code>mother_education</code>: Years of education completed by the mother. <code>17</code> means “some graduate school” and <code>18</code> means “graduate or professional degree.”</li>
-<li><code>father_education</code>: Years of education completed by the father. <code>17</code> means “some graduate school” and <code>18</code> means “graduate or professional degree.”</li>
-<li><code>walk</code>: How often does the respondent take a walk? (Includes walking to work/train station etc.) (<code>1</code> = “Never,” <code>2</code> = “Once a month or less,” <code>3</code> = “About twice a month,” <code>4</code> = “About once a week,” <code>5</code> = “Twice a week,” <code>6</code> = “Three times a week,” <code>7</code> = “More than 3 times a week,” <code>8</code> = “Every day”).</li>
-<li><code>exercise</code>: How often does the respondent do strenuous exercise such as running, basketball, aerobics, tennis, swimming, biking, and so on? (<code>1</code> = “Never,” <code>2</code> = “Once a month or less,” <code>3</code> = “About twice a month,” <code>4</code> = “About once a week,” <code>5</code> = “Twice a week,” <code>6</code> = “Three times a week,” <code>7</code> = “More than 3 times a week”).</li>
-<li><code>smokenow</code>: Does the respondent currently smoke 7 or more cigarettes a week? (either <code>"yes"</code> or <code>"no"</code>).</li>
-<li><code>tense</code>: On how many of the past 7 days has the respondent felt tense or anxious?</li>
-<li><code>angry</code>: On how many of the past 7 days has the respondent felt angry?</li>
+<li><code>ethnicity</code>: Ethnicity of the individual. Either
+<code>"Black"</code>, <code>"Hispanic"</code>, <code>"White"</code>, or
+<code>"Other"</code>.</li>
+<li><code>education</code>: Years of education completed by the
+individual. <code>17</code> means “some graduate school” and
+<code>18</code> means “graduate or professional degree”.</li>
+<li><code>mother_education</code>: Years of education completed by the
+mother. <code>17</code> means “some graduate school” and <code>18</code>
+means “graduate or professional degree”.</li>
+<li><code>father_education</code>: Years of education completed by the
+father. <code>17</code> means “some graduate school” and <code>18</code>
+means “graduate or professional degree”.</li>
+<li><code>walk</code>: How often does the respondent take a walk?
+(Includes walking to work/train station etc.) (<code>1</code> = “Never”,
+<code>2</code> = “Once a month or less”, <code>3</code> = “About twice a
+month”, <code>4</code> = “About once a week”, <code>5</code> = “Twice a
+week”, <code>6</code> = “Three times a week”, <code>7</code> = “More
+than 3 times a week”, <code>8</code> = “Every day”).</li>
+<li><code>exercise</code>: How often does the respondent do strenuous
+exercise such as running, basketball, aerobics, tennis, swimming,
+biking, and so on? (<code>1</code> = “Never”, <code>2</code> = “Once a
+month or less”, <code>3</code> = “About twice a month”, <code>4</code> =
+“About once a week”, <code>5</code> = “Twice a week”, <code>6</code> =
+“Three times a week”, <code>7</code> = “More than 3 times a week”).</li>
+<li><code>smokenow</code>: Does the respondent currently smoke 7 or more
+cigarettes a week? (either <code>"yes"</code> or
+<code>"no"</code>).</li>
+<li><code>tense</code>: On how many of the past 7 days has the
+respondent felt tense or anxious?</li>
+<li><code>angry</code>: On how many of the past 7 days has the
+respondent felt angry?</li>
 <li><code>age</code>: Age of the individual (years).</li>
 </ul></li>
 </ul>
@@ -481,7 +556,11 @@ div.tocify {
 <div id="generic-ballot-data" class="section level1">
 <h1>Generic Ballot Data</h1>
 <ul>
-<li><a href="./data/ballot.csv">ballot.csv</a>: These data were extracted from the scatterplot from a <a href="https://fivethirtyeight.com/features/our-best-tool-for-predicting-midterm-elections-doesnt-show-a-republican-wave-but-history-is-on-the-gops-side/">FiveThirtyEight artcle</a>. They were exploring the association between their generic ballot average versus the election results. Variables include
+<li><a href="./data/ballot.csv">ballot.csv</a>: These data were
+extracted from the scatterplot from a <a
+href="https://fivethirtyeight.com/features/our-best-tool-for-predicting-midterm-elections-doesnt-show-a-republican-wave-but-history-is-on-the-gops-side/">FiveThirtyEight
+artcle</a>. They were exploring the association between their generic
+ballot average versus the election results. Variables include
 <ul>
 <li><code>poll</code>: Generic ballot average on election day.</li>
 <li><code>vote</code>: House popular vote margin.</li>
@@ -491,29 +570,47 @@ div.tocify {
 <div id="heating-equipment" class="section level1">
 <h1>Heating Equipment</h1>
 <ul>
-<li><a href="./data/heating.csv">heating.csv</a>: Dataset C.8 from KNNL. A heating company wants to forecast the volume of monthely orders of some equipment. Data were collected for 43 consecutive months. Variables include:
+<li><a href="./data/heating.csv">heating.csv</a>: Dataset C.8 from KNNL.
+A heating company wants to forecast the volume of monthely orders of
+some equipment. Data were collected for 43 consecutive months. Variables
+include:
 <ul>
 <li><code>id</code>: Month identification number.</li>
-<li><code>orders</code>: Number of heating equipment orders duing the month.</li>
+<li><code>orders</code>: Number of heating equipment orders duing the
+month.</li>
 <li><code>interest</code>: Prime rate in effect during the month.</li>
-<li><code>homes</code>: Number of new homes completed and for sale in sales region during the month.</li>
-<li><code>discount</code>: Percent discount offered to distributers during the month. Usually 0.</li>
-<li><code>inventories</code>: Distributor inventories in warehouses during the month.</li>
-<li><code>sold</code>: Number of units sold by distributer to contractors in previous month.</li>
-<li><code>tempdev</code>: Difference between average temperature for the month and 30-year average for that month.</li>
-<li><code>date</code>: YYYY-MM-01, indicating year and month of data.</li>
+<li><code>homes</code>: Number of new homes completed and for sale in
+sales region during the month.</li>
+<li><code>discount</code>: Percent discount offered to distributers
+during the month. Usually 0.</li>
+<li><code>inventories</code>: Distributor inventories in warehouses
+during the month.</li>
+<li><code>sold</code>: Number of units sold by distributer to
+contractors in previous month.</li>
+<li><code>tempdev</code>: Difference between average temperature for the
+month and 30-year average for that month.</li>
+<li><code>date</code>: YYYY-MM-01, indicating year and month of
+data.</li>
 </ul></li>
 </ul>
 </div>
 <div id="hibbs-bread-and-peace" class="section level1">
 <h1>Hibb’s Bread and Peace</h1>
 <ul>
-<li><a href="./data/hibbs.csv">hibbs.csv</a>: Data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> based on the “bread and peace” model of <span class="citation">Hibbs (2000)</span> which predicts incumbent party’s share of the two-party vote as a function of income growth. That is, this model predicts that higher income growth yields a higher vote share for the incumbent party.
+<li><a href="./data/hibbs.csv">hibbs.csv</a>: Data from Chapter 7 of <a
+href="https://avehtari.github.io/ROS-Examples/">ROS</a> based on the
+“bread and peace” model of <span class="citation">Hibbs (2000)</span>
+which predicts incumbent party’s share of the two-party vote as a
+function of income growth. That is, this model predicts that higher
+income growth yields a higher vote share for the incumbent party.
 <ul>
 <li><code>year</code>: Year of the election.</li>
-<li><code>growth</code>: Inflation-adjusted growth in average personal income.</li>
-<li><code>vote</code>: Incumbant party’s vote share of the two-party vote (excludes third parties).</li>
-<li><code>inc_party_candidate</code>: The candidate of the incumbant party.</li>
+<li><code>growth</code>: Inflation-adjusted growth in average personal
+income.</li>
+<li><code>vote</code>: Incumbant party’s vote share of the two-party
+vote (excludes third parties).</li>
+<li><code>inc_party_candidate</code>: The candidate of the incumbant
+party.</li>
 <li><code>other_candidate</code>: The candidate of the other party.</li>
 </ul></li>
 </ul>
@@ -521,49 +618,75 @@ div.tocify {
 <div id="insurance-firm" class="section level1">
 <h1>Insurance Firm</h1>
 <ul>
-<li><a href="./data/firm.csv">firm.csv</a>: Data from Table 8.2 of KNNL. An innovation in the insurance industry was introduced, and a researcher wanted to study what factors affect how quickly different insurance firms adopted this new innovation. Variables include
+<li><a href="./data/firm.csv">firm.csv</a>: Data from Table 8.2 of KNNL.
+An innovation in the insurance industry was introduced, and a researcher
+wanted to study what factors affect how quickly different insurance
+firms adopted this new innovation. Variables include
 <ul>
-<li><code>months</code>: How long, in months, it took the firm to adopt the new innovation.</li>
-<li><code>size</code>: The amount of total assets of the insurance firm, in millions of dollars.</li>
-<li><code>type</code>: The type of firm. Either a mutual company (<code>"mutual"</code>) or a stock company (<code>"stock"</code>).</li>
+<li><code>months</code>: How long, in months, it took the firm to adopt
+the new innovation.</li>
+<li><code>size</code>: The amount of total assets of the insurance firm,
+in millions of dollars.</li>
+<li><code>type</code>: The type of firm. Either a mutual company
+(<code>"mutual"</code>) or a stock company (<code>"stock"</code>).</li>
 </ul></li>
 </ul>
 </div>
 <div id="ipo" class="section level1">
 <h1>IPO</h1>
 <ul>
-<li><a href="./data/ipo.csv">ipo.csv</a>: Dataset C.11 from KNNL. Data were collected on 482 companies that underwent an initial public offering (IPO). Variables include:
+<li><a href="./data/ipo.csv">ipo.csv</a>: Dataset C.11 from KNNL. Data
+were collected on 482 companies that underwent an initial public
+offering (IPO). Variables include:
 <ul>
 <li><code>id</code>: Identification number.</li>
-<li><code>vc</code>: Presence or absence of venture capital funding. Either <code>"yes"</code> or <code>"no"</code>.</li>
-<li><code>value</code>: Estimated face value of company from prospectus (in dollars).</li>
+<li><code>vc</code>: Presence or absence of venture capital funding.
+Either <code>"yes"</code> or <code>"no"</code>.</li>
+<li><code>value</code>: Estimated face value of company from prospectus
+(in dollars).</li>
 <li><code>shares</code>: Total number of shares offered.</li>
-<li><code>buyout</code>: Prsence or absence of leveraged buyout. Either <code>"yes"</code> or <code>"no"</code>.</li>
+<li><code>buyout</code>: Prsence or absence of leveraged buyout. Either
+<code>"yes"</code> or <code>"no"</code>.</li>
 </ul></li>
 </ul>
 </div>
 <div id="ischemic-heart-disease" class="section level1">
 <h1>Ischemic Heart Disease</h1>
 <ul>
-<li><a href="./data/ischemic.csv">ischemic.csv</a>: Dataset C.9 from KNNL. Data were collected on 788 insurance subscribers who made claims resulting from ischemic (coronary) heart disease. The goal is to find what factors contribute to cost. Varibles include:
+<li><a href="./data/ischemic.csv">ischemic.csv</a>: Dataset C.9 from
+KNNL. Data were collected on 788 insurance subscribers who made claims
+resulting from ischemic (coronary) heart disease. The goal is to find
+what factors contribute to cost. Varibles include:
 <ul>
 <li><code>id</code>: Identification number.</li>
-<li><code>cost</code>: Total cost of claims by subscriber (dollars).</li>
+<li><code>cost</code>: Total cost of claims by subscriber
+(dollars).</li>
 <li><code>age</code>: Age of subscriber (years).</li>
-<li><code>gender</code>: <code>"male"</code> or <code>"other"</code>.</li>
-<li><code>interventions</code>: Total number of interventions or procedures carried out.</li>
+<li><code>gender</code>: <code>"male"</code> or
+<code>"other"</code>.</li>
+<li><code>interventions</code>: Total number of interventions or
+procedures carried out.</li>
 <li><code>drugs</code>: Number of tracked drugs prescribed.</li>
 <li><code>er</code>: Number of emergency room visits.</li>
-<li><code>complications</code>: Number of other complications that arose during heart disease treatment.</li>
-<li><code>comorbidities</code>: Number of other diseases that the subscriber had during period.</li>
-<li><code>duration</code>: Number of days of duration of treatment condition.</li>
+<li><code>complications</code>: Number of other complications that arose
+during heart disease treatment.</li>
+<li><code>comorbidities</code>: Number of other diseases that the
+subscriber had during period.</li>
+<li><code>duration</code>: Number of days of duration of treatment
+condition.</li>
 </ul></li>
 </ul>
 </div>
 <div id="job-profficiency" class="section level1">
 <h1>Job Profficiency</h1>
 <ul>
-<li><a href="./data/job.csv">job.csv</a>: Data from exercise 9.10 of KNNL. A personnel officer in a governmental agency administered four newly developed aptitude tests to each of 25 applicants for entry-level clerical positions in the agency. For purpose of the study, all 25 applicants were accepted for positions irrespective of their test scores. After a probationary period, each applicant was rated for proficiency on the job. Variables include
+<li><a href="./data/job.csv">job.csv</a>: Data from exercise 9.10 of
+KNNL. A personnel officer in a governmental agency administered four
+newly developed aptitude tests to each of 25 applicants for entry-level
+clerical positions in the agency. For purpose of the study, all 25
+applicants were accepted for positions irrespective of their test
+scores. After a probationary period, each applicant was rated for
+proficiency on the job. Variables include
 <ul>
 <li><code>proficiency</code>: Job proficiency score.</li>
 <li><code>test1</code>: Score on the first aptitude test.</li>
@@ -576,27 +699,46 @@ div.tocify {
 <div id="kleibers-law" class="section level1">
 <h1>Kleiber’s law</h1>
 <ul>
-<li><a href="./data/kleiber.csv">kleiber.csv</a>: <a href="https://en.wikipedia.org/wiki/Kleiber%27s_law">Kleiber’s law</a> states that animals’ metabolic rates follow a power law to their masses. Data are from <span class="citation">Savage et al. (2004)</span>, where they collected data on mammals to study this power law. Variables include
+<li><a href="./data/kleiber.csv">kleiber.csv</a>: <a
+href="https://en.wikipedia.org/wiki/Kleiber%27s_law">Kleiber’s law</a>
+states that animals’ metabolic rates follow a power law to their masses.
+Data are from <span class="citation">Savage et al. (2004)</span>, where
+they collected data on mammals to study this power law. Variables
+include
 <ul>
-<li><code>order</code>: The <a href="https://en.wikipedia.org/wiki/Order_(biology)">order</a> of the species.</li>
-<li><code>family</code>: The <a href="https://en.wikipedia.org/wiki/Family_(biology)">family</a> of the species.</li>
-<li><code>species</code>: The <a href="https://en.wikipedia.org/wiki/Genus">genus</a> and <a href="https://en.wikipedia.org/wiki/Species">species</a> names.</li>
+<li><code>order</code>: The <a
+href="https://en.wikipedia.org/wiki/Order_(biology)">order</a> of the
+species.</li>
+<li><code>family</code>: The <a
+href="https://en.wikipedia.org/wiki/Family_(biology)">family</a> of the
+species.</li>
+<li><code>species</code>: The <a
+href="https://en.wikipedia.org/wiki/Genus">genus</a> and <a
+href="https://en.wikipedia.org/wiki/Species">species</a> names.</li>
 <li><code>mass</code>: The average mass (in grams) of the species.</li>
-<li><code>bmr</code>: The average basal metabolic rate (in watts) of the species.</li>
+<li><code>bmr</code>: The average basal metabolic rate (in watts) of the
+species.</li>
 </ul></li>
 </ul>
 </div>
 <div id="market-share" class="section level1">
 <h1>Market Share</h1>
 <ul>
-<li><a href="./data/market.csv">market.csv</a>: Dataset C.3 from KNNL. Market data for a packaged food product were collected for each month for 36 consecutive months. The goal is to determine what factors influence market share. Variables include:
+<li><a href="./data/market.csv">market.csv</a>: Dataset C.3 from KNNL.
+Market data for a packaged food product were collected for each month
+for 36 consecutive months. The goal is to determine what factors
+influence market share. Variables include:
 <ul>
 <li><code>num</code>: Month number (1–36)</li>
-<li><code>share</code>: Average monthly market share for product (percent)</li>
+<li><code>share</code>: Average monthly market share for product
+(percent)</li>
 <li><code>price</code>: Average monthly price of product (dollars)</li>
-<li><code>nielsen</code>: An index of the amount of advertising exposure that the product recieved (higher is larger exposure).</li>
-<li><code>discount</code>: Was there a discount during this month? (<code>"yes"</code> or <code>"no"</code>).</li>
-<li><code>promotion</code>: Was there a promotion during this month? (<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>nielsen</code>: An index of the amount of advertising exposure
+that the product recieved (higher is larger exposure).</li>
+<li><code>discount</code>: Was there a discount during this month?
+(<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>promotion</code>: Was there a promotion during this month?
+(<code>"yes"</code> or <code>"no"</code>).</li>
 <li><code>month</code>: Month.</li>
 <li><code>year</code>: Year.</li>
 </ul></li>
@@ -605,7 +747,10 @@ div.tocify {
 <div id="mile-times" class="section level1">
 <h1>Mile Times</h1>
 <ul>
-<li><a href="./data/mile.csv">mile.csv</a>: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a>. Variables include
+<li><a href="./data/mile.csv">mile.csv</a>: World record mile time
+progressions from 1913 to 1999. Data are from Figure A.1 of <a
+href="https://avehtari.github.io/ROS-Examples/">ROS</a>. Variables
+include
 <ul>
 <li><code>year</code>: The date (in years) of the new world record.</li>
 <li><code>seconds</code>: The new world record (in seconds).</li>
@@ -615,126 +760,294 @@ div.tocify {
 <div id="muscle-mass" class="section level1">
 <h1>Muscle Mass</h1>
 <ul>
-<li><a href="./data/muscle.csv">muscle.csv</a>: A person’s muscle mass is expected to decrease with age. To explore this relationship in women, a nutritionist randomly selected 15 women from each 10-year age group, beginning with age 40 and ending with age 79. This is from KNNL. Variables include
+<li><a href="./data/muscle.csv">muscle.csv</a>: A person’s muscle mass
+is expected to decrease with age. To explore this relationship in women,
+a nutritionist randomly selected 15 women from each 10-year age group,
+beginning with age 40 and ending with age 79. This is from KNNL.
+Variables include
 <ul>
 <li><code>mass</code>: A measure of muscle mass (g).</li>
 <li><code>age</code>: Age (years)</li>
 </ul></li>
 </ul>
 </div>
+<div id="nocturia" class="section level1">
+<h1>Nocturia</h1>
+<ul>
+<li><a href="./data/nocturia.csv">nocturia.csv</a>: Data from <span
+class="citation">Chung et al. (2022)</span>. Nocturia is the condition
+that causes some people to wake up at night to urinate. Many individuals
+with sleep apnea also have nocturia. This study recruited patients with
+sleep apnea, measured if they also had nocturia, and used a
+questionnaire to obtain various predictors that the authors thought
+might be associated with nocturia. Variables include
+<ul>
+<li><code>nocturia</code>: An indicator for whether the individual has
+nocturia (<code>1</code>) or not (<code>0</code>).</li>
+<li><code>age</code>: Age of the individual (years)</li>
+<li><code>ahi</code>: “Apnea-hypopnea index”, average number of times
+per hour an individual either has an apnea event or a hypopnea
+event.</li>
+<li><code>alcohol</code>: Alcohol intake in grams per week.</li>
+<li><code>apnea</code>: “Apnea index”, average number of times per hour
+an individual stopped breather for 10 seconds or longer.</li>
+<li><code>arousal</code>: “Arousal index”, average number of awakenings
+per hour.</li>
+<li><code>bed_time</code>: Total amount of time in bed in minutes.</li>
+<li><code>bmi</code>: Body mass index (kg/m<span
+class="math inline">\(^2\)</span>).</li>
+<li><code>caffeine</code>: Caffeine intake (cups/day).</li>
+<li><code>cardiovascular_disease</code>: Indicator for whether the
+individual has cardiovascular disease (<code>1</code>) or not
+(<code>0</code>).</li>
+<li><code>diabetes</code>: Indicator for whether the individual has <a
+href="https://en.wikipedia.org/wiki/Diabetes">diabetes mellitus</a>
+(<code>1</code>) or not (<code>0</code>).</li>
+<li><code>diuretics</code>: Indicator for whether the individual takes
+<a href="https://en.wikipedia.org/wiki/Diuretic">diuretics</a>
+(<code>1</code>) or not (<code>0</code>).</li>
+<li><code>dyslipidemia</code>: Indicator for whether the individual has
+<a href="https://en.wikipedia.org/wiki/Dyslipidemia">dyslipidemia</a>
+(<code>1</code>) or not (<code>0</code>) .</li>
+<li><code>ess</code>: Epworth sleep scale. Questionnaire index of
+“situational sleep propensity”. Values are between 0 and 32, with higher
+values indicating greater subjective sleepiness.</li>
+<li><code>hypertension</code>: Indicator for whether the individual has
+<a href="https://en.wikipedia.org/wiki/Hypertension">hypertention</a>
+(high blood pressure) (<code>1</code>) or not (<code>0</code>).</li>
+<li><code>hypopnea</code>: “Hypopnea index”, average number of times per
+hour an individual has a partial loss of breath for 10 seconds or
+longer.</li>
+<li><code>id</code>: Patient ID.</li>
+<li><code>isi</code>: Korean <a
+href="https://doi.org/10.3988/jcn.2014.10.3.210">insomnia severity
+index</a>, ranging from 0 to 28, with higher scores indicating worse
+insomnia.</li>
+<li><code>kbdiii</code>: Korean Beck depression inventory-II.
+Questionnaire index of severity of depression. Scores range from 0 to
+63, with higher scores indicating more severe depressive symptoms.</li>
+<li><code>kidney_disease</code>: Indicator for whether the individual
+has chronic kidney disease (<code>1</code>) or not
+(<code>0</code>).</li>
+<li><code>low_sa02</code>: Lowest percent of oxygen saturation detected
+during sleep.</li>
+<li><code>N1</code>: Percent of time in “N1 sleep”, non-rapid eye
+movement sleep stage 1. See <a
+href="https://en.wikipedia.org/wiki/Sleep_cycle">sleep cycle</a></li>
+<li><code>N2</code>: Percent of time in “N2 sleep”, non-rapid eye
+movement sleep stage 2. See <a
+href="https://en.wikipedia.org/wiki/Sleep_cycle">sleep cycle</a></li>
+<li><code>N3</code>: Percent of time in “N3 sleep”, non-rapid eye
+movement sleep stage 3. See <a
+href="https://en.wikipedia.org/wiki/Sleep_cycle">sleep cycle</a></li>
+<li><code>odi</code>: Oxygen desaturation index (the number of 3% oxygen
+desaturations per hour of estimated sleep time).</li>
+<li><code>odi90</code>: 90% oxygen desaturation index (the number of 3%
+oxygen desaturations below 90% per hour of estimated sleep time).</li>
+<li><code>parkinsons</code>: Indicator for whether the individual has <a
+href="https://en.wikipedia.org/wiki/Parkinson%27s_disease">Parkinson’s
+disease</a> (<code>1</code>) or not (<code>0</code>).</li>
+<li><code>psqi</code>: Korean version of the <a
+href="https://en.wikipedia.org/wiki/Pittsburgh_Sleep_Quality_Index">Pittsburgh
+sleep quality index</a>. A composite score between 0 and 21 based on a
+questionaire where smaller values indicate better self-reported
+sleep.</li>
+<li><code>rem</code>: : Percent of time in “REM sleep”. See <a
+href="https://en.wikipedia.org/wiki/Sleep_cycle">sleep cycle</a></li>
+<li><code>rem_latency</code>: REM latency (time it takes to reach REM
+sleep) in minutes.</li>
+<li><code>sex</code>: Biological sex of the individual. Female
+(<code>F</code>) or male (<code>M</code>).</li>
+<li><code>sleep_efficiency</code>: Percent of time spent asleep while in
+bed.</li>
+<li><code>sleep_latency</code>: Sleep latency (time it takes for a
+person to fall asleep) in minutes.</li>
+<li><code>sleep_time</code>: Total sleep time in minutes.</li>
+<li><code>smoking</code>: Smoking frequency in <a
+href="https://en.wikipedia.org/wiki/Pack-year">pack-years</a> (packs
+smoked per day times the number of years as a smoker).</li>
+<li><code>stroke</code>: Indicator for whether the individual has had a
+stroke (<code>1</code>) or not (<code>0</code>).</li>
+<li><code>waso</code>: Wakefulness after sleep onset.</li>
+</ul></li>
+</ul>
+</div>
 <div id="prostate-cancer" class="section level1">
 <h1>Prostate Cancer</h1>
 <ul>
-<li><a href="./data/prostate.csv">prostate.csv</a>: Dataset C.5 from KNNL. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:
+<li><a href="./data/prostate.csv">prostate.csv</a>: Dataset C.5 from
+KNNL. Researchers were interested in the association between
+prostate-specific antigen (PSA) and a few prognostic clincical
+measurements in men with prostate cancer. Data were collected on 97 men
+with prostate cancer. The variables are:
 <ul>
 <li><code>id</code>: Identification number of the patient.</li>
 <li><code>psa</code>: Serum prostate-specific antigen level (mg/ml)</li>
-<li><code>volume</code>: Estimate of prostate cancer volume (cubic centimeters)</li>
+<li><code>volume</code>: Estimate of prostate cancer volume (cubic
+centimeters)</li>
 <li><code>weight</code>: Prostate weight (grams)</li>
 <li><code>age</code>: Age of patient (years)</li>
-<li><code>benign</code>: Amount of benign prostatic hyperplasia (square centimeters)</li>
-<li><code>seminal</code>: Presence or absence of seminal vesicle invation (<code>"yes"</code> or <code>"no"</code>).</li>
+<li><code>benign</code>: Amount of benign prostatic hyperplasia (square
+centimeters)</li>
+<li><code>seminal</code>: Presence or absence of seminal vesicle
+invation (<code>"yes"</code> or <code>"no"</code>).</li>
 <li><code>capsular</code>: Degree of cpsular penetration (cm)</li>
-<li><code>gleason</code>: Pathologically determined grade of disease using total score of two patters (summed scores were either 6, 7, or 8, with higher scores indicating worse prognosis).</li>
+<li><code>gleason</code>: Pathologically determined grade of disease
+using total score of two patters (summed scores were either 6, 7, or 8,
+with higher scores indicating worse prognosis).</li>
 </ul></li>
 </ul>
 </div>
 <div id="real-estate-sales" class="section level1">
 <h1>Real Estate Sales</h1>
 <ul>
-<li><a href="./data/estate.csv">estate.csv</a>: Dataset C.7 from KNNL. Data on 522 home sales in a Midwestern city during the year 2002. The goal was to predict residential home sales prices from the other variables. The 13 variables are
+<li><a href="./data/estate.csv">estate.csv</a>: Dataset C.7 from KNNL.
+Data on 522 home sales in a Midwestern city during the year 2002. The
+goal was to predict residential home sales prices from the other
+variables. The 13 variables are
 <ul>
 <li><code>price</code>: Sales price of residence (in dollars)</li>
 <li><code>area</code>: Finished area of residence (in square feet)</li>
 <li><code>bed</code>: Total number of bedrooms in residence</li>
 <li><code>bath</code>: Total number of bathrooms in residence</li>
-<li><code>ac</code>: <code>"yes"</code> = presence of air conditioning, <code>"no"</code> = absence of air conditioning</li>
+<li><code>ac</code>: <code>"yes"</code> = presence of air conditioning,
+<code>"no"</code> = absence of air conditioning</li>
 <li><code>garage</code>: Number of cars that a garage will hold</li>
-<li><code>pool</code>: <code>"yes"</code> = presence of a pool, <code>"no"</code> = absence of a pool</li>
+<li><code>pool</code>: <code>"yes"</code> = presence of a pool,
+<code>"no"</code> = absence of a pool</li>
 <li><code>year</code>: Year property was originally constructed</li>
-<li><code>quality</code>: Index for quality of construction. <code>high</code>, <code>medium</code>, or <code>low</code>.</li>
-<li><code>style</code>: Categorical variable indicating architectural style</li>
+<li><code>quality</code>: Index for quality of construction.
+<code>high</code>, <code>medium</code>, or <code>low</code>.</li>
+<li><code>style</code>: Categorical variable indicating architectural
+style</li>
 <li><code>lot</code>: Lot size (in square feet)</li>
-<li><code>highway</code>: <code>"yes"</code> = highway adjacent, <code>"no"</code> = highway not adjacent.</li>
+<li><code>highway</code>: <code>"yes"</code> = highway adjacent,
+<code>"no"</code> = highway not adjacent.</li>
 </ul></li>
 </ul>
 </div>
 <div id="soap-production-line" class="section level1">
 <h1>Soap Production Line</h1>
 <ul>
-<li><a href="./data/soap.csv">soap.csv</a>: Table 8.5 of KNNL. Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include
+<li><a href="./data/soap.csv">soap.csv</a>: Table 8.5 of KNNL.
+Researchers were studying the relationship between line speed and the
+amount of scrap for two production lines in a soap production company.
+The variables include
 <ul>
 <li><code>scrap</code>: Amount of scrap (coded).</li>
 <li><code>speed</code>: Line production speed (coded).</li>
-<li><code>line</code>: Production line. Either <code>"line1"</code> or <code>"line2"</code>.</li>
+<li><code>line</code>: Production line. Either <code>"line1"</code> or
+<code>"line2"</code>.</li>
 </ul></li>
 </ul>
 </div>
 <div id="steroid-level" class="section level1">
 <h1>Steroid Level</h1>
 <ul>
-<li><a href="./data/steroid.csv">steroid.csv</a>: From problem 8.6 of KNNL. A researcher was interested in the relationship between the level of a steroid and the age in healthy female subjects between the ages of 8 and 25. Variables include
+<li><a href="./data/steroid.csv">steroid.csv</a>: From problem 8.6 of
+KNNL. A researcher was interested in the relationship between the level
+of a steroid and the age in healthy female subjects between the ages of
+8 and 25. Variables include
 <ul>
 <li><code>steroid</code>: Level of the steroid.</li>
 <li><code>age</code>: Age in years.</li>
 </ul></li>
 </ul>
 </div>
-<div id="study-on-the-efficacy-of-nosocomial-infection-control-senic" class="section level1">
+<div id="study-on-the-efficacy-of-nosocomial-infection-control-senic"
+class="section level1">
 <h1>Study on the Efficacy of Nosocomial Infection Control (SENIC)</h1>
 <ul>
-<li><a href="./data/senic.csv">senic.csv</a>: Dataset C.1 from KNNL. The goal was to study if surveillance and control programs reduced the number of hospital-acquired infections. The observational units are 113 hospitals surveyed. The variables are
+<li><a href="./data/senic.csv">senic.csv</a>: Dataset C.1 from KNNL. The
+goal was to study if surveillance and control programs reduced the
+number of hospital-acquired infections. The observational units are 113
+hospitals surveyed. The variables are
 <ul>
 <li><code>id</code>: Hospital identification number.</li>
-<li><code>length</code>: Average length of stay of all patients in hospital (days).</li>
+<li><code>length</code>: Average length of stay of all patients in
+hospital (days).</li>
 <li><code>age</code>: Average age of patients (years).</li>
-<li><code>risk</code>: Average estimated probability of acquiring infection in hospital (percent).</li>
-<li><code>culturing_ratio</code>: Ratio of number of cultures performed to number of patients without signs or symptoms of hospital-acquired infection, times 100.</li>
-<li><code>xray_ratio</code>: Ratio of number of X-rays perfromed to number of patients without signs or symptoms of pneumonia, times 100.</li>
-<li><code>beds</code>: Average number of beds in hospital during study period.</li>
-<li><code>med_school</code>: Whether a hospital was affiliated with a medical school (<code>yes</code> or <code>no</code>).</li>
-<li><code>region</code>: Geographic region, Northeast (<code>"NE"</code>), North-central (<code>"NC"</code>), South (<code>"S"</code>), or West (<code>"W"</code>).</li>
-<li><code>patients</code>: Average number of patients in hospital per day during study period.</li>
-<li><code>nurses</code>: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).</li>
-<li><code>facilities</code>: Percent of 35 potential facilities and services that are provided by the hospital.</li>
+<li><code>risk</code>: Average estimated probability of acquiring
+infection in hospital (percent).</li>
+<li><code>culturing_ratio</code>: Ratio of number of cultures performed
+to number of patients without signs or symptoms of hospital-acquired
+infection, times 100.</li>
+<li><code>xray_ratio</code>: Ratio of number of X-rays perfromed to
+number of patients without signs or symptoms of pneumonia, times
+100.</li>
+<li><code>beds</code>: Average number of beds in hospital during study
+period.</li>
+<li><code>med_school</code>: Whether a hospital was affiliated with a
+medical school (<code>yes</code> or <code>no</code>).</li>
+<li><code>region</code>: Geographic region, Northeast
+(<code>"NE"</code>), North-central (<code>"NC"</code>), South
+(<code>"S"</code>), or West (<code>"W"</code>).</li>
+<li><code>patients</code>: Average number of patients in hospital per
+day during study period.</li>
+<li><code>nurses</code>: Average number of full-time equivalent
+registered and licensed practical nurses during study period (full time
+plus half part-time).</li>
+<li><code>facilities</code>: Percent of 35 potential facilities and
+services that are provided by the hospital.</li>
 </ul></li>
 </ul>
 </div>
 <div id="textile-data" class="section level1">
 <h1>Textile Data</h1>
 <ul>
-<li><a href="./data/textile.csv">textile.csv</a>: These data from <span class="citation">Shadid and Rahman (2010)</span> measures the strength to resist breakage of knited fabric across conditions of length and yarn count. These data were downloaded from Larry Winner’s <a href="http://users.stat.ufl.edu/~winner/datasets.html">data page</a>. Variables include:
+<li><a href="./data/textile.csv">textile.csv</a>: These data from <span
+class="citation">Shadid and Rahman (2010)</span> measures the strength
+to resist breakage of knited fabric across conditions of length and yarn
+count. These data were downloaded from Larry Winner’s <a
+href="http://users.stat.ufl.edu/~winner/datasets.html">data page</a>.
+Variables include:
 <ul>
 <li><code>count</code>: Yarn count (thickness of the yarn) (g/km).</li>
 <li><code>length</code>: Stitch length (mm).</li>
-<li><code>strength</code>: Bursting strength of the fabric against a multidirectional flow of pressure (100<a href="https://en.wikipedia.org/wiki/Pascal_(unit)">kpa</a>).</li>
+<li><code>strength</code>: Bursting strength of the fabric against a
+multidirectional flow of pressure (100<a
+href="https://en.wikipedia.org/wiki/Pascal_(unit)">kpa</a>).</li>
 </ul></li>
 </ul>
 </div>
 <div id="university-admissions" class="section level1">
 <h1>University Admissions</h1>
 <ul>
-<li><a href="./data/university.csv">university.csv</a>: Dataset C.4 from KNNL. Academic data were collected on 705 students. The goal is to determine if GPA could be predicted by entrance test scores and high school class rank. Variables include
+<li><a href="./data/university.csv">university.csv</a>: Dataset C.4 from
+KNNL. Academic data were collected on 705 students. The goal is to
+determine if GPA could be predicted by entrance test scores and high
+school class rank. Variables include
 <ul>
 <li><code>id</code>: The student identification number.</li>
 <li><code>gpa</code>: Grade-point average following freshman year.</li>
-<li><code>rank</code>: High school class rank as percentile. Lower percentiles imply higher class ranks.</li>
+<li><code>rank</code>: High school class rank as percentile. Lower
+percentiles imply higher class ranks.</li>
 <li><code>act</code>: ACT entrance examination score.</li>
-<li><code>year</code>: Calendar year that the freshman entered university.</li>
+<li><code>year</code>: Calendar year that the freshman entered
+university.</li>
 </ul></li>
 </ul>
 </div>
 <div id="website-developer" class="section level1">
 <h1>Website Developer</h1>
 <ul>
-<li><a href="./data/website.csv">website.csv</a>: Dataset C.6 from KNNL. A company was interested on factors affecting the number of websites completed and delivered. Data were collected for 13 teams over 8 quarters.
+<li><a href="./data/website.csv">website.csv</a>: Dataset C.6 from KNNL.
+A company was interested on factors affecting the number of websites
+completed and delivered. Data were collected for 13 teams over 8
+quarters.
 <ul>
 <li><code>id</code>: Identification number for row.</li>
-<li><code>number</code>: Number of websites completed and delivered to customers during the quarter.</li>
-<li><code>backlog</code>: Number of website orders in backlog at the close of the quarter.</li>
+<li><code>number</code>: Number of websites completed and delivered to
+customers during the quarter.</li>
+<li><code>backlog</code>: Number of website orders in backlog at the
+close of the quarter.</li>
 <li><code>team</code>: Team number (1–13)</li>
-<li><code>experience</code>: Number of months the team has been together.</li>
-<li><code>change</code>: A change in the website development process occurred during the second quarter of 2002. This is an indicator variable adjusting for this change. <code>1</code> if quarter 2 or 3 of 2002, and <code>0</code> otherwise.</li>
+<li><code>experience</code>: Number of months the team has been
+together.</li>
+<li><code>change</code>: A change in the website development process
+occurred during the second quarter of 2002. This is an indicator
+variable adjusting for this change. <code>1</code> if quarter 2 or 3 of
+2002, and <code>0</code> otherwise.</li>
 <li><code>year</code>: Year, either 2001 or 2002.</li>
 <li><code>quarter</code>: 1, 2, 3, or 4.</li>
 </ul></li>
@@ -743,14 +1056,31 @@ div.tocify {
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chung2022prevalence" class="csl-entry">
+Chung, Yeon Hak, Jae Rim Kim, Su Jung Choi, and Eun Yeon Joo. 2022.
+<span>“Prevalence and Predictive Factors of Nocturia in Patients with
+Obstructive Sleep Apnea Syndrome: A Retrospective Cross-Sectional
+Study.”</span> <em>PLOS ONE</em> 17 (4): 1–12. <a
+href="https://doi.org/10.1371/journal.pone.0267441">https://doi.org/10.1371/journal.pone.0267441</a>.
+</div>
 <div id="ref-hibbs2000bread" class="csl-entry">
-Hibbs, Douglas A. 2000. <span>“Bread and Peace Voting in US Presidential Elections.”</span> <em>Public Choice</em> 104 (1): 149–80. <a href="https://doi.org/10.1023/A:1005292312412">https://doi.org/10.1023/A:1005292312412</a>.
+Hibbs, Douglas A. 2000. <span>“Bread and Peace Voting in US Presidential
+Elections.”</span> <em>Public Choice</em> 104 (1): 149–80. <a
+href="https://doi.org/10.1023/A:1005292312412">https://doi.org/10.1023/A:1005292312412</a>.
 </div>
 <div id="ref-savage2004predominance" class="csl-entry">
-Savage, V. M., J. F. Gillooly, W. H. Woodruff, G. B. West, A. P. Allen, B. J. Enquist, and J. H. Brown. 2004. <span>“The Predominance of Quarter-Power Scaling in Biology.”</span> <em>Functional Ecology</em> 18 (2): 257–82. <a href="https://doi.org/10.1111/j.0269-8463.2004.00856.x">https://doi.org/10.1111/j.0269-8463.2004.00856.x</a>.
+Savage, V. M., J. F. Gillooly, W. H. Woodruff, G. B. West, A. P. Allen,
+B. J. Enquist, and J. H. Brown. 2004. <span>“The Predominance of
+Quarter-Power Scaling in Biology.”</span> <em>Functional Ecology</em> 18
+(2): 257–82. <a
+href="https://doi.org/10.1111/j.0269-8463.2004.00856.x">https://doi.org/10.1111/j.0269-8463.2004.00856.x</a>.
 </div>
 <div id="ref-shadid2010study" class="csl-entry">
-Shadid, S A, and M F Rahman. 2010. <span>“Study on the Effect of Stitch Length on Bursting Strength of Knit Fabric.”</span> <em>Annals of the University of Oradea, Fascicle of Textiles, Leatherwork</em> 1: 142–46. <a href="http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf">http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf</a>.
+Shadid, S A, and M F Rahman. 2010. <span>“Study on the Effect of Stitch
+Length on Bursting Strength of Knit Fabric.”</span> <em>Annals of the
+University of Oradea, Fascicle of Textiles, Leatherwork</em> 1: 142–46.
+<a
+href="http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf">http://textile.webhost.uoradea.ro/Annals/VolumeXI-no%202-2010.pdf</a>.
 </div>
 </div>
 </div>

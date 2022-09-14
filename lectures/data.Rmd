@@ -201,6 +201,47 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `mass`: A measure of muscle mass (g).
     - `age`: Age (years)
     
+# Nocturia
+
+- [nocturia.csv](./data/nocturia.csv): Data from @chung2022prevalence. Nocturia is the condition that causes some people to wake up at night to urinate. Many individuals with sleep apnea also have nocturia. This study recruited patients with sleep apnea, measured if they also had nocturia, and used a questionnaire to obtain various predictors that the authors thought might be associated with nocturia. Variables include
+    - `nocturia`: An indicator for whether the individual has nocturia (`1`) or not (`0`).
+    - `age`: Age of the individual (years)
+    - `ahi`: "Apnea-hypopnea index", average number of times per hour an individual either has an apnea event or a hypopnea event.
+    - `alcohol`: Alcohol intake in grams per week.
+    - `apnea`: "Apnea index", average number of times per hour an individual stopped breather for 10 seconds or longer.
+    - `arousal`: "Arousal index", average number of awakenings per hour.
+    - `bed_time`: Total amount of time in bed in minutes.
+    - `bmi`: Body mass index (kg/m$^2$).
+    - `caffeine`: Caffeine intake (cups/day).
+    - `cardiovascular_disease`: Indicator for whether the individual has cardiovascular disease (`1`) or not (`0`).
+    - `diabetes`: Indicator for whether the individual has [diabetes mellitus](https://en.wikipedia.org/wiki/Diabetes) (`1`) or not (`0`).
+    - `diuretics`: Indicator for whether the individual takes [diuretics](https://en.wikipedia.org/wiki/Diuretic) (`1`) or not (`0`).
+    - `dyslipidemia`: Indicator for whether the individual has [dyslipidemia](https://en.wikipedia.org/wiki/Dyslipidemia) (`1`) or not (`0`) .
+    - `ess`: Epworth sleep scale. Questionnaire index of "situational sleep propensity". Values are between 0 and 32, with higher values indicating greater subjective sleepiness.
+    - `hypertension`: Indicator for whether the individual has [hypertention](https://en.wikipedia.org/wiki/Hypertension) (high blood pressure) (`1`) or not (`0`).
+    - `hypopnea`: "Hypopnea index", average number of times per hour an individual has a partial loss of breath for 10 seconds or longer.
+    - `id`: Patient ID.
+    - `isi`: Korean [insomnia severity index](https://doi.org/10.3988/jcn.2014.10.3.210), ranging from 0 to 28, with higher scores indicating worse insomnia.
+    - `kbdiii`: Korean Beck depression inventory-II. Questionnaire index of severity of depression. Scores range from 0 to 63, with higher scores indicating more severe depressive symptoms.
+    - `kidney_disease`: Indicator for whether the individual has chronic kidney disease (`1`) or not (`0`).
+    - `low_sa02`: Lowest percent of oxygen saturation detected during sleep.
+    - `N1`: Percent of time in "N1 sleep", non-rapid eye movement sleep stage 1. See [sleep cycle](https://en.wikipedia.org/wiki/Sleep_cycle)
+    - `N2`: Percent of time in "N2 sleep", non-rapid eye movement sleep stage 2. See [sleep cycle](https://en.wikipedia.org/wiki/Sleep_cycle)
+    - `N3`: Percent of time in "N3 sleep", non-rapid eye movement sleep stage 3. See [sleep cycle](https://en.wikipedia.org/wiki/Sleep_cycle)
+    - `odi`: Oxygen desaturation index (the number of 3\% oxygen desaturations per hour of estimated sleep time).
+    - `odi90`: 90\% oxygen desaturation index (the number of 3\% oxygen desaturations below 90\% per hour of estimated sleep time).
+    - `parkinsons`: Indicator for whether the individual has [Parkinson's disease](https://en.wikipedia.org/wiki/Parkinson%27s_disease) (`1`) or not (`0`).
+    - `psqi`: Korean version of the [Pittsburgh sleep quality index](https://en.wikipedia.org/wiki/Pittsburgh_Sleep_Quality_Index). A composite score between 0 and 21 based on a questionaire where smaller values indicate better self-reported sleep.
+    - `rem`: : Percent of time in "REM sleep". See [sleep cycle](https://en.wikipedia.org/wiki/Sleep_cycle)
+    - `rem_latency`: REM latency (time it takes to reach REM sleep) in minutes.
+    - `sex`: Biological sex of the individual. Female (`F`) or male (`M`).
+    - `sleep_efficiency`: Percent of time spent asleep while in bed.
+    - `sleep_latency`: Sleep latency (time it takes for a person to fall asleep) in minutes.
+    - `sleep_time`: Total sleep time in minutes.
+    - `smoking`: Smoking frequency in [pack-years](https://en.wikipedia.org/wiki/Pack-year) (packs smoked per day times the number of years as a smoker).
+    - `stroke`: Indicator for whether the individual has had a stroke (`1`) or not (`0`).
+    - `waso`: Wakefulness after sleep onset.
+    
 # Prostate Cancer
 
 - [prostate.csv](./data/prostate.csv): Dataset C.5 from KNNL. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:

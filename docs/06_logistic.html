@@ -595,6 +595,57 @@ Distribution</a>) and <span class="math inline">\(g(\mu_i) =
 </ul>
 </div>
 </div>
+<div id="estimation" class="section level1">
+<h1>Estimation</h1>
+<ul>
+<li><p>Let <span class="math inline">\(Y_i\)</span> be an indicator for
+survival for individual <span class="math inline">\(i\)</span>, let
+<span class="math inline">\(X_{i1}\)</span> be the age of individual
+<span class="math inline">\(i\)</span>, and let <span
+class="math inline">\(X_{i2}\)</span> be an indicator for male Then we
+fit the model <span class="math display">\[\begin{align}
+  Y_i &amp;\sim Bern(p_i)\\
+  \text{logit}(p_i) &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2}
+  \end{align}\]</span></p></li>
+<li><p>We fit all generalized linear models in R with
+<code>glm()</code>. The arguments are</p>
+<ul>
+<li><code>formula</code>: The same idea as in <code>lm()</code>.
+Response variable on the left of the tilde, explanatory variables on the
+right of the tilde.</li>
+<li><code>data</code>: The data frame where the variables are.</li>
+<li><code>family</code>: The distribution of <span
+class="math inline">\(Y_i\)</span>.
+<ul>
+<li><code>gaussian</code> will assume normal errors (like in
+<code>lm()</code>).</li>
+<li><code>binomial</code> in this case will fit the bernoulli model
+since <span class="math inline">\(Bern(p_i) = Bin(1, p_i)\)</span>.</li>
+</ul></li>
+<li>You can specify the link function here as well. So for probit models
+you would do <code>binomial(link = "probit")</code>.</li>
+</ul></li>
+<li><p>Let’s fit the model</p>
+<pre class="r"><code>glm_out &lt;- glm(Survived ~ Age + Sex, data = donner, family = binomial)</code></pre></li>
+<li><p>You again use <code>tidy()</code> from the <code>{broom}</code>
+package to get estimates / standard errors</p>
+<pre class="r"><code>tidy(glm_out)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)   3.23      1.39        2.33  0.0198
+## 2 Age          -0.0782    0.0373     -2.10  0.0359
+## 3 SexMale      -1.60      0.755      -2.11  0.0345</code></pre></li>
+<li><p>So the estimated regression surface is <span
+class="math display">\[
+  \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
+  \]</span></p></li>
+<li><p><strong>Exercise</strong>: What if <span
+class="math inline">\(X_2\)</span> would have been an indicator for
+female? What would the coefficient estimate of <span
+class="math inline">\(\beta_2\)</span> be?</p></li>
+</ul>
+</div>
 <div id="interpretation" class="section level1">
 <h1>Interpretation</h1>
 <div id="odds" class="section level2">

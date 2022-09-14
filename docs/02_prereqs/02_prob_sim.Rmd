@@ -50,7 +50,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     sd(Y) = \sqrt{var(Y)}
     $$
 
-- The **distribution** of a random variable is possible values of a random variable and how often it takes those values. 
+- The **distribution** of a random variable is the possible values of a random variable and how often it takes those values. 
   
 - A **density** describes the distribution of a *quantitative* variable. You can think of it as approximating a histogram. It is a curve where
   - The area under the curve between any two points is approximately the probability of being between those two points.
