@@ -28,19 +28,221 @@ klippy::klippy()
 # Learning Objectives
 
 - Logistic Regression for Binary Response Variables
-- Sections 14.1 to 14.12 of KNNL
+- Chapters 20 and 21 of the *Statistical Sleuth*
 
-```{r}
+```{r, message = FALSE}
+library(tidyverse)
+library(Sleuth3)
 library(broom)
+library(sandwich)
+library(lmtest)
 ```
 
 # Motivation
 
+- Lots of regression problems involve response variables that are **binary** --- the only possible values are either 0 or 1.
+    - Alive (1) vs dead (0)
+    - Success (1) vs failure (0)
+    - Presence (1) vs absence (0)
+    
+- It is arbitrary and unimportant which variable you encode as 1 vs 0. 
+    - E.g. we could have coded "dead" as 1 and "alive" as 0.
+    - Just keep track of the coding for interpretation purposes.
+    
+- E.g., either survival ($Y_i = 1$) or death ($Y_i = 0$) of individual $i$ from the Donner Party of 1846.
+
+    ```{r}
+    data("case2001")
+    donner <- case2001
+    glimpse(donner)
+    ```
+    
+- We often want to quantify the association between a quantitative predictor $x$ and the binary response $y$. E.g. older folks tended to die at a higher frequency:
+    ```{r}
+    qplot(x = Age, y = Status, data = donner, geom = "point")
+    ```
+
+# Linear Probability Model (LPM)
+
+- If your goal is *not* prediction, then it is not entirely incorrect to just use linear regression [@hellevik2009linear; @gomila2021logistic].
+    
+- Let $Y_i \sim Bern(p)$. That is $Y_i$ is 1 with probability $p$ and is 0 with probability $1-p$. Then
+
+    - $E[Y_i] = p$
+    - $var(Y_i) = p(1-p)$
+    
+- Suppose $Y_i$ is 1 for "success" and "0" for failure. Suppose we have the model
+
+    $$
+    Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i.
+    $$
+    
+- Since $E[Y_i]$ is the probability that $Y_i$ is 1, that mean's we can interpret the regression line as the probability that $Y_i$ is 1.
+
+- Interpreting the regression coefficients: "Individuals that are 1 unit larger in $X_{ik}$ are $\beta_k \times 100$ percentage points more probable to have a $Y$ value of 1, adjusting for other variables."
+
+- Let's apply this to the Donner party data
+
+    ```{r}
+    donner <- mutate(donner, Survived = if_else(Status == "Survived", 1, 0))
+    lmout <- lm(Survived ~ Age, data = donner)
+    lmout
+    ```
+
+- Thus, individuals that were one year older were 1.3 percentage points less likely to survive.
+    
+- Bernoulli random variables are always heteroscedastic since their variance is a function of the mean $p(1-p)$. So if you use the LPM, you *need* to use heteroscedastic robust standard errors.
+
+    ```{r}
+    cout <- coeftest(x = lmout, vcov. = vcovHC)
+    tidy(cout)
+    ```
+    
+- Residual plots are kind of useless here:
+
+    ```{r}
+    aout <- augment(lmout)
+    qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+    ```
+
+
+## Issues
+
+- Econometricians and psychologists love the LPM because of its ease of interpretability.
+
+- Statisticians typically do not like it (though I'm agnostic).
+
+- The possible values of $\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1}$ are any real numbers between $-\infty$ and $\infty$, but the probability of $Y_i$ being 1 can only be between 0 and 1.
+
+- So it is possible (and typical in many datasets) to have probability estimates that are negative or greater than 1. This makes folks squeamish.
+
+- E.g., the point-wise confidence bands from the Donner party make no sense:
+
+    ```{r}
+    ggplot(donner, aes(x = Age, y = Survived)) +
+      geom_point() +
+      geom_smooth(method = "lm", formula = y ~ x)
+    ```
+
+- When the probability of a "1" is between about 0.2 and 0.8, then the linear and logistic (see below) models produce about the same results.
+
+- Let's look at the differences in the Donner party example:
+
+    ```{r}
+    ggplot(donner, aes(x = Age, y = Survived)) +
+      geom_point() +
+      geom_smooth(method = "lm", se = FALSE, formula = y ~ x) +
+      geom_smooth(method = "glm", 
+                  se = FALSE,
+                  method.args = list(family = "binomial"),
+                  color = "red", 
+                  lty = 2,
+                  formula = y ~ x)
+    ```
+
 # Model
 
-# Interpretation (odds ratios)
+- Let $p_i$ be the probability that individual $i$ is 1. I.e. $E[Y_i] = p_i$. Then our model is
+    $$
+    \text{logit}(p_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1}
+    $$
 
-# Two ways to input data
+- Here, $\text{logit}(\cdot)$ is the "logit" function,
+    $$
+    \text{logit}(p_i) = \log\left(\frac{p_i}{1-p_i}\right).
+    $$
+
+- The inverse of the logit function is the "expit" function (or "logistic")
+    $$
+    \text{expit}(\eta) = \frac{e^{\eta}}{1 + e^{\eta}}.
+    $$
+    
+- So we can equivalently write this model as
+    $$
+    p_i = \text{expit}\left(\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1}\right)
+    $$
+
+- The $\text{expit}(\cdot)$ function takes a number from $-\infty$ to $\infty$ and places it between 0 and 1. Thus, it forces the probabilities to be between 0 and 1.
+
+    ```{r, echo = FALSE}
+    tibble(x = seq(-5, 5, length.out = 200)) %>%
+      mutate(p = exp(x) / (1 + exp(x))) %>%
+      ggplot(aes(x = x, y = p)) +
+      geom_line() +
+      ylab("expit(x)")
+    ```
+
+
+## Generalized Linear Model
+
+- This is an example of a "generalized linear model". Let $Y_i$ follow any distribution we specify Let $\mu_i$ be the mean of $Y_i$. Then a generalized linear model is
+
+    $$
+    g(\mu_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1}
+    $$
+    
+- Here, $g(\cdot)$ is called the "link function". The model is linear on the link scale (hence "generalized linear model").
+
+- In logistic regression, $Y_i \sim Bern(\mu_i)$ and $g(\mu_i) = \text{logit}(\mu_i)$.
+
+- Another example is probit regression (more popular in econ) where $g(\mu_i) = \Phi^{-1}(\mu_i)$, the standard normal quantile function (`qnorm()`). This gives you similar results, but statisicians don't like it because it's less interpretable than the logit.
+
+    ```{r, echo = FALSE, fig.width = 5}
+    tibble(x = seq(-5, 5, length.out = 200)) %>%
+      mutate(probit = pnorm(x),
+             logit = exp(x) / (1 + exp(x))) %>%
+      gather(-x, key = "Link Function", value = "g") %>%
+      ggplot(aes(x = x, y = g, color = `Link Function`)) +
+      geom_line() +
+      ylab("g(x)")
+    ```
+    
+- In [log-linear models](https://en.wikipedia.org/wiki/Poisson_regression) (which we might later), we model counts with $Y_i \sim Poi(\mu_i)$ ([Poisson Distribution](https://en.wikipedia.org/wiki/Poisson_distribution)) and $g(\mu_i) = \log(\mu_i)$.
+
+# Interpretation
+
+## Odds
+
+- The interpretation of the logistic regression model requires you to be familiar with odds.
+
+- As I write this, the Baltimore Ravens have 3 to 2 odds of defeating the Miami Dolphins tomorrow. This means that the odds of a Ravens victory are $3/2 = 1.5$.
+
+- The odds of an event are the probability of that event divided by the probability of not that event.
+
+- Let $p$ be the probability of an event, and let $\omega$ be the odds of the same event. Then we have the relations:
+    $$
+    \omega = \frac{p}{1-p}\\
+    p = \frac{\omega}{1+\omega}
+    $$
+
+- So odds are just another description of probabilities. 
+
+- In the football example above, the Ravens' probability of wining is 0.6, so the odds are 0.6/0.4 = 3/2 = 1.5.
+
+- **Exercise**: The Chiefs have 2 to 1 odds over the Chargers tomorrow. What's the probability of a Chief's win?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    2/3
+    ```
+
+## Interpreting Logistic Regression Model
+
+- Let $\omega_{old}$ be the odds of an individual. We can write the logistic regression model as
+    $$
+    \omega_{old} = \exp\left(\beta_0 + \beta_1X_{1} + \beta_2X_{2} + \cdots \beta_{p-1}X_{p-1}\right)
+    $$
+    
+- Suppose that a different individual has the exact same predictor values except one unit higher $X_1$. Then
+    \begin{align}
+    \omega_{new} &= \exp\left(\beta_0 + \beta_1(X_{1} + 1) + \beta_2X_{2} + \cdots \beta_{p-1}X_{p-1}\right)\\
+    &= \exp\left(\beta_0 + \beta_1X_{1} + \beta_1 + \beta_2X_{2} + \cdots \beta_{p-1}X_{p-1}\right)\\
+    &= \exp(\beta_1)\exp\left(\beta_0 + \beta_1X_{1} + \beta_2X_{2} + \cdots \beta_{p-1}X_{p-1}\right)\\
+    &= \exp(\beta_1)\omega_{old}
+    \end{align}
+    
+- Thus, the odds of the second individual are $e^{\beta_1}$ times as large as the odds of the first individual.
+
+- Different way to say this: The odds ratio for the two individuals is $e^{\beta_1}$.
 
 # Bias reduction
 
@@ -48,7 +250,7 @@ library(broom)
 
 Their example:
 
-```{r}
+```{r, warning=FALSE}
 ## The lizards example from ?brglm::brglm
 data("lizards", package = "brglm2")
 # Fit the model using maximum likelihood

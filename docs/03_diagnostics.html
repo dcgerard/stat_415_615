@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-09-28" />
+<meta name="date" content="2022-09-14" />
 
 <title>Diagnostics and Remedial Measures</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -314,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-09-28</h4>
+<h4 class="date">2022-09-14</h4>
 
 </div>
 
@@ -357,37 +365,60 @@ div.tocify {
 <div id="learning-objectives" class="section level1">
 <h1>Learning Objectives</h1>
 <ul>
-<li>Chapter 3 of KNNL (skip Sections 3.4–3.6 and the Box-Cox transformation).</li>
+<li>Chapter 3 of KNNL (skip Sections 3.4–3.6 and the Box-Cox
+transformation).</li>
 <li>Interpreting residuals plots.</li>
-<li>Diagnosing violations in the assumptions of the simple linear model.</li>
+<li>Diagnosing violations in the assumptions of the simple linear
+model.</li>
 <li>Suggesting solutions to remedy the violations.</li>
 </ul>
 </div>
-<div id="recall-assumptions-in-decreasing-order-of-importance" class="section level1">
+<div id="recall-assumptions-in-decreasing-order-of-importance"
+class="section level1">
 <h1>Recall: Assumptions in Decreasing Order of Importance</h1>
 <ol style="list-style-type: decimal">
-<li><p><strong>Linearity</strong> - Does the relationship look like a straight line?</p></li>
-<li><p><strong>Independence</strong> - knowledge of the value of one observation does not give you any information on the value of another.</p></li>
-<li><p><strong>Equal Variance</strong> - The spread is the same for every value of <span class="math inline">\(x\)</span></p></li>
-<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations, or if you are doing prediction intervals).</p></li>
+<li><p><strong>Linearity</strong> - Does the relationship look like a
+straight line?</p></li>
+<li><p><strong>Independence</strong> - knowledge of the value of one
+observation does not give you any information on the value of
+another.</p></li>
+<li><p><strong>Equal Variance</strong> - The spread is the same for
+every value of <span class="math inline">\(x\)</span></p></li>
+<li><p><strong>Normality</strong> - The distribution isn’t too skewed
+and there aren’t any too extreme points. (only an issue if you have
+outliers and a small number of observations, or if you are doing
+prediction intervals).</p></li>
 </ol>
 </div>
 <div id="problems-when-violated" class="section level1">
 <h1>Problems when Violated</h1>
 <ol style="list-style-type: decimal">
-<li><p><strong>Linearity</strong> - Linear regression line does not pick up actual relationship</p></li>
-<li><p><strong>Independence</strong> - Linear regression line is unbiased, but standard errors are too small.</p></li>
-<li><p><strong>Equal Variance</strong> - Linear regression line is unbiased, but standard errors are off.</p></li>
-<li><p><strong>Normality</strong> - Unstable results if outliers are present and sample size is small.</p></li>
+<li><p><strong>Linearity</strong> - Linear regression line does not pick
+up actual relationship</p></li>
+<li><p><strong>Independence</strong> - Linear regression line is
+unbiased, but standard errors are too small.</p></li>
+<li><p><strong>Equal Variance</strong> - Linear regression line is
+unbiased, but standard errors are off.</p></li>
+<li><p><strong>Normality</strong> - Unstable results if outliers are
+present and sample size is small.</p></li>
 </ol>
-<div id="assessment-tools-scatterplots-and-residual-plots" class="section level2">
+<div id="assessment-tools-scatterplots-and-residual-plots"
+class="section level2">
 <h2>Assessment Tools: Scatterplots and Residual Plots</h2>
 <ul>
-<li><p>Make a scatterplot of the explanatory variable (<span class="math inline">\(x\)</span>-axis) vs the response (<span class="math inline">\(y\)</span>-axis) to check for non-linearity, equal variance, and normality violations.</p></li>
-<li><p>Residuals (<span class="math inline">\(y\)</span>-axis) vs fitted values (<span class="math inline">\(x\)</span>-axis) is often more clear because the signal is removed.</p></li>
-<li><p>You should get used to residual plots, because they are necessary when we start doing multiple linear regression</p>
+<li><p>Make a scatterplot of the explanatory variable (<span
+class="math inline">\(x\)</span>-axis) vs the response (<span
+class="math inline">\(y\)</span>-axis) to check for non-linearity, equal
+variance, and normality violations.</p></li>
+<li><p>Residuals (<span class="math inline">\(y\)</span>-axis) vs fitted
+values (<span class="math inline">\(x\)</span>-axis) is often more clear
+because the signal is removed.</p></li>
+<li><p>You should get used to residual plots, because they are necessary
+when we start doing multiple linear regression</p>
 <ul>
-<li><span class="math inline">\(x\)</span> versus <span class="math inline">\(y\)</span> does not work well as a diagnostic device when you have many <span class="math inline">\(x\)</span>’s.</li>
+<li><span class="math inline">\(x\)</span> versus <span
+class="math inline">\(y\)</span> does not work well as a diagnostic
+device when you have many <span class="math inline">\(x\)</span>’s.</li>
 </ul></li>
 </ul>
 </div>
@@ -415,14 +446,18 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <h2>Dataset 1: Summary</h2>
 <ul>
 <li><p>Means are straight lines</p></li>
-<li><p>Residuals seem to be centered at 0 for all <span class="math inline">\(x\)</span></p></li>
-<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Residuals seem to be centered at 0 for all <span
+class="math inline">\(x\)</span></p></li>
+<li><p>Variance looks equal for all <span
+class="math inline">\(x\)</span></p></li>
 <li><p>Everything looks perfect</p></li>
-<li><p><strong>Exercise</strong>: Describe any issues with this plot. <img src="03_diagnostics_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Exercise</strong>: Describe any issues with this plot.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 </div>
-<div id="dataset-2-curved-monotone-relationship-equal-variances" class="section level1">
+<div id="dataset-2-curved-monotone-relationship-equal-variances"
+class="section level1">
 <h1>Dataset 2: Curved Monotone Relationship, Equal Variances</h1>
 <div id="dataset-2-scatterplot" class="section level2">
 <h2>Dataset 2: Scatterplot</h2>
@@ -443,13 +478,23 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-2-summary" class="section level2">
 <h2>Dataset 2: Summary</h2>
 <ul>
-<li><p>Curved (but always increasing <em>or</em> always decreasing) relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
-<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Curved (but always increasing <em>or</em> always decreasing)
+relationship between <span class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>.</p></li>
+<li><p>Variance looks equal for all <span
+class="math inline">\(x\)</span></p></li>
 <li><p>Residual plot has a parabolic shape.</p></li>
-<li><p>These indicate a <span class="math inline">\(\log\)</span> transformation of <span class="math inline">\(x\)</span> could help.</p></li>
-<li><p>Why not <span class="math inline">\(\log(y)\)</span>? Because taking transforming <span class="math inline">\(y\)</span> can change the variance, and we already have constant variance, so we do not want to mess with that.</p>
+<li><p>These indicate a <span class="math inline">\(\log\)</span>
+transformation of <span class="math inline">\(x\)</span> could
+help.</p></li>
+<li><p>Why not <span class="math inline">\(\log(y)\)</span>? Because
+taking transforming <span class="math inline">\(y\)</span> can change
+the variance, and we already have constant variance, so we do not want
+to mess with that.</p>
 <ul>
-<li>Recall, random variation occurs in the <span class="math inline">\(y\)</span> direction, not the <span class="math inline">\(x\)</span> direction.</li>
+<li>Recall, random variation occurs in the <span
+class="math inline">\(y\)</span> direction, not the <span
+class="math inline">\(x\)</span> direction.</li>
 </ul></li>
 <li><p><strong>Exercise</strong>: Consider the following data:</p>
 <pre class="r"><code>dftoy &lt;- tribble(~x, ~y,
@@ -459,24 +504,37 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
                  2, 5,
                  3, 1,
                  3, 20)</code></pre>
-<p>Plot <span class="math inline">\(x\)</span> versus <span class="math inline">\(y\)</span>. Then log-transform <span class="math inline">\(x\)</span> and plot <span class="math inline">\(\log(x)\)</span> versus <span class="math inline">\(y\)</span>. Then try log-transforming <span class="math inline">\(y\)</span> and plotting <span class="math inline">\(x\)</span> versus <span class="math inline">\(\log(y)\)</span>. Discuss how variation changes (vertically or horizontally) when we log <span class="math inline">\(x\)</span> versus logging <span class="math inline">\(y\)</span>.</p></li>
+<p>Plot <span class="math inline">\(x\)</span> versus <span
+class="math inline">\(y\)</span>. Then log-transform <span
+class="math inline">\(x\)</span> and plot <span
+class="math inline">\(\log(x)\)</span> versus <span
+class="math inline">\(y\)</span>. Then try log-transforming <span
+class="math inline">\(y\)</span> and plotting <span
+class="math inline">\(x\)</span> versus <span
+class="math inline">\(\log(y)\)</span>. Discuss how variation changes
+(vertically or horizontally) when we log <span
+class="math inline">\(x\)</span> versus logging <span
+class="math inline">\(y\)</span>.</p></li>
 </ul>
 </div>
 <div id="dataset-2-transformed-x-scatterplot" class="section level2">
-<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Scatterplot</h2>
+<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span>
+Scatterplot</h2>
 <pre class="r"><code>df &lt;- mutate(df, x_log = log(x))
 qplot(x = x_log, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-transformed-x-residual-plot" class="section level2">
-<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span> Residual Plot</h2>
+<h2>Dataset 2: Transformed <span class="math inline">\(x\)</span>
+Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x_log, data = df)
 aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
-<div id="dataset-3-curved-non-monotone-relationship-equal-variances" class="section level1">
+<div id="dataset-3-curved-non-monotone-relationship-equal-variances"
+class="section level1">
 <h1>Dataset 3: Curved Non-monotone Relationship, Equal Variances</h1>
 <div id="dataset-3-scatterplot" class="section level2">
 <h2>Dataset 3: Scatterplot</h2>
@@ -496,9 +554,13 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-3-summary" class="section level2">
 <h2>Dataset 3: Summary</h2>
 <ul>
-<li><p>Curved relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
-<li><p>Sometimes the relationship is increasing, sometimes it is decreasing.</p></li>
-<li><p>Variance looks equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Curved relationship between <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span></p></li>
+<li><p>Sometimes the relationship is increasing, sometimes it is
+decreasing.</p></li>
+<li><p>Variance looks equal for all <span
+class="math inline">\(x\)</span></p></li>
 <li><p>Residual plot has a parabolic form.</p></li>
 </ul>
 </div>
@@ -509,8 +571,9 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <p><span class="math display">\[
   E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2
   \]</span></p></li>
-<li><p>A more complicated solution (which we will not cover) would be to fit model <span class="math display">\[
-  Y_i = 
+<li><p>A more complicated solution (which we will not cover) would be to
+fit model <span class="math display">\[
+  Y_i =
   \begin{cases}
   \beta_0 + \beta_1 X_i &amp; \text{ if } X_i &lt; C\\
   \beta_0^* + \beta_1^* X_i &amp; \text{ if } X_i &gt; C\\
@@ -518,8 +581,10 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
   \]</span></p></li>
 </ul>
 </div>
-<div id="dataset-3-fitting-ey_i-beta_0-beta_1-x_i-beta_2-x_i2" class="section level2">
-<h2>Dataset 3: Fitting <span class="math inline">\(E[Y_i] = \beta_0 + \beta_1 X_i + \beta_2 X_i^2\)</span></h2>
+<div id="dataset-3-fitting-ey_i-beta_0-beta_1-x_i-beta_2-x_i2"
+class="section level2">
+<h2>Dataset 3: Fitting <span class="math inline">\(E[Y_i] = \beta_0 +
+\beta_1 X_i + \beta_2 X_i^2\)</span></h2>
 <pre class="r"><code>df &lt;- mutate(df, x2 = x^2) ## create x^2 first
 quad_lm &lt;- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout &lt;- augment(quad_lm)
@@ -539,8 +604,10 @@ beta0 &lt;- ttemp$estimate[[1]]
 beta1 &lt;- ttemp$estimate[[2]]
 beta2 &lt;- ttemp$estimate[[3]]</code></pre>
 <ul>
-<li><p>Recall that <span class="math inline">\(y = \beta_0 + \beta_1x + \beta_2x^2\)</span> is the equation of a parabola.</p></li>
-<li><p>The estimated parabola is <span class="math inline">\(y = 0.2756 + -0.0248 x + -1.0802 x^2\)</span></p></li>
+<li><p>Recall that <span class="math inline">\(y = \beta_0 + \beta_1x +
+\beta_2x^2\)</span> is the equation of a parabola.</p></li>
+<li><p>The estimated parabola is <span class="math inline">\(y = 0.2756
++ -0.0248 x + -1.0802 x^2\)</span></p></li>
 <li><p>We can get these coefficient estimates by running</p>
 <pre class="r"><code>tidy(quad_lm)</code></pre>
 <pre><code>## # A tibble: 3 × 5
@@ -549,14 +616,21 @@ beta2 &lt;- ttemp$estimate[[3]]</code></pre>
 ## 1 (Intercept)   0.276     0.168      1.64  1.04e- 1
 ## 2 x            -0.0248    0.0572    -0.434 6.65e- 1
 ## 3 x2           -1.08      0.0361   -30.0   8.09e-51</code></pre></li>
-<li><p>The negative coefficient for <span class="math inline">\(x^2\)</span> indicates that the parabola has a maximum, which we can recall occurs at <span class="math display">\[
-  x = -\frac{\beta_1}{2\beta_2} = -\frac{-0.0248}{2 \times -1.0802} = -0.0115
-  \]</span> So we could say that the trend increases to about 0, then decreases after 0.</p></li>
+<li><p>The negative coefficient for <span
+class="math inline">\(x^2\)</span> indicates that the parabola has a
+maximum, which we can recall occurs at <span class="math display">\[
+  x = -\frac{\beta_1}{2\beta_2} = -\frac{-0.0248}{2 \times -1.0802} =
+-0.0115
+  \]</span> So we could say that the trend increases to about 0, then
+decreases after 0.</p></li>
 </ul>
 </div>
 </div>
-<div id="dataset-4-curved-monotone-relationship-variance-increases-with-y" class="section level1">
-<h1>Dataset 4: Curved Monotone Relationship, Variance Increases with <span class="math inline">\(Y\)</span></h1>
+<div
+id="dataset-4-curved-monotone-relationship-variance-increases-with-y"
+class="section level1">
+<h1>Dataset 4: Curved Monotone Relationship, Variance Increases with
+<span class="math inline">\(Y\)</span></h1>
 <div id="dataset-4-scatterplot" class="section level2">
 <h2>Dataset 4: Scatterplot</h2>
 <pre class="r"><code>x &lt;- runif(100, 0, 2)
@@ -575,16 +649,21 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-4-summary" class="section level2">
 <h2>Dataset 4: Summary</h2>
 <ul>
-<li><p>Curved relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
-<li><p>Variance looks like it increases as <span class="math inline">\(y\)</span> increases</p></li>
+<li><p>Curved relationship between <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span></p></li>
+<li><p>Variance looks like it increases as <span
+class="math inline">\(y\)</span> increases</p></li>
 <li><p>Residual plot has a parabolic form.</p></li>
-<li><p>Residual plot variance looks larger to the right and smaller to the left.</p></li>
+<li><p>Residual plot variance looks larger to the right and smaller to
+the left.</p></li>
 </ul>
 </div>
 <div id="dataset-4-solution" class="section level2">
 <h2>Dataset 4: Solution</h2>
 <ul>
-<li><p>Take a log-transformation of <span class="math inline">\(y\)</span>.</p>
+<li><p>Take a log-transformation of <span
+class="math inline">\(y\)</span>.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y))
 qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p></li>
@@ -597,12 +676,17 @@ aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li><strong>Exercise</strong>: What if you see something like this? Do you think logging <span class="math inline">\(y\)</span> will help? <img src="03_diagnostics_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></li>
+<li><strong>Exercise</strong>: What if you see something like this? Do
+you think logging <span class="math inline">\(y\)</span> will help?
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></li>
 </ul>
 </div>
 </div>
-<div id="dataset-5-linear-relationship-equal-variances-skewed-distribution" class="section level1">
-<h1>Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution</h1>
+<div
+id="dataset-5-linear-relationship-equal-variances-skewed-distribution"
+class="section level1">
+<h1>Dataset 5: Linear Relationship, Equal Variances, Skewed
+Distribution</h1>
 <div id="dataset-5-scatterplot" class="section level2">
 <h2>Dataset 5: Scatterplot</h2>
 <pre class="r"><code>x &lt;- runif(200)
@@ -621,8 +705,11 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code><
 <div id="dataset-5-summary" class="section level2">
 <h2>Dataset 5: Summary</h2>
 <ul>
-<li><p>Straight line relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
-<li><p>Variances about equal for all <span class="math inline">\(x\)</span></p></li>
+<li><p>Straight line relationship between <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>.</p></li>
+<li><p>Variances about equal for all <span
+class="math inline">\(x\)</span></p></li>
 <li><p>Skew for all <span class="math inline">\(x\)</span></p></li>
 <li><p>Residual plots show skew.</p></li>
 </ul>
@@ -641,7 +728,8 @@ Median(Y_i) = \beta_0 + \beta_1 X_i
 </ul>
 </div>
 </div>
-<div id="dataset-6-linear-relationship-unequal-variances" class="section level1">
+<div id="dataset-6-linear-relationship-unequal-variances"
+class="section level1">
 <h1>Dataset 6: Linear Relationship, Unequal Variances</h1>
 <div id="dataset-6-scatterplot" class="section level2">
 <h2>Dataset 6: Scatterplot</h2>
@@ -661,33 +749,42 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)</code>
 <div id="dataset-6-summary" class="section level2">
 <h2>Dataset 6: Summary</h2>
 <ul>
-<li><p>Linear relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</p></li>
-<li><p>Variance is different for different values of <span class="math inline">\(x\)</span>. This is called <strong>heteroscedasticity</strong>.</p></li>
+<li><p>Linear relationship between <span
+class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>.</p></li>
+<li><p>Variance is different for different values of <span
+class="math inline">\(x\)</span>. This is called
+<strong>heteroscedasticity</strong>.</p></li>
 <li><p>Residual plots really good at showing this.</p></li>
 </ul>
 </div>
 <div id="dataset-6-solution" class="section level2">
 <h2>Dataset 6: Solution</h2>
 <ul>
-<li><p>You can try logging both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, sometimes that works. But that won’t work here. Be careful about negative values.</p>
+<li><p>You can try logging both <span class="math inline">\(x\)</span>
+and <span class="math inline">\(y\)</span>, sometimes that works. But
+that won’t work here. Be careful about negative values.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y + 0.5),
              x_log = log(x))</code></pre>
 <pre><code>## Warning in log(y + 0.5): NaNs produced</code></pre>
 <pre class="r"><code>qplot(x = x_log, y = y_log, data = df)</code></pre>
 <pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>The book will suggest weighted least squares (with weights inverse to the variance).</p></li>
-<li><p>But the modern solution is to use <strong>sandwich</strong> estimates of the standard errors.</p>
+<li><p>The book will suggest weighted least squares (with weights
+inverse to the variance).</p></li>
+<li><p>But the modern solution is to use <strong>sandwich</strong>
+estimates of the standard errors.</p>
 <pre class="r"><code>library(lmtest)
 library(sandwich)
-cout &lt;- coeftest(x = lmout, vcov. = vcovHC(x = lmout))
+cout &lt;- coeftest(x = lmout, vcov. = vcovHC)
 tidy(cout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic  p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)   0.0124    0.0454     0.273 7.86e- 1  -0.0778     0.103
 ## 2 x             1.03      0.150      6.85  6.55e-10   0.731      1.33</code></pre></li>
-<li><p><code>vcovHC()</code> stands for “Heteroscedastic-consistent variance/covariance”.</p></li>
+<li><p><code>vcovHC()</code> stands for “Heteroscedastic-consistent
+variance/covariance”.</p></li>
 <li><p>Compare to old standard errors</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
@@ -697,31 +794,42 @@ tidy(cout, conf.int = TRUE)</code></pre>
 ## 2 x             1.03      0.130      7.91  3.85e-12    0.772     1.29</code></pre></li>
 </ul>
 </div>
-<div id="intuition-of-sandwich-estimator-of-variance" class="section level2">
+<div id="intuition-of-sandwich-estimator-of-variance"
+class="section level2">
 <h2>Intuition of Sandwich Estimator of Variance</h2>
 <ul>
-<li><p>Simplified Model: <span class="math inline">\(Y_i = \beta_1 x_i\)</span> (so zero intercept)</p></li>
-<li><p>Using Calculus: <span class="math inline">\(\hat{\beta}_1 = \frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^2}\)</span></p></li>
+<li><p>Simplified Model: <span class="math inline">\(Y_i = \beta_1
+x_i\)</span> (so zero intercept)</p></li>
+<li><p>Using Calculus: <span class="math inline">\(\hat{\beta}_1 =
+\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^2}\)</span></p></li>
 </ul>
 <p>So <span class="math display">\[\begin{align*}
-Var(\hat{\beta}_1) &amp;= Var\left(\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i = 1}^n x_i^2}\right)\\
-&amp;=\frac{\sum_{i = 1}^n x_i^2 Var(y_i|x_i)}{\left(\sum_{i = 1}^n x_i^2\right)^2}
+Var(\hat{\beta}_1) &amp;= Var\left(\frac{\sum_{i = 1}^n x_i y_i}{\sum_{i
+= 1}^n x_i^2}\right)\\
+&amp;=\frac{\sum_{i = 1}^n x_i^2 Var(y_i|x_i)}{\left(\sum_{i = 1}^n
+x_i^2\right)^2}
 \end{align*}\]</span></p>
 <ul>
-<li><p>Usual Method: Estimate <span class="math inline">\(Var(y_i|x_i) = \sigma^2\)</span> with the MSE.</p>
+<li><p>Usual Method: Estimate <span class="math inline">\(Var(y_i|x_i) =
+\sigma^2\)</span> with the MSE.</p>
 <ul>
-<li>Assumes variance estimate is same for all <span class="math inline">\(i\)</span></li>
+<li>Assumes variance estimate is same for all <span
+class="math inline">\(i\)</span></li>
 </ul></li>
-<li><p>Sandwich Method: Estimate <span class="math inline">\(Var(y_i|x_i)\)</span> with <span class="math inline">\((y_i - \hat{\beta}_1x_i)^2\)</span></p>
+<li><p>Sandwich Method: Estimate <span
+class="math inline">\(Var(y_i|x_i)\)</span> with <span
+class="math inline">\((y_i - \hat{\beta}_1x_i)^2\)</span></p>
 <ul>
-<li>Allows variance estimate to differ at each <span class="math inline">\(i\)</span></li>
+<li>Allows variance estimate to differ at each <span
+class="math inline">\(i\)</span></li>
 </ul></li>
 </ul>
 </div>
 <div id="notes-on-sandwich" class="section level2">
 <h2>Notes on Sandwich</h2>
 <ul>
-<li><p>They result in accurate standard errors of the coefficient estimates as long as</p>
+<li><p>They result in accurate standard errors of the coefficient
+estimates as long as</p>
 <ol style="list-style-type: decimal">
 <li><p>The linearity assumption is satisfied.</p></li>
 <li><p>Independence is satisfied</p></li>
@@ -748,21 +856,27 @@ aout &lt;- augment(lmout)
 qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li>So we see one observation very high in residual plot compared to the other points around that area.</li>
+<li>So we see one observation very high in residual plot compared to the
+other points around that area.</li>
 </ul>
 </div>
 <div id="dataset-7-solution" class="section level2">
 <h2>Dataset 7: Solution</h2>
 <ul>
-<li><p>It’s generally a bad idea to discard outlying observations unless you know that this is a processing error or a calculation mistake.</p></li>
+<li><p>It’s generally a bad idea to discard outlying observations unless
+you know that this is a processing error or a calculation
+mistake.</p></li>
 <li><p>Generally the procedure to dealing with outliers is:</p>
 <ol style="list-style-type: decimal">
 <li>Detect influential points.</li>
 <li>Verify that the outliers are not caused by numerical errors.</li>
-<li>Fit the model both with and without the outliers. If the results do not change, report both results.</li>
+<li>Fit the model both with and without the outliers. If the results do
+not change, report both results.</li>
 <li>If the results change, try fitting a robust approach.</li>
 </ol></li>
-<li><p>Some robust approaches are described in Section 11.3 of KNNL. One possible approach is quantile regression, which assumes the model <span class="math display">\[
+<li><p>Some robust approaches are described in Section 11.3 of KNNL. One
+possible approach is quantile regression, which assumes the model <span
+class="math display">\[
   Median(Y_i) = \beta_0 + \beta_1X_i
   \]</span></p>
 <pre class="r"><code>library(quantreg)
@@ -774,14 +888,16 @@ t_rq</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;
 ## 1 (Intercept)   -0.290   -0.525   -0.0317   0.5
 ## 2 x              1.02     0.878    1.17     0.5</code></pre></li>
-<li><p>We have a large sample size, so the results do not change much.</p>
+<li><p>We have a large sample size, so the results do not change
+much.</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic  p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)   -0.136    0.115      -1.18 2.39e- 1   -0.365    0.0922
 ## 2 x              1.08     0.0657     16.4  8.48e-30    0.945    1.21</code></pre></li>
-<li><p>Chapter 10 contains more details on evaluating the influence of outliers.</p></li>
+<li><p>Chapter 10 contains more details on evaluating the influence of
+outliers.</p></li>
 <li><p><strong>Exercise</strong>: Consider the following data:</p>
 <pre class="r"><code>dftoy &lt;- tribble(~x, ~y,
                  2, 16,
@@ -792,14 +908,21 @@ t_rq</code></pre>
                  8, 35,
                  9, 37,
                  12, 54)</code></pre>
-<p>Make a scatterplot of <code>y</code> on <code>x</code>, then make a residual versus fits plot for a regression of <code>y</code> on <code>x</code>. Does the residual plot suggest that outliers are the issue, or is it decieving you into thinking something else is the issue?</p></li>
+<p>Make a scatterplot of <code>y</code> on <code>x</code>, then make a
+residual versus fits plot for a regression of <code>y</code> on
+<code>x</code>. Does the residual plot suggest that outliers are the
+issue, or is it decieving you into thinking something else is the
+issue?</p></li>
 </ul>
 </div>
 </div>
-<div id="dataset-8-sequence-plots-of-residuals-to-check-independence" class="section level1">
+<div id="dataset-8-sequence-plots-of-residuals-to-check-independence"
+class="section level1">
 <h1>Dataset 8: Sequence plots of residuals to check independence</h1>
 <ul>
-<li><p>Sometimes, the residuals can exhibit <strong>autocorrelation</strong> where residuals close to each other in time (or a sequence) are more similar than those further away.</p>
+<li><p>Sometimes, the residuals can exhibit
+<strong>autocorrelation</strong> where residuals close to each other in
+time (or a sequence) are more similar than those further away.</p>
 <pre class="r"><code>x &lt;- sort(runif(100, -3, 3))
 epsilon &lt;- rep(NA_real_, length.out = length(x))
 epsilon[[1]] &lt;- 0
@@ -816,22 +939,31 @@ aout &lt;- augment(lmout)
 aout &lt;- mutate(aout, index = row_number())
 qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>This is a specific issue with the <strong>independence</strong> assumption.</p></li>
-<li><p>The OLS fit is still unbiased, but the standard errors will be too small (because we have less information than we think).</p></li>
+<li><p>This is a specific issue with the <strong>independence</strong>
+assumption.</p></li>
+<li><p>The OLS fit is still unbiased, but the standard errors will be
+too small (because we have less information than we think).</p></li>
 </ul>
 <div id="dataset-8-solution" class="section level2">
 <h2>Dataset 8: Solution</h2>
 <ul>
 <li><p>This is discussed in detail in Chapter 12 of KNNL.</p></li>
-<li><p>You should first check if including omitted variables helps remove autocorrelation.</p>
+<li><p>You should first check if including omitted variables helps
+remove autocorrelation.</p>
 <ul>
-<li>E.g. plotting annual sales versus average price over time, if you are missing population size, then adjacent years probably have more similar errors.</li>
+<li>E.g. plotting annual sales versus average price over time, if you
+are missing population size, then adjacent years probably have more
+similar errors.</li>
 </ul></li>
-<li><p>You can try to estimate autocorrelation directly (Section 12.4 of KNNL).</p></li>
-<li><p>You can also adjust the OLS standard errors using a similar approach to sandwich estimation. This is called the “Newey-West HAC” (Heteroskedasticity- and autocorrelation-consistent) estimate of the standard error.</p>
+<li><p>You can try to estimate autocorrelation directly (Section 12.4 of
+KNNL).</p></li>
+<li><p>You can also adjust the OLS standard errors using a similar
+approach to sandwich estimation. This is called the “Newey-West HAC”
+(Heteroskedasticity- and autocorrelation-consistent) estimate of the
+standard error.</p>
 <pre class="r"><code>library(lmtest)
 library(sandwich)
-cout &lt;- coeftest(x = lmout, vcov. = vcovHAC(x = lmout))
+cout &lt;- coeftest(x = lmout, vcov. = vcovHAC)
 tidy(cout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic     p.value conf.low conf.high
@@ -839,7 +971,8 @@ tidy(cout, conf.int = TRUE)</code></pre>
 ## 1 (Intercept)    0.236     0.332     0.709 0.480         -0.424     0.895
 ## 2 x              0.991     0.188     5.27  0.000000825    0.617     1.36</code></pre>
 <ul>
-<li>Notice we used <code>vcovHAC()</code> instead of <code>vcovHC()</code>.</li>
+<li>Notice we used <code>vcovHAC()</code> instead of
+<code>vcovHC()</code>.</li>
 </ul></li>
 <li><p>Compare to original standard errors</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
@@ -848,43 +981,75 @@ tidy(cout, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    0.236    0.156       1.51 1.33e- 1  -0.0731     0.544
 ## 2 x              0.991    0.0900     11.0  8.18e-19   0.812      1.17</code></pre></li>
-<li><p>You should have large sample sizes for accurate inference (<span class="math inline">\(n\geq 100\)</span>) for estimating the autocorrelation or adjusting the standard errors.</p></li>
+<li><p>You should have large sample sizes for accurate inference (<span
+class="math inline">\(n\geq 100\)</span>) for estimating the
+autocorrelation or adjusting the standard errors.</p></li>
 </ul>
 </div>
 </div>
-<div id="quantile-quantile-plots-of-residuals-to-check-normality" class="section level1">
+<div id="quantile-quantile-plots-of-residuals-to-check-normality"
+class="section level1">
 <h1>Quantile-Quantile plots of residuals to check normality</h1>
 <ul>
-<li><p>To check the normality of the residuals, plot the sample quantiles of the residuals against the theoretical quantiles of the normal distribution.</p></li>
-<li><p><strong>Quantile</strong>: The <span class="math inline">\(q\)</span>th quantile of a variable is the value at with <span class="math inline">\(q\)</span> proportion of the observations fall.</p></li>
+<li><p>To check the normality of the residuals, plot the sample
+quantiles of the residuals against the theoretical quantiles of the
+normal distribution.</p></li>
+<li><p><strong>Quantile</strong>: The <span
+class="math inline">\(q\)</span>th quantile of a variable is the value
+at with <span class="math inline">\(q\)</span> proportion of the
+observations fall.</p></li>
 <li><p>Sample 0.25-quantile</p>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Theoretical 0.25-quantile</p>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>If the residuals were approximately normal, then we would expect the 0.25 quantile of the data to be about the 0.25 quantile of the normal, the 0.7 quantile of the data to be about the 0.7 quantile of the normal, etc.</p></li>
-<li><p>We can graphically compare the quantiles by making a scatterplot of the sample quantiles to the theoretical quantiles. This is called a <strong>QQ-plot</strong> (for quantile-quantile).</p></li>
-<li><p>We usually place the theoretical quantiles on the <span class="math inline">\(x\)</span>-axis and the sample quantiles on the <span class="math inline">\(y\)</span>-axis.</p></li>
+<li><p>If the residuals were approximately normal, then we would expect
+the 0.25 quantile of the data to be about the 0.25 quantile of the
+normal, the 0.7 quantile of the data to be about the 0.7 quantile of the
+normal, etc.</p></li>
+<li><p>We can graphically compare the quantiles by making a scatterplot
+of the sample quantiles to the theoretical quantiles. This is called a
+<strong>QQ-plot</strong> (for quantile-quantile).</p></li>
+<li><p>We usually place the theoretical quantiles on the <span
+class="math inline">\(x\)</span>-axis and the sample quantiles on the
+<span class="math inline">\(y\)</span>-axis.</p></li>
 <li><p>Constructing a QQ-plot</p>
 <p><img src="03_figs/qqplot.gif" /> </p></li>
-<li><p><strong>Exercise</strong>: The simplest definition of the <span class="math inline">\(p\)</span>th sample quantile is the minimum value <span class="math inline">\(q\)</span> in the sample such that <em>at least</em> <span class="math inline">\(p\)</span> proportion of the observations are at or below <span class="math inline">\(q\)</span>. In mathematical notation <span class="math display">\[
-  Q(p) = \min\left(q \in \{X_1,X_2,\ldots,X_n\}: p\leq \frac{1}{n}\#\{X_i:X_i &lt; q\}\right)
-  \]</span> In R, this corresponds to the <code>type = 1</code> argument from the quantile function. Try running this code and try understanding this definition:</p>
+<li><p><strong>Exercise</strong>: The simplest definition of the <span
+class="math inline">\(p\)</span>th sample quantile is the minimum value
+<span class="math inline">\(q\)</span> in the sample such that <em>at
+least</em> <span class="math inline">\(p\)</span> proportion of the
+observations are at or below <span class="math inline">\(q\)</span>. In
+mathematical notation <span class="math display">\[
+  Q(p) = \min\left(q \in \{X_1,X_2,\ldots,X_n\}: p\leq
+\frac{1}{n}\#\{X_i:X_i &lt; q\}\right)
+  \]</span> In R, this corresponds to the <code>type = 1</code> argument
+from the quantile function. Try running this code and try understanding
+this definition:</p>
 <pre class="r"><code>quantile(x = c(4, 9, 13, 22, 37), probs = c(0.19999, 0.2, 0.20001, 0.39999, 0.4, 0.40001), type = 1)</code></pre>
-<p>Which quantiles do you think we would use when constructing a QQ-plot?</p></li>
+<p>Which quantiles do you think we would use when constructing a
+QQ-plot?</p></li>
 <li><p>QQ-plots Can show us deviations from normality</p>
 <p><img src="03_figs/bad_qqplot.gif" /> </p></li>
-<li><p>QQ-plot indicating right skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating left skew. <img src="03_diagnostics_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating heavy tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating light tails. <img src="03_diagnostics_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating right skew.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating left skew.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating heavy tails.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating light tails.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="qq-plots-in-r" class="section level2">
 <h2>QQ-plots in R</h2>
 <ul>
-<li><p>We can evaluate the normality assumption from the bread and peace example.</p>
+<li><p>We can evaluate the normality assumption from the bread and peace
+example.</p>
 <pre class="r"><code>hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
 lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
-<li><p>Use <code>augment()</code> from the <code>{broom}</code> package to obtain the residuals. Then use the <code>geom = "qq"</code> argument in the <code>qplot()</code> function. Make sure you specify <code>sample = .resid</code>, <em>not</em> <code>x = .resid</code>.</p>
+<li><p>Use <code>augment()</code> from the <code>{broom}</code> package
+to obtain the residuals. Then use the <code>geom = "qq"</code> argument
+in the <code>qplot()</code> function. Make sure you specify
+<code>sample = .resid</code>, <em>not</em> <code>x = .resid</code>.</p>
 <pre class="r"><code>aout &lt;- augment(lmhibbs)
 qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
   geom_qq_line()</code></pre>
@@ -895,15 +1060,21 @@ qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
 <div id="final-notes-about-normality" class="section level2">
 <h2>Final notes about normality</h2>
 <ul>
-<li><p>Only worry about normality if you see extreme outliers or other extreme deviations from normality (or if you want prediction intervals).</p></li>
-<li><p>Check for normality <strong>last</strong>. Violations of linearity could make it seem like normality is violated.</p></li>
+<li><p>Only worry about normality if you see extreme outliers or other
+extreme deviations from normality (or if you want prediction
+intervals).</p></li>
+<li><p>Check for normality <strong>last</strong>. Violations of
+linearity could make it seem like normality is violated.</p></li>
 </ul>
 </div>
 </div>
-<div id="residual-plots-against-omitted-predictors" class="section level1">
+<div id="residual-plots-against-omitted-predictors"
+class="section level1">
 <h1>Residual plots against omitted predictors</h1>
 <ul>
-<li><p>If you have predictors that you did not use in the model, it is always a good idea to make plots of the residuals against those omitted predictors.</p></li>
+<li><p>If you have predictors that you did not use in the model, it is
+always a good idea to make plots of the residuals against those omitted
+predictors.</p></li>
 <li><p>Consider the Palmer Penguins Data.</p>
 <pre class="r"><code>library(palmerpenguins)
 data(&quot;penguins&quot;)
@@ -925,21 +1096,34 @@ penguins %&gt;%
   left_join(aout) %&gt;%
   qplot(x = species, y  = .resid, data = ., geom = &quot;boxplot&quot;)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.</p></li>
+<li><p>Whenever you see a systematic pattern between the residuals and
+an omitted predictor (as above), this indicates that you should include
+that predictor in your model.</p></li>
 </ul>
 </div>
 <div id="f-test-for-lack-of-fit" class="section level1">
 <h1><span class="math inline">\(F\)</span>-test for lack-of-fit</h1>
 <ul>
-<li><p>In many cases, you have repeat observations at the same value of the predictors. If you design a study, it is a good idea to include repeats at the same predictor levels.</p></li>
-<li><p>If so, then it is possible to run a <strong>lack-of-fit</strong> test:</p>
+<li><p>In many cases, you have repeat observations at the same value of
+the predictors. If you design a study, it is a good idea to include
+repeats at the same predictor levels.</p></li>
+<li><p>If so, then it is possible to run a <strong>lack-of-fit</strong>
+test:</p>
 <ul>
-<li><span class="math inline">\(H_0: E[Y_i] = \beta_0 + \beta_1 X_i\)</span></li>
-<li><span class="math inline">\(H_A: E[Y_i] \neq \beta_0 + \beta_1 X_i\)</span></li>
+<li><span class="math inline">\(H_0: E[Y_i] = \beta_0 + \beta_1
+X_i\)</span></li>
+<li><span class="math inline">\(H_A: E[Y_i] \neq \beta_0 + \beta_1
+X_i\)</span></li>
 </ul></li>
-<li><p>Rejecting this test indicates that the linear model is not a good fit.</p></li>
-<li><p>Failing to reject this test tells us that at least we do not have evidence that the linear model is a bad fit.</p></li>
-<li><p>We will consider this example in the context of a experiment run on 11 branches of a bank. Each branch offered a set gift size (<span class="math inline">\(X\)</span>) to open a new account. The branches then measured the number of new accounts opened (<span class="math inline">\(Y\)</span>).</p>
+<li><p>Rejecting this test indicates that the linear model is not a good
+fit.</p></li>
+<li><p>Failing to reject this test tells us that at least we do not have
+evidence that the linear model is a bad fit.</p></li>
+<li><p>We will consider this example in the context of a experiment run
+on 11 branches of a bank. Each branch offered a set gift size (<span
+class="math inline">\(X\)</span>) to open a new account. The branches
+then measured the number of new accounts opened (<span
+class="math inline">\(Y\)</span>).</p>
 <pre class="r"><code>bank &lt;- tibble::tribble(~gift, ~accounts,
                         125, 160,
                         100, 112,
@@ -953,20 +1137,33 @@ penguins %&gt;%
                         200, 104,
                         100, 136
                         )</code></pre>
-<p>There are 6 values of gift size, with all but one value having two units.</p></li>
-<li><p>The basic idea of the lack-of-fit test is to compare the residuals under the regression model (the reduced model) to the residuals under a “saturated” model where each level of <span class="math inline">\(X\)</span> is allowed to have its own mean.</p></li>
-<li><p>Reduced Model: SSE(R) <img src="03_diagnostics_files/figure-html/unnamed-chunk-63-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Full Model: SSE(F) <img src="03_diagnostics_files/figure-html/unnamed-chunk-64-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p>There are 6 values of gift size, with all but one value having two
+units.</p></li>
+<li><p>The basic idea of the lack-of-fit test is to compare the
+residuals under the regression model (the reduced model) to the
+residuals under a “saturated” model where each level of <span
+class="math inline">\(X\)</span> is allowed to have its own
+mean.</p></li>
+<li><p>Reduced Model: SSE(R)
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-63-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Full Model: SSE(F)
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-64-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There are 11 observations.</p></li>
-<li><p>In the reduced model, there are two parameter (<span class="math inline">\(y\)</span>-intercept and slope), so <span class="math inline">\(df_R = 11 - 2 = 9\)</span>.</p></li>
-<li><p>In the full model, there are six parameters (one for each mean to estimate), so <span class="math inline">\(df_F = 11 - 6 = 5\)</span>.</p></li>
-<li><p>Use the <span class="math inline">\(F\)</span>-statistic <span class="math display">\[
+<li><p>In the reduced model, there are two parameter (<span
+class="math inline">\(y\)</span>-intercept and slope), so <span
+class="math inline">\(df_R = 11 - 2 = 9\)</span>.</p></li>
+<li><p>In the full model, there are six parameters (one for each mean to
+estimate), so <span class="math inline">\(df_F = 11 - 6 =
+5\)</span>.</p></li>
+<li><p>Use the <span class="math inline">\(F\)</span>-statistic <span
+class="math display">\[
   F^* = \frac{[SSE(R) - SSE(F)] / (df_R - df_F)}{SSE(F) / df_F}
   \]</span></p></li>
 <li><p>Under the reduced model, we have <span class="math display">\[
   F^* \sim F(df_R - df_F, df_F)
   \]</span></p>
-<p>So we can compare it to this distribution to obtain a <span class="math inline">\(p\)</span>-value.</p></li>
+<p>So we can compare it to this distribution to obtain a <span
+class="math inline">\(p\)</span>-value.</p></li>
 </ul>
 <div id="lack-of-fit-test-in-r" class="section level2">
 <h2>Lack-of-fit Test in R</h2>
@@ -974,10 +1171,14 @@ penguins %&gt;%
 <li><p>First, fit both the reduced and full models.</p></li>
 <li><p>The reduced model we’ve seen before.</p>
 <pre class="r"><code>lm_r &lt;- lm(accounts ~ gift, data = bank)</code></pre></li>
-<li><p>The full model is fit automatically if you convert <code>gift</code> to a factor variable. We’ll talk about the specifics of how this works when we get to indicator variables in multiple linear regression.</p>
+<li><p>The full model is fit automatically if you convert
+<code>gift</code> to a factor variable. We’ll talk about the specifics
+of how this works when we get to indicator variables in multiple linear
+regression.</p>
 <pre class="r"><code>df_full &lt;- mutate(bank, gift_factor = as.factor(gift))
 lm_f &lt;- lm(accounts ~ gift_factor, data = df_full)</code></pre></li>
-<li><p>Then use the <code>anova()</code> function to compare these two models.</p>
+<li><p>Then use the <code>anova()</code> function to compare these two
+models.</p>
 <pre class="r"><code>anova(lm_r, lm_f)</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
@@ -986,7 +1187,9 @@ lm_f &lt;- lm(accounts ~ gift_factor, data = df_full)</code></pre></li>
 ##   Res.Df   RSS Df Sum of Sq    F Pr(&gt;F)
 ## 1      9 14742                         
 ## 2      5  1148  4     13594 14.8 0.0056</code></pre></li>
-<li><p>We can verify this <span class="math inline">\(p\)</span>-value by calculating the <span class="math inline">\(F\)</span>-statistic manually.</p>
+<li><p>We can verify this <span class="math inline">\(p\)</span>-value
+by calculating the <span class="math inline">\(F\)</span>-statistic
+manually.</p>
 <pre class="r"><code>resid_r &lt;- augment(lm_r)$.resid
 resid_f &lt;- augment(lm_f)$.resid
 sse_r &lt;- sum(resid_r^2)
@@ -1001,52 +1204,86 @@ pf(q = f_star, df1 = df_r - df_f, df2 = df_f, lower.tail = FALSE)</code></pre>
 <div id="math-notation" class="section level2">
 <h2>Math notation</h2>
 <ul>
-<li><p>We will change notation. Let <span class="math inline">\(Y_{ij}\)</span> be the <span class="math inline">\(j\)</span>th individual in group <span class="math inline">\(i\)</span>. Let <span class="math inline">\(X_i\)</span> be the level of group <span class="math inline">\(i\)</span>.</p></li>
-<li><p>You might recognize the above “saturated” model as a one-way ANOVA model <span class="math display">\[
+<li><p>We will change notation. Let <span
+class="math inline">\(Y_{ij}\)</span> be the <span
+class="math inline">\(j\)</span>th individual in group <span
+class="math inline">\(i\)</span>. Let <span
+class="math inline">\(X_i\)</span> be the level of group <span
+class="math inline">\(i\)</span>.</p></li>
+<li><p>You might recognize the above “saturated” model as a one-way
+ANOVA model <span class="math display">\[
   Y_{ij} \sim N(\mu_i, \sigma^2)
   \]</span></p></li>
-<li><p>We compare the ANOVA model to the “reduced” linear regression model. <span class="math display">\[
+<li><p>We compare the ANOVA model to the “reduced” linear regression
+model. <span class="math display">\[
   Y_{ij} \sim N(\beta_0 + \beta_1X_i, \sigma^2)
-  \]</span> where <span class="math inline">\(X_i\)</span> is the level of group <span class="math inline">\(i\)</span>.</p></li>
-<li><p>This makes it more clear that the regression model is a reduced version of the ANOVA model.</p></li>
+  \]</span> where <span class="math inline">\(X_i\)</span> is the level
+of group <span class="math inline">\(i\)</span>.</p></li>
+<li><p>This makes it more clear that the regression model is a reduced
+version of the ANOVA model.</p></li>
 </ul>
 </div>
 <div id="lack-of-fit-test-summary" class="section level2">
 <h2>Lack-of-fit test Summary</h2>
 <ul>
-<li>Lack-of-fit <span class="math inline">\(F\)</span>-test tests the assumption of linearity.</li>
-<li>Needs multiple observations at different predictor values (but some values can have only one observation).</li>
-<li>Small <span class="math inline">\(p\)</span>-values indicate lack-of-fit (so linearity is not a valid assumption).</li>
+<li>Lack-of-fit <span class="math inline">\(F\)</span>-test tests the
+assumption of linearity.</li>
+<li>Needs multiple observations at different predictor values (but some
+values can have only one observation).</li>
+<li>Small <span class="math inline">\(p\)</span>-values indicate
+lack-of-fit (so linearity is not a valid assumption).</li>
 </ul>
 </div>
 </div>
 <div id="other-transformations" class="section level1">
 <h1>Other transformations</h1>
 <ul>
-<li><p>The book suggests other transformations (square root, Box-Cox).</p></li>
-<li><p>Square root on the response will compress values more mildly than the log.</p></li>
-<li><p>The Box-Cox transformation on the response is really a set of transformations that includes the log and the square root as special cases.</p></li>
-<li><p><span class="math inline">\(1/X\)</span> and <span class="math inline">\(exp(X)\)</span> and <span class="math inline">\(exp(-X)\)</span> and <span class="math inline">\(\sqrt{X}\)</span> could all help improve linearity.</p></li>
-<li><p><span class="math inline">\(1/X\)</span> works well when the non-constant variance is <em>more</em> severe.</p></li>
-<li><p><span class="math inline">\(\sqrt{X}\)</span> works well when the non-constant variance is <em>less</em> severe.</p></li>
+<li><p>The book suggests other transformations (square root,
+Box-Cox).</p></li>
+<li><p>Square root on the response will compress values more mildly than
+the log.</p></li>
+<li><p>The Box-Cox transformation on the response is really a set of
+transformations that includes the log and the square root as special
+cases.</p></li>
+<li><p><span class="math inline">\(1/X\)</span> and <span
+class="math inline">\(exp(X)\)</span> and <span
+class="math inline">\(exp(-X)\)</span> and <span
+class="math inline">\(\sqrt{X}\)</span> could all help improve
+linearity.</p></li>
+<li><p><span class="math inline">\(1/X\)</span> works well when the
+non-constant variance is <em>more</em> severe.</p></li>
+<li><p><span class="math inline">\(\sqrt{X}\)</span> works well when the
+non-constant variance is <em>less</em> severe.</p></li>
 <li><p>If your goal is <em>prediction</em>, then have at it.</p></li>
-<li><p>But if your goal is inference, then you lose all interpretability by using transformations other than <span class="math inline">\(\log()\)</span>. So think carefully before trying other transformations.</p></li>
-<li><p>If you are transforming a variable that you do not care about (are just controlling for it), then it would be OK to use non-interpretable transformations.</p></li>
+<li><p>But if your goal is inference, then you lose all interpretability
+by using transformations other than <span
+class="math inline">\(\log()\)</span>. So think carefully before trying
+other transformations.</p></li>
+<li><p>If you are transforming a variable that you do not care about
+(are just controlling for it), then it would be OK to use
+non-interpretable transformations.</p></li>
 </ul>
 </div>
 <div id="back-transforming" class="section level1">
 <h1>Back Transforming</h1>
 <ul>
-<li><p>After you make a transformation, you often want to back transform predictions, estimates, etc.</p></li>
+<li><p>After you make a transformation, you often want to back transform
+predictions, estimates, etc.</p></li>
 <li><p>The steps for this are:</p>
 <ol style="list-style-type: decimal">
-<li>Make estimates, confidence intervals, and prediction intervals on the transformed scale that you used to fit the linear model.</li>
-<li>Apply the same transformation to confidence bounds as you do to estimates to interpret (see the <a href="./02_math_prereq.html">Math Prerequisites</a> lecture).</li>
-<li>Apply the inverse transformation you applied to <span class="math inline">\(Y\)</span> to predictions and prediction bounds to get back to the original scale.</li>
+<li>Make estimates, confidence intervals, and prediction intervals on
+the transformed scale that you used to fit the linear model.</li>
+<li>Apply the same transformation to confidence bounds as you do to
+estimates to interpret (see the <a href="./02_math_prereq.html">Math
+Prerequisites</a> lecture).</li>
+<li>Apply the inverse transformation you applied to <span
+class="math inline">\(Y\)</span> to predictions and prediction bounds to
+get back to the original scale.</li>
 </ol></li>
 </ul>
 <div id="logging-x-but-not-logging-y" class="section level2">
-<h2>Logging <span class="math inline">\(X\)</span> but not logging <span class="math inline">\(Y\)</span></h2>
+<h2>Logging <span class="math inline">\(X\)</span> but not logging <span
+class="math inline">\(Y\)</span></h2>
 <ul>
 <li><p>From the <code>mtcars</code> dataset:</p>
 <pre class="r"><code>data(&quot;mtcars&quot;)
@@ -1060,8 +1297,13 @@ tidy(lm_mt, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)     39.3      1.76      22.3 3.05e-20     35.7      42.8
 ## 2 log_wt         -17.1      1.51     -11.3 2.39e-12    -20.2     -14.0</code></pre></li>
-<li><p>Interpretation: Cars that are 50% heavier tend to have <span class="math inline">\(-17.0 \times \log(1.5) = -6.9\)</span> worse miles per gallon.</p></li>
-<li><p>Confidence interval: <span class="math inline">\(-20.2 \times \log(1.5) = -8.2\)</span> to <span class="math inline">\(-14.0 \times \log(1.5) = -5.7\)</span>. Notice that we applied the same transformation on the bounds as we did on the estimate.</p></li>
+<li><p>Interpretation: Cars that are 50% heavier tend to have <span
+class="math inline">\(-17.0 \times \log(1.5) = -6.9\)</span> worse miles
+per gallon.</p></li>
+<li><p>Confidence interval: <span class="math inline">\(-20.2 \times
+\log(1.5) = -8.2\)</span> to <span class="math inline">\(-14.0 \times
+\log(1.5) = -5.7\)</span>. Notice that we applied the same
+transformation on the bounds as we did on the estimate.</p></li>
 <li><p>Prediction interval</p>
 <pre class="r"><code>newdf &lt;- data.frame(wt = 3)
 newdf &lt;- mutate(newdf, log_wt = log(wt))
@@ -1069,14 +1311,19 @@ predict(object = lm_mt, newdata = newdf, interval = &quot;prediction&quot;)</cod
 <pre><code>##     fit   lwr   upr
 ## 1 20.49 14.95 26.02</code></pre>
 <ul>
-<li>Prediction interval at a weight of 3000 lbs: 20.49 mpg (14.95 mpg to 26.02 mpg). Notice that I did not transform these since they are already on the proper scale.</li>
+<li>Prediction interval at a weight of 3000 lbs: 20.49 mpg (14.95 mpg to
+26.02 mpg). Notice that I did not transform these since they are already
+on the proper scale.</li>
 </ul></li>
 </ul>
 </div>
 <div id="not-logging-x-but-logging-y" class="section level2">
-<h2>Not logging <span class="math inline">\(X\)</span> but logging <span class="math inline">\(Y\)</span></h2>
+<h2>Not logging <span class="math inline">\(X\)</span> but logging <span
+class="math inline">\(Y\)</span></h2>
 <ul>
-<li><p>The early growth of <a href="https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests">COVID-19 in DC</a> looked exponential:</p>
+<li><p>The early growth of <a
+href="https://dcgerard.github.io/stat_415_615/data.html#dc-covid-tests">COVID-19
+in DC</a> looked exponential:</p>
 <pre class="r"><code>dc &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/dccovid.csv&quot;)
 dc &lt;- select(dc, day, positives)
 dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
@@ -1090,21 +1337,34 @@ tidy(lm_cov, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    2.18    0.0771       28.3 1.28e-17    2.02      2.34 
 ## 2 day_num        0.218   0.00628      34.7 2.40e-19    0.205     0.231</code></pre></li>
-<li><p>Each day saw about <span class="math inline">\(\exp(0.218) = 1.24\)</span> times as many COVID cases (about 24% more).</p></li>
-<li><p>Confidence interval: <span class="math inline">\(\exp(0.2049) = 1.23\)</span> to <span class="math inline">\(\exp(0.2311) = 1.26\)</span> times as many. Notice that I applied the same transformation to the bounds as I did to the estimator.</p></li>
-<li><p><strong>Exercise</strong>: How many more COVID cases did we see every two days? Provide a 95% confidence interval with your estimate.</p></li>
+<li><p>Each day saw about <span class="math inline">\(\exp(0.218) =
+1.24\)</span> times as many COVID cases (about 24% more).</p></li>
+<li><p>Confidence interval: <span class="math inline">\(\exp(0.2049) =
+1.23\)</span> to <span class="math inline">\(\exp(0.2311) =
+1.26\)</span> times as many. Notice that I applied the same
+transformation to the bounds as I did to the estimator.</p></li>
+<li><p><strong>Exercise</strong>: How many more COVID cases did we see
+every two days? Provide a 95% confidence interval with your
+estimate.</p></li>
 <li><p>Prediction interval:</p>
 <pre class="r"><code>newdf &lt;- data.frame(day_num = 10)
 predict(object = lm_cov, newdata = newdf, interval = &quot;prediction&quot;)</code></pre>
 <pre><code>##     fit   lwr   upr
 ## 1 4.364 3.965 4.763</code></pre>
 <ul>
-<li>We predict that about 10 days in, there were about <span class="math inline">\(\exp(4.364) = 78.6\)</span> COVID cases, with prediction interval <span class="math inline">\(\exp(3.965) = 52.7\)</span> to <span class="math inline">\(\exp(4.763) = 117.1\)</span> COVID cases. Notice that I applied the same transformation to my estimate as I did to the bounds of the prediction interval.</li>
+<li>We predict that about 10 days in, there were about <span
+class="math inline">\(\exp(4.364) = 78.6\)</span> COVID cases, with
+prediction interval <span class="math inline">\(\exp(3.965) =
+52.7\)</span> to <span class="math inline">\(\exp(4.763) =
+117.1\)</span> COVID cases. Notice that I applied the same
+transformation to my estimate as I did to the bounds of the prediction
+interval.</li>
 </ul></li>
 </ul>
 </div>
 <div id="logging-x-and-logging-y" class="section level2">
-<h2>Logging <span class="math inline">\(X\)</span> and logging <span class="math inline">\(Y\)</span></h2>
+<h2>Logging <span class="math inline">\(X\)</span> and logging <span
+class="math inline">\(Y\)</span></h2>
 <ul>
 <li><p>Wine and mortality follow a power-law decline.</p>
 <pre class="r"><code>library(Sleuth3)
@@ -1122,8 +1382,15 @@ tidy(lm_wine, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    2.56     0.127      20.1  8.60e-13    2.29      2.82 
 ## 2 log_wine      -0.356    0.0529     -6.72 4.91e- 6   -0.468    -0.243</code></pre></li>
-<li><p>Countries that drink twice as much wine per capita tend to have (<span class="math inline">\(2^{-0.3556} = 0.78\)</span>) 22% fewer deaths per 1000 individuals.</p></li>
-<li><p>Confidence interval: <span class="math inline">\(2^{-0.4678} = 0.7231\)</span> to <span class="math inline">\(2^{-0.2434} = 0.8448\)</span>, so anywhere from 16% fewer deaths per 1000 individuals, to 28% fewer deaths per 1000 individuals. Notice that I applied the same transformation to the bounds of the confidence interval as I did to the estimate.</p></li>
+<li><p>Countries that drink twice as much wine per capita tend to have
+(<span class="math inline">\(2^{-0.3556} = 0.78\)</span>) 22% fewer
+deaths per 1000 individuals.</p></li>
+<li><p>Confidence interval: <span class="math inline">\(2^{-0.4678} =
+0.7231\)</span> to <span class="math inline">\(2^{-0.2434} =
+0.8448\)</span>, so anywhere from 16% fewer deaths per 1000 individuals,
+to 28% fewer deaths per 1000 individuals. Notice that I applied the same
+transformation to the bounds of the confidence interval as I did to the
+estimate.</p></li>
 <li><p>Prediction interval:</p>
 <pre class="r"><code>newdf &lt;- data.frame(Wine = 20)
 newdf &lt;- mutate(newdf, log_wine = log(Wine))
@@ -1131,7 +1398,12 @@ predict(object = lm_wine, newdata = newdf, interval = &quot;prediction&quot;)</c
 <pre><code>##    fit   lwr   upr
 ## 1 1.49 0.984 1.997</code></pre>
 <ul>
-<li>So countries that drink 20 liters per person per year tend to have mortality rates of about <span class="math inline">\(\exp(1.49) = 4.4\)</span> deaths per 1000 individuals. With a prediction interval of <span class="math inline">\(\exp(0.984) = 2.7\)</span> to <span class="math inline">\(\exp(1.997) = 7.4\)</span> deaths per 1000 individuals.</li>
+<li>So countries that drink 20 liters per person per year tend to have
+mortality rates of about <span class="math inline">\(\exp(1.49) =
+4.4\)</span> deaths per 1000 individuals. With a prediction interval of
+<span class="math inline">\(\exp(0.984) = 2.7\)</span> to <span
+class="math inline">\(\exp(1.997) = 7.4\)</span> deaths per 1000
+individuals.</li>
 </ul></li>
 </ul>
 </div>
@@ -1139,18 +1411,37 @@ predict(object = lm_wine, newdata = newdf, interval = &quot;prediction&quot;)</c
 <div id="smoothers" class="section level1">
 <h1>Smoothers</h1>
 <ul>
-<li><p>Use non-parametric approaches to curve fitting for exploration purposes. When you have a ton of values, or if the trend is weak relative to the variance, it is sometimes easier to see a trend if you plot an estimate of the curve.</p></li>
-<li><p>Lowess works by estimating the mean <span class="math inline">\(Y\)</span> value at a given point <span class="math inline">\(X\)</span> by fitting a regression to points near <span class="math inline">\(X\)</span>, weighting the objective function proportionally to how far away values are from <span class="math inline">\(X\)</span>. E.g. <span class="math display">\[
+<li><p>Use non-parametric approaches to curve fitting for exploration
+purposes. When you have a ton of values, or if the trend is weak
+relative to the variance, it is sometimes easier to see a trend if you
+plot an estimate of the curve.</p></li>
+<li><p>Lowess works by estimating the mean <span
+class="math inline">\(Y\)</span> value at a given point <span
+class="math inline">\(X\)</span> by fitting a regression to points near
+<span class="math inline">\(X\)</span>, weighting the objective function
+proportionally to how far away values are from <span
+class="math inline">\(X\)</span>. E.g. <span class="math display">\[
   \sum_{i: X_i \text{ is near } X} w_i[Y_i - (\beta_0 + \beta_1 X_i)]^2,
-  \]</span> where <span class="math inline">\(w_i\)</span> is larger for values closer to <span class="math inline">\(X\)</span>. For each <span class="math inline">\(X\)</span> where you want to make a prediction, it obtains an estimate <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> and estimates the mean value by <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1 X\)</span>.</p>
+  \]</span> where <span class="math inline">\(w_i\)</span> is larger for
+values closer to <span class="math inline">\(X\)</span>. For each <span
+class="math inline">\(X\)</span> where you want to make a prediction, it
+obtains an estimate <span class="math inline">\(\hat{\beta}_0\)</span>
+and <span class="math inline">\(\hat{\beta}_1\)</span> and estimates the
+mean value by <span class="math inline">\(\hat{\beta}_0 + \hat{\beta}_1
+X\)</span>.</p>
 <ul>
-<li>This is not exactly what happens, but gives you an idea of how it works.</li>
+<li>This is not exactly what happens, but gives you an idea of how it
+works.</li>
 </ul></li>
-<li><p>In practice, you don’t need to know any of this. Just add <code>geom_smooth(se = FALSE)</code> after you make a scatterplot.</p>
+<li><p>In practice, you don’t need to know any of this. Just add
+<code>geom_smooth(se = FALSE)</code> after you make a scatterplot.</p>
 <pre class="r"><code>qplot(x = growth, y = vote, data = hibbs) +
   geom_smooth(se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-78-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Be careful not to over-interpret these.</strong> E.g., don’t say that the above is evidence for a leveling off between 1 and 2, then increasing again. Lowess does not provide inference. It can only generate questions.</p></li>
+<li><p><strong>Be careful not to over-interpret these.</strong> E.g.,
+don’t say that the above is evidence for a leveling off between 1 and 2,
+then increasing again. Lowess does not provide inference. It can only
+generate questions.</p></li>
 </ul>
 </div>
 

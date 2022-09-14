@@ -429,7 +429,7 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)
     ```{r, echo = TRUE, message = FALSE}
     library(lmtest)
     library(sandwich)
-    cout <- coeftest(x = lmout, vcov. = vcovHC(x = lmout))
+    cout <- coeftest(x = lmout, vcov. = vcovHC)
     tidy(cout, conf.int = TRUE)
     ```
     
@@ -598,7 +598,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     ```{r, echo = TRUE, message = FALSE}
     library(lmtest)
     library(sandwich)
-    cout <- coeftest(x = lmout, vcov. = vcovHAC(x = lmout))
+    cout <- coeftest(x = lmout, vcov. = vcovHAC)
     tidy(cout, conf.int = TRUE)
     ```
     

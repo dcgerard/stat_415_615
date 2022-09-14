@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-07-30" />
+<meta name="date" content="2022-09-14" />
 
 <title>Logistic Regression</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -172,11 +172,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -371,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Logistic Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-07-30</h4>
+<h4 class="date">2022-09-14</h4>
 
 </div>
 
@@ -384,21 +388,267 @@ div.tocify {
 <h1>Learning Objectives</h1>
 <ul>
 <li>Logistic Regression for Binary Response Variables</li>
-<li>Sections 14.1 to 14.12 of KNNL</li>
+<li>Chapters 20 and 21 of the <em>Statistical Sleuth</em></li>
 </ul>
-<pre class="r"><code>library(broom)</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(Sleuth3)
+library(broom)
+library(sandwich)
+library(lmtest)</code></pre>
 </div>
 <div id="motivation" class="section level1">
 <h1>Motivation</h1>
+<ul>
+<li><p>Lots of regression problems involve response variables that are
+<strong>binary</strong> — the only possible values are either 0 or
+1.</p>
+<ul>
+<li>Alive (1) vs dead (0)</li>
+<li>Success (1) vs failure (0)</li>
+<li>Presence (1) vs absence (0)</li>
+</ul></li>
+<li><p>It is arbitrary and unimportant which variable you encode as 1 vs
+0.</p>
+<ul>
+<li>E.g. we could have coded “dead” as 1 and “alive” as 0.</li>
+<li>Just keep track of the coding for interpretation purposes.</li>
+</ul></li>
+<li><p>E.g., either survival (<span class="math inline">\(Y_i =
+1\)</span>) or death (<span class="math inline">\(Y_i = 0\)</span>) of
+individual <span class="math inline">\(i\)</span> from the Donner Party
+of 1846.</p>
+<pre class="r"><code>data(&quot;case2001&quot;)
+donner &lt;- case2001
+glimpse(donner)</code></pre>
+<pre><code>## Rows: 45
+## Columns: 3
+## $ Age    &lt;int&gt; 23, 40, 40, 30, 28, 40, 45, 62, 65, 45, 25, 28, 28, 23, 22, 23,…
+## $ Sex    &lt;fct&gt; Male, Female, Male, Male, Male, Male, Female, Male, Male, Femal…
+## $ Status &lt;fct&gt; Died, Survived, Survived, Died, Died, Died, Died, Died, Died, D…</code></pre></li>
+<li><p>We often want to quantify the association between a quantitative
+predictor <span class="math inline">\(x\)</span> and the binary response
+<span class="math inline">\(y\)</span>. E.g. older folks tended to die
+at a higher frequency:</p>
+<pre class="r"><code>qplot(x = Age, y = Status, data = donner, geom = &quot;point&quot;)</code></pre>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<div id="linear-probability-model-lpm" class="section level1">
+<h1>Linear Probability Model (LPM)</h1>
+<ul>
+<li><p>If your goal is <em>not</em> prediction, then it is not entirely
+incorrect to just use linear regression <span class="citation">(Hellevik
+2009; Gomila 2021)</span>.</p></li>
+<li><p>Let <span class="math inline">\(Y_i \sim Bern(p)\)</span>. That
+is <span class="math inline">\(Y_i\)</span> is 1 with probability <span
+class="math inline">\(p\)</span> and is 0 with probability <span
+class="math inline">\(1-p\)</span>. Then</p>
+<ul>
+<li><span class="math inline">\(E[Y_i] = p\)</span></li>
+<li><span class="math inline">\(var(Y_i) = p(1-p)\)</span></li>
+</ul></li>
+<li><p>Suppose <span class="math inline">\(Y_i\)</span> is 1 for
+“success” and “0” for failure. Suppose we have the model</p>
+<p><span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots +
+\beta_{p-1}X_{i,p-1} + \epsilon_i.
+  \]</span></p></li>
+<li><p>Since <span class="math inline">\(E[Y_i]\)</span> is the
+probability that <span class="math inline">\(Y_i\)</span> is 1, that
+mean’s we can interpret the regression line as the probability that
+<span class="math inline">\(Y_i\)</span> is 1.</p></li>
+<li><p>Interpreting the regression coefficients: “Individuals that are 1
+unit larger in <span class="math inline">\(X_{ik}\)</span> are <span
+class="math inline">\(\beta_k \times 100\)</span> percentage points more
+probable to have a <span class="math inline">\(Y\)</span> value of 1,
+adjusting for other variables.”</p></li>
+<li><p>Let’s apply this to the Donner party data</p>
+<pre class="r"><code>donner &lt;- mutate(donner, Survived = if_else(Status == &quot;Survived&quot;, 1, 0))
+lmout &lt;- lm(Survived ~ Age, data = donner)
+lmout</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Survived ~ Age, data = donner)
+## 
+## Coefficients:
+## (Intercept)          Age  
+##      0.8692      -0.0134</code></pre></li>
+<li><p>Thus, individuals that were one year older were 1.3 percentage
+points less likely to survive.</p></li>
+<li><p>Bernoulli random variables are always heteroscedastic since their
+variance is a function of the mean <span
+class="math inline">\(p(1-p)\)</span>. So if you use the LPM, you
+<em>need</em> to use heteroscedastic robust standard errors.</p>
+<pre class="r"><code>cout &lt;- coeftest(x = lmout, vcov. = vcovHC)
+tidy(cout)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term        estimate std.error statistic    p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+## 1 (Intercept)   0.869    0.171        5.08 0.00000772
+## 2 Age          -0.0134   0.00413     -3.23 0.00235</code></pre></li>
+<li><p>Residual plots are kind of useless here:</p>
+<pre class="r"><code>aout &lt;- augment(lmout)
+qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+<div id="issues" class="section level2">
+<h2>Issues</h2>
+<ul>
+<li><p>Econometricians and psychologists love the LPM because of its
+ease of interpretability.</p></li>
+<li><p>Statisticians typically do not like it (though I’m
+agnostic).</p></li>
+<li><p>The possible values of <span class="math inline">\(\beta_0 +
+\beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1}\)</span>
+are any real numbers between <span
+class="math inline">\(-\infty\)</span> and <span
+class="math inline">\(\infty\)</span>, but the probability of <span
+class="math inline">\(Y_i\)</span> being 1 can only be between 0 and
+1.</p></li>
+<li><p>So it is possible (and typical in many datasets) to have
+probability estimates that are negative or greater than 1. This makes
+folks squeamish.</p></li>
+<li><p>E.g., the point-wise confidence bands from the Donner party make
+no sense:</p>
+<pre class="r"><code>ggplot(donner, aes(x = Age, y = Survived)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, formula = y ~ x)</code></pre>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>When the probability of a “1” is between about 0.2 and 0.8, then
+the linear and logistic (see below) models produce about the same
+results.</p></li>
+<li><p>Let’s look at the differences in the Donner party example:</p>
+<pre class="r"><code>ggplot(donner, aes(x = Age, y = Survived)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, formula = y ~ x) +
+  geom_smooth(method = &quot;glm&quot;, 
+              se = FALSE,
+              method.args = list(family = &quot;binomial&quot;),
+              color = &quot;red&quot;, 
+              lty = 2,
+              formula = y ~ x)</code></pre>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
 </div>
 <div id="model" class="section level1">
 <h1>Model</h1>
+<ul>
+<li><p>Let <span class="math inline">\(p_i\)</span> be the probability
+that individual <span class="math inline">\(i\)</span> is 1. I.e. <span
+class="math inline">\(E[Y_i] = p_i\)</span>. Then our model is <span
+class="math display">\[
+  \text{logit}(p_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots
+\beta_{p-1}X_{i,p-1}
+  \]</span></p></li>
+<li><p>Here, <span class="math inline">\(\text{logit}(\cdot)\)</span> is
+the “logit” function, <span class="math display">\[
+  \text{logit}(p_i) = \log\left(\frac{p_i}{1-p_i}\right).
+  \]</span></p></li>
+<li><p>The inverse of the logit function is the “expit” function (or
+“logistic”) <span class="math display">\[
+  \text{expit}(\eta) = \frac{e^{\eta}}{1 + e^{\eta}}.
+  \]</span></p></li>
+<li><p>So we can equivalently write this model as <span
+class="math display">\[
+  p_i = \text{expit}\left(\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} +
+\cdots \beta_{p-1}X_{i,p-1}\right)
+  \]</span></p></li>
+<li><p>The <span class="math inline">\(\text{expit}(\cdot)\)</span>
+function takes a number from <span
+class="math inline">\(-\infty\)</span> to <span
+class="math inline">\(\infty\)</span> and places it between 0 and 1.
+Thus, it forces the probabilities to be between 0 and 1.</p>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+<div id="generalized-linear-model" class="section level2">
+<h2>Generalized Linear Model</h2>
+<ul>
+<li><p>This is an example of a “generalized linear model”. Let <span
+class="math inline">\(Y_i\)</span> follow any distribution we specify
+Let <span class="math inline">\(\mu_i\)</span> be the mean of <span
+class="math inline">\(Y_i\)</span>. Then a generalized linear model
+is</p>
+<p><span class="math display">\[
+  g(\mu_i) = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots
+\beta_{p-1}X_{i,p-1}
+  \]</span></p></li>
+<li><p>Here, <span class="math inline">\(g(\cdot)\)</span> is called the
+“link function”. The model is linear on the link scale (hence
+“generalized linear model”).</p></li>
+<li><p>In logistic regression, <span class="math inline">\(Y_i \sim
+Bern(\mu_i)\)</span> and <span class="math inline">\(g(\mu_i) =
+\text{logit}(\mu_i)\)</span>.</p></li>
+<li><p>Another example is probit regression (more popular in econ) where
+<span class="math inline">\(g(\mu_i) = \Phi^{-1}(\mu_i)\)</span>, the
+standard normal quantile function (<code>qnorm()</code>). This gives you
+similar results, but statisicians don’t like it because it’s less
+interpretable than the logit.</p>
+<p><img src="06_logistic_files/figure-html/unnamed-chunk-10-1.png" width="480" style="display: block; margin: auto;" /></p></li>
+<li><p>In <a
+href="https://en.wikipedia.org/wiki/Poisson_regression">log-linear
+models</a> (which we might later), we model counts with <span
+class="math inline">\(Y_i \sim Poi(\mu_i)\)</span> (<a
+href="https://en.wikipedia.org/wiki/Poisson_distribution">Poisson
+Distribution</a>) and <span class="math inline">\(g(\mu_i) =
+\log(\mu_i)\)</span>.</p></li>
+</ul>
 </div>
-<div id="interpretation-odds-ratios" class="section level1">
-<h1>Interpretation (odds ratios)</h1>
 </div>
-<div id="two-ways-to-input-data" class="section level1">
-<h1>Two ways to input data</h1>
+<div id="interpretation" class="section level1">
+<h1>Interpretation</h1>
+<div id="odds" class="section level2">
+<h2>Odds</h2>
+<ul>
+<li><p>The interpretation of the logistic regression model requires you
+to be familiar with odds.</p></li>
+<li><p>As I write this, the Baltimore Ravens have 3 to 2 odds of
+defeating the Miami Dolphins tomorrow. This means that the odds of a
+Ravens victory are <span class="math inline">\(3/2 =
+1.5\)</span>.</p></li>
+<li><p>The odds of an event are the probability of that event divided by
+the probability of not that event.</p></li>
+<li><p>Let <span class="math inline">\(p\)</span> be the probability of
+an event, and let <span class="math inline">\(\omega\)</span> be the
+odds of the same event. Then we have the relations: <span
+class="math display">\[
+  \omega = \frac{p}{1-p}\\
+  p = \frac{\omega}{1+\omega}
+  \]</span></p></li>
+<li><p>So odds are just another description of probabilities.</p></li>
+<li><p>In the football example above, the Ravens’ probability of wining
+is 0.6, so the odds are 0.6/0.4 = 3/2 = 1.5.</p></li>
+<li><p><strong>Exercise</strong>: The Chiefs have 2 to 1 odds over the
+Chargers tomorrow. What’s the probability of a Chief’s win?</p></li>
+</ul>
+</div>
+<div id="interpreting-logistic-regression-model" class="section level2">
+<h2>Interpreting Logistic Regression Model</h2>
+<ul>
+<li><p>Let <span class="math inline">\(\omega_{old}\)</span> be the odds
+of an individual. We can write the logistic regression model as <span
+class="math display">\[
+  \omega_{old} = \exp\left(\beta_0 + \beta_1X_{1} + \beta_2X_{2} +
+\cdots \beta_{p-1}X_{p-1}\right)
+  \]</span></p></li>
+<li><p>Suppose that a different individual has the exact same predictor
+values except one unit higher <span class="math inline">\(X_1\)</span>.
+Then <span class="math display">\[\begin{align}
+  \omega_{new} &amp;= \exp\left(\beta_0 + \beta_1(X_{1} + 1) +
+\beta_2X_{2} + \cdots \beta_{p-1}X_{p-1}\right)\\
+  &amp;= \exp\left(\beta_0 + \beta_1X_{1} + \beta_1 + \beta_2X_{2} +
+\cdots \beta_{p-1}X_{p-1}\right)\\
+  &amp;= \exp(\beta_1)\exp\left(\beta_0 + \beta_1X_{1} + \beta_2X_{2} +
+\cdots \beta_{p-1}X_{p-1}\right)\\
+  &amp;= \exp(\beta_1)\omega_{old}
+  \end{align}\]</span></p></li>
+<li><p>Thus, the odds of the second individual are <span
+class="math inline">\(e^{\beta_1}\)</span> times as large as the odds of
+the first individual.</p></li>
+<li><p>Different way to say this: The odds ratio for the two individuals
+is <span class="math inline">\(e^{\beta_1}\)</span>.</p></li>
+</ul>
+</div>
 </div>
 <div id="bias-reduction" class="section level1">
 <h1>Bias reduction</h1>
@@ -431,9 +681,6 @@ tidy(lizardsML)</code></pre>
 ## 5 timemidday      0.227     0.250     0.908 0.364       
 ## 6 timelate       -0.737     0.299    -2.46  0.0137</code></pre>
 <pre class="r"><code>tidy(lizardsBR)</code></pre>
-<pre><code>## Warning: The `tidy()` method for objects of class `brglmFit` is not maintained by the broom team, and is only supported through the `glm` tidier method. Please be cautious in interpreting and reporting broom output.
-## 
-## This warning is displayed once per session.</code></pre>
 <pre><code>## # A tibble: 6 × 5
 ##   term         estimate std.error statistic      p.value
 ##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
@@ -452,6 +699,19 @@ Firth, David. 1993. <span>“<span class="nocase">Bias reduction of
 maximum likelihood estimates</span>.”</span> <em>Biometrika</em> 80 (1):
 27–38. <a
 href="https://doi.org/10.1093/biomet/80.1.27">https://doi.org/10.1093/biomet/80.1.27</a>.
+</div>
+<div id="ref-gomila2021logistic" class="csl-entry">
+Gomila, Robin. 2021. <span>“Logistic or Linear? Estimating Causal
+Effects of Experimental Treatments on Binary Outcomes Using Regression
+Analysis.”</span> <em>Journal of Experimental Psychology: General</em>
+150 (4): 700. <a
+href="https://doi.org/10.1037/xge0000920">https://doi.org/10.1037/xge0000920</a>.
+</div>
+<div id="ref-hellevik2009linear" class="csl-entry">
+Hellevik, Ottar. 2009. <span>“Linear Versus Logistic Regression When the
+Dependent Variable Is a Dichotomy.”</span> <em>Quality &amp;
+Quantity</em> 43 (1): 59–74. <a
+href="https://doi.org/10.1007/s11135-007-9077-3">https://doi.org/10.1007/s11135-007-9077-3</a>.
 </div>
 </div>
 </div>
