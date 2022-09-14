@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-05-20" />
+<meta name="date" content="2022-09-14" />
 
 <title>Simple Linear Regression: The Model</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -150,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -349,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-05-20</h4>
+<h4 class="date">2022-09-14</h4>
 
 </div>
 
@@ -371,40 +375,70 @@ div.tocify {
 <div id="overview" class="section level1">
 <h1>Overview</h1>
 <ul>
-<li><p><strong>Observational/experimental Units</strong>: The people/places/things/animals/groups that we collect information about. Also known as “individuals” or “cases”. Sometimes I just say “units”.</p></li>
-<li><p><strong>Variable</strong>: A property of the observational/experimental units.</p>
+<li><p><strong>Observational/experimental Units</strong>: The
+people/places/things/animals/groups that we collect information about.
+Also known as “individuals” or “cases”. Sometimes I just say
+“units”.</p></li>
+<li><p><strong>Variable</strong>: A property of the
+observational/experimental units.</p>
 <ul>
 <li>E.g.: height of a person, area of a country, marital status.</li>
 </ul></li>
-<li><p><strong>Value</strong>: The specific level of a variable for an observational/experimental unit.</p>
+<li><p><strong>Value</strong>: The specific level of a variable for an
+observational/experimental unit.</p>
 <ul>
-<li>E.g.: Bob is 5’11’’, China has an area of 3,705,407 square miles, Jane is divorced.</li>
+<li>E.g.: Bob is 5’11’’, China has an area of 3,705,407 square miles,
+Jane is divorced.</li>
 </ul></li>
-<li><p><strong>Quantitative Variable</strong>: The variable takes on numerical values where arithmetic operations (<span class="math inline">\(+\)</span>/<span class="math inline">\(-\)</span>/<span class="math inline">\(\times\)</span>/<span class="math inline">\(\div\)</span>) make sense.</p>
+<li><p><strong>Quantitative Variable</strong>: The variable takes on
+numerical values where arithmetic operations (<span
+class="math inline">\(+\)</span>/<span
+class="math inline">\(-\)</span>/<span
+class="math inline">\(\times\)</span>/<span
+class="math inline">\(\div\)</span>) make sense.</p>
 <ul>
 <li>E.g.: height, weight, area, income.</li>
 <li>Counterexample: Phone numbers, social security numbers.</li>
 </ul></li>
-<li><p><strong>Regression Analysis</strong>: Study relationship between or more <em>quantitative</em> variables.</p></li>
+<li><p><strong>Regression Analysis</strong>: Study relationship between
+or more <em>quantitative</em> variables.</p></li>
 <li><p><strong>Response Variable</strong>:</p>
 <ul>
-<li>What we think is either caused by or explained by the predictor variable.</li>
+<li>What we think is either caused by or explained by the predictor
+variable.</li>
 <li>Also called “outcome variable” and “dependent variable”.</li>
-<li>Usually denote this with the letter <span class="math inline">\(y\)</span>.</li>
+<li>Usually denote this with the letter <span
+class="math inline">\(y\)</span>.</li>
 </ul></li>
 <li><p><strong>Predictor Variable</strong>:</p>
 <ul>
 <li>What we think causes or explains the outcome variable.</li>
-<li>Also called a “feature”, “explanatory variable”, “independent variable”, and (when doing an experiment) a “treatment variable”.</li>
+<li>Also called a “feature”, “explanatory variable”, “independent
+variable”, and (when doing an experiment) a “treatment variable”.</li>
 <li>Typically have more than one predictor.</li>
-<li>Usually denote these with the letters <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, <span class="math inline">\(x_3\)</span>, <span class="math inline">\(\ldots\)</span>, <span class="math inline">\(x_p\)</span>.</li>
+<li>Usually denote these with the letters <span
+class="math inline">\(x_1\)</span>, <span
+class="math inline">\(x_2\)</span>, <span
+class="math inline">\(x_3\)</span>, <span
+class="math inline">\(\ldots\)</span>, <span
+class="math inline">\(x_p\)</span>.</li>
 </ul></li>
-<li><p>Two quantitative variables can have either a <strong>functional</strong> or a <strong>statistical</strong> relationship.</p></li>
-<li><p><strong>Functional relationship</strong>: There is an exact mathematical formula relating the value of one quantitative variable <span class="math inline">\(x\)</span> (the predictor) to the other <span class="math inline">\(y\)</span> (the response). <span class="math display">\[
+<li><p>Two quantitative variables can have either a
+<strong>functional</strong> or a <strong>statistical</strong>
+relationship.</p></li>
+<li><p><strong>Functional relationship</strong>: There is an exact
+mathematical formula relating the value of one quantitative variable
+<span class="math inline">\(x\)</span> (the predictor) to the other
+<span class="math inline">\(y\)</span> (the response). <span
+class="math display">\[
   y = f(x)
-  \]</span> <span class="math inline">\(f()\)</span> is some function relating the correspondence of <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>.</p>
+  \]</span> <span class="math inline">\(f()\)</span> is some function
+relating the correspondence of <span class="math inline">\(x\)</span> to
+<span class="math inline">\(y\)</span>.</p>
 <ul>
-<li>E.g.: <span class="math inline">\(x\)</span> = the radius of a circle and <span class="math inline">\(y\)</span> = the area of a circle then <span class="math display">\[
+<li>E.g.: <span class="math inline">\(x\)</span> = the radius of a
+circle and <span class="math inline">\(y\)</span> = the area of a circle
+then <span class="math display">\[
   y = \pi x^2
   \]</span></li>
 </ul>
@@ -413,7 +447,10 @@ div.tocify {
 <ul>
 <li><p>Is not a perfect relation.</p></li>
 <li><p>Functional + noise.</p></li>
-<li><p>E.g. “bread and peace” data from Chapter 7 of <a href="https://avehtari.github.io/ROS-Examples/">ROS</a> looking at the statistical relationship between economic growth and vote-share of the incumbant for president.</p></li>
+<li><p>E.g. “bread and peace” data from Chapter 7 of <a
+href="https://avehtari.github.io/ROS-Examples/">ROS</a> looking at the
+statistical relationship between economic growth and vote-share of the
+incumbant for president.</p></li>
 </ul>
 <pre class="r"><code>library(readr)
 library(ggplot2)
@@ -422,28 +459,39 @@ qplot(x = growth, y = vote, data = hibbs) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li><p>Can say higher higher growth tends to have higher vote-share. But relationship is not perfect (but still pretty good!)</p></li>
-<li><p>The scattering of points about the line represents variation in vote share that is not associated with economic growth.</p></li>
+<li><p>Can say higher higher growth tends to have higher vote-share. But
+relationship is not perfect (but still pretty good!)</p></li>
+<li><p>The scattering of points about the line represents variation in
+vote share that is not associated with economic growth.</p></li>
 </ul></li>
 <li><p>Goals of Regression:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Description</strong>:
 <ol style="list-style-type: lower-alpha">
-<li>Gene expression (<span class="math inline">\(x\)</span>) is associated with height (<span class="math inline">\(y\)</span>).</li>
-<li>Biological sex (<span class="math inline">\(x\)</span>) is associated with salary (<span class="math inline">\(y\)</span>).</li>
+<li>Gene expression (<span class="math inline">\(x\)</span>) is
+associated with height (<span class="math inline">\(y\)</span>).</li>
+<li>Biological sex (<span class="math inline">\(x\)</span>) is
+associated with salary (<span class="math inline">\(y\)</span>).</li>
 </ol></li>
 <li><strong>Prediction</strong>:
 <ol style="list-style-type: lower-alpha">
-<li>Predict sales (<span class="math inline">\(y\)</span>) based on product attributes (<span class="math inline">\(x\)</span>’s)</li>
-<li>Predict crop yield (<span class="math inline">\(y\)</span>) based on genomic markers (<span class="math inline">\(x\)</span>’s)</li>
+<li>Predict sales (<span class="math inline">\(y\)</span>) based on
+product attributes (<span class="math inline">\(x\)</span>’s)</li>
+<li>Predict crop yield (<span class="math inline">\(y\)</span>) based on
+genomic markers (<span class="math inline">\(x\)</span>’s)</li>
 </ol></li>
 </ol></li>
-<li><p>When we describe relationships, this does not imply causation.</p>
+<li><p>When we describe relationships, this does not imply
+causation.</p>
 <ul>
-<li>You need very special settings for “causal inference”, which we might cover later in the course.</li>
-<li>One special case where we can make causal claims is when we have a completely randomized experiment, where predictor values are randomly assigned.</li>
+<li>You need very special settings for “causal inference”, which we
+might cover later in the course.</li>
+<li>One special case where we can make causal claims is when we have a
+completely randomized experiment, where predictor values are randomly
+assigned.</li>
 </ul></li>
-<li><p>E.g. A researcher noticed that murder rates went up whenever ice cream consumption increased.</p></li>
+<li><p>E.g. A researcher noticed that murder rates went up whenever ice
+cream consumption increased.</p></li>
 </ul>
 </div>
 <div id="the-simple-linear-regression-model" class="section level1">
@@ -453,39 +501,72 @@ qplot(x = growth, y = vote, data = hibbs) +
   Y_i = \beta_0 + \beta_i X_i + \epsilon_i
   \]</span></p>
 <ul>
-<li><p><span class="math inline">\(Y_i\)</span>: The response value for unit <span class="math inline">\(i\)</span>.</p></li>
-<li><p><span class="math inline">\(X_i\)</span>: The predictor value for unit <span class="math inline">\(i\)</span>.</p></li>
-<li><p><span class="math inline">\(\beta_0\)</span>: The <span class="math inline">\(y\)</span>-intercept of the regression line.</p></li>
-<li><p><span class="math inline">\(\beta_1\)</span>: The slope of the regression line.</p></li>
-<li><p><span class="math inline">\(\epsilon_i\)</span>: The random noise of individual <span class="math inline">\(i\)</span>.</p>
+<li><p><span class="math inline">\(Y_i\)</span>: The response value for
+unit <span class="math inline">\(i\)</span>.</p></li>
+<li><p><span class="math inline">\(X_i\)</span>: The predictor value for
+unit <span class="math inline">\(i\)</span>.</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span>: The <span
+class="math inline">\(y\)</span>-intercept of the regression
+line.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: The slope of the
+regression line.</p></li>
+<li><p><span class="math inline">\(\epsilon_i\)</span>: The random noise
+of individual <span class="math inline">\(i\)</span>.</p>
 <ul>
 <li>This is a random variable.</li>
-<li><span class="math inline">\(E[\epsilon_i] = 0\)</span> (mean zero).</li>
-<li><span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span> (variance is the same for all <span class="math inline">\(i\)</span>).</li>
-<li><span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span> (uncorrelated errors).</li>
+<li><span class="math inline">\(E[\epsilon_i] = 0\)</span> (mean
+zero).</li>
+<li><span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span>
+(variance is the same for all <span
+class="math inline">\(i\)</span>).</li>
+<li><span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span>
+for all <span class="math inline">\(i \neq j\)</span> (uncorrelated
+errors).</li>
 </ul></li>
 </ul></li>
-<li><p><span class="math inline">\(X_i\)</span> and <span class="math inline">\(Y_i\)</span> are typically known. We usually have a sample of <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>.</p>
+<li><p><span class="math inline">\(X_i\)</span> and <span
+class="math inline">\(Y_i\)</span> are typically known. We usually have
+a sample of <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots,
+(X_n, Y_n)\)</span>.</p>
 <ul>
-<li>E.g. <span class="math inline">\(X_i\)</span> could be the economic growth in year <span class="math inline">\(i\)</span>, and <span class="math inline">\(Y_i\)</span> could be the incumbent vote-share for year <span class="math inline">\(i\)</span>.</li>
+<li>E.g. <span class="math inline">\(X_i\)</span> could be the economic
+growth in year <span class="math inline">\(i\)</span>, and <span
+class="math inline">\(Y_i\)</span> could be the incumbent vote-share for
+year <span class="math inline">\(i\)</span>.</li>
 </ul></li>
-<li><p><span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> are called <strong>parameters</strong> and are typically not observed. They must be inferred from a sample of values <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>.</p></li>
-<li><p><strong>Regression line</strong>: <span class="math inline">\(y = \beta_0 + \beta_1x\)</span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span>, <span
+class="math inline">\(\beta_1\)</span> are called
+<strong>parameters</strong> and are typically not observed. They must be
+inferred from a sample of values <span class="math inline">\((X_1, Y_1),
+(X_2, Y_2), \ldots, (X_n, Y_n)\)</span>.</p></li>
+<li><p><strong>Regression line</strong>: <span class="math inline">\(y =
+\beta_0 + \beta_1x\)</span></p></li>
 <li><p>Assumptions in decreasing order of importance:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Linearity</strong>: <span class="math inline">\(E[Y_i|X_i] = \beta_0 + \beta_1X_i\)</span></p></li>
-<li><p><strong>Uncorrelated errors</strong>: <span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span></p></li>
-<li><p><strong>Constant Variance</strong>: <span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span></p></li>
+<li><p><strong>Linearity</strong>: <span
+class="math inline">\(E[Y_i|X_i] = \beta_0 +
+\beta_1X_i\)</span></p></li>
+<li><p><strong>Uncorrelated errors</strong>: <span
+class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all
+<span class="math inline">\(i \neq j\)</span></p></li>
+<li><p><strong>Constant Variance</strong>: <span
+class="math inline">\(var(\epsilon_i) = \sigma^2\)</span></p></li>
 </ol></li>
-<li><p>Note: Distribution of <span class="math inline">\(Y_i\)</span> is conditional on <span class="math inline">\(X_i\)</span>.</p>
+<li><p>Note: Distribution of <span class="math inline">\(Y_i\)</span> is
+conditional on <span class="math inline">\(X_i\)</span>.</p>
 <p><img src="03_figs/dist.gif" style="width:50.0%" /> </p></li>
-<li><p><strong>Exercise</strong>: Suppose the regression model between two variables is <span class="math display">\[
+<li><p><strong>Exercise</strong>: Suppose the regression model between
+two variables is <span class="math display">\[
   Y_i = 3 + 2 x_i + \epsilon_i,~~var(\epsilon_i) = \sigma^2
   \]</span></p>
 <ol style="list-style-type: decimal">
-<li><p>What is the mean of <span class="math inline">\(Y_i\)</span> if <span class="math inline">\(X_i = -1\)</span>?</p></li>
-<li><p>What is the variance of <span class="math inline">\(Y_i\)</span> if <span class="math inline">\(X_i = -1\)</span>?</p></li>
-<li><p>Suppose <span class="math inline">\(X_i = 1\)</span> and <span class="math inline">\(Y_i = 4\)</span>. What is <span class="math inline">\(\epsilon_i\)</span>?</p></li>
+<li><p>What is the mean of <span class="math inline">\(Y_i\)</span> if
+<span class="math inline">\(X_i = -1\)</span>?</p></li>
+<li><p>What is the variance of <span class="math inline">\(Y_i\)</span>
+if <span class="math inline">\(X_i = -1\)</span>?</p></li>
+<li><p>Suppose <span class="math inline">\(X_i = 1\)</span> and <span
+class="math inline">\(Y_i = 4\)</span>. What is <span
+class="math inline">\(\epsilon_i\)</span>?</p></li>
 </ol></li>
 </ul>
 </div>
@@ -494,57 +575,100 @@ qplot(x = growth, y = vote, data = hibbs) +
 <ul>
 <li><p><span class="math inline">\(\beta_0\)</span>:</p>
 <ul>
-<li><span class="math inline">\(Y\)</span>-intercept of the regression line.</li>
-<li>If <span class="math inline">\(0\)</span> is in the range of the <span class="math inline">\(X_i\)</span>’s, then can also interpret this as the value of <span class="math inline">\(E[Y_i|X_i = 0]\)</span>. But cannot use this interpretation if 0 is outside of the <span class="math inline">\(X_i\)</span>’s.</li>
+<li><span class="math inline">\(Y\)</span>-intercept of the regression
+line.</li>
+<li>If <span class="math inline">\(0\)</span> is in the range of the
+<span class="math inline">\(X_i\)</span>’s, then can also interpret this
+as the value of <span class="math inline">\(E[Y_i|X_i = 0]\)</span>. But
+cannot use this interpretation if 0 is outside of the <span
+class="math inline">\(X_i\)</span>’s.</li>
 </ul></li>
 <li><p><span class="math inline">\(\beta_1\)</span>:</p>
 <ul>
-<li>Difference in average of <span class="math inline">\(Y_i\)</span>’s when <span class="math inline">\(X_i\)</span>’s differ by 1.</li>
-<li>Do <strong>not</strong> use implicitely causal language like “change” or “increase” or “decrease”.</li>
+<li>Difference in average of <span class="math inline">\(Y_i\)</span>’s
+when <span class="math inline">\(X_i\)</span>’s differ by 1.</li>
+<li>Do <strong>not</strong> use implicitely causal language like
+“change” or “increase” or “decrease”.</li>
 </ul></li>
-<li><p>Relationships are <strong>positive</strong> if <span class="math inline">\(\beta_1 &gt; 0\)</span> (larger <span class="math inline">\(x\)</span> tend to correspond to larger <span class="math inline">\(y\)</span>).</p>
+<li><p>Relationships are <strong>positive</strong> if <span
+class="math inline">\(\beta_1 &gt; 0\)</span> (larger <span
+class="math inline">\(x\)</span> tend to correspond to larger <span
+class="math inline">\(y\)</span>).</p>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p>Relationships are <strong>negative</strong> if <span class="math inline">\(\beta_1 &lt; 0\)</span> (larger <span class="math inline">\(x\)</span> tend to correspond to smaller <span class="math inline">\(y\)</span>).</p>
+<li><p>Relationships are <strong>negative</strong> if <span
+class="math inline">\(\beta_1 &lt; 0\)</span> (larger <span
+class="math inline">\(x\)</span> tend to correspond to smaller <span
+class="math inline">\(y\)</span>).</p>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-7-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p>Two variables are uncorrelated if <span class="math inline">\(\beta_1 = 0\)</span> (the value of <span class="math inline">\(x\)</span> does not matter, the value of <span class="math inline">\(y\)</span> tends to stay the same).</p>
+<li><p>Two variables are uncorrelated if <span
+class="math inline">\(\beta_1 = 0\)</span> (the value of <span
+class="math inline">\(x\)</span> does not matter, the value of <span
+class="math inline">\(y\)</span> tends to stay the same).</p>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-8-1.png" width="480" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Example</strong>: In the bread and peace example, a regression line that fits the data well is</p>
+<li><p><strong>Example</strong>: In the bread and peace example, a
+regression line that fits the data well is</p>
 <p><span class="math display">\[
   y = 46.25 + 3.06
   \]</span></p>
-<p><strong>Correct</strong>: Years that show 1 percentage point more growth tend to have 3 percentage points larger vote shares for the incumbant.</p>
-<p><strong>Incorrect</strong>: Incumbant vote-share increases 3 percentage points for each 1 percentage point increase in growth.</p></li>
+<p><strong>Correct</strong>: Years that show 1 percentage point more
+growth tend to have 3 percentage points larger vote shares for the
+incumbant.</p>
+<p><strong>Incorrect</strong>: Incumbant vote-share increases 3
+percentage points for each 1 percentage point increase in
+growth.</p></li>
 </ul>
 </div>
 <div id="estimating-parameters" class="section level1">
 <h1>Estimating Parameters</h1>
 <ul>
-<li><p>We have data <span class="math inline">\((X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)\)</span>, and we want to estimate <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> in the equation</p>
+<li><p>We have data <span class="math inline">\((X_1, Y_1), (X_2, Y_2),
+\ldots, (X_n, Y_n)\)</span>, and we want to estimate <span
+class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span> in the equation</p>
 <p><span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
   \]</span></p></li>
-<li><p>Idea: Try to get <span class="math inline">\(Y_i\)</span> as close to its mean. So we want each <span class="math inline">\(Y_i - (\beta_0 + \beta_1 X_i)\)</span> to be close to 0.</p></li>
-<li><p>To make all of these differences on average close to zero, consider minimizing the <em>sum of squares</em>:</p>
+<li><p>Idea: Try to get <span class="math inline">\(Y_i\)</span> as
+close to its mean. So we want each <span class="math inline">\(Y_i -
+(\beta_0 + \beta_1 X_i)\)</span> to be close to 0.</p></li>
+<li><p>To make all of these differences on average close to zero,
+consider minimizing the <em>sum of squares</em>:</p>
 <p><span class="math display">\[
   \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
   \]</span></p></li>
 <li><p>Visualization:</p>
 <p><img src="03_figs/ols.gif" /></p></li>
-<li><p>We can solve for the <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> that minimize this sum of squares.</p></li>
-<li><p>We denote the resulting estimates by <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>, and call them the <strong>OLS estimates</strong> (ordinary least squares estimates).</p></li>
+<li><p>We can solve for the <span class="math inline">\(\beta_0\)</span>
+and <span class="math inline">\(\beta_1\)</span> that minimize this sum
+of squares.</p></li>
+<li><p>We denote the resulting estimates by <span
+class="math inline">\(\hat{\beta}_0\)</span> and <span
+class="math inline">\(\hat{\beta}_1\)</span>, and call them the
+<strong>OLS estimates</strong> (ordinary least squares
+estimates).</p></li>
 <li><p>In equations:</p>
 <p><span class="math display">\[\begin{align}
   \hat{\beta}_0 &amp;= \bar{Y} - \hat{\beta}_1\bar{X},\\
   \hat{\beta}_1 &amp;= cor(X, Y) \frac{sd(Y)}{sd(X)},\\
-  cor(X, Y) &amp;= \frac{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})(Y_i - \bar{Y})}{\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2}\sqrt{\frac{1}{n-1}\sum_{i=1}^n(Y_i - \bar{Y})^2}},\\
+  cor(X, Y) &amp;= \frac{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})(Y_i -
+\bar{Y})}{\sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i -
+\bar{X})^2}\sqrt{\frac{1}{n-1}\sum_{i=1}^n(Y_i - \bar{Y})^2}},\\
   sd(X) &amp;= \sqrt{\frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2},\\
   sd(Y) &amp;= \sqrt{\frac{1}{n-1}\sum_{i=1}^n(Y_i - \bar{Y})^2}.
   \end{align}\]</span></p></li>
-<li><p>Notice that the estimate of <span class="math inline">\(\beta_1\)</span> is a linear function of the correlation coefficient.</p></li>
-<li><p>To derive these (if you are a Statistics BS or MS, you should do this exercise once without looking at the solution):</p>
+<li><p>Notice that the estimate of <span
+class="math inline">\(\beta_1\)</span> is a linear function of the
+correlation coefficient.</p></li>
+<li><p>To derive these (if you are a Statistics BS or MS, you should do
+this exercise once without looking at the solution):</p>
 <ol style="list-style-type: decimal">
-<li>Take the derivative of the least squares objective function with respect to both <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</li>
-<li>Set equal to 0 and solve for <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> (2 equations and 2 unknowns).</li>
+<li>Take the derivative of the least squares objective function with
+respect to both <span class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>.</li>
+<li>Set equal to 0 and solve for <span
+class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span> (2 equations and 2
+unknowns).</li>
 <li>Simplify into the terms above.</li>
 <li>Use a second derivative test to verify that this is a minimum.</li>
 </ol></li>
@@ -552,31 +676,48 @@ qplot(x = growth, y = vote, data = hibbs) +
 <div id="note-on-least-squares" class="section level2">
 <h2>Note on Least Squares</h2>
 <ul>
-<li><p>Least squares inference is much more widely applicable to beyond the linear model.</p></li>
+<li><p>Least squares inference is much more widely applicable to beyond
+the linear model.</p></li>
 <li><p>Suppose</p>
 <p><span class="math display">\[
   Y_i = f(X_i;\theta) + \epsilon_i,
   \]</span></p>
-<p>where <span class="math inline">\(\theta\)</span> is some vector of parameters. E.g. in the simple linear regression model <span class="math display">\[
+<p>where <span class="math inline">\(\theta\)</span> is some vector of
+parameters. E.g. in the simple linear regression model <span
+class="math display">\[
   \theta = (\beta_0, \beta_1) \text{ and}\\
   f(X_i;\theta) = \beta_0 + \beta_1X_i
-  \]</span> Then we can estimate <span class="math inline">\(\theta\)</span> by minimizing the sum of squares over <span class="math inline">\(\theta\)</span>.</p>
+  \]</span> Then we can estimate <span
+class="math inline">\(\theta\)</span> by minimizing the sum of squares
+over <span class="math inline">\(\theta\)</span>.</p>
 <p><span class="math display">\[
-  \hat{\theta} = \text{argmin}_{\theta}\sum_{i=1}^n\left[Y_i - f(X_i;\theta)\right]^2
+  \hat{\theta} = \text{argmin}_{\theta}\sum_{i=1}^n\left[Y_i -
+f(X_i;\theta)\right]^2
   \]</span></p></li>
-<li><p>If it is hard to find <span class="math inline">\(\hat{\theta}\)</span> analytically, then there are numerical procedures that can be used to systematically minimize the sum of squares (e.g. gradient descent).</p></li>
+<li><p>If it is hard to find <span
+class="math inline">\(\hat{\theta}\)</span> analytically, then there are
+numerical procedures that can be used to systematically minimize the sum
+of squares (e.g. gradient descent).</p></li>
 </ul>
 </div>
 </div>
 <div id="finding-ols-estimates-in-r" class="section level1">
 <h1>Finding OLS Estimates in R</h1>
 <ul>
-<li><p>Use <code>lm()</code> (for “linear model”) to obtain coefficient estimates.</p></li>
-<li><p>The first argument of <code>lm()</code> is a <em>formula</em> of the form <code>response ~ predictor</code>. That squiggly line (<code>~</code>) separating the response from the predictor is called a “tilde”.</p></li>
-<li><p>The second argument is the data frame that holds the variables.</p></li>
+<li><p>Use <code>lm()</code> (for “linear model”) to obtain coefficient
+estimates.</p></li>
+<li><p>The first argument of <code>lm()</code> is a <em>formula</em> of
+the form <code>response ~ predictor</code>. That squiggly line
+(<code>~</code>) separating the response from the predictor is called a
+“tilde”.</p></li>
+<li><p>The second argument is the data frame that holds the
+variables.</p></li>
 <li><p>Using the Hibbs data</p>
 <pre class="r"><code>lmout &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
-<li><p>You can print out the values and the values under <code>Coefficients</code> are the OLS estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p>
+<li><p>You can print out the values and the values under
+<code>Coefficients</code> are the OLS estimates of <span
+class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>.</p>
 <pre class="r"><code>lmout</code></pre>
 <pre><code>## 
 ## Call:
@@ -585,10 +726,16 @@ qplot(x = growth, y = vote, data = hibbs) +
 ## Coefficients:
 ## (Intercept)       growth  
 ##       46.25         3.06</code></pre></li>
-<li><p><span class="math inline">\(\hat{\beta}_0 = 46.25\)</span></p></li>
-<li><p><span class="math inline">\(\hat{\beta}_1 = 3.06\)</span></p></li>
-<li><p>Estimated regression line: <span class="math inline">\(y = 46.25 + 3.06 x\)</span>.</p></li>
-<li><p>It is a pain to extract these values using base R, but the <code>{broom}</code> package has a nice function called <code>tidy()</code> that returns coefficient estimates in a data frame.</p>
+<li><p><span class="math inline">\(\hat{\beta}_0 =
+46.25\)</span></p></li>
+<li><p><span class="math inline">\(\hat{\beta}_1 =
+3.06\)</span></p></li>
+<li><p>Estimated regression line: <span class="math inline">\(y = 46.25
++ 3.06 x\)</span>.</p></li>
+<li><p>It is a pain to extract these values using base R, but the
+<code>{broom}</code> package has a nice function called
+<code>tidy()</code> that returns coefficient estimates in a data
+frame.</p>
 <pre class="r"><code>library(broom)
 est &lt;- tidy(lmout)
 est</code></pre>
@@ -599,7 +746,10 @@ est</code></pre>
 ## 2 growth          3.06     0.696      4.40 6.10e- 4</code></pre>
 <pre class="r"><code>est$estimate</code></pre>
 <pre><code>## [1] 46.248  3.061</code></pre></li>
-<li><p><strong>Exercise</strong>: From the <code>mtcars</code> data, find the OLS estimates of <code>mpg</code> (the response) on <code>wt</code> (the predictor). Interpret the coefficients. You can load these data into R using:</p>
+<li><p><strong>Exercise</strong>: From the <code>mtcars</code> data,
+find the OLS estimates of <code>mpg</code> (the response) on
+<code>wt</code> (the predictor). Interpret the coefficients. You can
+load these data into R using:</p>
 <pre class="r"><code>data(&quot;mtcars&quot;)</code></pre></li>
 </ul>
 </div>
@@ -608,26 +758,36 @@ est</code></pre>
 <ol style="list-style-type: decimal">
 <li><p>Unbiased:</p>
 <p><span class="math display">\[
- E[\hat{\beta}_0] = \beta_0\\
- E[\hat{\beta}_1] = \beta_1
- \]</span></p></li>
+E[\hat{\beta}_0] = \beta_0\\
+E[\hat{\beta}_1] = \beta_1
+\]</span></p></li>
 <li><p>Gauss-Markov Theorem</p>
-<p>The OLS estimates have minimum sampling variance in the class of unbiased estimators that are linear functions of <span class="math inline">\(Y_1, Y_2,\ldots,Y_n\)</span>.</p></li>
+<p>The OLS estimates have minimum sampling variance in the class of
+unbiased estimators that are linear functions of <span
+class="math inline">\(Y_1, Y_2,\ldots,Y_n\)</span>.</p></li>
 </ol>
 <ul>
-<li><p>Recall <strong>sampling distribution</strong>: The distribution of an estimator across many theoretical samples. The sampling variance is the variance of the sampling distribution.</p></li>
-<li><p>Let’s demonstrate the unbiased property through simulation. Let’s choose <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and the <span class="math inline">\(X_i\)</span>’s:</p>
+<li><p>Recall <strong>sampling distribution</strong>: The distribution
+of an estimator across many theoretical samples. The sampling variance
+is the variance of the sampling distribution.</p></li>
+<li><p>Let’s demonstrate the unbiased property through simulation. Let’s
+choose <span class="math inline">\(\beta_0\)</span>, <span
+class="math inline">\(\beta_1\)</span>, and the <span
+class="math inline">\(X_i\)</span>’s:</p>
 <pre class="r"><code>x &lt;- runif(n = 100)
 beta0 &lt;- 1
 beta1 &lt;- 2</code></pre></li>
-<li><p>To simulate <span class="math inline">\(Y_i\)</span>’s, we generate new errors each replication.</p>
+<li><p>To simulate <span class="math inline">\(Y_i\)</span>’s, we
+generate new errors each replication.</p>
 <pre class="r"><code>epsilon &lt;- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
 qplot(epsilon, bins = 10)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>y &lt;- beta0 + beta1 * x + epsilon
 qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>We then use <code>lm()</code> to find <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> each replication.</p>
+<li><p>We then use <code>lm()</code> to find <span
+class="math inline">\(\hat{\beta}_0\)</span> and <span
+class="math inline">\(\hat{\beta}_1\)</span> each replication.</p>
 <pre class="r"><code>lmout &lt;- lm(y ~ x)
 beta0_hat &lt;- tidy(lmout)$estimate[[1]]
 beta1_hat &lt;- tidy(lmout)$estimate[[2]]
@@ -635,7 +795,9 @@ beta0_hat</code></pre>
 <pre><code>## [1] 0.9076</code></pre>
 <pre class="r"><code>beta1_hat</code></pre>
 <pre><code>## [1] 2.245</code></pre></li>
-<li><p>We can use a for-loop to generate many samples, and for each sample we collect the <span class="math inline">\(\hat{\beta}_0\)</span> and the <span class="math inline">\(\hat{\beta}_1\)</span></p>
+<li><p>We can use a for-loop to generate many samples, and for each
+sample we collect the <span class="math inline">\(\hat{\beta}_0\)</span>
+and the <span class="math inline">\(\hat{\beta}_1\)</span></p>
 <pre class="r"><code>nrep &lt;- 1000
 beta0_hat &lt;- rep(NA, nrep)
 beta1_hat &lt;- rep(NA, nrep)
@@ -660,7 +822,10 @@ for (i in 1:nrep) {
 <p><img src="03_ols_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(beta1_hat, bins = 20) + geom_vline(xintercept = beta1, color = &quot;red&quot;)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Note: In this simulation process, the <span class="math inline">\(X_i\)</span>’s were <strong>fixed</strong> each replication (from sample to sample). This is an assumption of most sampling properties that we’ll discuss.</p></li>
+<li><p>Note: In this simulation process, the <span
+class="math inline">\(X_i\)</span>’s were <strong>fixed</strong> each
+replication (from sample to sample). This is an assumption of most
+sampling properties that we’ll discuss.</p></li>
 </ul>
 </div>
 <div id="estimating-mean-response" class="section level1">
@@ -670,31 +835,49 @@ for (i in 1:nrep) {
 <p><span class="math display">\[
   \hat{Y} = \hat{\beta}_0 + \hat{\beta}_1X
   \]</span></p></li>
-<li><p><span class="math inline">\(\hat{Y}\)</span> is the estimate of the mean response when the level of the predictor is <span class="math inline">\(X\)</span>.</p></li>
-<li><p>We set <span class="math inline">\(\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1X_i\)</span> for the observed levels of predictors <span class="math inline">\(X_1, X_2,\ldots, X_n\)</span>. These are called the <strong>fitted values</strong>. These are in contrast to the <strong>observed values</strong>, which are just the original <span class="math inline">\(Y_1,Y_2,\ldots,Y_n\)</span>.</p></li>
-<li><p><strong>Exercise</strong>: Recall that in the bread and peace example, the estimated regression function is <span class="math display">\[
+<li><p><span class="math inline">\(\hat{Y}\)</span> is the estimate of
+the mean response when the level of the predictor is <span
+class="math inline">\(X\)</span>.</p></li>
+<li><p>We set <span class="math inline">\(\hat{Y}_i = \hat{\beta}_0 +
+\hat{\beta}_1X_i\)</span> for the observed levels of predictors <span
+class="math inline">\(X_1, X_2,\ldots, X_n\)</span>. These are called
+the <strong>fitted values</strong>. These are in contrast to the
+<strong>observed values</strong>, which are just the original <span
+class="math inline">\(Y_1,Y_2,\ldots,Y_n\)</span>.</p></li>
+<li><p><strong>Exercise</strong>: Recall that in the bread and peace
+example, the estimated regression function is <span
+class="math display">\[
   \hat{Y} = 46.248 + 3.061 X
-  \]</span> What is the estimated mean incumbant vote-share when the growth is 2%?</p></li>
+  \]</span> What is the estimated mean incumbant vote-share when the
+growth is 2%?</p></li>
 </ul>
 </div>
 <div id="residuals" class="section level1">
 <h1>Residuals</h1>
 <ul>
-<li><p>We often evaluate the performance of a model by looking at how far the fitted values are from the observed values.</p></li>
-<li><p>The <span class="math inline">\(i\)</span>th <strong>residual</strong> are <span class="math display">\[
+<li><p>We often evaluate the performance of a model by looking at how
+far the fitted values are from the observed values.</p></li>
+<li><p>The <span class="math inline">\(i\)</span>th
+<strong>residual</strong> are <span class="math display">\[
   e_i = Y_i - \hat{Y}_i.
   \]</span></p></li>
-<li><p>These are different from the model error terms, which are <span class="math display">\[
+<li><p>These are different from the model error terms, which are <span
+class="math display">\[
   \epsilon_i = Y_i - E[Y_i|X_i]
   \]</span></p></li>
-<li><p>The residuals are the deviation from an <em>estimated</em> regression function, and so are known.</p></li>
-<li><p>The error terms are the deviation from the <em>unknown true</em> regression function, and so are unknown.</p></li>
+<li><p>The residuals are the deviation from an <em>estimated</em>
+regression function, and so are known.</p></li>
+<li><p>The error terms are the deviation from the <em>unknown true</em>
+regression function, and so are unknown.</p></li>
 <li><p>Graphic:</p>
 <p><img src="03_figs/bread_line.png" /> </p></li>
-<li><p><strong>Exercise</strong>: In the above graphic, is the residual <em>positive</em> or <em>negative</em>? Did we underestimate or over estimate here?</p></li>
+<li><p><strong>Exercise</strong>: In the above graphic, is the residual
+<em>positive</em> or <em>negative</em>? Did we underestimate or over
+estimate here?</p></li>
 </ul>
 </div>
-<div id="obtaining-fitted-values-and-residuals-in-r" class="section level1">
+<div id="obtaining-fitted-values-and-residuals-in-r"
+class="section level1">
 <h1>Obtaining fitted values and residuals in R</h1>
 <ul>
 <li><p>To obtain predictions, you need to</p>
@@ -712,7 +895,9 @@ newdf</code></pre>
 <pre class="r"><code>predict(object = lmout, newdata = newdf)</code></pre>
 <pre><code>##     1     2 
 ## 49.61 52.98</code></pre></li>
-<li><p>To obtain the fitted values and the residuals, use the <code>augment()</code> from the <code>{broom}</code> package. Pass to it the output from <code>lm()</code>.</p>
+<li><p>To obtain the fitted values and the residuals, use
+<code>augment()</code> from the <code>{broom}</code> package. Pass to it
+the output from <code>lm()</code>.</p>
 <pre class="r"><code>aout &lt;- augment(x = lmout)
 glimpse(aout)</code></pre>
 <pre><code>## Rows: 16
@@ -727,10 +912,12 @@ glimpse(aout)</code></pre>
 ## $ .std.resid &lt;dbl&gt; -2.47947, 0.74558, 0.29717, 0.67535, -1.65509, 1.29717, -0.…</code></pre></li>
 </ul>
 </div>
-<div id="alternative-means-to-obtain-fitted-values-and-residuals-in-r." class="section level1">
+<div id="alternative-means-to-obtain-fitted-values-and-residuals-in-r."
+class="section level1">
 <h1>Alternative means to obtain fitted values and residuals in R.</h1>
 <ul>
-<li><p>If <code>augment()</code> does not work, there are base R methods to obtain residuals and fitted values.</p></li>
+<li><p>If <code>augment()</code> does not work, there are base R methods
+to obtain residuals and fitted values.</p></li>
 <li><p>You can get the residuals via <code>residuals()</code></p>
 <pre class="r"><code>residuals(object = lmout)</code></pre>
 <pre><code>##       1       2       3       4       5       6       7       8       9      10 
@@ -748,65 +935,98 @@ glimpse(aout)</code></pre>
 <div id="properties-of-fitted-regression-line" class="section level1">
 <h1>Properties of Fitted Regression Line</h1>
 <ul>
-<li>I’ve seen folks over-interpret these items when they are just properties of every OLS line. So it’s good to be aware of these.</li>
+<li>I’ve seen folks over-interpret these items when they are just
+properties of every OLS line. So it’s good to be aware of these.</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li><p>Mean of residuals is 0. <span class="math display">\[
- \frac{1}{n}\sum_{i=1}^n e_i = 0
- \]</span></p></li>
-<li><p>Mean of observed values equals mean of fitted values. <span class="math display">\[
- \frac{1}{n}\sum_{i=1}^nY_i = \frac{1}{n}\sum_{i=1}^n\hat{Y}_i
- \]</span></p></li>
-<li><p>Residuals are uncorrelated with predictors <span class="math display">\[
- \frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(e_i - \bar{e}) = 0
- \]</span> (but remember that <span class="math inline">\(\bar{e} = 0\)</span>).</p></li>
-<li><p>Residuals are uncorrelated with <em>fitted</em> values. <span class="math display">\[
- \frac{1}{n-1}\sum_{i=1}^n(\hat{Y}_i-\bar{\hat{Y}})(e_i - \bar{e}) = 0
- \]</span> But note that the residuals <em>can</em> be correlated with the <em>observed</em> values.</p></li>
-<li><p>The regression line always goes through the mean <span class="math inline">\((\bar{X}, \bar{Y})\)</span>.</p></li>
+\frac{1}{n}\sum_{i=1}^n e_i = 0
+\]</span></p></li>
+<li><p>Mean of observed values equals mean of fitted values. <span
+class="math display">\[
+\frac{1}{n}\sum_{i=1}^nY_i = \frac{1}{n}\sum_{i=1}^n\hat{Y}_i
+\]</span></p></li>
+<li><p>Residuals are uncorrelated with predictors <span
+class="math display">\[
+\frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})(e_i - \bar{e}) = 0
+\]</span> (but remember that <span class="math inline">\(\bar{e} =
+0\)</span>).</p></li>
+<li><p>Residuals are uncorrelated with <em>fitted</em> values. <span
+class="math display">\[
+\frac{1}{n-1}\sum_{i=1}^n(\hat{Y}_i-\bar{\hat{Y}})(e_i - \bar{e}) = 0
+\]</span> But note that the residuals <em>can</em> be correlated with
+the <em>observed</em> values.</p></li>
+<li><p>The regression line always goes through the mean <span
+class="math inline">\((\bar{X}, \bar{Y})\)</span>.</p></li>
 </ol>
 <ul>
-<li><strong>Exercise</strong>: Demonstrate each of these properties on using the bread and peace data using R.</li>
+<li><strong>Exercise</strong>: Demonstrate each of these properties on
+using the bread and peace data using R.</li>
 </ul>
 </div>
 <div id="estimating-sigma2" class="section level1">
 <h1>Estimating <span class="math inline">\(\sigma^2\)</span></h1>
 <ul>
-<li><p>We’ll need an estimate of the variance to do inference (see Chapter 2).</p></li>
-<li><p>Recall that the simple linear regression model is <span class="math display">\[
+<li><p>We’ll need an estimate of the variance to do inference (see
+Chapter 2).</p></li>
+<li><p>Recall that the simple linear regression model is <span
+class="math display">\[
   Y_i = \beta_0 + \beta_1X_i + \epsilon_i\\
   E[\epsilon_i] = 0\\
   var(\epsilon_i) = \sigma^2
   \]</span></p></li>
-<li><p>So if we knew <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> and wanted to estimate <span class="math inline">\(\sigma^2\)</span>, we could calculate <span class="math display">\[
+<li><p>So if we knew <span class="math inline">\(\beta_0\)</span> and
+<span class="math inline">\(\beta_1\)</span> and wanted to estimate
+<span class="math inline">\(\sigma^2\)</span>, we could calculate <span
+class="math display">\[
   \epsilon_i = Y_i - (\beta_0 + \beta_1X_i)
-  \]</span> Then take the sample standard deviation of the <span class="math inline">\(\epsilon_i\)</span>’s.</p></li>
-<li><p>But we don’t know <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, so we insert their OLS estimates to get the residuals <span class="math display">\[
+  \]</span> Then take the sample variance of the <span
+class="math inline">\(\epsilon_i\)</span>’s.</p></li>
+<li><p>But we don’t know <span class="math inline">\(\beta_0\)</span>
+and <span class="math inline">\(\beta_1\)</span>, so we insert their OLS
+estimates to get the residuals <span class="math display">\[
   e_i = Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)
-  \]</span> And then take the sample standard deviation of the residuals to estimate <span class="math inline">\(\sigma^2\)</span>.</p></li>
-<li><p>We divide by <span class="math inline">\(n-2\)</span> to account for the two degrees of freedom lost when estimating <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p>
+  \]</span> And then take the sample variance of the residuals to
+estimate <span class="math inline">\(\sigma^2\)</span>.</p></li>
+<li><p>We divide by <span class="math inline">\(n-2\)</span> to account
+for the two degrees of freedom lost when estimating <span
+class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>.</p>
 <p><span class="math display">\[\begin{align}
   \hat{\sigma}^2 &amp;= \frac{1}{n-2}\sum_{i=1}^ne_i^2\\
                  &amp;= \frac{1}{n-2}\sum_{i=1}^n(Y_i - \hat{Y}_i)^2\\
-                 &amp;= \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+                 &amp;= \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 +
+\hat{\beta}_1X_i)]^2
   \end{align}\]</span></p></li>
-<li><p>This estimate is sometimes called the <strong>Mean Squared Error</strong> (MSE).</p></li>
+<li><p>This estimate is sometimes called the <strong>Mean Squared
+Error</strong> (MSE).</p></li>
 </ul>
 <div id="intuition-behind-degrees-of-freedom" class="section level3">
 <h3>Intuition behind degrees of freedom</h3>
 <ul>
-<li><p>If we knew <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, the best variance estimator we could come up with would be <span class="math display">\[
-  s_1^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_i)]^2 
+<li><p>If we knew <span class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>, the best variance estimator we
+could come up with would be <span class="math display">\[
+  s_1^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_i)]^2
   \]</span></p></li>
-<li><p>But we don’t know these quantities, so we use <span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span>.</p>
+<li><p>But we don’t know these quantities, so we use <span
+class="math inline">\(\hat{\beta}_1\)</span> and <span
+class="math inline">\(\hat{\beta}_2\)</span>.</p>
 <p><span class="math display">\[
-  s_2^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+  s_2^2 = \frac{1}{n}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 +
+\hat{\beta}_1X_i)]^2
   \]</span></p></li>
-<li><p>But remember that <span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span> minimize the objective, which is exactly the MSE. That means that <span class="math display">\[
+<li><p>But remember that <span
+class="math inline">\(\hat{\beta}_1\)</span> and <span
+class="math inline">\(\hat{\beta}_2\)</span> minimize the objective,
+which is exactly the MSE. That means that <span class="math display">\[
   s_2^2 &lt; s_1^2
   \]</span></p></li>
-<li><p>Dividing by the smaller <span class="math inline">\(n-2\)</span> instead of the larger <span class="math inline">\(n\)</span> corrects for this. That’s why we use <span class="math display">\[
-  \hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)]^2 
+<li><p>Dividing by the smaller <span class="math inline">\(n-2\)</span>
+instead of the larger <span class="math inline">\(n\)</span> corrects
+for this. That’s why we use <span class="math display">\[
+  \hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n[Y_i - (\hat{\beta}_0 +
+\hat{\beta}_1X_i)]^2
   \]</span></p></li>
 <li><p>It can be shown that <span class="math display">\[
   E[\hat{\sigma}^2] = \sigma^2
@@ -817,27 +1037,42 @@ glimpse(aout)</code></pre>
 <div id="the-normal-linear-model" class="section level1">
 <h1>The Normal Linear Model</h1>
 <ul>
-<li><p>We have so far made only minimal distributional assumptions. We have <strong>not</strong> assumed normality so far. All of these properties of the OLS estimators hold without assuming normality.</p></li>
-<li><p>We sometimes assume that the error terms are normally distributed. The <strong>normal simple linear model</strong> is</p>
+<li><p>We have so far made only minimal distributional assumptions. We
+have <strong>not</strong> assumed normality so far. All of these
+properties of the OLS estimators hold without assuming
+normality.</p></li>
+<li><p>We sometimes assume that the error terms are normally
+distributed. The <strong>normal simple linear model</strong> is</p>
 <p><span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\\
   \epsilon_i \sim N(0, \sigma^2)\\
-  \epsilon_1,\epsilon_2,\ldots,\epsilon_n \text{ are mutually independent}.
+  \epsilon_1,\epsilon_2,\ldots,\epsilon_n \text{ are mutually
+independent}.
   \]</span></p></li>
-<li><p>“Mutually independent” means that knowing the value of one tells you nothing about the values of the others.</p>
+<li><p>“Mutually independent” means that knowing the value of one tells
+you nothing about the values of the others.</p>
 <ul>
-<li>In the normal model, uncorrelated <span class="math inline">\(\Leftrightarrow\)</span> independent.</li>
+<li>In the normal model, uncorrelated <span
+class="math inline">\(\Leftrightarrow\)</span> independent.</li>
 </ul></li>
 <li><p>This implies that <span class="math display">\[
   Y_i|X_i \sim N(\beta_0 + \beta_1 X_i, \sigma^2)
   \]</span></p></li>
-<li><p><strong>Exercise</strong>: Do we assume that the predictors are normally distributed?</p></li>
-<li><p>In the normal linear model, we thus have four assumptions, in decreasing order of importance:</p>
+<li><p><strong>Exercise</strong>: Do we assume that the predictors are
+normally distributed?</p></li>
+<li><p>In the normal linear model, we thus have four assumptions, in
+decreasing order of importance:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Linearity</strong>: <span class="math inline">\(E[Y_i|X_i] = \beta_0 + \beta_1X_i\)</span></p></li>
-<li><p><strong>Uncorrelated errors</strong>: <span class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all <span class="math inline">\(i \neq j\)</span></p></li>
-<li><p><strong>Constant Variance</strong>: <span class="math inline">\(var(\epsilon_i) = \sigma^2\)</span></p></li>
-<li><p><strong>Normality</strong>: <span class="math inline">\(\epsilon_i \sim N(0, \sigma^2)\)</span></p></li>
+<li><p><strong>Linearity</strong>: <span
+class="math inline">\(E[Y_i|X_i] = \beta_0 +
+\beta_1X_i\)</span></p></li>
+<li><p><strong>Uncorrelated errors</strong>: <span
+class="math inline">\(cor(\epsilon_i, \epsilon_j) = 0\)</span> for all
+<span class="math inline">\(i \neq j\)</span></p></li>
+<li><p><strong>Constant Variance</strong>: <span
+class="math inline">\(var(\epsilon_i) = \sigma^2\)</span></p></li>
+<li><p><strong>Normality</strong>: <span
+class="math inline">\(\epsilon_i \sim N(0, \sigma^2)\)</span></p></li>
 </ol></li>
 <li><p>The normality assumption is really only important if</p>
 <ol style="list-style-type: decimal">
@@ -849,23 +1084,50 @@ glimpse(aout)</code></pre>
 <div id="method-of-maximum-likelihood" class="section level1">
 <h1>Method of Maximum Likelihood</h1>
 <ul>
-<li><p>We used the method of least squares to obtain the OLS estimates <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span>.</p></li>
-<li><p>We can derive these estimators using a different technique: the method of maximum likelihood.</p></li>
-<li><p>Idea: Given a data-generative model (like the normal linear model), find the parameters that maximize the probability of seeing the data that we actually saw.</p>
+<li><p>We used the method of least squares to obtain the OLS estimates
+<span class="math inline">\(\hat{\beta}_0\)</span> and <span
+class="math inline">\(\hat{\beta}_1\)</span>.</p></li>
+<li><p>We can derive these estimators using a different technique: the
+method of maximum likelihood.</p></li>
+<li><p>Idea: Given a data-generative model (like the normal linear
+model), find the parameters that maximize the probability of seeing the
+data that we actually saw.</p>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>This function of the parameter is called the <strong>likelihood function</strong>, and the parameter that maximized this function is called the <strong>maximum likelihood estimate</strong>.</p></li>
-<li><p>Given the normal assumption and values of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span>, we can calculate the density (which roughly means the probability) of our observed sample <span class="math inline">\((X_1, Y_1),(X_2, Y_2),\ldots, (X_n, Y_n)\)</span>.</p>
+<li><p>This function of the parameter is called the <strong>likelihood
+function</strong>, and the parameter that maximized this function is
+called the <strong>maximum likelihood estimate</strong>.</p></li>
+<li><p>Given the normal assumption and values of <span
+class="math inline">\(\beta_0\)</span>, <span
+class="math inline">\(\beta_1\)</span>, and <span
+class="math inline">\(\sigma^2\)</span>, we can calculate the density
+(which roughly means the probability) of our observed sample <span
+class="math inline">\((X_1, Y_1),(X_2, Y_2),\ldots, (X_n,
+Y_n)\)</span>.</p>
 <p><span class="math display">\[
-  f(data|\beta_0,\beta_1,\sigma^2) = \prod_{i=1}^n N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)
+  f(data|\beta_0,\beta_1,\sigma^2) = \prod_{i=1}^n N(Y_i|\beta_0 +
+\beta_1X_i, \sigma^2)
   \]</span></p></li>
-<li><p>Here, <span class="math inline">\(N(a|b,c^2)\)</span> is notation for the density of value <span class="math inline">\(a\)</span> with mean <span class="math inline">\(b\)</span> and variance <span class="math inline">\(c^2\)</span>: <span class="math display">\[
-  N(a|b,c^2) = \frac{1}{\sqrt{2\pi c^2}}\exp\left[-\frac{1}{2c^2}(a-b)^2\right]
+<li><p>Here, <span class="math inline">\(N(a|b,c^2)\)</span> is notation
+for the density of value <span class="math inline">\(a\)</span> with
+mean <span class="math inline">\(b\)</span> and variance <span
+class="math inline">\(c^2\)</span>: <span class="math display">\[
+  N(a|b,c^2) = \frac{1}{\sqrt{2\pi
+c^2}}\exp\left[-\frac{1}{2c^2}(a-b)^2\right]
   \]</span></p></li>
-<li><p>One idea is to find the values of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\sigma^2\)</span> to make the data that we did observe as likely as possible.</p></li>
-<li><p>Typically, we actually work with the log-likelihood <span class="math display">\[
-  L(data|\beta_0,\beta_1,\sigma^2) = \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right]
+<li><p>One idea is to find the values of <span
+class="math inline">\(\beta_0\)</span>, <span
+class="math inline">\(\beta_1\)</span>, and <span
+class="math inline">\(\sigma^2\)</span> to make the data that we did
+observe as likely as possible.</p></li>
+<li><p>Typically, we actually work with the log-likelihood <span
+class="math display">\[
+  L(data|\beta_0,\beta_1,\sigma^2) = \sum_{i=1}^n \log
+\left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right]
   \]</span></p></li>
-<li><p>Let’s calculate the log-likelihood from the bread and peace example at <span class="math inline">\(\beta_0 = 45\)</span>, <span class="math inline">\(\beta_1 = 3\)</span> and <span class="math inline">\(\sigma^2 = 3.5\)</span></p>
+<li><p>Let’s calculate the log-likelihood from the bread and peace
+example at <span class="math inline">\(\beta_0 = 45\)</span>, <span
+class="math inline">\(\beta_1 = 3\)</span> and <span
+class="math inline">\(\sigma^2 = 3.5\)</span></p>
 <pre class="r"><code>ll &lt;- function(beta0, beta1, sigma2) {
   dnorm(x = hibbs$vote, 
         mean = beta0 + beta1 * hibbs$growth, 
@@ -879,15 +1141,30 @@ ll(4, 3, 3.5)</code></pre>
 <pre class="r"><code>ll(46.25, 3.06, 3.76)</code></pre>
 <pre><code>## [1] -51.66</code></pre>
 <p>Much higher!</p></li>
-<li><p>It turns out the the OLS estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> are also the maximum likelihood estimates of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p></li>
-<li><p>The MLE of <span class="math inline">\(\sigma^2\)</span> is <span class="math inline">\(\frac{n-2}{n}\hat{\sigma}^2\)</span> (the uncorrected standard deviation estimate).</p></li>
+<li><p>It turns out the the OLS estimates of <span
+class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span> are also the maximum likelihood
+estimates of <span class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>.</p></li>
+<li><p>The MLE of <span class="math inline">\(\sigma^2\)</span> is <span
+class="math inline">\(\frac{n-2}{n}\hat{\sigma}^2\)</span> (the
+uncorrected standard deviation estimate).</p></li>
 <li><p>Derivation <span class="math display">\[\begin{align}
-  \max \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i, \sigma^2)\right] &amp;= \max\sum_{i=1}^n\left[-\frac{1}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
-  &amp;= \min\sum_{i=1}^n\left[\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
-  &amp;= \min\left[n\frac{1}{2}\log(2\pi\sigma^2) + \frac{1}{2\sigma^2}\sum_{i=1}^n(Y_i - \beta_0 - \beta_1X_i)^2\right]
+  \max \sum_{i=1}^n \log \left[N(Y_i|\beta_0 + \beta_1X_i,
+\sigma^2)\right] &amp;=
+\max\sum_{i=1}^n\left[-\frac{1}{2}\log(2\pi\sigma^2) -
+\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
+  &amp;= \min\sum_{i=1}^n\left[\frac{1}{2}\log(2\pi\sigma^2) +
+\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right]\\
+  &amp;= \min\left[n\frac{1}{2}\log(2\pi\sigma^2) +
+\frac{1}{2\sigma^2}\sum_{i=1}^n(Y_i - \beta_0 - \beta_1X_i)^2\right]
   \end{align}\]</span></p>
-<p>When we minimize over <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, we just need to worry about the second term. But this is equivalent to minimizing the sum of squares!</p></li>
-<li><p>Maximum likelihood estimation is a very general approach to estimating a parameter given a data generative model.</p></li>
+<p>When we minimize over <span class="math inline">\(\beta_0\)</span>
+and <span class="math inline">\(\beta_1\)</span>, we just need to worry
+about the second term. But this is equivalent to minimizing the sum of
+squares!</p></li>
+<li><p>Maximum likelihood estimation is a very general approach to
+estimating a parameter given a data generative model.</p></li>
 </ul>
 </div>
 

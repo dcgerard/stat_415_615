@@ -583,7 +583,7 @@ saveGIF(expr = {
     predict(object = lmout, newdata = newdf)
     ```
 
-- To obtain the fitted values and the residuals, use the `augment()` from the `{broom}` package. Pass to it the output from `lm()`.
+- To obtain the fitted values and the residuals, use `augment()` from the `{broom}` package. Pass to it the output from `lm()`.
 
     ```{r}
     aout <- augment(x = lmout)
@@ -671,13 +671,13 @@ saveGIF(expr = {
     $$
     \epsilon_i = Y_i - (\beta_0 + \beta_1X_i)
     $$
-    Then take the sample standard deviation of the $\epsilon_i$'s.
+    Then take the sample variance of the $\epsilon_i$'s.
 
 - But we don't know $\beta_0$ and $\beta_1$, so we insert their OLS estimates to get the residuals
     $$
     e_i = Y_i - (\hat{\beta}_0 + \hat{\beta}_1X_i)
     $$
-    And then take the sample standard deviation of the residuals to estimate $\sigma^2$.
+    And then take the sample variance of the residuals to estimate $\sigma^2$.
     
 - We divide by $n-2$ to account for the two degrees of freedom lost when estimating $\beta_0$ and $\beta_1$.
 
