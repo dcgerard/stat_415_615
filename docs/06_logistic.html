@@ -698,8 +698,61 @@ class="math inline">\(e^{\beta_1}\)</span> times as large as the odds of
 the first individual.</p></li>
 <li><p>Different way to say this: The odds ratio for the two individuals
 is <span class="math inline">\(e^{\beta_1}\)</span>.</p></li>
+<li><p>Recall the estimated regression relationship from the Donner
+party example: <span class="math display">\[
+  \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
+  \]</span></p></li>
+<li><p>So individuals of the same sex that are 10 years younger have
+about twice the odds of surviving (<span class="math inline">\(e^{0.08}
+\times 10} = 2.186\)</span>). Also, a woman’s odds of survival were
+about 5 times that of a man of the same age (<span
+class="math inline">\(e^{1.6} = 4.95\)</span>).</p></li>
+<li><p><strong>Exercise</strong>: The nocturia data set, described <a
+href="https://dcgerard.github.io/stat_415_615/data.html#Nocturia">here</a>
+and dowloadable from <a
+href="https://dcgerard.github.io/stat_415_615/data/nocturia.csv">here</a>,
+contains patient covariates that are believed to be associated with
+whether the individual has nocturia (wakes up to pee). Download the
+data, the fit of logistic regression model of nocturia on age. Interpret
+the resulting coefficients.</p></li>
 </ul>
 </div>
+</div>
+<div id="retrospective-studies" class="section level1">
+<h1>Retrospective studies</h1>
+<ul>
+<li><p>In a <strong>prospective</strong> study, the explanatory
+variables are fixed and we imagine <span
+class="math inline">\(Y_i\)</span> being sampled given <span
+class="math inline">\(X_i\)</span>.</p>
+<ul>
+<li>E.g. we might choose <span class="math inline">\(200\)</span>
+patients and observe their cancer status.</li>
+</ul></li>
+<li><p>In a <strong>retrospective</strong> study, we fix <span
+class="math inline">\(Y_i\)</span> and later observe their <span
+class="math inline">\(X_i\)</span>.</p>
+<ul>
+<li>E.g. we might choose <span class="math inline">\(n = 100\)</span>
+cancer patients and <span class="math inline">\(n = 100\)</span>
+controls.</li>
+<li>This is typically done with the probability of one group is really
+small and you want more samples of that group.</li>
+</ul></li>
+<li><p>The LPM model (and probit model) are <strong>not</strong> valid
+in retrospective studies, but the logistic regression model
+<strong>is</strong> valid. So in retrospective studies you
+<strong>must</strong> use logistic regression.</p></li>
+<li><p>The reason is that the odds ratios for prospective studies and
+retrospective studies are the same, even though the probabilities are
+not.</p></li>
+<li><p>You can interpret slopes in the usual way in retrospective
+studies, but you cannot interpret the <span
+class="math inline">\(Y\)</span>-intercept, or <strong>any</strong>
+fixed estimate of the probability. In these studies,
+<strong>only</strong> the slope (the odds ratio) is
+interpretable.</p></li>
+</ul>
 </div>
 <div id="bias-reduction" class="section level1">
 <h1>Bias reduction</h1>
