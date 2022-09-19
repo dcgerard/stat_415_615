@@ -300,6 +300,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `nurses`: Average number of full-time equivalent registered and licensed practical nurses during study period (full time plus half part-time).
     - `facilities`: Percent of 35 potential facilities and services that are provided by the hospital.
     
+    
+# Taxes in Tudor England
+
+- [tax.csv](./data/tax.csv): These data were extracted from the scatterplot of Figure 1 of @cesaretti2020. Economists think moderng cities are more efficient engines of economic growth, producing more output per individual. This is because of various factors like easier access to skilled labor, logistical cost savings because folks are closer together, etc. @cesaretti2020 wanted to test if this was also true in old England. They collected data from the 1524--1525 tax years from 93 towns. Variables include:
+    - `taxpayers`: Number of taxpayers in the town.
+    - `tax`: The total tax collected by from the town, in British pounds £.
+    
 # Textile Data
 
 - [textile.csv](./data/textile.csv): These data from @shadid2010study measures the strength to resist breakage of knited fabric across conditions of length and yarn count. These data were downloaded from Larry Winner's [data page](http://users.stat.ufl.edu/~winner/datasets.html). Variables include:

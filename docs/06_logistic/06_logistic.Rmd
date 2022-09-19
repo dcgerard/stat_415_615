@@ -201,6 +201,12 @@ library(lmtest)
 
 # Estimation
 
+## Maximum Likelihood Estimation
+
+
+
+## Practical Use in R
+
 - Let $Y_i$ be an indicator for survival for individual $i$, let $X_{i1}$ be the age of individual $i$, and let $X_{i2}$ be an indicator for male Then we fit the model
     \begin{align}
     Y_i &\sim Bern(p_i)\\
@@ -289,7 +295,38 @@ library(lmtest)
     
 - So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.08} \times 10} = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
 
-- **Exercise**: 
+- **Exercise**: The nocturia data set, described [here](https://dcgerard.github.io/stat_415_615/data.html#Nocturia) and dowloadable from [here](https://dcgerard.github.io/stat_415_615/data/nocturia.csv), contains patient covariates that are believed to be associated with whether the individual has nocturia (wakes up to pee). Download the data, the fit of logistic regression model of nocturia on age. Interpret the resulting coefficients.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    nocturia <- read_csv("https://dcgerard.github.io/stat_415_615/data/nocturia.csv")
+    qplot(x = age, y = nocturia, data = nocturia, geom = "jitter", width = 0, height = 0.05) +
+      geom_smooth(method = "glm", se = FALSE, method.args = list(family = binomial))
+    
+    glmout <- glm(nocturia ~ age, data = nocturia, family = binomial)
+    tout <- tidy(glmout)
+    tout
+    exp(tout$estimate[[2]] * 10)
+    ```
+    
+    ```{block, eval = FALSE, echo = FALSE}
+    Individuals 10 years older have about 1.6 times the odds of having nocturia.
+    ```
+
+# Retrospective studies
+
+- In a **prospective** study, the explanatory variables are fixed and we imagine $Y_i$ being sampled given $X_i$.
+    - E.g. we might choose $200$ patients and observe their cancer status.
+
+- In a **retrospective** study, we fix $Y_i$ and later observe their $X_i$. 
+    - E.g. we might choose $n = 100$ cancer patients and $n = 100$ controls.
+    - This is typically done with the probability of one group is really small and you want more samples of that group.
+    
+- The LPM model (and probit model) are **not** valid in retrospective studies, but the logistic regression model **is** valid. So in retrospective studies you **must** use logistic regression.
+
+- The reason is that the odds ratios for prospective studies and retrospective studies are the same, even though the probabilities are not.
+
+- You can interpret slopes in the usual way in retrospective studies, but you cannot interpret the $Y$-intercept, or **any** fixed estimate of the probability. In these studies, **only** the slope (the odds ratio) is interpretable.
+
 
 # Bias reduction
 
