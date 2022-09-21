@@ -117,7 +117,7 @@ You can read about the copiers dataset [here](https://dcgerard.github.io/stat_41
     Yes. 0 is not covered by the 95\% confidence interval, so the $p$-value should be less than 0.05.
     ```
 
-9. The manufacturer has suggested that the mean required time should not increase by more than 14 minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.
+9. The manufacturer has suggested that the mean required time should not be more than 14 additional minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.
 
     ```{r}
     beta1_hat <- tout$estimate[[2]]

@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-02" />
+<meta name="date" content="2022-09-21" />
 
 <title>Inference Lab</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -62,6 +62,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -82,6 +83,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -139,11 +143,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -234,7 +242,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -265,36 +273,73 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Inference Lab</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-02</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#copier-maintenance">Copier Maintenance</a></li>
+<li><a href="#copier-maintenance" id="toc-copier-maintenance">Copier
+Maintenance</a></li>
 </ul>
 </div>
 
 <div id="copier-maintenance" class="section level1">
 <h1>Copier Maintenance</h1>
-<p>You can read about the copiers dataset <a href="https://dcgerard.github.io/stat_415_615/data.html#copiers">here</a>, and download it from here: <a href="https://dcgerard.github.io/stat_415_615/data/copiers.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/copiers.csv</a></p>
+<p>You can read about the copiers dataset <a
+href="https://dcgerard.github.io/stat_415_615/data.html#copiers">here</a>,
+and download it from here: <a
+href="https://dcgerard.github.io/stat_415_615/data/copiers.csv"
+class="uri">https://dcgerard.github.io/stat_415_615/data/copiers.csv</a></p>
 <ol style="list-style-type: decimal">
-<li><p>Obtain the estimated regression function of a regression of minutes on number of copiers.</p></li>
-<li><p>Plot the estimated regression function and the data. How well does the estimated regression function fit the data?</p></li>
-<li><p>Interpret <span class="math inline">\(\hat{\beta}_0\)</span> in your estimated regression function. Does <span class="math inline">\(\hat{\beta}_0\)</span> provide any relevant information here?</p></li>
-<li><p>Obtain a point estimate of the mean service time when <span class="math inline">\(X=5\)</span> copiers are serviced.</p></li>
-<li><p>Estimate the difference in the mean service time when servicing one more copier. Use a 90% confidence interval. Interpret your confidence interval.</p></li>
-<li><p>Adjust your confidence interval from part 5 to estimate the difference in mean service time when servicing two more copiers.</p></li>
-<li><p>Test whether or not there is a linear association between the number of copiers and the time of service. State your conclusion.</p></li>
-<li><p>Are your results in parts (6) and (7) consistent? Explain.</p></li>
-<li><p>The manufacturer has suggested that the mean required time should not increase by more than 14 minutes for each additional copier that is serviced on a service call. Conduct a test to decide whether this standard is being satisfied by the company. State your conclusions.</p></li>
-<li><p>Obtain a 90% confidence interval for the mean service time on calls in which six copiers are serviced. Interpret your confidence interval.</p></li>
-<li><p>Obtain a 90% prediction interval for the service time on the next call in which six copiers are serviced. Is your prediction interval wider than the corresponding confidence interval in part (10)? Should it be?</p></li>
-<li><p>Management wished to estimate the expected service time <em>per copier</em> on calls in which six copiers are serviced. Obtain an appropriate 90% confidence interval by converting the interval obtained in part (10). Interpret the converted confidence interval.</p></li>
-<li><p>Use <code>augment()</code> from the <code>{broom}</code> package to obtain the residuals of the regression of service time on copier number.</p></li>
-<li><p>Calculate the SSTO, SSE, and SSR by hand. Use these to write out an ANOVA table.</p></li>
-<li><p>Use the sums of squares from part 13 to conduct an F-test to determine whether or not there is a linear association between time spent and the number of copiers serviced. State your conclusions.</p></li>
-<li><p>Verify parts (13) and (14) using the <code>Anova()</code> function from the <code>{car}</code> package.</p></li>
+<li><p>Obtain the estimated regression function of a regression of
+minutes on number of copiers.</p></li>
+<li><p>Plot the estimated regression function and the data. How well
+does the estimated regression function fit the data?</p></li>
+<li><p>Interpret <span class="math inline">\(\hat{\beta}_0\)</span> in
+your estimated regression function. Does <span
+class="math inline">\(\hat{\beta}_0\)</span> provide any relevant
+information here?</p></li>
+<li><p>Obtain a point estimate of the mean service time when <span
+class="math inline">\(X=5\)</span> copiers are serviced.</p></li>
+<li><p>Estimate the difference in the mean service time when servicing
+one more copier. Use a 90% confidence interval. Interpret your
+confidence interval.</p></li>
+<li><p>Adjust your confidence interval from part 5 to estimate the
+difference in mean service time when servicing two more
+copiers.</p></li>
+<li><p>Test whether or not there is a linear association between the
+number of copiers and the time of service. State your
+conclusion.</p></li>
+<li><p>Are your results in parts (6) and (7) consistent?
+Explain.</p></li>
+<li><p>The manufacturer has suggested that the mean required time should
+not be more than 14 additional minutes for each additional copier that
+is serviced on a service call. Conduct a test to decide whether this
+standard is being satisfied by the company. State your
+conclusions.</p></li>
+<li><p>Obtain a 90% confidence interval for the mean service time on
+calls in which six copiers are serviced. Interpret your confidence
+interval.</p></li>
+<li><p>Obtain a 90% prediction interval for the service time on the next
+call in which six copiers are serviced. Is your prediction interval
+wider than the corresponding confidence interval in part (10)? Should it
+be?</p></li>
+<li><p>Management wished to estimate the expected service time <em>per
+copier</em> on calls in which six copiers are serviced. Obtain an
+appropriate 90% confidence interval by converting the interval obtained
+in part (10). Interpret the converted confidence interval.</p></li>
+<li><p>Use <code>augment()</code> from the <code>{broom}</code> package
+to obtain the residuals of the regression of service time on copier
+number.</p></li>
+<li><p>Calculate the SSTO, SSE, and SSR by hand. Use these to write out
+an ANOVA table.</p></li>
+<li><p>Use the sums of squares from part 13 to conduct an F-test to
+determine whether or not there is a linear association between time
+spent and the number of copiers serviced. State your
+conclusions.</p></li>
+<li><p>Verify parts (13) and (14) using the <code>Anova()</code>
+function from the <code>{car}</code> package.</p></li>
 </ol>
 </div>
 
