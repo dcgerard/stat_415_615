@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-10-26" />
+<meta name="date" content="2022-09-21" />
 
 <title>Multiple Linear Regression I</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -314,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-10-26</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
@@ -358,7 +366,8 @@ div.tocify {
 <h1>Learning Objectives</h1>
 <ul>
 <li>Multiple linear regression model definition and interpretation.</li>
-<li>Indicator variables, transformed variables, interaction effects,</li>
+<li>Indicator variables, transformed variables, interaction
+effects,</li>
 <li>Inference</li>
 <li>Diagnostics and remedial measures.</li>
 <li>Chapter 6 of KNNL</li>
@@ -368,70 +377,128 @@ div.tocify {
 <h1>Motivation</h1>
 <ul>
 <li><p>Most regression problems have more than one predictor.</p></li>
-<li><p>Multiple linear regression explores the relationship between <strong>one response variable</strong> and <strong>multiple predictor variables</strong>.</p>
+<li><p>Multiple linear regression explores the relationship between
+<strong>one response variable</strong> and <strong>multiple predictor
+variables</strong>.</p>
 <ul>
-<li>(if you have multiple response variables, this is called “multivariate” regression, and is a separate topic)</li>
+<li>(if you have multiple response variables, this is called
+“multivariate” regression, and is a separate topic)</li>
 </ul></li>
 <li><p>Examples:</p>
 <ul>
-<li>Predicting volume of tractor sales in a territory (<span class="math inline">\(Y\)</span>) given number of farms (<span class="math inline">\(X_1\)</span>) and crop production (<span class="math inline">\(X_2\)</span>).</li>
-<li>Predicting a political party’s vote share in a congressional district (<span class="math inline">\(Y\)</span>) given that party’s vote share in the previous election (<span class="math inline">\(X_1\)</span>) and the incumbancy’s status of the political party (<span class="math inline">\(X_2\)</span>).</li>
+<li>Predicting volume of tractor sales in a territory (<span
+class="math inline">\(Y\)</span>) given number of farms (<span
+class="math inline">\(X_1\)</span>) and crop production (<span
+class="math inline">\(X_2\)</span>).</li>
+<li>Predicting a political party’s vote share in a congressional
+district (<span class="math inline">\(Y\)</span>) given that party’s
+vote share in the previous election (<span
+class="math inline">\(X_1\)</span>) and the incumbancy’s status of the
+political party (<span class="math inline">\(X_2\)</span>).</li>
 </ul></li>
 <li><p>Why include more predictors?</p>
 <ul>
-<li>You can often get a more accurate prediction of <span class="math inline">\(Y\)</span> if you include more <span class="math inline">\(X\)</span>’s.</li>
-<li>You can adjust for other variables when assessing the relationship between a response and a predictor of interest. (researchers often call this “controlling” for other variables)</li>
+<li>You can often get a more accurate prediction of <span
+class="math inline">\(Y\)</span> if you include more <span
+class="math inline">\(X\)</span>’s.</li>
+<li>You can adjust for other variables when assessing the relationship
+between a response and a predictor of interest. (researchers often call
+this “controlling” for other variables)</li>
 </ul></li>
-<li><p>Adjusting is necessary because the strength/sign of a relationship might change once you adjust for a variable.</p></li>
-<li><p>Consider the earnings data described <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a> and available for download <a href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p>
-<p>We might be interested in the association between height and earnings. Indeed, there seems to be a slight positive relationship. <img src="05_mlr_i_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>But then we remember that men tend to be taller than women, and men tend to make more money than women, and so this might be the reason why <strong>marginally</strong> we are seeing this association between height and earnings. <img src="05_mlr_i_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>The relationship appears to still be slightly positive within each sex, but nowhere near as strong as the marginal association.</p></li>
+<li><p>Adjusting is necessary because the strength/sign of a
+relationship might change once you adjust for a variable.</p></li>
+<li><p>Consider the earnings data described <a
+href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">here</a>
+and available for download <a
+href="https://dcgerard.github.io/stat_415_615/data/earnings.csv">here</a>.</p>
+<p>We might be interested in the association between height and
+earnings. Indeed, there seems to be a slight positive relationship.
+<img src="05_mlr_i_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>But then we remember that men tend to be taller than women, and men
+tend to make more money than women, and so this might be the reason why
+<strong>marginally</strong> we are seeing this association between
+height and earnings.
+<img src="05_mlr_i_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>The relationship appears to still be slightly positive within each
+sex, but nowhere near as strong as the marginal association.</p></li>
 </ul>
 </div>
-<div id="multiple-linear-regression-model-2-predictors" class="section level1">
+<div id="multiple-linear-regression-model-2-predictors"
+class="section level1">
 <h1>Multiple linear regression model: 2 predictors</h1>
 <ul>
-<li><p>The multiple linear regression model for two predictors is <span class="math display">\[\begin{align}
+<li><p>The multiple linear regression model for two predictors is <span
+class="math display">\[\begin{align}
   Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\\
   E[\epsilon_i] &amp;= 0\\
   var(\epsilon_i) &amp;= \sigma^2\\
   cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
   \end{align}\]</span> where</p>
 <ul>
-<li><span class="math inline">\(Y_i\)</span> is the value of the response for individual <span class="math inline">\(i\)</span>.</li>
-<li><span class="math inline">\(X_{i1}\)</span> is the value of the first predictor for individual <span class="math inline">\(i\)</span>.</li>
-<li><span class="math inline">\(X_{i2}\)</span> is the value of the second predictor for individual <span class="math inline">\(i\)</span>.</li>
-<li><span class="math inline">\(\epsilon_i\)</span> is the error term for individual <span class="math inline">\(i\)</span> (vertical distance from plane).</li>
+<li><span class="math inline">\(Y_i\)</span> is the value of the
+response for individual <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(X_{i1}\)</span> is the value of the
+first predictor for individual <span
+class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(X_{i2}\)</span> is the value of the
+second predictor for individual <span
+class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\epsilon_i\)</span> is the error term
+for individual <span class="math inline">\(i\)</span> (vertical distance
+from plane).</li>
 </ul></li>
 <li><p>This necessarily means that <span class="math display">\[
   E[Y_i] = \beta_0 + \beta_1 X_{i1} + \beta_2X_{i2}
   \]</span></p></li>
 <li><p>We can visualize this model using KNNL’s figure 6.1:</p>
 <p><img src="figs/plane.png" /> </p></li>
-<li><p>The regression function (the deterministic part) is often called the <strong>regression surface</strong> or the <strong>response surface</strong>.</p></li>
-<li><p><strong>Example</strong>: It’s been determined, from the <code>mtcars</code> dataset, that the relationship of <code>drat</code> (<span class="math inline">\(X_1\)</span>) and <code>wt</code> (<span class="math inline">\(X_2\)</span>) with <code>mpg</code> (<span class="math inline">\(Y\)</span>) can be described by <span class="math display">\[
+<li><p>The regression function (the deterministic part) is often called
+the <strong>regression surface</strong> or the <strong>response
+surface</strong>.</p></li>
+<li><p><strong>Example</strong>: It’s been determined, from the
+<code>mtcars</code> dataset, that the relationship of <code>drat</code>
+(<span class="math inline">\(X_1\)</span>) and <code>wt</code> (<span
+class="math inline">\(X_2\)</span>) with <code>mpg</code> (<span
+class="math inline">\(Y\)</span>) can be described by <span
+class="math display">\[
   E[Y] = 30.3 + 1.4 X_1 - 4.8 X_2
   \]</span></p>
 <pre class="r"><code>data(&quot;mtcars&quot;)
 coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
 <pre><code>## (Intercept)        drat          wt 
 ##      30.290       1.442      -4.783</code></pre></li>
-<li><p>We interpret multiple linear models the same way we interpret simple linear models while <strong>considering that all predictors except one are fixed.</strong></p></li>
-<li><p>Suppose we are just interested in cars that are exactly 4000 pounds. Then, given a car is 4000 pounds, the regression relationship becomes <span class="math display">\[\begin{align}
+<li><p>We interpret multiple linear models the same way we interpret
+simple linear models while <strong>considering that all predictors
+except one are fixed.</strong></p></li>
+<li><p>Suppose we are just interested in cars that are exactly 4000
+pounds. Then, given a car is 4000 pounds, the regression relationship
+becomes <span class="math display">\[\begin{align}
   E[Y] &amp;= 30.3 + 1.4X_1 - 4.8 \times 4\\
   &amp;= 11.1 + 1.4 X_1.
-  \end{align}\]</span> So, given two cars that are the same weight, we expect the car with 1 more <code>drat</code> to have 1.4 more miles per gallon, on average.</p></li>
-<li><p>This interpretation would have held if we considered any other car weight (besides 4000 pounds).</p></li>
-<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as</p>
+  \end{align}\]</span> So, given two cars that are the same weight, we
+expect the car with 1 more <code>drat</code> to have 1.4 more miles per
+gallon, on average.</p></li>
+<li><p>This interpretation would have held if we considered any other
+car weight (besides 4000 pounds).</p></li>
+<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted
+as</p>
 <blockquote>
-<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_1\)</span> but have the same <span class="math inline">\(X_2\)</span>.</p>
+<p>The expected difference in <span class="math inline">\(Y\)</span>
+between two individuals that differ by 1 <span
+class="math inline">\(X_1\)</span> but have the same <span
+class="math inline">\(X_2\)</span>.</p>
 </blockquote></li>
-<li><p>Similarly, <span class="math inline">\(\beta_2\)</span> is interpreted as</p>
+<li><p>Similarly, <span class="math inline">\(\beta_2\)</span> is
+interpreted as</p>
 <blockquote>
-<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_2\)</span> but have the same <span class="math inline">\(X_1\)</span>.</p>
+<p>The expected difference in <span class="math inline">\(Y\)</span>
+between two individuals that differ by 1 <span
+class="math inline">\(X_2\)</span> but have the same <span
+class="math inline">\(X_1\)</span>.</p>
 </blockquote></li>
-<li><p>In the <code>mtcars</code> dataset example, a car that weighs 1000 pounds more but has the same drat will on average have 4.8 worse mpg.</p></li>
+<li><p>In the <code>mtcars</code> dataset example, a car that weighs
+1000 pounds more but has the same drat will on average have 4.8 worse
+mpg.</p></li>
 <li><p>Visualization for interpretation:</p>
 <p><img src="figs/mlr_interp/mlr_interp.gif" /> </p></li>
 </ul>
@@ -441,88 +508,123 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
 <ul>
 <li><p>The multiple linear regression (MLR) model is of the form</p>
 <p><span class="math display">\[\begin{align}
-  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
+  Y_i &amp;= \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots +
+\beta_{p-1}X_{i,p-1} + \epsilon_i\\
   E[\epsilon_i] &amp;= 0\\
   var(\epsilon_i) &amp;= \sigma^2\\
   cov(\epsilon_i, \epsilon_j) &amp;= 0 \text{ for all } i \neq j
   \end{align}\]</span></p></li>
-<li><p>Using summation notation, we can write the top equation by <span class="math display">\[
+<li><p>Using summation notation, we can write the top equation by <span
+class="math display">\[
   Y_i = \beta_0 + \sum_{j=1}^{p-1}\beta_j X_{ij}
   \]</span></p></li>
-<li><p>Why use <span class="math inline">\(p-1\)</span> in the indexing? The <span class="math inline">\(p\)</span>th variable is <span class="math inline">\(X_{0i} = 1\)</span> and the linear model can be equivalently written <span class="math display">\[\begin{align}
-  Y_i &amp;= \beta_0X_{0i} + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_pX_{i,p-1} + \epsilon_i\\
+<li><p>Why use <span class="math inline">\(p-1\)</span> in the indexing?
+The <span class="math inline">\(p\)</span>th variable is <span
+class="math inline">\(X_{0i} = 1\)</span> and the linear model can be
+equivalently written <span class="math display">\[\begin{align}
+  Y_i &amp;= \beta_0X_{0i} + \beta_1X_{i1} + \beta_2X_{i2} + \cdots +
+\beta_pX_{i,p-1} + \epsilon_i\\
    &amp;= \sum_{j=0}^{p-1}\beta_j X_{ij}
   \end{align}\]</span></p></li>
 <li><p>The response function <span class="math display">\[
   E[Y] = \beta_0 + \beta_1X_1 + \beta_2X_2 + \cdots + \beta_{p-1}X_{p-1}
-  \]</span> is a <strong>hyperplane</strong>. You cannot visualize this (since it involves more than three dimensions).</p></li>
-<li><p>The interpretation of <span class="math inline">\(\beta_i\)</span> is similar:</p>
+  \]</span> is a <strong>hyperplane</strong>. You cannot visualize this
+(since it involves more than three dimensions).</p></li>
+<li><p>The interpretation of <span
+class="math inline">\(\beta_i\)</span> is similar:</p>
 <blockquote>
-<p>The expected difference in <span class="math inline">\(Y\)</span> between two individuals that differ by 1 <span class="math inline">\(X_i\)</span> but have the same values of every other predictor.</p>
+<p>The expected difference in <span class="math inline">\(Y\)</span>
+between two individuals that differ by 1 <span
+class="math inline">\(X_i\)</span> but have the same values of every
+other predictor.</p>
 </blockquote></li>
-<li><p>Notice that I am not using the words “change”, “increase”, or “decrease”. These are forbidden words in this class.</p></li>
+<li><p>Notice that I am not using the words “change”, “increase”, or
+“decrease”. These are forbidden words in this class.</p></li>
 </ul>
 </div>
 <div id="the-flexibility-of-the-linear-model" class="section level1">
 <h1>The flexibility of the linear model</h1>
 <ul>
-<li>Fitting a hyperplane through a cloud of points seems restrictive, but it turns out that the multiple linear regression model is extremely flexible by including transformations of variables as covariates.</li>
+<li>Fitting a hyperplane through a cloud of points seems restrictive,
+but it turns out that the multiple linear regression model is extremely
+flexible by including transformations of variables as covariates.</li>
 </ul>
 <div id="polynomial-regression" class="section level2">
 <h2>Polynomial regression</h2>
 <ul>
-<li><p>Suppose we want to fit a quadratic function to some data. Our model is</p>
+<li><p>Suppose we want to fit a quadratic function to some data. Our
+model is</p>
 <p><span class="math display">\[
   Y_i = \beta_0 + \beta_1X_i + \beta_2 X_i^2 + \epsilon_i
   \]</span></p>
 <p><img src="figs/quad.png" /> </p></li>
-<li><p>We can redefine predictors: <span class="math display">\[\begin{align}
+<li><p>We can redefine predictors: <span
+class="math display">\[\begin{align}
   X_{i1} &amp;= X_i\\
   X_{i2} &amp;= X_i^2
   \end{align}\]</span></p></li>
-<li><p>Then it is easy to see that this is the multiple linear model: <span class="math display">\[
+<li><p>Then it is easy to see that this is the multiple linear model:
+<span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{i1} + \beta_2 X_{i2} + \epsilon_i
   \]</span></p></li>
 <li><p>This induces curvature in the response surface.</p></li>
-<li><p>It is still called a linear model because it is linear in terms of the parameters (the <span class="math inline">\(\beta\)</span>’s).</p></li>
+<li><p>It is still called a linear model because it is linear in terms
+of the parameters (the <span
+class="math inline">\(\beta\)</span>’s).</p></li>
 </ul>
 </div>
 <div id="transformed-variables" class="section level2">
 <h2>Transformed variables</h2>
 <ul>
-<li><p>It should be clear that you can include arbitrary transformations of the <span class="math inline">\(X_i\)</span>’s (but this may or may not be a good idea).</p></li>
+<li><p>It should be clear that you can include arbitrary transformations
+of the <span class="math inline">\(X_i\)</span>’s (but this may or may
+not be a good idea).</p></li>
 <li><p>Suppose</p>
 <p><span class="math display">\[
-  \log(Y_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  \log(Y_i) = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3}
++ \epsilon_i
   \]</span></p>
-<p>Then if we define <span class="math inline">\(Y_i&#39; = \log(Y_i)\)</span>, we have the MLR</p>
+<p>Then if we define <span class="math inline">\(Y_i&#39; =
+\log(Y_i)\)</span>, we have the MLR</p>
 <p><span class="math display">\[
-  Y_i&#39; = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  Y_i&#39; = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \beta_3 X_{i3}
++ \epsilon_i
   \]</span></p></li>
 <li><p>Suppose <span class="math display">\[
-  Y_i = \beta_0 + \beta_1 \log(X_{i1}) + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  Y_i = \beta_0 + \beta_1 \log(X_{i1}) + \beta_2 X_{i2} + \beta_3 X_{i3}
++ \epsilon_i
   \]</span></p>
-<p>Then if we define <span class="math inline">\(X_{i1}&#39; = \log(X_{i1})\)</span>, we have the MLR</p>
+<p>Then if we define <span class="math inline">\(X_{i1}&#39; =
+\log(X_{i1})\)</span>, we have the MLR</p>
 <p><span class="math display">\[
-  Y_i = \beta_0 + \beta_1 X_{i1}&#39; + \beta_2 X_{i2} + \beta_3 X_{i3} + \epsilon_i
+  Y_i = \beta_0 + \beta_1 X_{i1}&#39; + \beta_2 X_{i2} + \beta_3 X_{i3}
++ \epsilon_i
   \]</span></p></li>
-<li><p>These are result in complicated curved response surfaces.</p></li>
-<li><p>It is still called a linear model because it is linear in terms of the parameters (the <span class="math inline">\(\beta\)</span>’s).</p></li>
+<li><p>These are result in complicated curved response
+surfaces.</p></li>
+<li><p>It is still called a linear model because it is linear in terms
+of the parameters (the <span
+class="math inline">\(\beta\)</span>’s).</p></li>
 </ul>
 </div>
 <div id="categorical-qualitative-variables" class="section level2">
 <h2>Categorical (qualitative) variables</h2>
 <ul>
-<li><p>Categorical variables (such as alive/dead, race, marital status, etc) can be used as predictors in the linear model by using indicator variables.</p></li>
-<li><p>An <strong>indicator variable</strong> takes on the value of 1 if a unit belongs to a category and 0 if it does not.</p></li>
-<li><p>E.g., from the <code>mtcars</code> dataset, <code>am</code> is an indicator variable where <span class="math display">\[
-  X_{i} = 
+<li><p>Categorical variables (such as alive/dead, race, marital status,
+etc) can be used as predictors in the linear model by using indicator
+variables.</p></li>
+<li><p>An <strong>indicator variable</strong> takes on the value of 1 if
+a unit belongs to a category and 0 if it does not.</p></li>
+<li><p>E.g., from the <code>mtcars</code> dataset, <code>am</code> is an
+indicator variable where <span class="math display">\[
+  X_{i} =
   \begin{cases}
   1 &amp; \text{ if manual}\\
   0 &amp; \text{ if automatic}
   \end{cases}
   \]</span></p></li>
-<li><p>You could then include this indicator variable into the multiple linear regression model as a predictor. <span class="math display">\[
+<li><p>You could then include this indicator variable into the multiple
+linear regression model as a predictor. <span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
   \]</span></p></li>
 <li><p>The model for automatic cars is <span class="math display">\[
@@ -531,61 +633,89 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
 <li><p>The model for manual cars is <span class="math display">\[
   Y_i = \beta_0 + \beta_1 + \epsilon_i
   \]</span></p></li>
-<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as the mean difference between automatic and manual cars.</p></li>
-<li><p>If other covariates are included in the model, this interpretation changes to the “mean difference between automatic and manual cars while adjusting for other variables”.</p></li>
-<li><p>If there are <span class="math inline">\(c\)</span> classes (instead of 2), we use <span class="math inline">\(c-1\)</span> indicator variables to represent this categorical variable.</p></li>
-<li><p>For example, in the <code>mpg</code> dataset from the <code>{ggplot2}</code> package, the <code>drv</code> variable has values <code>"f"</code>, <code>"4"</code> and <code>"r"</code>. We could create two variables <span class="math display">\[\begin{align}
-  X_{i1} &amp;= 
+<li><p>So <span class="math inline">\(\beta_1\)</span> is interpreted as
+the mean difference between automatic and manual cars.</p></li>
+<li><p>If other covariates are included in the model, this
+interpretation changes to the “mean difference between automatic and
+manual cars while adjusting for other variables”.</p></li>
+<li><p>If there are <span class="math inline">\(c\)</span> classes
+(instead of 2), we use <span class="math inline">\(c-1\)</span>
+indicator variables to represent this categorical variable.</p></li>
+<li><p>For example, in the <code>mpg</code> dataset from the
+<code>{ggplot2}</code> package, the <code>drv</code> variable has values
+<code>"f"</code>, <code>"4"</code> and <code>"r"</code>. We could create
+two variables <span class="math display">\[\begin{align}
+  X_{i1} &amp;=
   \begin{cases}
   1 &amp; \text{ if forward-wheel drive}\\
   0 &amp; \text{ otherwise}
   \end{cases}\\
-  X_{i2} &amp;= 
+  X_{i2} &amp;=
   \begin{cases}
   1 &amp; \text{ if 4-wheel drive}\\
   0 &amp; \text{ otherwise}
   \end{cases}
   \end{align}\]</span></p>
-<p>The multiple linear regression model (using, say, <code>cty</code> as the response) becomes</p>
+<p>The multiple linear regression model (using, say, <code>cty</code> as
+the response) becomes</p>
 <p><span class="math display">\[
   Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \epsilon_i
   \]</span></p></li>
-<li><p>The model for rear-wheel drive cars is <span class="math display">\[
+<li><p>The model for rear-wheel drive cars is <span
+class="math display">\[
   Y_i = \beta_0 + \epsilon_i
   \]</span></p></li>
-<li><p>The model for forward-wheel drive cars is <span class="math display">\[
+<li><p>The model for forward-wheel drive cars is <span
+class="math display">\[
   Y_i = \beta_0 + \beta_1 + \epsilon_i
   \]</span></p></li>
 <li><p>The model for 4-wheel drive cars is <span class="math display">\[
   Y_i = \beta_0 + \beta_2 + \epsilon_i
   \]</span></p></li>
-<li><p><span class="math inline">\(\beta_0\)</span> is interpreted as the mean city mpg for rear-wheel drive cars.</p></li>
-<li><p><span class="math inline">\(\beta_1\)</span> is interpreted as the mean difference in city mpg between rear-wheel drive and forward-wheel drive cars.</p></li>
-<li><p><span class="math inline">\(\beta_2\)</span> is interpreted as the mean difference in city mpg between rear-wheel drive and 4-wheel drive cars.</p></li>
-<li><p><strong>Exercise</strong>: What is the mean difference in city mpg between 4-wheel drive and forward-wheel drive cars?</p></li>
-<li><p>This parameterization allows for a different mean for each class. This is the <strong>exact same</strong> as ANOVA.</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is interpreted as
+the mean city mpg for rear-wheel drive cars.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is interpreted as
+the mean difference in city mpg between rear-wheel drive and
+forward-wheel drive cars.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> is interpreted as
+the mean difference in city mpg between rear-wheel drive and 4-wheel
+drive cars.</p></li>
+<li><p><strong>Exercise</strong>: What is the mean difference in city
+mpg between 4-wheel drive and forward-wheel drive cars?</p></li>
+<li><p>This parameterization allows for a different mean for each class.
+This is the <strong>exact same</strong> as ANOVA.</p></li>
 <li><p>We’ll talk more about indicator variables in Chapter 8.</p></li>
 </ul>
 </div>
 <div id="interaction-effects" class="section level2">
 <h2>Interaction effects</h2>
 <ul>
-<li><p>The effect of one predictor may depend on the values of other predictors.</p></li>
-<li><p>E.g., in the height/earnings example, we saw that height might have a stronger earnings effect in men than in women (the slope was steeper for men than for women).</p></li>
-<li><p>Interaction terms are represented by multiplying predictors with each other: <span class="math display">\[
-  Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} +\beta_3X_{1i}X_{2i} + \epsilon_i
+<li><p>The effect of one predictor may depend on the values of other
+predictors.</p></li>
+<li><p>E.g., in the height/earnings example, we saw that height might
+have a stronger earnings effect in men than in women (the slope was
+steeper for men than for women).</p></li>
+<li><p>Interaction terms are represented by multiplying predictors with
+each other: <span class="math display">\[
+  Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} +\beta_3X_{1i}X_{2i} +
+\epsilon_i
   \]</span></p></li>
-<li><p>We can get back the linear model by setting <span class="math inline">\(X_3 = X_{1i}X_{2i}\)</span>.</p></li>
-<li><p>This creates a very complicated and flexible model. We will talk about these interaction terms in chapter 8.</p></li>
+<li><p>We can get back the linear model by setting <span
+class="math inline">\(X_3 = X_{1i}X_{2i}\)</span>.</p></li>
+<li><p>This creates a very complicated and flexible model. We will talk
+about these interaction terms in chapter 8.</p></li>
 </ul>
 </div>
 </div>
 <div id="matrix-representation" class="section level1">
 <h1>Matrix Representation</h1>
 <ul>
-<li><p>The matrix representation of the multiple linear regression model is <strong>the exact same</strong> as the matrix representation of the simple linear regression model, once we define the appropriate matrices.</p></li>
+<li><p>The matrix representation of the multiple linear regression model
+is <strong>the exact same</strong> as the matrix representation of the
+simple linear regression model, once we define the appropriate
+matrices.</p></li>
 <li><p>Let <span class="math display">\[\begin{align}
-  \mathbf{y} &amp;= 
+  \mathbf{y} &amp;=
   \left(
   \begin{array}{c}
   Y_1\\
@@ -594,7 +724,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   Y_n
   \end{array}
   \right),\\
-  \mathbf{X} &amp;= 
+  \mathbf{X} &amp;=
   \left(
   \begin{array}{cc}
   1 &amp; X_{11} &amp; X_{12} &amp; \cdots &amp; X_{1,p-1}\\
@@ -603,7 +733,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   1 &amp; X_{n1} &amp; X_{n2} &amp; \cdots &amp; X_{n,p-1}
   \end{array}
   \right),\\
-  \mathbf{\beta} &amp;= 
+  \mathbf{\beta} &amp;=
   \left(
   \begin{array}{c}
   \beta_0\\
@@ -612,7 +742,7 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   \beta_{p-1}
   \end{array}
   \right),\\
-  \mathbf{\epsilon} &amp;= 
+  \mathbf{\epsilon} &amp;=
   \left(
   \begin{array}{c}
   \epsilon_1\\
@@ -622,29 +752,45 @@ coef(lm(mpg ~ drat + wt, data = mtcars))</code></pre>
   \end{array}
   \right)
   \end{align}\]</span></p></li>
-<li><p>The multiple linear model can be fully expressed with assumptions via <span class="math display">\[\begin{align}
+<li><p>The multiple linear model can be fully expressed with assumptions
+via <span class="math display">\[\begin{align}
   \mathbf{y} &amp;= \mathbf{X}\mathbf{\beta} + \mathbf{\epsilon}\\
   E[\mathbf{\epsilon}] &amp;= \mathbf{0}_n\\
   cov(\mathbf{\epsilon}) &amp;= \sigma^2\mathbf{I}_n
   \end{align}\]</span></p></li>
-<li><p>For the normal linear model (important only for prediction intervals or small sample sizes), you further assume that each <span class="math inline">\(\epsilon_i\)</span> is normally distributed.</p></li>
-<li><p><strong>Exercise</strong>: In the <span class="math inline">\(\mathbf{X}\)</span> matrix. What does the <span class="math inline">\(i\)</span> represent in <span class="math inline">\(X_{ij}\)</span>? What does the <span class="math inline">\(j\)</span> represent?</p></li>
+<li><p>For the normal linear model (important only for prediction
+intervals or small sample sizes), you further assume that each <span
+class="math inline">\(\epsilon_i\)</span> is normally
+distributed.</p></li>
+<li><p><strong>Exercise</strong>: In the <span
+class="math inline">\(\mathbf{X}\)</span> matrix. What does the <span
+class="math inline">\(i\)</span> represent in <span
+class="math inline">\(X_{ij}\)</span>? What does the <span
+class="math inline">\(j\)</span> represent?</p></li>
 </ul>
 </div>
 <div id="estimates-and-fitted-values" class="section level1">
 <h1>Estimates and fitted values</h1>
 <p><span class="math display">\[
-Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots +
+\beta_{p-1}X_{i,p-1} + \epsilon_i
 \]</span></p>
 <ul>
-<li><p>The <span class="math inline">\(\beta\)</span>’s are unknown. So, as in SLR, we estimate them by OLS: <span class="math display">\[
-  \min_{\beta_0,\beta_1,\ldots,\beta_{p-1}}\sum_{i=1}^n[Y_i - (\beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1})]^2
+<li><p>The <span class="math inline">\(\beta\)</span>’s are unknown. So,
+as in SLR, we estimate them by OLS: <span class="math display">\[
+  \min_{\beta_0,\beta_1,\ldots,\beta_{p-1}}\sum_{i=1}^n[Y_i - (\beta_0 +
+\beta_1X_{i1} + \beta_2X_{i2} + \cdots \beta_{p-1}X_{i,p-1})]^2
   \]</span></p></li>
-<li><p>The OLS estimates can be expressed using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
-  \hat{\mathbf{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}
+<li><p>The OLS estimates can be expressed using matrix notation <em>the
+exact same way</em> as in SLR: <span class="math display">\[
+  \hat{\mathbf{\beta}} =
+(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}
   \]</span></p></li>
-<li><p>The fitted values and the residuals can be expressed using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
-  \hat{\mathbf{Y}} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+<li><p>The fitted values and the residuals can be expressed using matrix
+notation <em>the exact same way</em> as in SLR: <span
+class="math display">\[
+  \hat{\mathbf{Y}} =
+\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
   \]</span> <span class="math display">\[
   \mathbf{e} = (\mathbf{I}_n - \mathbf{H})\mathbf{Y}.
   \]</span></p></li>
@@ -653,24 +799,51 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
 <div id="inference" class="section level1">
 <h1>Inference</h1>
 <ul>
-<li><p>One can show that the OLS estimates are unbiased: <span class="math display">\[
+<li><p>One can show that the OLS estimates are unbiased: <span
+class="math display">\[
   E[\hat{\mathbf{\beta}}] = \mathbf{\beta},
-  \]</span> where this expectation is taken over the sampling distribution of <span class="math inline">\(\hat{\mathbf{\beta}}\)</span>.</p></li>
-<li><p>The estimated covariance matrix of <span class="math inline">\(\mathbf{\beta}\)</span> can be expressed the using matrix notation <em>the exact same way</em> as in SLR: <span class="math display">\[
+  \]</span> where this expectation is taken over the sampling
+distribution of <span
+class="math inline">\(\hat{\mathbf{\beta}}\)</span>.</p></li>
+<li><p>The estimated covariance matrix of <span
+class="math inline">\(\mathbf{\beta}\)</span> can be expressed the using
+matrix notation <em>the exact same way</em> as in SLR: <span
+class="math display">\[
   s^2(\hat{\mathbf{\beta}}) = MSE(\mathbf{X}^T\mathbf{X})^{-1}
   \]</span></p></li>
-<li><p><strong>Exercise</strong>: What is the dimension of <span class="math inline">\(s^2(\hat{\mathbf{\beta}})\)</span></p></li>
-<li><p><strong>Exercise</strong>: How would you get the standard error of <span class="math inline">\(\hat{\beta}_i\)</span> from this covariance matrix? We denote this standard error <span class="math inline">\(s\{\hat{\beta}_i\}\)</span>.</p></li>
-<li><p>It can be shown that the sampling distribution of <span class="math inline">\(\hat{\beta}_i\)</span> is given by <span class="math display">\[
+<li><p><strong>Exercise</strong>: What is the dimension of <span
+class="math inline">\(s^2(\hat{\mathbf{\beta}})\)</span></p></li>
+<li><p><strong>Exercise</strong>: How would you get the standard error
+of <span class="math inline">\(\hat{\beta}_i\)</span> from this
+covariance matrix? We denote this standard error <span
+class="math inline">\(s\{\hat{\beta}_i\}\)</span>.</p></li>
+<li><p>It can be shown that the sampling distribution of <span
+class="math inline">\(\hat{\beta}_i\)</span> is given by <span
+class="math display">\[
   t_i = \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \sim t(n-p)
   \]</span></p></li>
-<li><p>Confidence intervals: Because of this sampling distribution, we have <span class="math display">\[
-  \text{Pr}(\text{qt}(\alpha / 2, n-p) \leq t \leq \text{qt}(1 - \alpha/2, n-p)) = 1 - \alpha,
-  \]</span> where this probability is taken over the sampling distribution of <span class="math inline">\(t\)</span>. <img src="05_mlr_i_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /> So a 95% confidence interval can be found by solving for <span class="math inline">\(\beta_i\)</span> in <span class="math display">\[\begin{align}
-  &amp;\text{qt}(\alpha / 2, n-p) \leq \frac{\hat{\beta}_i - \beta_i}{s\{\hat{\beta}_i\}} \leq \text{qt}(1 - \alpha/2, n-p)\\
-  &amp;\Leftrightarrow  \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \leq \hat{\beta}_i - \beta_i \leq \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}\\
-      &amp;\Leftrightarrow  \hat{\beta}_i - \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\} \geq \beta_i \geq \hat{\beta}_i - \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}.
-  \end{align}\]</span> Noting that <span class="math inline">\(\text{qt}(\alpha / 2, n-p) = -\text{qt}(1 - \alpha/2, n-p)\)</span>, we can write this interval as <span class="math display">\[
+<li><p>Confidence intervals: Because of this sampling distribution, we
+have <span class="math display">\[
+  \text{Pr}(\text{qt}(\alpha / 2, n-p) \leq t \leq \text{qt}(1 -
+\alpha/2, n-p)) = 1 - \alpha,
+  \]</span> where this probability is taken over the sampling
+distribution of <span class="math inline">\(t\)</span>.
+<img src="05_mlr_i_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" />
+So a 95% confidence interval can be found by solving for <span
+class="math inline">\(\beta_i\)</span> in <span
+class="math display">\[\begin{align}
+  &amp;\text{qt}(\alpha / 2, n-p) \leq \frac{\hat{\beta}_i -
+\beta_i}{s\{\hat{\beta}_i\}} \leq \text{qt}(1 - \alpha/2, n-p)\\
+  &amp;\Leftrightarrow  \text{qt}(\alpha / 2, n-p)s\{\hat{\beta}_i\}
+\leq \hat{\beta}_i - \beta_i \leq \text{qt}(1 - \alpha/2,
+n-p)s\{\hat{\beta}_i\}\\
+      &amp;\Leftrightarrow  \hat{\beta}_i - \text{qt}(\alpha / 2,
+n-p)s\{\hat{\beta}_i\} \geq \beta_i \geq \hat{\beta}_i - \text{qt}(1 -
+\alpha/2, n-p)s\{\hat{\beta}_i\}.
+  \end{align}\]</span> Noting that <span
+class="math inline">\(\text{qt}(\alpha / 2, n-p) = -\text{qt}(1 -
+\alpha/2, n-p)\)</span>, we can write this interval as <span
+class="math display">\[
   \hat{\beta}_i \pm \text{qt}(1 - \alpha/2, n-p)s\{\hat{\beta}_i\}
   \]</span></p></li>
 <li><p>This sampling distribution can also be used to test</p>
@@ -680,25 +853,42 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
 </ul>
 <p>Under the null, we have <span class="math display">\[
   t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}} \sim t(n-p).
-  \]</span> So to test against <span class="math inline">\(H_0\)</span>, we can compare <span class="math inline">\(t^* = \frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}\)</span> to a <span class="math inline">\(t(n-p)\)</span> distribution and see how extreme it is. <span class="math display">\[
+  \]</span> So to test against <span class="math inline">\(H_0\)</span>,
+we can compare <span class="math inline">\(t^* =
+\frac{\hat{\beta}_i}{s\{\hat{\beta}_i\}}\)</span> to a <span
+class="math inline">\(t(n-p)\)</span> distribution and see how extreme
+it is. <span class="math display">\[
   \text{$p$-value} = 2*\text{pt}(-|t^*|, n-p).
   \]</span></p>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>When we test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> versus <span class="math inline">\(H_A:\beta_1 \neq 0\)</span>, we are still allowing all other <span class="math inline">\(\beta_k\)</span>’s to be non-zero. That is, we are comparing the two models: <span class="math display">\[\begin{align}
-  H_0&amp;: Y_i = \beta_0 \phantom{+ \beta_1X_{i1}}\hspace{2.3mm} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i\\
-  H_A&amp;: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
+<li><p>When we test for <span class="math inline">\(H_0: \beta_1 =
+0\)</span> versus <span class="math inline">\(H_A:\beta_1 \neq
+0\)</span>, we are still allowing all other <span
+class="math inline">\(\beta_k\)</span>’s to be non-zero. That is, we are
+comparing the two models: <span class="math display">\[\begin{align}
+  H_0&amp;: Y_i = \beta_0 \phantom{+ \beta_1X_{i1}}\hspace{2.3mm} +
+\beta_2X_{i2} + \beta_3 X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} +
+\epsilon_i\\
+  H_A&amp;: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3
+X_{i3} + \cdots + \beta_{p-1}X_{i,p-1} + \epsilon_i
   \end{align}\]</span></p></li>
-<li><p>The results of this hypothesis would be different if we had other covariates in the model because then we are comparing different models.</p></li>
+<li><p>The results of this hypothesis would be different if we had other
+covariates in the model because then we are comparing different
+models.</p></li>
 </ul>
 </div>
 <div id="estimation-and-inference-in-r" class="section level1">
 <h1>Estimation and Inference in R</h1>
 <ul>
-<li><p>A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include</p>
+<li><p>A portrait studio chain contains data on 21 cities (from Section
+6.9 of KNNL). Variables include</p>
 <ul>
-<li><code>young</code>: The number of persons aged 16 or younger in the community (thousands of persons).</li>
-<li><code>disp</code>: The per capita disposable personal income in the community (thousands of dollars).</li>
-<li><code>sales</code>: Portrait studio sales in the community (thousands of dollars).</li>
+<li><code>young</code>: The number of persons aged 16 or younger in the
+community (thousands of persons).</li>
+<li><code>disp</code>: The per capita disposable personal income in the
+community (thousands of dollars).</li>
+<li><code>sales</code>: Portrait studio sales in the community
+(thousands of dollars).</li>
 </ul></li>
 <li><p>You can load these data into R with:</p>
 <pre class="r"><code>portrait &lt;- tribble(~young, ~disp, ~sales,
@@ -723,20 +913,25 @@ Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \cdots + \beta_{p-1}X_{i,p-1} + 
                     89.6,   18.1,  232.6,
                     82.7,   19.1,  224.1,
                     52.3,   16.0,  166.5)</code></pre></li>
-<li><p>The goal is to predict sales from these other two variables.</p></li>
+<li><p>The goal is to predict sales from these other two
+variables.</p></li>
 <li><p>Let’s begin with an EDA</p>
 <pre class="r"><code>qplot(x = disp, y = sales, data = portrait)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = young, y = sales, data = portrait)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
-<p>There seems to be a strong linear relationship between portrait and disp and portrait and young.</p></li>
-<li><p>A shortcut to making these plots is the <code>ggpairs()</code> function from the <code>{GGally}</code> package. It creates what’s called a <strong>scatterplot matrix</strong>.</p>
+<p>There seems to be a strong linear relationship between portrait and
+disp and portrait and young.</p></li>
+<li><p>A shortcut to making these plots is the <code>ggpairs()</code>
+function from the <code>{GGally}</code> package. It creates what’s
+called a <strong>scatterplot matrix</strong>.</p>
 <pre class="r"><code>library(GGally)
 ggpairs(data = portrait)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>We will fit the model <span class="math display">\[
   Y_i = \beta_0 + \beta_1X_{1i} + \beta_2X_{2i} + \epsilon_i
-  \]</span> We use the same syntax as in SLR, but add multiple predictors on the right hand side of the formula.</p>
+  \]</span> We use the same syntax as in SLR, but add multiple
+predictors on the right hand side of the formula.</p>
 <pre class="r"><code>lmout &lt;- lm(sales ~ young + disp, data = portrait)
 lmout</code></pre>
 <pre><code>## 
@@ -746,7 +941,10 @@ lmout</code></pre>
 ## Coefficients:
 ## (Intercept)        young         disp  
 ##      -68.86         1.45         9.37</code></pre></li>
-<li><p>You obtain coefficient estimates, standard errors, and <span class="math inline">\(p\)</span>-values against the null of <span class="math inline">\(\beta_k = 0\)</span> using <code>tidy()</code> from the <code>{broom}</code> package.</p>
+<li><p>You obtain coefficient estimates, standard errors, and <span
+class="math inline">\(p\)</span>-values against the null of <span
+class="math inline">\(\beta_k = 0\)</span> using <code>tidy()</code>
+from the <code>{broom}</code> package.</p>
 <pre class="r"><code>library(broom)
 tidy(lmout)</code></pre>
 <pre><code>## # A tibble: 3 × 5
@@ -755,7 +953,8 @@ tidy(lmout)</code></pre>
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266     
 ## 2 young           1.45     0.212      6.87 0.00000200
 ## 3 disp            9.37     4.06       2.30 0.0333</code></pre></li>
-<li><p>Confidence intervals can be obtained using the <code>conf.int = TRUE</code> argument.</p>
+<li><p>Confidence intervals can be obtained using the
+<code>conf.int = TRUE</code> argument.</p>
 <pre class="r"><code>tidy(lmout, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 3 × 7
 ##   term        estimate std.error statistic    p.value conf.low conf.high
@@ -763,9 +962,21 @@ tidy(lmout)</code></pre>
 ## 1 (Intercept)   -68.9     60.0       -1.15 0.266      -195.        57.2 
 ## 2 young           1.45     0.212      6.87 0.00000200    1.01       1.90
 ## 3 disp            9.37     4.06       2.30 0.0333        0.827     17.9</code></pre></li>
-<li><p>We will talk about assessing the fit of this model later.</p></li>
-<li><p><strong>Exercise</strong>: Let <span class="math inline">\(Y_i\)</span> be the sales for community <span class="math inline">\(i\)</span>, <span class="math inline">\(X_{i1}\)</span> be the number of young individuals in community <span class="math inline">\(i\)</span>, and <span class="math inline">\(X_{i2}\)</span> be the amount of disposable income for individual <span class="math inline">\(i\)</span>. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>0.002e-06</code> is testing. Write out the two models that the <span class="math inline">\(p\)</span>-value <code>3.332e-02</code> is testing.</p></li>
-<li><p>Let’s compare these coefficients to those under simple linear regression.</p>
+<li><p>We will talk about assessing the fit of this model
+later.</p></li>
+<li><p><strong>Exercise</strong>: Let <span
+class="math inline">\(Y_i\)</span> be the sales for community <span
+class="math inline">\(i\)</span>, <span
+class="math inline">\(X_{i1}\)</span> be the number of young individuals
+in community <span class="math inline">\(i\)</span>, and <span
+class="math inline">\(X_{i2}\)</span> be the amount of disposable income
+for individual <span class="math inline">\(i\)</span>. Write out the two
+models that the <span class="math inline">\(p\)</span>-value
+<code>0.002e-06</code> is testing. Write out the two models that the
+<span class="math inline">\(p\)</span>-value <code>3.332e-02</code> is
+testing.</p></li>
+<li><p>Let’s compare these coefficients to those under simple linear
+regression.</p>
 <pre class="r"><code>lm_simp_young &lt;- lm(sales ~ young, data = portrait)
 tidy(lm_simp_young)</code></pre>
 <pre><code>## # A tibble: 2 × 5
@@ -780,45 +991,78 @@ tidy(lm_simp_disp)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 (Intercept)   -352.      80.7      -4.37 0.000329  
 ## 2 disp            31.2      4.70      6.64 0.00000239</code></pre></li>
-<li><p>Look how different the coefficient for <code>disp</code> is when we include <code>young</code> versus when we do not include <code>young</code>.</p></li>
-<li><p><strong>You should generally expect the coefficient estimates of the same variable to differ as you include more covariates in your model.</strong></p></li>
-<li><p>Whenever you include more covariates in a model, the interpretation of the coefficient <em>on the same variable</em> changes.</p></li>
+<li><p>Look how different the coefficient for <code>disp</code> is when
+we include <code>young</code> versus when we do not include
+<code>young</code>.</p></li>
+<li><p><strong>You should generally expect the coefficient estimates of
+the same variable to differ as you include more covariates in your
+model.</strong></p></li>
+<li><p>Whenever you include more covariates in a model, the
+interpretation of the coefficient <em>on the same variable</em>
+changes.</p></li>
 <li><p>What is the interpretation of the 31.17 coefficient?</p>
 <blockquote>
-<p>Communities that have a per-capita disposable income that is $1000 more tend to have about $31,000 more sales.</p>
+<p>Communities that have a per-capita disposable income that is $1000
+more have about $31,000 more sales on average.</p>
 </blockquote></li>
 <li><p>What is the interpretation of the 9.366 coefficient?</p>
 <blockquote>
-<p>Communities that have a per-capita disposable income that is $1000 more, but the same number of young people, tend to have about $9400 more sales.</p>
+<p>Communities that have a per-capita disposable income that is $1000
+more, but the same number of young people, have about $9400 more sales
+on average.</p>
 </blockquote>
 <blockquote>
-<p>Or, adjusting for the number of young people in a community, communities that have $1000 more in per capita income tend to have $9400 more sales.</p>
+<p>Or, adjusting for the number of young people in a community,
+communities that have $1000 more in per capita income have $9400 more
+sales on average.</p>
 </blockquote>
 <ul>
-<li>These are equivalent interpretations. I like the first description better, but when you are publishing a paper you should use the second description.</li>
+<li>These are equivalent interpretations. I like the first description
+better, but when you are publishing a paper you should use the second
+description.</li>
 </ul></li>
-<li><p><strong>Exercise</strong>: Consider the university admissions data, described <a href="https://dcgerard.github.io/stat_415_615/data.html#University_Admissions">here</a> and available for download here: <a href="https://dcgerard.github.io/stat_415_615/data/university.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/university.csv</a></p>
+<li><p><strong>Exercise</strong>: Consider the university admissions
+data, described <a
+href="https://dcgerard.github.io/stat_415_615/data.html#University_Admissions">here</a>
+and available for download here: <a
+href="https://dcgerard.github.io/stat_415_615/data/university.csv"
+class="uri">https://dcgerard.github.io/stat_415_615/data/university.csv</a></p>
 <ol style="list-style-type: decimal">
-<li><p>Write out, using mathematical notation, the model for a multiple linear regression model for gpa on rank, act, and year. You should define variables.</p></li>
-<li><p>Fit this model in R, estimate the coefficients, and run hypothesis tests against the null that the coefficients of each term are zero.</p></li>
+<li><p>Write out, using mathematical notation, the model for a multiple
+linear regression model for gpa on rank, act, and year. You should
+define variables.</p></li>
+<li><p>Fit this model in R, estimate the coefficients, and run
+hypothesis tests against the null that the coefficients of each term are
+zero.</p></li>
 <li><p>What is the estimated regression surface?</p></li>
-<li><p>Provide an interpretation for the coefficient on <code>rank</code>.</p></li>
-<li><p>Write out the two models that the <span class="math inline">\(p\)</span>-value for <code>year</code> is testing.</p></li>
+<li><p>Provide an interpretation for the coefficient on
+<code>rank</code>.</p></li>
+<li><p>Write out the two models that the <span
+class="math inline">\(p\)</span>-value for <code>year</code> is
+testing.</p></li>
 <li><p>What is the residual standard deviation?</p></li>
 </ol></li>
 </ul>
 </div>
-<div id="estimating-mean-responses-and-making-predictions." class="section level1">
+<div id="estimating-mean-responses-and-making-predictions."
+class="section level1">
 <h1>Estimating mean responses and making predictions.</h1>
 <ul>
-<li><p>Let <span class="math inline">\(\mathbf{X}_h\)</span> denote the <span class="math inline">\(m\times p\)</span> matrix of the predictor values at <span class="math inline">\(m\)</span> new observations.</p></li>
-<li><p>The mean value of the response at these new observations is <span class="math display">\[
+<li><p>Let <span class="math inline">\(\mathbf{X}_h\)</span> denote the
+<span class="math inline">\(m\times p\)</span> matrix of the predictor
+values at <span class="math inline">\(m\)</span> new
+observations.</p></li>
+<li><p>The mean value of the response at these new observations is <span
+class="math display">\[
   E[\mathbf{y}_h] = \mathbf{X}_h\mathbf{\beta}
   \]</span></p></li>
 <li><p>We can estimate this with <span class="math display">\[
-  \hat{\mathbf{y}}_h = \mathbf{X}_h\hat{\mathbf{\beta}} = \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
+  \hat{\mathbf{y}}_h = \mathbf{X}_h\hat{\mathbf{\beta}} =
+\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}
   \]</span></p></li>
-<li><p>If <span class="math inline">\(\mathbf{X}_h = \mathbf{X}\)</span>, then we can use <code>augment()</code> from <code>{broom}</code> to obtain the fitted value</p>
+<li><p>If <span class="math inline">\(\mathbf{X}_h =
+\mathbf{X}\)</span>, then we can use <code>augment()</code> from
+<code>{broom}</code> to obtain the fitted value</p>
 <pre class="r"><code>augment(lmout)</code></pre>
 <pre><code>## # A tibble: 21 × 9
 ##    sales young  disp .fitted  .resid   .hat .sigma   .cooksd .std.resid
@@ -834,67 +1078,111 @@ tidy(lm_simp_disp)</code></pre>
 ##  9  145.  48.9  16.6    158. -12.3   0.0724  10.9  0.0353       -1.16  
 ## 10  137.  38.4  16      137.   0.354 0.133   11.3  0.0000607     0.0345
 ## # … with 11 more rows</code></pre></li>
-<li><p>If we have a new set of predictors, then we need to first create the data frame representing <span class="math inline">\(\mathbf{X}_h\)</span> before using <code>predict()</code> to obtain estimated mean values.</p>
+<li><p>If we have a new set of predictors, then we need to first create
+the data frame representing <span
+class="math inline">\(\mathbf{X}_h\)</span> before using
+<code>predict()</code> to obtain estimated mean values.</p>
 <pre class="r"><code>newdf &lt;- data.frame(young = c(60, 55), disp = c(15, 15.5))
 predict(object = lmout, newdata = newdf)</code></pre>
 <pre><code>##     1     2 
 ## 158.9 156.3</code></pre></li>
-<li><p>Standard errors for the fitted values can be obtained using matrix notation in the same way as in SLR <span class="math display">\[\begin{align}
-  var(\hat{\mathbf{y}}_h) &amp;= var(\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
-  &amp;= \mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tvar(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
-  &amp;= \sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
-  &amp;= \sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T.
-  \end{align}\]</span> The standard errors are the square roots of the diagonal of the above matrix.</p></li>
-<li><p>If <span class="math inline">\(\hat{Y}_h\)</span> is a single value, then the formula for the confidence interval for the mean is <span class="math display">\[
+<li><p>Standard errors for the fitted values can be obtained using
+matrix notation in the same way as in SLR <span
+class="math display">\[\begin{align}
+  var(\hat{\mathbf{y}}_h) &amp;=
+var(\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y})\\
+  &amp;=
+\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^Tvar(\mathbf{Y})\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
+  &amp;=
+\sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T\\
+  &amp;=
+\sigma^2\mathbf{X}_h(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}_h^T.
+  \end{align}\]</span> The standard errors are the square roots of the
+diagonal of the above matrix.</p></li>
+<li><p>If <span class="math inline">\(\hat{Y}_h\)</span> is a single
+value, then the formula for the confidence interval for the mean is
+<span class="math display">\[
   \hat{Y}_h \pm qt(1 - \alpha / 2, n-p)s\{\hat{Y}_h\}
   \]</span></p></li>
-<li><p>A Working-Hotelling procedure is also possible for the entire response surface.</p></li>
-<li><p>In R, you just tell <code>predict()</code> that you want confidence intervals.</p>
+<li><p>A Working-Hotelling procedure is also possible for the entire
+response surface.</p></li>
+<li><p>In R, you just tell <code>predict()</code> that you want
+confidence intervals.</p>
 <pre class="r"><code>predict(object = lmout, newdata = newdf, interval = &quot;confidence&quot;)</code></pre>
 <pre><code>##     fit   lwr   upr
 ## 1 158.9 140.6 177.2
 ## 2 156.3 143.5 169.1</code></pre></li>
-<li><p><strong>Exercise</strong>: In the above portrait studio example that we implemented in R, write out <span class="math inline">\(\mathbf{X}_h\)</span> and <span class="math inline">\(\mathbf{y}_h\)</span>.</p></li>
-<li><p>Predicted values <span class="math inline">\(\hat{\mathbf{y}}_h\)</span> at a new set of predictor values <span class="math inline">\(\mathbf{X}_h\)</span> have the same form as the estimated mean response.</p></li>
-<li><p>You add the MSE to the estimated standard error to account for the added variability of individual observations.</p>
+<li><p><strong>Exercise</strong>: In the above portrait studio example
+that we implemented in R, write out <span
+class="math inline">\(\mathbf{X}_h\)</span> and <span
+class="math inline">\(\mathbf{y}_h\)</span>.</p></li>
+<li><p>Predicted values <span
+class="math inline">\(\hat{\mathbf{y}}_h\)</span> at a new set of
+predictor values <span class="math inline">\(\mathbf{X}_h\)</span> have
+the same form as the estimated mean response.</p></li>
+<li><p>You add the MSE to the estimated standard error to account for
+the added variability of individual observations.</p>
 <p><span class="math display">\[
   s^2\{pred\} = MSE + s^2\{\hat{\mathbf{y}}_h\}
   \]</span></p></li>
-<li><p>Prediction intervals can then be found by using this standard error <span class="math display">\[
+<li><p>Prediction intervals can then be found by using this standard
+error <span class="math display">\[
   \hat{Y}_h \pm qt(1 - \alpha / 2, n-p)s\{pred\}
   \]</span></p></li>
-<li><p>In R, you just use the <code>interval = "prediction"</code> argument.</p>
+<li><p>In R, you just use the <code>interval = "prediction"</code>
+argument.</p>
 <pre class="r"><code>predict(object = lmout, newdata = newdf, interval = &quot;prediction&quot;)</code></pre>
 <pre><code>##     fit   lwr   upr
 ## 1 158.9 129.4 188.4
 ## 2 156.3 129.9 182.7</code></pre></li>
-<li><p>Recall, <em>prediction intervals depend strongly on the normality assumption</em>.</p></li>
-<li><p>Be careful about hidden extrapolations in multiple linear regression. Looking at marginal ranges is not enough.</p></li>
-<li><p>In the below plot, the red dot is in the range of <span class="math inline">\(x_1\)</span> = <code>young</code> and in the range of <span class="math inline">\(x_2\)</span> = <code>disp</code>, but is not in the range of the joint distribution of <code>young</code> and <code>disp</code>.</p>
+<li><p>Recall, <em>prediction intervals depend strongly on the normality
+assumption</em>.</p></li>
+<li><p>Be careful about hidden extrapolations in multiple linear
+regression. Looking at marginal ranges is not enough.</p></li>
+<li><p>In the below plot, the red dot is in the range of <span
+class="math inline">\(x_1\)</span> = <code>young</code> and in the range
+of <span class="math inline">\(x_2\)</span> = <code>disp</code>, but is
+not in the range of the joint distribution of <code>young</code> and
+<code>disp</code>.</p>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="diagnostics" class="section level1">
 <h1>Diagnostics</h1>
 <ul>
-<li><p>Recall, the assumptions of the linear model in decreasing order of importance are:</p>
+<li><p>Recall, the assumptions of the linear model in decreasing order
+of importance are:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Linearity</strong> - Does the relationship look like a straight line?</p></li>
-<li><p><strong>Independence</strong> - knowledge of the value of one observation does not give you any information on the value of another.</p></li>
-<li><p><strong>Equal Variance</strong> - The spread is the same for every value of <span class="math inline">\(x\)</span></p></li>
-<li><p><strong>Normality</strong> - The distribution isn’t too skewed and there aren’t any too extreme points. (only an issue if you have outliers and a small number of observations, or if you are doing prediction intervals).</p></li>
+<li><p><strong>Linearity</strong> - Does the relationship look like a
+straight line?</p></li>
+<li><p><strong>Independence</strong> - knowledge of the value of one
+observation does not give you any information on the value of
+another.</p></li>
+<li><p><strong>Equal Variance</strong> - The spread is the same for
+every value of <span class="math inline">\(x\)</span></p></li>
+<li><p><strong>Normality</strong> - The distribution isn’t too skewed
+and there aren’t any too extreme points. (only an issue if you have
+outliers and a small number of observations, or if you are doing
+prediction intervals).</p></li>
 </ol></li>
 <li><p>Residual plots are used the same way as before.</p></li>
 <li><p>Plot residuals versus fitted values</p>
 <ol style="list-style-type: decimal">
-<li>See curvature? Try logging variables if appropriate, or other transformation. If it doesn’t work, try including quadratic terms.</li>
-<li>See non-constant variance? If the goal is estimation, then use sandwich standard errors.</li>
-<li>See outlying observations? Try to first explain why that observation is outlying. If that doesn’t work, try a robust approach (like quantile regression).</li>
+<li>See curvature? Try logging variables if appropriate, or other
+transformation. If it doesn’t work, try including quadratic terms.</li>
+<li>See non-constant variance? If the goal is estimation, then use
+sandwich standard errors.</li>
+<li>See outlying observations? Try to first explain why that observation
+is outlying. If that doesn’t work, try a robust approach (like quantile
+regression).</li>
 </ol></li>
-<li><p>Plotting predictors versus residuals can tell you if you need to log certain predictors.</p></li>
-<li><p>Plot residuals versus omitted predictor variables to explore if including these variables is necessary.</p>
+<li><p>Plotting predictors versus residuals can tell you if you need to
+log certain predictors.</p></li>
+<li><p>Plot residuals versus omitted predictor variables to explore if
+including these variables is necessary.</p>
 <ul>
-<li>If you see an association between the residuals and the omitted predictor, then you might want to include that predictor.</li>
+<li>If you see an association between the residuals and the omitted
+predictor, then you might want to include that predictor.</li>
 </ul></li>
 <li><p>Obtain residuals in MLR using the same code as in SLR:</p>
 <pre class="r"><code>aout &lt;- augment(x = lmout)
@@ -904,18 +1192,29 @@ qplot(x = .fitted, y = .resid, data = aout)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-2.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = disp, y = .resid, data = aout)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-3.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Everything looks good for our portrait example. Even the QQ-plot looks good.</p>
+<p>Everything looks good for our portrait example. Even the QQ-plot
+looks good.</p>
 <pre class="r"><code>qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
   geom_qq_line()</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-33-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: Recall the real estate data that you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales">here</a> and download here: <a href="https://dcgerard.github.io/stat_415_615/data/estate.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/estate.csv</a></p>
+<li><p><strong>Exercise</strong>: Recall the real estate data that you
+can read about <a
+href="https://dcgerard.github.io/stat_415_615/data.html#Real_Estate_Sales">here</a>
+and download here: <a
+href="https://dcgerard.github.io/stat_415_615/data/estate.csv"
+class="uri">https://dcgerard.github.io/stat_415_615/data/estate.csv</a></p>
 <ol style="list-style-type: decimal">
 <li><p>Fit a linear model of price on area and lot size.</p></li>
-<li><p>Make residual plots and from these alone, try to deduce any possible issues.</p></li>
-<li><p>Try to fix the issues from part 2. Iterate making residual plots and fixing issues until you have a final model.</p></li>
+<li><p>Make residual plots and from these alone, try to deduce any
+possible issues.</p></li>
+<li><p>Try to fix the issues from part 2. Iterate making residual plots
+and fixing issues until you have a final model.</p></li>
 <li><p>Write down your final model</p></li>
-<li><p>Obtain coefficient estimates and interpret them on the original scale of all variables.</p></li>
-<li><p>A new house is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.</p></li>
+<li><p>Obtain coefficient estimates and interpret them on the original
+scale of all variables.</p></li>
+<li><p>A new house is on sale. It has an area of 1000 square feet and a
+lot-size of 10,000. The realter wants you to give them a range of
+possible selling prices.</p></li>
 </ol></li>
 </ul>
 </div>

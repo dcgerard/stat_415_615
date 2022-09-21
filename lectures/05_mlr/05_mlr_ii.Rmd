@@ -117,7 +117,7 @@ klippy::klippy()
     tidy(lm(earn ~ log_height, data = earnings))
     ```
     
-    Individuals that are 5\% taller tend to make $106362 * \log(1.05) = \$5189$ more on average.
+    Individuals that are 5\% taller make $106362 * \log(1.05) = \$5189$ more on average.
     
     - You can choose a good multiplier by seeing if the standard deviation of the log of that base is between 0.5 and 10 (but this is a rough rule of thumb).
 
@@ -173,7 +173,7 @@ klippy::klippy()
     ```
     
     ```{block, eval = FALSE, echo = FALSE}
-    Each decade, the world record tended to be about 3.9 seconds lower (95\% confidence interval of 3.7 to 4.2 seconds lower).
+    Each decade, the world record was about 3.9 seconds lower (95\% confidence interval of 3.7 to 4.2 seconds lower) on average.
     ```
 
 ## Z-score scales
@@ -219,7 +219,7 @@ klippy::klippy()
     $$
 - If we run a linear regression under this model, then the interpretation of coefficient $\beta_i^*$ is:
 
-    > Individuals that are 1 standard deviation larger in $X_i$ tend to have $\beta_1^*$ higher $Y_i$ on average, adjusting for all other predictors in our model.
+    > Individuals that are 1 standard deviation larger in $X_i$ have $\beta_1^*$ higher $Y_i$ on average, adjusting for all other predictors in our model.
     
 - Note: If $X_i^* = \frac{X_i - a}{b}$, then $\beta_i^* = b\beta_i$ and $\hat{\beta}_i^* = b\hat{\beta}_i$.
 
@@ -288,9 +288,9 @@ klippy::klippy()
         tidy(lm(sales ~ young_z + disp_z, data = portrait))
         ```
         ```{block, eval = FALSE, echo = FALSE}
-        Cities that have the same number of young folks, but are 1 standard deviation higher in disposable income, tend to have \$9100 more in sales.
+        Cities that have the same number of young folks, but are 1 standard deviation higher in disposable income, have \$9100 more in sales on average.
         
-        Cities that have the same amount of disposable income, but are 1 standard deviation higher in young folks, tend to make \$27000 more in sales.
+        Cities that have the same amount of disposable income, but are 1 standard deviation higher in young folks, make \$27000 more in sales on average.
         ```
   
 - $Z$-scores make the coefficients more comparable. However, the issues of multicollinearity (next section) still might make it hard to compare the importance of various predictors. This is because, e.g. in our portrait example, there might not be any cities that are 1 standard deviation higher in disposable income but have the same number of young folks.

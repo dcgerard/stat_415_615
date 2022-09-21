@@ -223,7 +223,7 @@ From the *Statistical Sleuth*:
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i
     $$
     
-- The interpretation of $\beta_1$ is as usual. Firms that are the same type, but are 10 million dollars larger, tended to take $10 \times \beta_1$ months less to innovate.
+- The interpretation of $\beta_1$ is as usual. Firms that are the same type, but are 10 million dollars larger, take on average $10 \times \beta_1$ months less to innovate.
     
 - To interpret $\beta_2$, consider that the model for mutual companies is
     $$
@@ -268,7 +268,7 @@ From the *Statistical Sleuth*:
     lm_firm <- lm(months ~ size + type, data = firm)
     tidy(lm_firm, conf.int = TRUE)
     ```
-    We conclude that stock companies tended to take 8 months longer than mutual companies to adopt the new innovation (95\% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had \$10 million more assets tended to take 1 fewer month to adopt the new innovation (95\% CI of 0.8 to 1.2 fewer months).
+    We conclude that stock companies take on average 8 months longer than mutual companies to adopt the new innovation (95\% CI of 5 to 11 months longer), adjusting for company size. Companies of the same type that had \$10 million more assets take 1 fewer month on average to adopt the new innovation (95\% CI of 0.8 to 1.2 fewer months).
     
 - If you wanted to change which level is the reference level of a factor variable, you could use `fct_relevel()` from the `{forcats}` package (a part of the tidyverse).
     ```{r}
@@ -365,7 +365,7 @@ From the *Statistical Sleuth*:
     
     - 4-wheel cars have $e^{\beta_2 - \beta_1}$ times higher mpg than front wheel cars, adjusting for engine size.
     
-    - Cars that have 1 liter higher engine displacement tend to have $e^{\beta_3}$ times higher mpg on average, adjusting for car type.
+    - Cars that have 1 liter higher engine displacement have $e^{\beta_3}$ times higher mpg on average, adjusting for car type.
 
 - We fit this model in R by first selecting the order of the levels of `drv` to include rear-wheel drive cars as the reference class. We do this using `parse_factor()` from the `{forcats}` package:
     ```{r}
@@ -506,7 +506,7 @@ From the *Statistical Sleuth*:
     ```
 
 - So we could tell a client something like:
-    1. In general, higher weight tends to decrease fuel-mileage.
+    1. In general, higher weight tends to have lower fuel-mileage.
     2. The effect of rear-axle ratio depends on the weight of the car. Smaller cars have better fuel-mileage with higher rear axle ratios, but larger cars tend to have better fuel-mileage with smaller rear axle ratios"
 
 - BUT, we have to be emphasize the scope of our conclusions. E.g. there are no cars with a rear-axle ratio of 3 and a weight of 2.

@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-09" />
+<meta name="date" content="2022-09-21" />
 
 <title>MLR: Practical Considerations</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -314,7 +322,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-09</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
@@ -359,7 +367,8 @@ div.tocify {
 <ul>
 <li>Choice of scaling predictors for interpretation.</li>
 <li>Multicollinearity</li>
-<li>Effect sizes, practical significance, and statistical significance.</li>
+<li>Effect sizes, practical significance, and statistical
+significance.</li>
 <li>Chapter 12 from ROS</li>
 <li>Section 7.6 from KNNL</li>
 </ul>
@@ -377,7 +386,9 @@ div.tocify {
 <div id="interpretable-scales" class="section level2">
 <h2>Interpretable Scales</h2>
 <ul>
-<li><p>Recall <a href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">earnings data</a> exploring the relationship between height and earnings.</p>
+<li><p>Recall <a
+href="https://dcgerard.github.io/stat_415_615/data.html#Earnings_Data">earnings
+data</a> exploring the relationship between height and earnings.</p>
 <pre class="r"><code>library(tidyverse)
 library(broom)
 earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earnings.csv&quot;)
@@ -404,19 +415,31 @@ tidy(lm(earn ~ height_mm, data = earnings))</code></pre>
 ##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)    -85027.     8861.     -9.60 2.64e-21
 ## 2 height_mi   101056650.  8419609.     12.0  5.42e-32</code></pre></li>
-<li><p>The estimated regression line depends on the units for <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<li><p>The estimated regression line depends on the units for <span
+class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span>.</p>
 <ul>
 <li>earnings = -85,000 + 36 * height(millimeters)</li>
 <li>earnings = -85,000 + 1600 * height(inches)</li>
 <li>earnings = -85,000 + 101,001,000 * height(miles)</li>
 </ul></li>
-<li><p>Does this mean that height in miles is a stronger predictor of earnings (since its coefficient estimate is larger?)</p>
+<li><p>Does this mean that height in miles is a stronger predictor of
+earnings (since its coefficient estimate is larger?)</p>
 <ul>
 <li>NO! 🤦</li>
-<li>The scale of height was chosen arbitrarily. These three equations all reflect the same underlying information.</li>
+<li>The scale of height was chosen arbitrarily. These three equations
+all reflect the same underlying information.</li>
 </ul></li>
-<li><p>By itself, <strong>the size of the regression coefficients tells you nothing about the importance of a predictor</strong> because this coefficient can change if you change the units of the predictor.</p></li>
-<li><p><strong>Exercise</strong>: When exploring the effect of the percent of of the population with bachelor’s degrees and percent unemployment on percent below the poverty line in the <a href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">County Demographic Information</a> data, researchers obtained the following output:</p>
+<li><p>By itself, <strong>the size of the regression coefficients tells
+you nothing about the importance of a predictor</strong> because this
+coefficient can change if you change the units of the
+predictor.</p></li>
+<li><p><strong>Exercise</strong>: When exploring the effect of the
+percent of of the population with bachelor’s degrees and percent
+unemployment on percent below the poverty line in the <a
+href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">County
+Demographic Information</a> data, researchers obtained the following
+output:</p>
 <pre class="r"><code>cdi &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/cdi.csv&quot;)
 cdi &lt;- select(cdi, poverty, bachelors, unemployment)
 lmout &lt;- lm(poverty ~ bachelors + unemployment, data = cdi)
@@ -427,14 +450,19 @@ tidy(lmout)</code></pre>
 ## 1 (Intercept)     7.83     1.15        6.80 3.56e-11
 ## 2 bachelors      -0.148    0.0303     -4.88 1.47e- 6
 ## 3 unemployment    0.608    0.0992      6.13 1.97e- 9</code></pre>
-<p>Which has a bigger effect on <code>poverty</code>: <code>bachelors</code> or <code>unemployment</code> and why?</p></li>
-<li><p>You should choose a scale which is in the most interpretable units.</p></li>
-<li><p>A 1 millimeter difference in height is not a meaningful difference, in terms of the distribution of human heights.</p></li>
+<p>Which has a bigger effect on <code>poverty</code>:
+<code>bachelors</code> or <code>unemployment</code> and why?</p></li>
+<li><p>You should choose a scale which is in the most interpretable
+units.</p></li>
+<li><p>A 1 millimeter difference in height is not a meaningful
+difference, in terms of the distribution of human heights.</p></li>
 <li><p>A 1 mile difference in height is unrealistic.</p></li>
 <li><p>A 1 inch difference in height is more reasonable.</p>
 <pre class="r"><code>qplot(x = height_in, data = earnings, bins = 20)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>You can use the standard deviation of the variables to help guide you. If the standard deviation is between 0.5 and 10, then you have a good scale. But this is a rough rule of thumb.</p>
+<li><p>You can use the standard deviation of the variables to help guide
+you. If the standard deviation is between 0.5 and 10, then you have a
+good scale. But this is a rough rule of thumb.</p>
 <pre class="r"><code>sd(earnings$height_mm)</code></pre>
 <pre><code>## [1] 97.33</code></pre>
 <pre class="r"><code>sd(earnings$height_in)</code></pre>
@@ -443,10 +471,17 @@ tidy(lmout)</code></pre>
 <pre><code>## [1] 6.048e-05</code></pre></li>
 <li><p>What if you are logging variables?</p>
 <ul>
-<li>Recall, we interpret log-relationships in terms of <em>multiplicative</em> changes. So being twice as tall is just as good in inches (84 inches versus 42 inches) as it is in miles (0.00133 miles versus 0.00066 miles).</li>
+<li>Recall, we interpret log-relationships in terms of
+<em>multiplicative</em> changes. So being twice as tall is just as good
+in inches (84 inches versus 42 inches) as it is in miles (0.00133 miles
+versus 0.00066 miles).</li>
 <li>So choosing the units does not really matter.</li>
-<li>But choosing the <em>size</em> of the multiplicative difference is important (50% larger versus twice as large versus ten times as large, etc).</li>
-<li>E.g., there are very few humans who are twice as large as other humans. So a better multiplicative difference would be 1.05 (5% taller).</li>
+<li>But choosing the <em>size</em> of the multiplicative difference is
+important (50% larger versus twice as large versus ten times as large,
+etc).</li>
+<li>E.g., there are very few humans who are twice as large as other
+humans. So a better multiplicative difference would be 1.05 (5%
+taller).</li>
 </ul>
 <pre class="r"><code>earnings &lt;- mutate(earnings, log_height = log(height))
 tidy(lm(earn ~ log_height, data = earnings))</code></pre>
@@ -455,9 +490,13 @@ tidy(lm(earn ~ log_height, data = earnings))</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept) -425211.    37370.     -11.4 5.03e-29
 ## 2 log_height   106362.     8904.      11.9 1.03e-31</code></pre>
-<p>Individuals that are 5% taller tend to make <span class="math inline">\(106362 * \log(1.05) = \$5189\)</span> more on average.</p>
+<p>Individuals that are 5% taller make <span
+class="math inline">\(106362 * \log(1.05) = \$5189\)</span> more on
+average.</p>
 <ul>
-<li>You can choose a good multiplier by seeing if the standard deviation of the log of that base is between 0.5 and 10 (but this is a rough rule of thumb).</li>
+<li>You can choose a good multiplier by seeing if the standard deviation
+of the log of that base is between 0.5 and 10 (but this is a rough rule
+of thumb).</li>
 </ul>
 <pre class="r"><code>sd(log(earnings$height, base = 10)) # bad</code></pre>
 <pre><code>## [1] 0.02484</code></pre>
@@ -467,13 +506,21 @@ tidy(lm(earn ~ log_height, data = earnings))</code></pre>
 <pre><code>## [1] 1.173</code></pre>
 <pre class="r"><code>sd(log(earnings$height, base = 1.01)) # good</code></pre>
 <pre><code>## [1] 5.749</code></pre></li>
-<li><p><strong>Exercise</strong>: A study was exploring the association between a country’s wine consumption (liters per person per year) and mortality rate (deaths per 1000 individuals). Researchers found that a power-law relationship was a fine approximation. Based on the below plot alone, choose a good multiplier to interpret the coefficient of a regression of log-mortality on log-wine. Verify your result using our rule of thumb above.</p>
+<li><p><strong>Exercise</strong>: A study was exploring the association
+between a country’s wine consumption (liters per person per year) and
+mortality rate (deaths per 1000 individuals). Researchers found that a
+power-law relationship was a fine approximation. Based on the below plot
+alone, choose a good multiplier to interpret the coefficient of a
+regression of log-mortality on log-wine. Verify your result using our
+rule of thumb above.</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;ex0823&quot;)
 wine &lt;- ex0823
 qplot(x = Wine, y = Mortality, data = wine)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p><strong>Exercise</strong>: World record mile time progressions from 1913 to 1999. Data are from Figure A.1 of ROS. Variables include</p>
+<li><p><strong>Exercise</strong>: World record mile time progressions
+from 1913 to 1999. Data are from Figure A.1 of ROS. Variables
+include</p>
 <ul>
 <li><code>year</code>: The date (in years) of the new world record.</li>
 <li><code>seconds</code>: The new world record (in seconds).</li>
@@ -484,25 +531,48 @@ glimpse(mile)</code></pre>
 ## Columns: 2
 ## $ year    &lt;dbl&gt; 1913, 1916, 1924, 1932, 1934, 1934, 1938, 1943, 1943, 1943, 19…
 ## $ seconds &lt;dbl&gt; 254.4, 252.6, 250.4, 249.2, 247.6, 246.8, 246.4, 246.2, 246.2,…</code></pre>
-<p>The default scale of the <span class="math inline">\(X\)</span> variable is in years. Is this the best scale? If not, transform the <span class="math inline">\(X\)</span>-variable to a more appropriate scale, fit a regression of world record on year, then provide an interpretation for the slope.</p></li>
+<p>The default scale of the <span class="math inline">\(X\)</span>
+variable is in years. Is this the best scale? If not, transform the
+<span class="math inline">\(X\)</span>-variable to a more appropriate
+scale, fit a regression of world record on year, then provide an
+interpretation for the slope.</p></li>
 </ul>
 </div>
 <div id="z-score-scales" class="section level2">
 <h2>Z-score scales</h2>
 <ul>
-<li><p>The idea behind using standard deviations is that roughly (i.e. generally only exactly if normal) 68% of observations will be within 1 standard deviation of the mean. So this difference represents something meaningful.</p></li>
-<li><p>Above, I suggested to use standard deviations to <em>guide</em> your scaling. Alternatively, we could scale explicitly <em>by</em> standard deviations.</p></li>
-<li><p>The <span class="math inline">\(Z\)</span>-score for a variable is its value, minus its mean, divided by its standard deviation. <span class="math display">\[
+<li><p>The idea behind using standard deviations is that roughly
+(i.e. generally only exactly if normal) 68% of observations will be
+within 1 standard deviation of the mean. So this difference represents
+something meaningful.</p></li>
+<li><p>Above, I suggested to use standard deviations to <em>guide</em>
+your scaling. Alternatively, we could scale explicitly <em>by</em>
+standard deviations.</p></li>
+<li><p>The <span class="math inline">\(Z\)</span>-score for a variable
+is its value, minus its mean, divided by its standard deviation. <span
+class="math display">\[
   Z_i = \frac{X_i - \bar{X}}{s_x}
   \]</span></p></li>
-<li><p><span class="math inline">\(Z_i\)</span> is now in units of <em>standard deviations of <span class="math inline">\(X_i\)</span> from its mean</em>.</p>
+<li><p><span class="math inline">\(Z_i\)</span> is now in units of
+<em>standard deviations of <span class="math inline">\(X_i\)</span> from
+its mean</em>.</p>
 <ul>
-<li><span class="math inline">\(Z_i = 1\)</span> means individual <span class="math inline">\(i\)</span> has an <span class="math inline">\(X_i\)</span> value that is one standard deviation above the mean.</li>
-<li><span class="math inline">\(Z_i = -1\)</span> means individual <span class="math inline">\(i\)</span> has an <span class="math inline">\(X_i\)</span> value that is one standard deviation below the mean.</li>
-<li><span class="math inline">\(Z_i = 2\)</span> means individual <span class="math inline">\(i\)</span> has an <span class="math inline">\(X_i\)</span> value that is two standard deviations above the mean.</li>
+<li><span class="math inline">\(Z_i = 1\)</span> means individual <span
+class="math inline">\(i\)</span> has an <span
+class="math inline">\(X_i\)</span> value that is one standard deviation
+above the mean.</li>
+<li><span class="math inline">\(Z_i = -1\)</span> means individual <span
+class="math inline">\(i\)</span> has an <span
+class="math inline">\(X_i\)</span> value that is one standard deviation
+below the mean.</li>
+<li><span class="math inline">\(Z_i = 2\)</span> means individual <span
+class="math inline">\(i\)</span> has an <span
+class="math inline">\(X_i\)</span> value that is two standard deviations
+above the mean.</li>
 <li>etc</li>
 </ul></li>
-<li><p><strong>Example</strong>: For the heights and earnings dataset, let’s create <span class="math inline">\(Z\)</span>-scores.</p>
+<li><p><strong>Example</strong>: For the heights and earnings dataset,
+let’s create <span class="math inline">\(Z\)</span>-scores.</p>
 <pre class="r"><code>earnings &lt;- mutate(earnings, 
                    height_z = (height - mean(height)) / sd(height),
                    earn_z = (earn - mean(earn)) / sd(earn))
@@ -515,7 +585,8 @@ glimpse(select(earnings, earn_z, height_z))</code></pre>
 <pre class="r"><code>qplot(x = height, y = earn, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
-<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-2.png" width="384" style="display: block; margin: auto;" /> But this will make interpretation a little easier.</p>
+<p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-2.png" width="384" style="display: block; margin: auto;" />
+But this will make interpretation a little easier.</p>
 <pre class="r"><code>lm_earn_z &lt;- lm(earn_z ~ height_z, data = earnings)
 tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
@@ -523,20 +594,37 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept) 4.70e-16    0.0226  2.08e-14 1.00e+ 0  -0.0443    0.0443
 ## 2 height_z    2.71e- 1    0.0226  1.20e+ 1 5.42e-32   0.227     0.316</code></pre>
-<p>So a 1 standard deviation difference in height corresponds to 0.27 standard deviations higher earnings.</p></li>
-<li><p>If you do this to all variables in your model, you can use the following multiple regression model: <span class="math display">\[
-  Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots + \beta_{p-1}^*Z_{i, p-1} + \epsilon_i
+<p>So a 1 standard deviation difference in height corresponds to 0.27
+standard deviations higher earnings.</p></li>
+<li><p>If you do this to all variables in your model, you can use the
+following multiple regression model: <span class="math display">\[
+  Y_i = \beta_0^* + \beta_1^*Z_{i1} + \beta_2^* Z_{i2} + \cdots +
+\beta_{p-1}^*Z_{i, p-1} + \epsilon_i
   \]</span></p></li>
-<li><p>If we run a linear regression under this model, then the interpretation of coefficient <span class="math inline">\(\beta_i^*\)</span> is:</p>
+<li><p>If we run a linear regression under this model, then the
+interpretation of coefficient <span
+class="math inline">\(\beta_i^*\)</span> is:</p>
 <blockquote>
-<p>Individuals that are 1 standard deviation larger in <span class="math inline">\(X_i\)</span> tend to have <span class="math inline">\(\beta_1^*\)</span> higher <span class="math inline">\(Y_i\)</span> on average, adjusting for all other predictors in our model.</p>
+<p>Individuals that are 1 standard deviation larger in <span
+class="math inline">\(X_i\)</span> have <span
+class="math inline">\(\beta_1^*\)</span> higher <span
+class="math inline">\(Y_i\)</span> on average, adjusting for all other
+predictors in our model.</p>
 </blockquote></li>
-<li><p>Note: If <span class="math inline">\(X_i^* = \frac{X_i - a}{b}\)</span>, then <span class="math inline">\(\beta_i^* = b\beta_i\)</span> and <span class="math inline">\(\hat{\beta}_i^* = b\hat{\beta}_i\)</span>.</p></li>
-<li><p><strong>Exercise</strong>: Recall the portrait studio example where A portrait studio chain contains data on 21 cities (from Section 6.9 of KNNL). Variables include</p>
+<li><p>Note: If <span class="math inline">\(X_i^* = \frac{X_i -
+a}{b}\)</span>, then <span class="math inline">\(\beta_i^* =
+b\beta_i\)</span> and <span class="math inline">\(\hat{\beta}_i^* =
+b\hat{\beta}_i\)</span>.</p></li>
+<li><p><strong>Exercise</strong>: Recall the portrait studio example
+where A portrait studio chain contains data on 21 cities (from Section
+6.9 of KNNL). Variables include</p>
 <ul>
-<li><p><code>young</code>: The number of persons aged 16 or younger in the community (thousands of persons).</p></li>
-<li><p><code>disp</code>: The per capita disposable personal income in the community (thousands of dollars).</p></li>
-<li><p><code>sales</code>: Portrait studio sales in the community (thousands of dollars).</p></li>
+<li><p><code>young</code>: The number of persons aged 16 or younger in
+the community (thousands of persons).</p></li>
+<li><p><code>disp</code>: The per capita disposable personal income in
+the community (thousands of dollars).</p></li>
+<li><p><code>sales</code>: Portrait studio sales in the community
+(thousands of dollars).</p></li>
 <li><p>You can load these data into R with:</p>
 <pre class="r"><code>portrait &lt;- tribble(~young, ~disp, ~sales,
                     68.5,   16.7,  174.4,
@@ -562,40 +650,69 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
                     52.3,   16.0,  166.5)</code></pre></li>
 </ul>
 <ol style="list-style-type: decimal">
-<li><p>Fit a linear model of sales (<span class="math inline">\(Y\)</span>) on young (<span class="math inline">\(X_1\)</span>) and disp (<span class="math inline">\(X_2\)</span>). What are the coefficient estimates?</p></li>
-<li><p>What would happen to the coefficient estimates of <code>young</code> and <code>disp</code> if you converted the units of <code>disp</code> to tens of thousands of dollars?</p></li>
-<li><p>Convert <code>disp</code> to units of tens of thousands of dollars and rerun the regression. Did what you think would happen to the coefficient happen?</p></li>
-<li><p>What about if convert <code>disp</code> to <span class="math inline">\(z\)</span>-scores? What do you think would happen to the <code>young</code> coefficient estimate? Verify your statement.</p></li>
-<li><p>Run a linear model by first converting <code>young</code> and <code>disp</code> to <span class="math inline">\(z\)</span>-scores. Interpret the coefficients.</p></li>
+<li><p>Fit a linear model of sales (<span
+class="math inline">\(Y\)</span>) on young (<span
+class="math inline">\(X_1\)</span>) and disp (<span
+class="math inline">\(X_2\)</span>). What are the coefficient
+estimates?</p></li>
+<li><p>What would happen to the coefficient estimates of
+<code>young</code> and <code>disp</code> if you converted the units of
+<code>disp</code> to tens of thousands of dollars?</p></li>
+<li><p>Convert <code>disp</code> to units of tens of thousands of
+dollars and rerun the regression. Did what you think would happen to the
+coefficient happen?</p></li>
+<li><p>What about if convert <code>disp</code> to <span
+class="math inline">\(z\)</span>-scores? What do you think would happen
+to the <code>young</code> coefficient estimate? Verify your
+statement.</p></li>
+<li><p>Run a linear model by first converting <code>young</code> and
+<code>disp</code> to <span class="math inline">\(z\)</span>-scores.
+Interpret the coefficients.</p></li>
 </ol></li>
-<li><p><span class="math inline">\(Z\)</span>-scores make the coefficients more comparable. However, the issues of multicollinearity (next section) still might make it hard to compare the importance of various predictors. This is because, e.g. in our portrait example, there might not be any cities that are 1 standard deviation higher in disposable income but have the same number of young folks.</p></li>
+<li><p><span class="math inline">\(Z\)</span>-scores make the
+coefficients more comparable. However, the issues of multicollinearity
+(next section) still might make it hard to compare the importance of
+various predictors. This is because, e.g. in our portrait example, there
+might not be any cities that are 1 standard deviation higher in
+disposable income but have the same number of young folks.</p></li>
 </ul>
 </div>
 </div>
 <div id="multicollinearity" class="section level1">
 <h1>Multicollinearity</h1>
 <ul>
-<li><p><strong>Multicollinearity</strong>: Correlation between predictors.</p></li>
-<li><p>In observational studies, multicollinearity is the rule, not the exception.</p>
+<li><p><strong>Multicollinearity</strong>: Correlation between
+predictors.</p></li>
+<li><p>In observational studies, multicollinearity is the rule, not the
+exception.</p>
 <ul>
-<li>In observational studies, you will always have some correlation between predictors.</li>
-<li>But too much correlation can be a really bad thing (how much is too much is calculated in Chapter 10).</li>
+<li>In observational studies, you will always have some correlation
+between predictors.</li>
+<li>But too much correlation can be a really bad thing (how much is too
+much is calculated in Chapter 10).</li>
 </ul></li>
 <li><p>The consequences of multicollinearity:</p>
 <ol style="list-style-type: decimal">
-<li>Estimates of coefficients change based on what other predictors are in the model.</li>
-<li>Extra sums of squares change based on what other predictors are in the model.</li>
+<li>Estimates of coefficients change based on what other predictors are
+in the model.</li>
+<li>Extra sums of squares change based on what other predictors are in
+the model.</li>
 <li>Standard errors are inflated.</li>
 <li>Fits and predictions and MSE are less affected.</li>
 <li>The significance of some predictors can be masked.</li>
 <li>Interpretation becomes more difficult.</li>
 </ol></li>
-<li><p>We will demonstrate all of these issues through the body fat example with variables</p>
+<li><p>We will demonstrate all of these issues through the body fat
+example with variables</p>
 <ul>
-<li><span class="math inline">\(X_1\)</span> <code>triceps</code>: Triceps skinfold thickness.</li>
-<li><span class="math inline">\(X_2\)</span> <code>thigh</code>: Thigh circumference.</li>
-<li><span class="math inline">\(X_3\)</span> <code>midarm</code>: Midarm circumference</li>
-<li><span class="math inline">\(Y\)</span> <code>fat</code>: Body fat.</li>
+<li><span class="math inline">\(X_1\)</span> <code>triceps</code>:
+Triceps skinfold thickness.</li>
+<li><span class="math inline">\(X_2\)</span> <code>thigh</code>: Thigh
+circumference.</li>
+<li><span class="math inline">\(X_3\)</span> <code>midarm</code>: Midarm
+circumference</li>
+<li><span class="math inline">\(Y\)</span> <code>fat</code>: Body
+fat.</li>
 </ul>
 <pre class="r"><code>body &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/body.csv&quot;)
 glimpse(body)</code></pre>
@@ -609,7 +726,10 @@ glimpse(body)</code></pre>
 <pre class="r"><code>library(GGally)
 ggpairs(data = body)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-30-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>Notice that <span class="math inline">\(X_1\)</span> = triceps and <span class="math inline">\(X_2\)</span> = thigh are highly correlated with each other, but these are less correlated with <span class="math inline">\(X_3\)</span> = midarm.</p></li>
+<li><p>Notice that <span class="math inline">\(X_1\)</span> = triceps
+and <span class="math inline">\(X_2\)</span> = thigh are highly
+correlated with each other, but these are less correlated with <span
+class="math inline">\(X_3\)</span> = midarm.</p></li>
 <li><p>Let’s fit a bunch of models</p>
 <pre class="r"><code>lm_tr &lt;- lm(fat ~ triceps, data = body)
 lm_th &lt;- lm(fat ~ thigh, data = body)
@@ -646,14 +766,17 @@ lm_tr_th_m &lt;- lm(fat ~ triceps + thigh + midarm, data = body)</code></pre></l
 ## 3 thigh          -2.86
 ## 4 midarm         -2.19</code></pre>
 <ul>
-<li>Coefficient estimates change based on what predictors are in the model.</li>
+<li>Coefficient estimates change based on what predictors are in the
+model.</li>
 </ul>
 <table>
 <thead>
 <tr class="header">
 <th align="center">Variables in Model</th>
-<th align="center"><span class="math inline">\(\hat{\beta}_1\)</span></th>
-<th align="center"><span class="math inline">\(\hat{\beta}_2\)</span></th>
+<th align="center"><span
+class="math inline">\(\hat{\beta}_1\)</span></th>
+<th align="center"><span
+class="math inline">\(\hat{\beta}_2\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -673,7 +796,8 @@ lm_tr_th_m &lt;- lm(fat ~ triceps + thigh + midarm, data = body)</code></pre></l
 <td align="center">0.66</td>
 </tr>
 <tr class="even">
-<td align="center"><span class="math inline">\(X_1, X_2, X_3\)</span></td>
+<td align="center"><span class="math inline">\(X_1, X_2,
+X_3\)</span></td>
 <td align="center">4.33</td>
 <td align="center">-2.86</td>
 </tr>
@@ -681,18 +805,42 @@ lm_tr_th_m &lt;- lm(fat ~ triceps + thigh + midarm, data = body)</code></pre></l
 </table>
 <ul>
 <li><p>😱 Look how much they change!</p></li>
-<li><p><strong>Exercise</strong>: What is the model for each row in the above table?</p></li>
-<li><p>We saw that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> were highly correlated, so it makes sense that those coefficients change when they are included together in the model.</p></li>
-<li><p>But <span class="math inline">\(X_3\)</span> was not highly correlated with either <span class="math inline">\(X_1\)</span> nor <span class="math inline">\(X_2\)</span>, so why did the coefficients change so much?</p></li>
-<li><p>It turns out that, although <span class="math inline">\(X_3\)</span> is not highly correlated with <span class="math inline">\(X_1\)</span> and is not highly correlated with <span class="math inline">\(X_2\)</span>, it is highly correlated with the combination of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>.</p></li>
-<li><p>We can measure the strength of the association between <span class="math inline">\(X_3\)</span> and the combination of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> by the multiple <span class="math inline">\(R^2\)</span> value of regression of <span class="math inline">\(X_3\)</span> on <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span></p>
+<li><p><strong>Exercise</strong>: What is the model for each row in the
+above table?</p></li>
+<li><p>We saw that <span class="math inline">\(X_1\)</span> and <span
+class="math inline">\(X_2\)</span> were highly correlated, so it makes
+sense that those coefficients change when they are included together in
+the model.</p></li>
+<li><p>But <span class="math inline">\(X_3\)</span> was not highly
+correlated with either <span class="math inline">\(X_1\)</span> nor
+<span class="math inline">\(X_2\)</span>, so why did the coefficients
+change so much?</p></li>
+<li><p>It turns out that, although <span
+class="math inline">\(X_3\)</span> is not highly correlated with <span
+class="math inline">\(X_1\)</span> and is not highly correlated with
+<span class="math inline">\(X_2\)</span>, it is highly correlated with
+the combination of <span class="math inline">\(X_1\)</span> and <span
+class="math inline">\(X_2\)</span>.</p></li>
+<li><p>We can measure the strength of the association between <span
+class="math inline">\(X_3\)</span> and the combination of <span
+class="math inline">\(X_1\)</span> and <span
+class="math inline">\(X_2\)</span> by the multiple <span
+class="math inline">\(R^2\)</span> value of regression of <span
+class="math inline">\(X_3\)</span> on <span
+class="math inline">\(X_1\)</span> and <span
+class="math inline">\(X_2\)</span></p>
 <pre class="r"><code>glance(lm(midarm ~ triceps + thigh, data = body))$r.squared</code></pre>
 <pre><code>## [1] 0.9904</code></pre></li>
-<li><p>So, you cannot detect multicollinearity by just looking at pairwise correlations between predictors.</p>
+<li><p>So, you cannot detect multicollinearity by just looking at
+pairwise correlations between predictors.</p>
 <ul>
-<li>Chapter 10 provides more sophisticated measures of multicollinearity.</li>
+<li>Chapter 10 provides more sophisticated measures of
+multicollinearity.</li>
 </ul></li>
-<li><p>Key Takeaway: a regression coefficient does not reflect any inherent effect of a particular predictor on the response, but only a marginal or partial effect given whatever other predictors are in the model.</p></li>
+<li><p>Key Takeaway: a regression coefficient does not reflect any
+inherent effect of a particular predictor on the response, but only a
+marginal or partial effect given whatever other predictors are in the
+model.</p></li>
 </ul>
 </div>
 <div id="extra-sums-of-squares-change" class="section level2">
@@ -723,15 +871,22 @@ Anova(lm_tr)</code></pre>
 ## midarm      11.5  1    1.88   0.19
 ## Residuals   98.4 16</code></pre>
 <ul>
-<li><p>Extra sums of squares will differ based on what other predictors are in the model</p>
+<li><p>Extra sums of squares will differ based on what other predictors
+are in the model</p>
 <ul>
 <li><span class="math inline">\(SSR(X_1) = 352\)</span></li>
 <li><span class="math inline">\(SSR(X_1|X_2) = 3.5\)</span></li>
 <li><span class="math inline">\(SSR(X_1|X_2, X_3) = 12.7\)</span></li>
 </ul></li>
-<li><p>Recall, the extra sum of squares is how much the error sum of squares is reduced when we include a predictor in a model with other predictors already in the model.</p></li>
-<li><p>The extra sum of squares can increase or decrease depending on what other variables are in the model.</p></li>
-<li><p>Key Takeaway: there is no unique sum of squares that can be ascribed to any one predictor as reflecting its effect in reducing the total variation in <span class="math inline">\(Y\)</span> — this depends on what other predictors are in the model.</p></li>
+<li><p>Recall, the extra sum of squares is how much the error sum of
+squares is reduced when we include a predictor in a model with other
+predictors already in the model.</p></li>
+<li><p>The extra sum of squares can increase or decrease depending on
+what other variables are in the model.</p></li>
+<li><p>Key Takeaway: there is no unique sum of squares that can be
+ascribed to any one predictor as reflecting its effect in reducing the
+total variation in <span class="math inline">\(Y\)</span> — this depends
+on what other predictors are in the model.</p></li>
 </ul>
 </div>
 <div id="standard-errors-are-larger" class="section level2">
@@ -767,8 +922,10 @@ Anova(lm_tr)</code></pre>
 <thead>
 <tr class="header">
 <th align="center">Variables in Model</th>
-<th align="center"><span class="math inline">\(s\{\hat{\beta}_1\}\)</span></th>
-<th align="center"><span class="math inline">\(s\{\hat{\beta}_2\}\)</span></th>
+<th align="center"><span
+class="math inline">\(s\{\hat{\beta}_1\}\)</span></th>
+<th align="center"><span
+class="math inline">\(s\{\hat{\beta}_2\}\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -788,30 +945,47 @@ Anova(lm_tr)</code></pre>
 <td align="center">0.29</td>
 </tr>
 <tr class="even">
-<td align="center"><span class="math inline">\(X_1, X_2, X_3\)</span></td>
+<td align="center"><span class="math inline">\(X_1, X_2,
+X_3\)</span></td>
 <td align="center">3.02</td>
 <td align="center">2.58</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li><p>Standard error increases as you include correlated predictors in the model.</p></li>
-<li><p>Why? Consider the case of perfectly correlated variables where <span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span class="math inline">\(i\)</span>. Then for an number <span class="math inline">\(a\)</span> <span class="math display">\[\begin{align}
-  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
-  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+<li><p>Standard error increases as you include correlated predictors in
+the model.</p></li>
+<li><p>Why? Consider the case of perfectly correlated variables where
+<span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span
+class="math inline">\(i\)</span>. Then for an number <span
+class="math inline">\(a\)</span> <span
+class="math display">\[\begin{align}
+  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} +
+\hat{\beta}_2X_{i2}\\
+  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 +
+a)X_{i2}
   \end{align}\]</span></p>
 <ul>
-<li><p>So it is impossible to tell <span class="math inline">\(\hat{\beta}_1\)</span> and <span class="math inline">\(\hat{\beta}_2\)</span> apart.</p></li>
-<li><p>We don’t know what effect to attribute to <span class="math inline">\(X_1\)</span> and what to attribute to <span class="math inline">\(X_2\)</span>.</p></li>
+<li><p>So it is impossible to tell <span
+class="math inline">\(\hat{\beta}_1\)</span> and <span
+class="math inline">\(\hat{\beta}_2\)</span> apart.</p></li>
+<li><p>We don’t know what effect to attribute to <span
+class="math inline">\(X_1\)</span> and what to attribute to <span
+class="math inline">\(X_2\)</span>.</p></li>
 </ul></li>
 </ul>
 </div>
-<div id="fitted-values-predictions-and-mse-are-relatively-stable" class="section level2">
+<div id="fitted-values-predictions-and-mse-are-relatively-stable"
+class="section level2">
 <h2>Fitted Values, Predictions, and MSE are Relatively Stable</h2>
 <ul>
-<li><p>The major issue with multicollinearity is that we can’t tell what effect comes from which predictor.</p></li>
-<li><p>But the effect of multicollinearity on fitted values, predictions, and MSE is much more modest.</p></li>
-<li><p>Confidence intervals for mean have about the same width (predictor levels chosen to have about the same mean estimate in each model)</p>
+<li><p>The major issue with multicollinearity is that we can’t tell what
+effect comes from which predictor.</p></li>
+<li><p>But the effect of multicollinearity on fitted values,
+predictions, and MSE is much more modest.</p></li>
+<li><p>Confidence intervals for mean have about the same width
+(predictor levels chosen to have about the same mean estimate in each
+model)</p>
 <pre class="r"><code>df1 &lt;- data.frame(triceps = 25)
 df2 &lt;- data.frame(triceps = 25, thigh = 50)
 df3 &lt;- data.frame(triceps = 25, thigh = 50, midarm = 28.8)
@@ -834,31 +1008,47 @@ predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
 <pre class="r"><code>predict(lm_tr_th_m, newdata = df3, interval = &quot;prediction&quot;)</code></pre>
 <pre><code>##     fit   lwr   upr
 ## 1 19.64 14.21 25.07</code></pre></li>
-<li><p>Residual standard deviation (square root of MSE) is about the same in all models</p>
+<li><p>Residual standard deviation (square root of MSE) is about the
+same in all models</p>
 <pre class="r"><code>glance(lm_tr)$sigma</code></pre>
 <pre><code>## [1] 2.82</code></pre>
 <pre class="r"><code>glance(lm_tr_th)$sigma</code></pre>
 <pre><code>## [1] 2.543</code></pre>
 <pre class="r"><code>glance(lm_tr_th_m)$sigma</code></pre>
 <pre><code>## [1] 2.48</code></pre></li>
-<li><p>Why? Consider the case of perfectly correlated variables where <span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span class="math inline">\(i\)</span>. Then for an number <span class="math inline">\(a\)</span> <span class="math display">\[\begin{align}
-  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} + \hat{\beta}_2X_{i2}\\
-  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 + a)X_{i2}
+<li><p>Why? Consider the case of perfectly correlated variables where
+<span class="math inline">\(X_{i1} = X_{i2}\)</span> for all <span
+class="math inline">\(i\)</span>. Then for an number <span
+class="math inline">\(a\)</span> <span
+class="math display">\[\begin{align}
+  \hat{Y}_i &amp;= \hat{\beta}_0 + \hat{\beta}_1X_{i1} +
+\hat{\beta}_2X_{i2}\\
+  &amp;= \hat{\beta}_0 + (\hat{\beta}_1-a)X_{i1} + (\hat{\beta}_2 +
+a)X_{i2}
   \end{align}\]</span></p>
 <ul>
-<li><p>The estimated mean value does not change no matter what value of <span class="math inline">\(a\)</span> is provided (so predictions would also be robust to change).</p></li>
-<li><p>This means the residuals would also not change no matter what value of <span class="math inline">\(a\)</span> is provided (so the MSE would be more robust to change).</p></li>
+<li><p>The estimated mean value does not change no matter what value of
+<span class="math inline">\(a\)</span> is provided (so predictions would
+also be robust to change).</p></li>
+<li><p>This means the residuals would also not change no matter what
+value of <span class="math inline">\(a\)</span> is provided (so the MSE
+would be more robust to change).</p></li>
 </ul></li>
-<li><p>This is not to say that you should just include every predictor in the model. This is called “overfitting” and can cause bad issues (machine learning will discuss this).</p>
+<li><p>This is not to say that you should just include every predictor
+in the model. This is called “overfitting” and can cause bad issues
+(machine learning will discuss this).</p>
 <ul>
-<li>The point is just that predictions are more <em>robust</em> to issues of multicollinearity.</li>
+<li>The point is just that predictions are more <em>robust</em> to
+issues of multicollinearity.</li>
 </ul></li>
 </ul>
 </div>
 <div id="masking-significance" class="section level2">
 <h2>Masking Significance</h2>
 <ul>
-<li><p>The <span class="math inline">\(p\)</span>-values for all three variables are all large, indicating a lack of evidence to include any of them.</p>
+<li><p>The <span class="math inline">\(p\)</span>-values for all three
+variables are all large, indicating a lack of evidence to include any of
+them.</p>
 <pre class="r"><code>tidy(lm_tr_th_m)</code></pre>
 <pre><code>## # A tibble: 4 × 5
 ##   term        estimate std.error statistic p.value
@@ -867,30 +1057,61 @@ predict(lm_tr, newdata = df1, interval = &quot;confidence&quot;)</code></pre>
 ## 2 triceps         4.33      3.02      1.44   0.170
 ## 3 thigh          -2.86      2.58     -1.11   0.285
 ## 4 midarm         -2.19      1.60     -1.37   0.190</code></pre></li>
-<li><p>But the overall <span class="math inline">\(F\)</span>-test indicates strong evidence that we should include at least one of them:</p>
+<li><p>But the overall <span class="math inline">\(F\)</span>-test
+indicates strong evidence that we should include at least one of
+them:</p>
 <pre class="r"><code>glance(lm_tr_th_m)$p.value</code></pre>
 <pre><code>##     value 
 ## 7.343e-06</code></pre></li>
-<li><p>The <span class="math inline">\(t\)</span>-test for <span class="math inline">\(H_0: \beta_1 = 0\)</span> compares the two models:</p>
+<li><p>The <span class="math inline">\(t\)</span>-test for <span
+class="math inline">\(H_0: \beta_1 = 0\)</span> compares the two
+models:</p>
 <ul>
-<li><span class="math inline">\(H_0: Y_i = \beta_0 + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
-<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 + \beta_2X_{i2} +
+\beta_3X_{i3} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} +
+\beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
 </ul>
-<p>and if <span class="math inline">\(X_2\)</span> is highly correlated with <span class="math inline">\(X_1\)</span>, and <span class="math inline">\(X_2\)</span> is already in the model, then why do we also need to have <span class="math inline">\(X_1\)</span> in the model?</p></li>
-<li><p>The overall <span class="math inline">\(F\)</span>-test compares the two models:</p>
+<p>and if <span class="math inline">\(X_2\)</span> is highly correlated
+with <span class="math inline">\(X_1\)</span>, and <span
+class="math inline">\(X_2\)</span> is already in the model, then why do
+we also need to have <span class="math inline">\(X_1\)</span> in the
+model?</p></li>
+<li><p>The overall <span class="math inline">\(F\)</span>-test compares
+the two models:</p>
 <ul>
-<li><span class="math inline">\(H_0: Y_i = \beta_0 + \epsilon_i\)</span></li>
-<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
+<li><span class="math inline">\(H_0: Y_i = \beta_0 +
+\epsilon_i\)</span></li>
+<li><span class="math inline">\(H_A: Y_i = \beta_0 + \beta_1X_{i1} +
+\beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i\)</span></li>
 </ul>
-<p>So this test says that we should have at least one of these variables in the model.</p></li>
-<li><p>Key point: Just because the <span class="math inline">\(p\)</span>-values from the <span class="math inline">\(t\)</span>-tests are large does <em>not</em> mean that none of the predictors are associated with <span class="math inline">\(Y\)</span>.</p></li>
+<p>So this test says that we should have at least one of these variables
+in the model.</p></li>
+<li><p>Key point: Just because the <span
+class="math inline">\(p\)</span>-values from the <span
+class="math inline">\(t\)</span>-tests are large does <em>not</em> mean
+that none of the predictors are associated with <span
+class="math inline">\(Y\)</span>.</p></li>
 </ul>
 </div>
 <div id="the-difficulty-of-interpretation" class="section level2">
 <h2>The Difficulty of Interpretation</h2>
 <ul>
-<li><p>Sometimes, no data points exist that are one unit larger <span class="math inline">\(X_1\)</span> but the same <span class="math inline">\(X_2\)</span>, because of multicollinearity. Thus, this interpretation is suspect.</p></li>
-<li><p><strong>Example</strong>: Researchers were interested in studying the association between energy expenditure (<span class="math inline">\(Y\)</span>) on body mass (<span class="math inline">\(X_1\)</span>) and echolocation type. Echolocation type is a categorical variable with levels “non-echolocating bats”, “non-echolocating birds”, and “echolocating bats”. The idea is that echolocation consumes a lot of energy, and so researchers were interested in if evolution found a way to correct for this, so that the sum of energy expenditure was not higher in echolocating bats than what would be expected based on their mass. You can load these data into R with</p>
+<li><p>Sometimes, no data points exist that are one unit larger <span
+class="math inline">\(X_1\)</span> but the same <span
+class="math inline">\(X_2\)</span>, because of multicollinearity. Thus,
+this interpretation is suspect.</p></li>
+<li><p><strong>Example</strong>: Researchers were interested in studying
+the association between energy expenditure (<span
+class="math inline">\(Y\)</span>) on body mass (<span
+class="math inline">\(X_1\)</span>) and echolocation type. Echolocation
+type is a categorical variable with levels “non-echolocating bats”,
+“non-echolocating birds”, and “echolocating bats”. The idea is that
+echolocation consumes a lot of energy, and so researchers were
+interested in if evolution found a way to correct for this, so that the
+sum of energy expenditure was not higher in echolocating bats than what
+would be expected based on their mass. You can load these data into R
+with</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;case1002&quot;)
 echo &lt;- case1002
@@ -900,7 +1121,8 @@ glimpse(echo)</code></pre>
 ## $ Mass   &lt;dbl&gt; 779.0, 628.0, 258.0, 315.0, 24.3, 35.0, 72.8, 120.0, 213.0, 275…
 ## $ Type   &lt;fct&gt; non-echolocating bats, non-echolocating bats, non-echolocating …
 ## $ Energy &lt;dbl&gt; 43.70, 34.80, 23.30, 22.40, 2.46, 3.93, 9.15, 13.80, 14.60, 22.…</code></pre></li>
-<li><p>Since echolocation type is a categorical variable, we define two new indicator variables</p>
+<li><p>Since echolocation type is a categorical variable, we define two
+new indicator variables</p>
 <p><span class="math display">\[\begin{align}
   X_{i2} &amp;= \begin{cases}
   1 &amp; \text{ if individual $i$ is a non-echolocating bird}\\
@@ -911,56 +1133,80 @@ glimpse(echo)</code></pre>
   0 &amp; \text{ otherwise}
   \end{cases}
   \end{align}\]</span></p></li>
-<li><p>It turns out that the best model is one that includes a log-transformation on both energy and mass.</p>
+<li><p>It turns out that the best model is one that includes a
+log-transformation on both energy and mass.</p>
 <pre class="r"><code>echo &lt;- mutate(echo, l_energy = log(Energy), l_mass = log(Mass))
 echo &lt;- mutate(echo, Type = fct_relevel(Type, &quot;non-echolocating bats&quot;, &quot;non-echolocating birds&quot;, &quot;echolocating bats&quot;))</code></pre>
-<p>The last line above changes the order of the factor levels so that non-echolocating bats are the reference level.</p></li>
+<p>The last line above changes the order of the factor levels so that
+non-echolocating bats are the reference level.</p></li>
 <li><p>We then fit the model</p>
 <p><span class="math display">\[
-  \log(Y_i) = \beta_0 + \beta_1\log(X_{i1}) + \beta_2X_{i2} + \beta_3X_{i3} + \epsilon_i
+  \log(Y_i) = \beta_0 + \beta_1\log(X_{i1}) + \beta_2X_{i2} +
+\beta_3X_{i3} + \epsilon_i
   \]</span></p>
 <pre class="r"><code>lm_echo &lt;- lm(l_energy ~ l_mass + Type, data = echo)
 tidy(lm_echo, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 4 × 7
-##   term                  estimate std.error statistic  p.value conf.low conf.high
-##   &lt;chr&gt;                    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)            -1.58      0.287     -5.49  4.96e- 5   -2.19     -0.967
-## 2 l_mass                  0.815     0.0445    18.3   3.76e-12    0.721     0.909
-## 3 Typenon-echolocating…   0.102     0.114      0.896 3.84e- 1   -0.140     0.344
-## 4 Typeecholocating bats   0.0787    0.203      0.388 7.03e- 1   -0.351     0.508</code></pre></li>
+##   term                       estimate std.error stati…¹  p.value conf.…² conf.…³
+##   &lt;chr&gt;                         &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)                 -1.58      0.287   -5.49  4.96e- 5  -2.19   -0.967
+## 2 l_mass                       0.815     0.0445  18.3   3.76e-12   0.721   0.909
+## 3 Typenon-echolocating birds   0.102     0.114    0.896 3.84e- 1  -0.140   0.344
+## 4 Typeecholocating bats        0.0787    0.203    0.388 7.03e- 1  -0.351   0.508
+## # … with abbreviated variable names ¹​statistic, ²​conf.low, ³​conf.high</code></pre></li>
 <li><p>So the fit is</p>
 <p><span class="math display">\[
   \hat{Y} = -1.58 + 0.82 X_1 + 0.11X_2 + 0.08X_3
   \]</span></p></li>
-<li><p>How do we interpret the 0.08 coefficient? Typically, we would say that “echolocating bats expend about 8.3% more energy (<span class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating bats of about the same mass.”</p></li>
-<li><p><strong>However</strong>, there are no echolocating bats and non-echolocating bats of the same mass.</p>
+<li><p>How do we interpret the 0.08 coefficient? Typically, we would say
+that “echolocating bats expend about 8.3% more energy (<span
+class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating
+bats of about the same mass.”</p></li>
+<li><p><strong>However</strong>, there are no echolocating bats and
+non-echolocating bats of the same mass.</p>
 <pre class="r"><code>echo %&gt;%
   filter(Type != &quot;non-echolocating birds&quot;) %&gt;%
   qplot(x = Type, y = l_mass, data = ., ylab = &quot;log(Mass)&quot;)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-45-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>This is an example of multicollinearity.</p>
 <p>So this interpretation is suspect.</p></li>
-<li><p>The best interpretation is to just say that we are adjusting for body size. E.g. “echolocating bats expend about 8.3% more energy (<span class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating bats, adjusting for body size”.</p></li>
-<li><p>What this means is that group differences are considered only after the best explanation for body size is taken into account.</p></li>
+<li><p>The best interpretation is to just say that we are adjusting for
+body size. E.g. “echolocating bats expend about 8.3% more energy (<span
+class="math inline">\(e^{0.08}\)</span> = 1.083) than non-echolocating
+bats, adjusting for body size”.</p></li>
+<li><p>What this means is that group differences are considered only
+after the best explanation for body size is taken into account.</p></li>
 </ul>
 </div>
 <div id="remedies-for-multicollinearity" class="section level2">
 <h2>Remedies for Multicollinearity</h2>
 <ol style="list-style-type: decimal">
-<li><p>If it is not extreme (Section 10.5 of KNNL), don’t do anything. Just be cognizant of it.</p></li>
+<li><p>If it is not extreme (Section 10.5 of KNNL), don’t do anything.
+Just be cognizant of it.</p></li>
 <li><p>Drop some of the correlated predictor variables.</p></li>
-<li><p>Develop “composite” predictors that combine the correlated predictors.</p>
+<li><p>Develop “composite” predictors that combine the correlated
+predictors.</p>
 <ul>
 <li>Do this manually.</li>
-<li>Use <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal component analysis</a> (PCA).</li>
+<li>Use <a
+href="https://en.wikipedia.org/wiki/Principal_component_analysis">principal
+component analysis</a> (PCA).</li>
 </ul></li>
-<li><p>Apply <a href="https://en.wikipedia.org/wiki/Ridge_regression">ridge regression</a> (Chapter 10).</p></li>
+<li><p>Apply <a
+href="https://en.wikipedia.org/wiki/Ridge_regression">ridge
+regression</a> (Chapter 10).</p></li>
 </ol>
 </div>
-<div id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity" class="section level2">
-<h2>OK, that sucked, but what about when there is no multicollinearity?</h2>
+<div
+id="ok-that-sucked-but-what-about-when-there-is-no-multicollinearity"
+class="section level2">
+<h2>OK, that sucked, but what about when there is no
+multicollinearity?</h2>
 <ul>
-<li><p>Researchers were studying the effect of work crew size (<span class="math inline">\(X_1\)</span>) and level of bonus pay (<span class="math inline">\(X_2\)</span>) on crew productivity (<span class="math inline">\(Y\)</span>).</p>
+<li><p>Researchers were studying the effect of work crew size (<span
+class="math inline">\(X_1\)</span>) and level of bonus pay (<span
+class="math inline">\(X_2\)</span>) on crew productivity (<span
+class="math inline">\(Y\)</span>).</p>
 <pre class="r"><code>crew &lt;- tibble::tribble(
   ~size, ~bonus, ~productivity,
       4,      2,            42,
@@ -972,14 +1218,16 @@ tidy(lm_echo, conf.int = TRUE)</code></pre>
       6,      3,            61,
       6,      3,            60
   )</code></pre></li>
-<li><p><code>size</code> and <code>bonus</code> are both uncorrelated, by design.</p>
+<li><p><code>size</code> and <code>bonus</code> are both uncorrelated,
+by design.</p>
 <pre class="r"><code>cor(crew$size, crew$bonus)</code></pre>
 <pre><code>## [1] 0</code></pre></li>
 <li><p>Let’s fit these models:</p>
 <pre class="r"><code>lm_s &lt;- lm(productivity ~ size, data = crew)
 lm_b &lt;- lm(productivity ~ bonus, data = crew)
 lm_bs &lt;- lm(productivity ~ bonus + size, data = crew)</code></pre></li>
-<li><p>Notice that the estimated coefficients are unchanged when we add more predictors.</p>
+<li><p>Notice that the estimated coefficients are unchanged when we add
+more predictors.</p>
 <pre class="r"><code>tidy(lm_s)</code></pre>
 <pre><code>## # A tibble: 2 × 5
 ##   term        estimate std.error statistic p.value
@@ -999,13 +1247,20 @@ lm_bs &lt;- lm(productivity ~ bonus + size, data = crew)</code></pre></li>
 ## 1 (Intercept)    0.375     4.74     0.0791 0.940   
 ## 2 bonus          9.25      1.33     6.97   0.000937
 ## 3 size           5.37      0.664    8.10   0.000466</code></pre></li>
-<li><p>The interpretation of the coefficients still changes based on what variables are in the model (controlling for the other predictor), but the effect size is estimated to be the same regardless.</p></li>
-<li><p>Did you also notice that the standard errors did not get inflated?</p></li>
-<li><p>The extra sums of squares are the same. That is <span class="math display">\[
+<li><p>The interpretation of the coefficients still changes based on
+what variables are in the model (controlling for the other predictor),
+but the effect size is estimated to be the same regardless.</p></li>
+<li><p>Did you also notice that the standard errors did not get
+inflated?</p></li>
+<li><p>The extra sums of squares are the same. That is <span
+class="math display">\[
   SSR(X_1) = SSR(X_1|X_2)\\
   SSR(X_2) = SSR(X_2|X_1)
   \]</span></p>
-<p>so the relative reduction in the variation in <span class="math inline">\(Y\)</span> by including <span class="math inline">\(X_1\)</span> is the same no matter if <span class="math inline">\(X_2\)</span> is in the model.</p>
+<p>so the relative reduction in the variation in <span
+class="math inline">\(Y\)</span> by including <span
+class="math inline">\(X_1\)</span> is the same no matter if <span
+class="math inline">\(X_2\)</span> is in the model.</p>
 <pre class="r"><code>Anova(lm_b)</code></pre>
 <pre><code>## Anova Table (Type II tests)
 ## 
@@ -1028,8 +1283,11 @@ lm_bs &lt;- lm(productivity ~ bonus + size, data = crew)</code></pre></li>
 ## bonus      171.1  1    48.5 0.00094
 ## size       231.1  1    65.6 0.00047
 ## Residuals   17.6  5</code></pre></li>
-<li><p>Thus, it is relatively straightforward to determine if a variable should be included in a model, because this question may be answered without looking at other variables.</p></li>
-<li><p>Conclusion: When designing an experiment, make sure your predictors are all uncorrelated.</p></li>
+<li><p>Thus, it is relatively straightforward to determine if a variable
+should be included in a model, because this question may be answered
+without looking at other variables.</p></li>
+<li><p>Conclusion: When designing an experiment, make sure your
+predictors are all uncorrelated.</p></li>
 </ul>
 </div>
 </div>
