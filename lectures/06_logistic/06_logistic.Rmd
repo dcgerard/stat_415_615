@@ -203,7 +203,89 @@ library(lmtest)
 
 ## Maximum Likelihood Estimation
 
+- We don't use least squares for estimation. Rather, we use Maximum Likelihood.
 
+- The probability that $Y_i = 1$ is $p_i$ and the probability that $Y_i = 0$ is $1 - p_i$. 
+
+- Let $y_i \in \{0,1\}$ be the observed value of the random variable $Y_i$. Then we can succinctly write the probabilities of $Y_i$ as
+    $$
+    Pr(Y_i = y_i) = p_i^{y_i}(1-p_i)^{1 - y_i}
+    $$
+    Go ahead and plug in $y_i = 0$ and $y_i = 1$ to see this.
+
+- So the probability of our data given $p_i$ is
+    $$
+    Pr(Y_1 = y_1, Y_2 = y_2, \ldots, Y_n = y_n) = \prod_{i=1}^n p_i^{y_i}(1-p_i)^{1-y_i}
+    $$
+    
+- Recall that
+    $$
+    \text{logit}(p_i) = \beta_0 + \beta_1X_{i1} + \cdots \beta_{p-1}X_{i,p-1}.
+    $$
+    
+- So the probability of the data is a function of $\beta_0,\beta_1,\ldots,\beta_{p-1}$.
+
+- IDEA: Choose the $\beta_k$'s that make our observed data as probable as possible.
+
+- The objective function is called the "likelihood".
+
+- The resulting estimates are called the "maximum likelihood estimates" (MLE's).
+
+- Typically, we actually maximize the log of the likelihood
+
+$$
+L(\mathbf{\beta}) = \sum_{i=1}^n [y_i\log(p_i) + (1-y_i)\log(1-p_i)]
+$$
+
+
+```{r, eval = FALSE, echo = FALSE}
+library(ggrepel)
+library(latex2exp)
+beta0_seq <- seq(10, 1.8185, length.out = 20)
+beta1_seq <- seq(-0.3, -0.0665, length.out = 20)
+expit <- function(x) {
+  exp(x) / (1 + exp(x))
+}
+df <- tibble(Age = seq(min(donner$Age), max(donner$Age), length.out = 200))
+plist <- list()
+for (i in seq_along(beta1_seq)) {
+  beta0 <- beta0_seq[[i]]
+  beta1 <- beta1_seq[[i]]
+  
+  df %>%
+    mutate(Survived = expit(beta0 + beta1 * Age)) ->
+    df
+  
+  donner %>%
+    mutate(pi = expit(beta0 + beta1 * Age),
+           pi = if_else(Survived == 1, pi, 1 - pi)) ->
+    dontemp
+  
+  ll <- sum(log(dontemp$pi))
+  
+  dontemp %>%
+    mutate(pi = round(pi, digits = 2)) %>%
+    distinct(Age, Survived, .keep_all = TRUE) ->
+    dontemp
+  
+  ggplot(dontemp, aes(x = Age, y = Survived, label = pi)) +
+    geom_point() +
+    geom_text_repel(min.segment.length = 0) +
+    geom_line(data = df) +
+    ggtitle(TeX(paste0("LL = $\\sum_{i=1}^n [y_i\\log(p_i) + (1-y_i)\\log(1-p_i)] = $", round(ll, digits = 2)))) ->
+    plist[[i]]
+}
+
+saveGIF(expr = {
+  for (i in seq_along(plist)) {
+    print(plist[[i]])
+  }
+}, movie.name = "./06_figs/logistic_mle.gif", interval = 1)
+```
+
+- Below, the expit curve is morphing according to different values of $\beta_0$ and $\beta_1$. The text by the points is the probability of the those observed points, which in this case is just the height (or one minus the height) of the expit function. The likelihood is the product of those probabilities, and the log-likelihood is the sum of the log of those probabilities.
+
+  ![](./06_figs/logistic_mle.gif)\ 
 
 ## Practical Use in R
 
@@ -293,7 +375,7 @@ library(lmtest)
     \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
     $$
     
-- So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.08} \times 10} = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
+- So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.08} \times 10 = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
 
 - **Exercise**: The nocturia data set, described [here](https://dcgerard.github.io/stat_415_615/data.html#Nocturia) and dowloadable from [here](https://dcgerard.github.io/stat_415_615/data/nocturia.csv), contains patient covariates that are believed to be associated with whether the individual has nocturia (wakes up to pee). Download the data, the fit of logistic regression model of nocturia on age. Interpret the resulting coefficients.
 
@@ -326,6 +408,16 @@ library(lmtest)
 - The reason is that the odds ratios for prospective studies and retrospective studies are the same, even though the probabilities are not.
 
 - You can interpret slopes in the usual way in retrospective studies, but you cannot interpret the $Y$-intercept, or **any** fixed estimate of the probability. In these studies, **only** the slope (the odds ratio) is interpretable.
+
+# Inference
+
+- (Essentially) all maximum likelihood estimates enjoy good properties
+
+1. Mostly unbiased.
+2. Equations for standard deviation calculations are available.
+3. Sampling distribution of MLE's is approximately normal for moderate to large sample sizes.
+
+- That means that we can take
 
 
 # Bias reduction

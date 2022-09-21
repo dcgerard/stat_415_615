@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-16" />
+<meta name="date" content="2022-09-20" />
 
 <title>Logistic Regression</title>
 
@@ -375,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Logistic Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-16</h4>
+<h4 class="date">2022-09-20</h4>
 
 </div>
 
@@ -599,6 +599,54 @@ Distribution</a>) and <span class="math inline">\(g(\mu_i) =
 <h1>Estimation</h1>
 <div id="maximum-likelihood-estimation" class="section level2">
 <h2>Maximum Likelihood Estimation</h2>
+<ul>
+<li><p>We don’t use least squares for estimation. Rather, we use Maximum
+Likelihood.</p></li>
+<li><p>The probability that <span class="math inline">\(Y_i = 1\)</span>
+is <span class="math inline">\(p_i\)</span> and the probability that
+<span class="math inline">\(Y_i = 0\)</span> is <span
+class="math inline">\(1 - p_i\)</span>.</p></li>
+<li><p>Let <span class="math inline">\(y_i \in \{0,1\}\)</span> be the
+observed value of the random variable <span
+class="math inline">\(Y_i\)</span>. Then we can succinctly write the
+probabilities of <span class="math inline">\(Y_i\)</span> as <span
+class="math display">\[
+  Pr(Y_i = y_i) = p_i^{y_i}(1-p_i)^{1 - y_i}
+  \]</span> Go ahead and plug in <span class="math inline">\(y_i =
+0\)</span> and <span class="math inline">\(y_i = 1\)</span> to see
+this.</p></li>
+<li><p>So the probability of our data given <span
+class="math inline">\(p_i\)</span> is <span class="math display">\[
+  Pr(Y_1 = y_1, Y_2 = y_2, \ldots, Y_n = y_n) = \prod_{i=1}^n
+p_i^{y_i}(1-p_i)^{1-y_i}
+  \]</span></p></li>
+<li><p>Recall that <span class="math display">\[
+  \text{logit}(p_i) = \beta_0 + \beta_1X_{i1} + \cdots
+\beta_{p-1}X_{i,p-1}.
+  \]</span></p></li>
+<li><p>So the probability of the data is a function of <span
+class="math inline">\(\beta_0,\beta_1,\ldots,\beta_{p-1}\)</span>.</p></li>
+<li><p>IDEA: Choose the <span class="math inline">\(\beta_k\)</span>’s
+that make our observed data as probable as possible.</p></li>
+<li><p>The objective function is called the “likelihood”.</p></li>
+<li><p>The resulting estimates are called the “maximum likelihood
+estimates” (MLE’s).</p></li>
+<li><p>Typically, we actually maximize the log of the
+likelihood</p></li>
+</ul>
+<p><span class="math display">\[
+L(\mathbf{\beta}) = \sum_{i=1}^n [y_i\log(p_i) + (1-y_i)\log(1-p_i)]
+\]</span></p>
+<ul>
+<li><p>Below, the expit curve is morphing according to different values
+of <span class="math inline">\(\beta_0\)</span> and <span
+class="math inline">\(\beta_1\)</span>. The text by the points is the
+probability of the those observed points, which in this case is just the
+height (or one minus the height) of the expit function. The likelihood
+is the product of those probabilities, and the log-likelihood is the sum
+of the log of those probabilities.</p>
+<p><img src="06_figs/logistic_mle.gif" /> </p></li>
+</ul>
 </div>
 <div id="practical-use-in-r" class="section level2">
 <h2>Practical Use in R</h2>
@@ -710,8 +758,8 @@ party example: <span class="math display">\[
   \]</span></p></li>
 <li><p>So individuals of the same sex that are 10 years younger have
 about twice the odds of surviving (<span class="math inline">\(e^{0.08}
-\times 10} = 2.186\)</span>). Also, a woman’s odds of survival were
-about 5 times that of a man of the same age (<span
+\times 10 = 2.186\)</span>). Also, a woman’s odds of survival were about
+5 times that of a man of the same age (<span
 class="math inline">\(e^{1.6} = 4.95\)</span>).</p></li>
 <li><p><strong>Exercise</strong>: The nocturia data set, described <a
 href="https://dcgerard.github.io/stat_415_615/data.html#Nocturia">here</a>
@@ -758,6 +806,22 @@ class="math inline">\(Y\)</span>-intercept, or <strong>any</strong>
 fixed estimate of the probability. In these studies,
 <strong>only</strong> the slope (the odds ratio) is
 interpretable.</p></li>
+</ul>
+</div>
+<div id="inference" class="section level1">
+<h1>Inference</h1>
+<ul>
+<li>(Essentially) all maximum likelihood estimates enjoy good
+properties</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Mostly unbiased.</li>
+<li>Equations for standard deviation calculations are available.</li>
+<li>Sampling distribution of MLE’s is approximately normal for moderate
+to large sample sizes.</li>
+</ol>
+<ul>
+<li>That means that we can take</li>
 </ul>
 </div>
 <div id="bias-reduction" class="section level1">
