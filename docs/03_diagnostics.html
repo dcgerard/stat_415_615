@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-14" />
+<meta name="date" content="2022-09-21" />
 
 <title>Diagnostics and Remedial Measures</title>
 
@@ -353,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-14</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
@@ -1297,7 +1297,7 @@ tidy(lm_mt, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)     39.3      1.76      22.3 3.05e-20     35.7      42.8
 ## 2 log_wt         -17.1      1.51     -11.3 2.39e-12    -20.2     -14.0</code></pre></li>
-<li><p>Interpretation: Cars that are 50% heavier tend to have <span
+<li><p>Interpretation: Cars that are 50% heavier have on average <span
 class="math inline">\(-17.0 \times \log(1.5) = -6.9\)</span> worse miles
 per gallon.</p></li>
 <li><p>Confidence interval: <span class="math inline">\(-20.2 \times
@@ -1382,9 +1382,9 @@ tidy(lm_wine, conf.int = TRUE)</code></pre>
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1 (Intercept)    2.56     0.127      20.1  8.60e-13    2.29      2.82 
 ## 2 log_wine      -0.356    0.0529     -6.72 4.91e- 6   -0.468    -0.243</code></pre></li>
-<li><p>Countries that drink twice as much wine per capita tend to have
-(<span class="math inline">\(2^{-0.3556} = 0.78\)</span>) 22% fewer
-deaths per 1000 individuals.</p></li>
+<li><p>Countries that drink twice as much wine per capita have on
+average (<span class="math inline">\(2^{-0.3556} = 0.78\)</span>) 22%
+fewer deaths per 1000 individuals.</p></li>
 <li><p>Confidence interval: <span class="math inline">\(2^{-0.4678} =
 0.7231\)</span> to <span class="math inline">\(2^{-0.2434} =
 0.8448\)</span>, so anywhere from 16% fewer deaths per 1000 individuals,
@@ -1398,10 +1398,10 @@ predict(object = lm_wine, newdata = newdf, interval = &quot;prediction&quot;)</c
 <pre><code>##    fit   lwr   upr
 ## 1 1.49 0.984 1.997</code></pre>
 <ul>
-<li>So countries that drink 20 liters per person per year tend to have
-mortality rates of about <span class="math inline">\(\exp(1.49) =
-4.4\)</span> deaths per 1000 individuals. With a prediction interval of
-<span class="math inline">\(\exp(0.984) = 2.7\)</span> to <span
+<li>So countries that drink 20 liters per person per year have on
+average mortality rates of about <span class="math inline">\(\exp(1.49)
+= 4.4\)</span> deaths per 1000 individuals. With a prediction interval
+of <span class="math inline">\(\exp(0.984) = 2.7\)</span> to <span
 class="math inline">\(\exp(1.997) = 7.4\)</span> deaths per 1000
 individuals.</li>
 </ul></li>

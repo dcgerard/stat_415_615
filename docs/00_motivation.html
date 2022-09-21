@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-05-20" />
+<meta name="date" content="2022-09-21" />
 
 <title>Motivation</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -156,11 +156,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -355,7 +359,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Motivation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-05-20</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
@@ -367,13 +371,15 @@ div.tocify {
 <li>What are the goals of linear regression?</li>
 <li>What can linear regression accomplish?</li>
 <li>How are other procedures related to linear regression?</li>
-<li><a href="https://lindeloev.github.io/tests-as-linear/" class="uri">https://lindeloev.github.io/tests-as-linear/</a></li>
+<li><a href="https://lindeloev.github.io/tests-as-linear/"
+class="uri">https://lindeloev.github.io/tests-as-linear/</a></li>
 </ul>
 </div>
 <div id="what-is-simple-linear-regression" class="section level1">
 <h1>What is simple linear regression?</h1>
 <ol style="list-style-type: decimal">
-<li><p>Equation for line: <span class="math inline">\(y = \beta_0 + \beta_1 x\)</span></p>
+<li><p>Equation for line: <span class="math inline">\(y = \beta_0 +
+\beta_1 x\)</span></p>
 <p><img src="figs/line_review.png" /> </p></li>
 <li><p>Have cloud of points</p>
 <p><img src="00_motivation_files/figure-html/unnamed-chunk-1-1.png" width="446.4" /></p></li>
@@ -393,19 +399,30 @@ div.tocify {
 <h1>What is multiple linear regression?</h1>
 <ol style="list-style-type: decimal">
 <li><p>Equation for a 2-d plane: <span class="math display">\[
- y = \beta_0 + \beta_1 x_1 + \beta_2 x_2
- \]</span></p>
+y = \beta_0 + \beta_1 x_1 + \beta_2 x_2
+\]</span></p>
 <ul>
-<li><p>When <span class="math inline">\(x_1\)</span> is fixed (not changing), <span class="math inline">\(y = \beta_0 + \beta_1 x_1 + \beta_2 x_2\)</span> is the equation for a line with slope <span class="math inline">\(\beta_2\)</span> and <span class="math inline">\(y\)</span>-intercept <span class="math inline">\(\beta_0 + \beta_1 x_1\)</span>.</p></li>
-<li><p>When <span class="math inline">\(x_2\)</span> is fixed (not changing), <span class="math inline">\(y = \beta_0 + \beta_1 x_1 + \beta_2 x_2\)</span> is the equation for a line with slope <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(y\)</span>-intercept <span class="math inline">\(\beta_0 + \beta_2 x_2\)</span>.</p></li>
-<li><p>So a plane can be interpreted as a line when you fix all predictors but one.</p></li>
+<li><p>When <span class="math inline">\(x_1\)</span> is fixed (not
+changing), <span class="math inline">\(y = \beta_0 + \beta_1 x_1 +
+\beta_2 x_2\)</span> is the equation for a line with slope <span
+class="math inline">\(\beta_2\)</span> and <span
+class="math inline">\(y\)</span>-intercept <span
+class="math inline">\(\beta_0 + \beta_1 x_1\)</span>.</p></li>
+<li><p>When <span class="math inline">\(x_2\)</span> is fixed (not
+changing), <span class="math inline">\(y = \beta_0 + \beta_1 x_1 +
+\beta_2 x_2\)</span> is the equation for a line with slope <span
+class="math inline">\(\beta_1\)</span> and <span
+class="math inline">\(y\)</span>-intercept <span
+class="math inline">\(\beta_0 + \beta_2 x_2\)</span>.</p></li>
+<li><p>So a plane can be interpreted as a line when you fix all
+predictors but one.</p></li>
 </ul></li>
 <li><p>Have a cloud of points:</p>
-<div id="htmlwidget-55ca62e69ceb44a713aa" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-55ca62e69ceb44a713aa">{"x":{"visdat":{"5e1e2daa6b4a":["function () ","plotlyVisDat"],"5e1e439b4e88":["function () ","data"]},"cur_data":"5e1e439b4e88","attrs":{"5e1e439b4e88":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
+<div id="htmlwidget-8e40e1b035778fce7c9e" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8e40e1b035778fce7c9e">{"x":{"visdat":{"3fee40bbab59":["function () ","plotlyVisDat"],"3fee3920837a":["function () ","data"]},"cur_data":"3fee3920837a","attrs":{"3fee3920837a":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
 <li><p>Fit plane to cloud of points:</p>
-<div id="htmlwidget-f5026199e4fdec3b8138" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f5026199e4fdec3b8138">{"x":{"visdat":{"5e1e2daa6b4a":["function () ","plotlyVisDat"],"5e1e439b4e88":["function () ","data"],"5e1e2bda1ba5":["function () ","data"]},"cur_data":"5e1e2bda1ba5","attrs":{"5e1e439b4e88":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true},"5e1e2bda1ba5":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null},{"colorbar":{"title":"mpg<br />mpg","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93],"y":[1.513,1.513,1.513,1.513,1.513,2.49075,2.49075,2.49075,2.49075,2.49075,3.4685,3.4685,3.4685,3.4685,3.4685,4.44625,4.44625,4.44625,4.44625,4.44625,5.424,5.424,5.424,5.424,5.424],"z":[27.0351319598431,27.8176831872508,28.6002344146584,29.3827856420661,30.1653368694737,22.3586610681407,23.1412122955484,23.923763522956,24.7063147503637,25.4888659777713,17.6821901764383,18.4647414038459,19.2472926312536,20.0298438586612,20.8123950860689,13.0057192847359,13.7882705121435,14.5708217395512,15.3533729669588,16.1359241943665,8.32924839303343,9.11179962044108,9.89435084784873,10.6769020752564,11.459453302664],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
+<div id="htmlwidget-91f5a77b60f3b8c10675" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-91f5a77b60f3b8c10675">{"x":{"visdat":{"3fee40bbab59":["function () ","plotlyVisDat"],"3fee3920837a":["function () ","data"],"3fee1f0932f9":["function () ","data"]},"cur_data":"3fee1f0932f9","attrs":{"3fee3920837a":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","size":[20],"inherit":true},"3fee1f0932f9":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"mesh3d","opacity":0.3,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"drat"},"yaxis":{"title":"wt"},"zaxis":{"title":"mpg"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[3.9,3.9,3.85,3.08,3.15,2.76,3.21,3.69,3.92,3.92,3.92,3.07,3.07,3.07,2.93,3,3.23,4.08,4.93,4.22,3.7,2.76,3.15,3.73,3.08,4.08,4.43,3.77,4.22,3.62,3.54,4.11],"y":[2.62,2.875,2.32,3.215,3.44,3.46,3.57,3.19,3.15,3.44,3.44,4.07,3.73,3.78,5.25,5.424,5.345,2.2,1.615,1.835,2.465,3.52,3.435,3.84,3.845,1.935,2.14,1.513,3.17,2.77,3.57,2.78],"z":[21,21,22.8,21.4,18.7,18.1,14.3,24.4,22.8,19.2,17.8,16.4,17.3,15.2,10.4,10.4,14.7,32.4,30.4,33.9,21.5,15.5,15.2,13.3,19.2,27.3,26,30.4,15.8,19.7,15,21.4],"type":"scatter3d","mode":"markers","marker":{"color":"rgba(31,119,180,1)","size":[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20],"sizemode":"area","line":{"color":"rgba(31,119,180,1)"}},"textfont":{"size":20},"error_y":{"color":"rgba(31,119,180,1)","width":20},"error_x":{"color":"rgba(31,119,180,1)","width":20},"line":{"color":"rgba(31,119,180,1)","width":20},"frame":null},{"colorbar":{"title":"mpg<br />mpg","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(68,1,84,1)"],["0.0416666666666667","rgba(70,19,97,1)"],["0.0833333333333333","rgba(72,32,111,1)"],["0.125","rgba(71,45,122,1)"],["0.166666666666667","rgba(68,58,128,1)"],["0.208333333333333","rgba(64,70,135,1)"],["0.25","rgba(60,82,138,1)"],["0.291666666666667","rgba(56,93,140,1)"],["0.333333333333333","rgba(49,104,142,1)"],["0.375","rgba(46,114,142,1)"],["0.416666666666667","rgba(42,123,142,1)"],["0.458333333333333","rgba(38,133,141,1)"],["0.5","rgba(37,144,140,1)"],["0.541666666666667","rgba(33,154,138,1)"],["0.583333333333333","rgba(39,164,133,1)"],["0.625","rgba(47,174,127,1)"],["0.666666666666667","rgba(53,183,121,1)"],["0.708333333333333","rgba(79,191,110,1)"],["0.75","rgba(98,199,98,1)"],["0.791666666666667","rgba(119,207,85,1)"],["0.833333333333333","rgba(147,214,70,1)"],["0.875","rgba(172,220,52,1)"],["0.916666666666667","rgba(199,225,42,1)"],["0.958333333333333","rgba(226,228,40,1)"],["1","rgba(253,231,37,1)"]],"showscale":true,"x":[2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93,2.76,3.3025,3.845,4.3875,4.93],"y":[1.513,1.513,1.513,1.513,1.513,2.49075,2.49075,2.49075,2.49075,2.49075,3.4685,3.4685,3.4685,3.4685,3.4685,4.44625,4.44625,4.44625,4.44625,4.44625,5.424,5.424,5.424,5.424,5.424],"z":[27.0351319598431,27.8176831872508,28.6002344146584,29.3827856420661,30.1653368694737,22.3586610681407,23.1412122955484,23.923763522956,24.7063147503637,25.4888659777713,17.6821901764383,18.4647414038459,19.2472926312536,20.0298438586612,20.8123950860689,13.0057192847359,13.7882705121435,14.5708217395512,15.3533729669588,16.1359241943664,8.32924839303343,9.11179962044108,9.89435084784872,10.6769020752564,11.459453302664],"type":"mesh3d","opacity":0.3,"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script></li>
 <li><p>Infer slopes from fitted plane.</p></li>
 <li><p>Inference:</p>
 <ol style="list-style-type: lower-alpha">
@@ -421,40 +438,52 @@ div.tocify {
 <li><p>The above procedures assume that:</p>
 <ol style="list-style-type: decimal">
 <li>The cloud of points roughly follows a line (or plane).</li>
-<li>All predictors (the <span class="math inline">\(x\)</span>’s) are associated with the response (the <span class="math inline">\(y\)</span>). We might have many predictors and we need to choose which ones to include.</li>
+<li>All predictors (the <span class="math inline">\(x\)</span>’s) are
+associated with the response (the <span
+class="math inline">\(y\)</span>). We might have many predictors and we
+need to choose which ones to include.</li>
 </ol></li>
-<li><p>We typically need to transform the data or try out a few models.</p></li>
+<li><p>We typically need to transform the data or try out a few
+models.</p></li>
 <li><p>Steps:</p></li>
 </ul>
-<div id="htmlwidget-d81ae7a8d73ef755381b" style="width:672px;height:672px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d81ae7a8d73ef755381b">{"x":{"diagram":"digraph flowchart {\n  node [fontname = arial, shape = rectangle]\n  tab1 [label = \"START\"]\n  tab2 [label = \"Exploratory\nData Analysis\"]\n  tab3 [label = \"Develop one\nor more tentative\nregression models\"]\n  tab4 [label = \"Is\none or more of\nthe regression models\nsuitable for the data\nat hand?\"]\n  tab5 [label = \"Revise regression\nmodels and/or\ndevelop new ones\"]\n  tab6 [label = \"Identify most\nsuitable model\"]\n  tab7 [label = \"Make inferences\none basis of\nregression model\"]\n  tab8 [label = \"STOP\"]\n  taby [label = \"YES\"]\n  tabn [label = \"NO\"]\n  \n  tab1 -> tab2 -> tab3 -> tab4 -> taby -> tab6 -> tab7 -> tab8;\n  tab4 -> tabn -> tab5 -> tab3;\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-289c2150445bb2adfc2c" style="width:672px;height:672px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-289c2150445bb2adfc2c">{"x":{"diagram":"digraph flowchart {\n  node [fontname = arial, shape = rectangle]\n  tab1 [label = \"START\"]\n  tab2 [label = \"Exploratory\nData Analysis\"]\n  tab3 [label = \"Develop one\nor more tentative\nregression models\"]\n  tab4 [label = \"Is\none or more of\nthe regression models\nsuitable for the data\nat hand?\"]\n  tab5 [label = \"Revise regression\nmodels and/or\ndevelop new ones\"]\n  tab6 [label = \"Identify most\nsuitable model\"]\n  tab7 [label = \"Make inferences\non basis of\nregression model\"]\n  tab8 [label = \"STOP\"]\n  taby [label = \"YES\"]\n  tabn [label = \"NO\"]\n  \n  tab1 -> tab2 -> tab3 -> tab4 -> taby -> tab6 -> tab7 -> tab8;\n  tab4 -> tabn -> tab5 -> tab3;\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="what-can-you-use-it-for" class="section level1">
 <h1>What can you use it for?</h1>
 <ul>
 <li>Detecting trends.
 <ul>
-<li>Easy to see trends if you have two variables. Harder if you have more. Need something more sophisticated.</li>
-<li>Linear regression allows us to say “folks that have bigger x tend to have bigger y”.</li>
+<li>Easy to see trends if you have two variables. Harder if you have
+more. Need something more sophisticated.</li>
+<li>Linear regression allows us to say “folks that have bigger x have,
+on average, bigger y”.</li>
 </ul></li>
 <li>Control for other variables.
 <ul>
-<li>“Folks that have the <em>same</em> z but <em>bigger</em> x tend to have bigger y.”</li>
+<li>“Folks that have the <em>same</em> z but <em>bigger</em> x have, on
+average, bigger y.”</li>
 </ul></li>
 <li>Prediction
 <ul>
 <li>Most machine learning tasks in the read world are “small data”.</li>
-<li>The fancy ML methods have many parameters that require lots of data to estimate.</li>
-<li>Linear regression is often the best you can do in small data tasks.</li>
+<li>The fancy ML methods have many parameters that require lots of data
+to estimate.</li>
+<li>Linear regression is often the best you can do in small data
+tasks.</li>
 </ul></li>
 </ul>
 </div>
 <div id="generality" class="section level1">
 <h1>Generality</h1>
 <ul>
-<li><p>Many statistical procedures are special cases of (or approximations to) linear regression.</p></li>
-<li><p>Understanding linear regression really well will give you a deeper understanding of statistics in general.</p></li>
-<li><p>Procedures that are special cases of linear regression, or can be well approximated by linear regression:</p>
+<li><p>Many statistical procedures are special cases of (or
+approximations to) linear regression.</p></li>
+<li><p>Understanding linear regression really well will give you a
+deeper understanding of statistics in general.</p></li>
+<li><p>Procedures that are special cases of linear regression, or can be
+well approximated by linear regression:</p>
 <ul>
 <li>One/two sample <span class="math inline">\(t\)</span>-test.</li>
 <li>ANOVA</li>

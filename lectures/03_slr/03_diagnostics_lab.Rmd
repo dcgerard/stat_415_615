@@ -179,7 +179,7 @@ tidy(lm_3, conf.int = TRUE)
 ```{block, eval = FALSE}
 **REPORT**
 
-We estimate a power-law growth between PSA and Volume ($p < 0.001$, $n = 97$), with an estimated relationship of $\text{psa} = 4.5 \times \text{Volume}^{0.72}$. What this means is that cancers that are twice the volume tend to have a PSA's about 64\% larger (since $2^{0.72} = 1.645$), with a 95\% confidence interval of around 50\% to 81\% larger.
+We estimate a power-law growth between PSA and Volume ($p < 0.001$, $n = 97$), with an estimated relationship of $\text{psa} = 4.5 \times \text{Volume}^{0.72}$. What this means is that cancers that are twice the volume have PSA's about 64\% larger (since $2^{0.72} = 1.645$) on average, with a 95\% confidence interval of around 50\% to 81\% larger.
 
 For an individual with cancer volume of 20 cc, we predict that their PSA level would be about 38.9 mg/ml (since $e^{3.661}$ = 38.9), with a likely range of 7.9 mg/ml to 190.4 mg/ml.
 ```

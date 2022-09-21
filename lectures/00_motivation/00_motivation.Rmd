@@ -134,7 +134,7 @@ grViz(diagram = "digraph flowchart {
   [4]: 'Is\\none or more of\\nthe regression models\\nsuitable for the data\\nat hand?'
   [5]: 'Revise regression\\nmodels and/or\\ndevelop new ones'
   [6]: 'Identify most\\nsuitable model'
-  [7]: 'Make inferences\\none basis of\\nregression model'
+  [7]: 'Make inferences\\non basis of\\nregression model'
   [8]: 'STOP'
   [9]: 'YES'
   [10]: 'NO'
@@ -146,10 +146,10 @@ grViz(diagram = "digraph flowchart {
 
 - Detecting trends.
     - Easy to see trends if you have two variables. Harder if you have more. Need something more sophisticated.
-    - Linear regression allows us to say "folks that have bigger x tend to have bigger y".
+    - Linear regression allows us to say "folks that have bigger x have, on average, bigger y".
 
 - Control for other variables. 
-    - "Folks that have the *same* z but *bigger* x tend to have bigger y."
+    - "Folks that have the *same* z but *bigger* x have, on average, bigger y."
     
 - Prediction
     - Most machine learning tasks in the read world are "small data".

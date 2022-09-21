@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-14" />
+<meta name="date" content="2022-09-21" />
 
 <title>Simple Linear Regression: The Model</title>
 
@@ -353,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-14</h4>
+<h4 class="date">2022-09-21</h4>
 
 </div>
 
@@ -459,8 +459,8 @@ qplot(x = growth, y = vote, data = hibbs) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_ols_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
-<li><p>Can say higher higher growth tends to have higher vote-share. But
-relationship is not perfect (but still pretty good!)</p></li>
+<li><p>Can say higher higher growth has higher vote-share on average.
+But relationship is not perfect (but still pretty good!)</p></li>
 <li><p>The scattering of points about the line represents variation in
 vote share that is not associated with economic growth.</p></li>
 </ul></li>
@@ -611,7 +611,7 @@ regression line that fits the data well is</p>
   y = 46.25 + 3.06
   \]</span></p>
 <p><strong>Correct</strong>: Years that show 1 percentage point more
-growth tend to have 3 percentage points larger vote shares for the
+growth have on average 3 percentage points larger vote shares for the
 incumbant.</p>
 <p><strong>Incorrect</strong>: Incumbant vote-share increases 3
 percentage points for each 1 percentage point increase in
