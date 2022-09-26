@@ -50,6 +50,8 @@ Here is a list of the equations I want you to have memorized on the top of your 
     
 - $t$-statistic: $t^* = \frac{\hat{\beta}_1}{s(\hat{\beta}_1)}$, which follows a $t_{n-p}$ distribution under the null that $\beta_1 = 0$.
 
+    - If the null is $H_0: \beta_1 = c$ for some constant $c$, then the $t$-statistic is then $t^* = \frac{\hat{\beta}_1 - c}{s(\hat{\beta}_1)}$. This also follows a $t_{n-p}$ distribution under the null that $\beta_1 = c$.
+
 - Get two-sided $p$-value manually via $2 * pt(q = -abs(t^*), df = n - p)$, where $p=2$ in SLR.
 
 - Confidence interval = estimate $\pm$ multiplier $\times$ standard error
