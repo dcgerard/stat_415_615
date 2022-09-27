@@ -51,7 +51,7 @@ I will let you propose a journal article with a dataset, but I retain the right 
 
 [PLoS](https://journals.plos.org) Journals are all required to have a data availability statement, so this is a good place to start searching.
 
-You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLoS One](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467). These aren't necessarily good or interesting articles, just ones that satisfy the above requirements and were released in July 2022 when I checked for the newest releases in PLoS One.
+You can get a sense of the type of articles I am looking for (or use one of these) based on the following that I picked out of a [search from PLoS One](https://journals.plos.org/plosone/search?filterJournals=PLoSONE&q=%22linear%20regression%22&sortOrder=DATE_NEWEST_FIRST&page=1&utm_content=a&utm_campaign=ENG-467). These aren't necessarily good or interesting articles, just ones that satisfy the above requirements and were released when I checked for the newest releases in PLoS One.
 
 If the data are in a weird format (like "sav" or "dta"), then try to use the [`{haven}`](https://cran.r-project.org/package=haven) package to load it into R.
 
