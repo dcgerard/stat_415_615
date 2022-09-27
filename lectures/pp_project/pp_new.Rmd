@@ -77,6 +77,10 @@ If the data are in a weird format (like "sav" or "dta"), then try to use the [`{
 - @hettich2022conspiracy
 - @lu2022emojis
     - Only do this one if you have had some machine learning experience.
+- @han2022using
+    - No need to do the neural network.
+    - Data are in a PDF file. Try [`{pdftables}`](https://cran.r-project.org/web/packages/pdftables/index.html).
+- @luedeker2022relationship
 
 # Progress Report (5 pts)
 

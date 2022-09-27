@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-08-11" />
+<meta name="date" content="2022-09-27" />
 
 <title>Final Project</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -172,11 +172,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -371,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Final Project</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-08-11</h4>
+<h4 class="date">2022-09-27</h4>
 
 </div>
 
@@ -477,6 +481,13 @@ features.</li>
 <li>Only do this one if you have had some machine learning
 experience.</li>
 </ul></li>
+<li><span class="citation">Han (2022)</span>
+<ul>
+<li>No need to do the neural network.</li>
+<li>Data are in a PDF file. Try <a
+href="https://cran.r-project.org/web/packages/pdftables/index.html"><code>{pdftables}</code></a>.</li>
+</ul></li>
+<li><span class="citation">Luedeker (2022)</span></li>
 </ul>
 </div>
 <div id="progress-report-5-pts" class="section level1">
@@ -571,6 +582,13 @@ South Ethiopia: Application of Theory of Planned Behavior.”</span>
 <em>PLOS ONE</em> 17 (6): 1–18. <a
 href="https://doi.org/10.1371/journal.pone.0270738">https://doi.org/10.1371/journal.pone.0270738</a>.
 </div>
+<div id="ref-han2022using" class="csl-entry">
+Han, Jinliang AND Yan, Shuo AND Xu. 2022. <span>“Using Multiple Linear
+Regression and BP Neural Network to Predict Critical Meteorological
+Conditions of Expressway Bridge Pavement Icing.”</span> <em>PLOS
+ONE</em> 17 (2): 1–15. <a
+href="https://doi.org/10.1371/journal.pone.0263539">https://doi.org/10.1371/journal.pone.0263539</a>.
+</div>
 <div id="ref-hettich2022conspiracy" class="csl-entry">
 Hettich, Manfred E. AND Ernst, Nora AND Beutel. 2022. <span>“Conspiracy
 Endorsement and Its Associations with Personality Functioning, Anxiety,
@@ -591,6 +609,12 @@ Lu, Wei AND Chen, Xuan AND Ai. 2022. <span>“Emojis Predict Dropouts of
 Remote Workers: An Empirical Study of Emoji Usage on GitHub.”</span>
 <em>PLOS ONE</em> 17 (1): 1–21. <a
 href="https://doi.org/10.1371/journal.pone.0261262">https://doi.org/10.1371/journal.pone.0261262</a>.
+</div>
+<div id="ref-luedeker2022relationship" class="csl-entry">
+Luedeker, Monnie, Bianca AND McGee. 2022. <span>“Relationship Between
+Judges’ Scores and Dive Attributes from a Video Recording of a Diving
+Competition.”</span> <em>PLOS ONE</em> 17 (8): 1–15. <a
+href="https://doi.org/10.1371/journal.pone.0273374">https://doi.org/10.1371/journal.pone.0273374</a>.
 </div>
 <div id="ref-taillie2022developing" class="csl-entry">
 Taillie, Carmen E. AND Hall, Lindsey Smith AND Prestemon. 2022.
