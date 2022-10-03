@@ -15,6 +15,7 @@ bibliography: "../data.bib"
 set.seed(1)
 library(latex2exp)
 library(tidyverse)
+library(ggthemes)
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.align  = "center",
                       fig.height = 3, fig.width = 4)
@@ -64,7 +65,8 @@ library(lmtest)
 
 # Linear Probability Model (LPM)
 
-- If your goal is *not* prediction, then it is not entirely incorrect to just use linear regression [@hellevik2009linear; @gomila2021logistic].
+- If your goal is *not* prediction, then it is **not entirely incorrect** to just use linear regression [@hellevik2009linear; @gomila2021logistic].
+    - I am hedging here since this is a controversial statement.
     
 - Let $Y_i \sim Bern(p)$. That is $Y_i$ is 1 with probability $p$ and is 0 with probability $1-p$. Then
 
@@ -98,7 +100,7 @@ library(lmtest)
     tidy(cout)
     ```
     
-- Residual plots are kind of useless here:
+- Residual plots are useless here, so never show them:
 
     ```{r}
     aout <- augment(lmout)
@@ -108,7 +110,7 @@ library(lmtest)
 
 ## Issues
 
-- Econometricians and psychologists love the LPM because of its ease of interpretability.
+- Econometricians and psychometricians love the LPM because of its ease of interpretability.
 
 - Statisticians typically do not like it (though I'm agnostic).
 
@@ -140,7 +142,7 @@ library(lmtest)
                   formula = y ~ x)
     ```
 
-# Model
+# Logistic Regression Model
 
 - Let $p_i$ be the probability that individual $i$ is 1. I.e. $E[Y_i] = p_i$. Then our model is
     $$
@@ -152,7 +154,7 @@ library(lmtest)
     \text{logit}(p_i) = \log\left(\frac{p_i}{1-p_i}\right).
     $$
 
-- The inverse of the logit function is the "expit" function (or "logistic")
+- The inverse of the logit function is the "expit" function (confusingly, also known as the "logistic" function)
     $$
     \text{expit}(\eta) = \frac{e^{\eta}}{1 + e^{\eta}}.
     $$
@@ -185,23 +187,24 @@ library(lmtest)
 
 - In logistic regression, $Y_i \sim Bern(\mu_i)$ and $g(\mu_i) = \text{logit}(\mu_i)$.
 
-- Another example is probit regression (more popular in econ) where $g(\mu_i) = \Phi^{-1}(\mu_i)$, the standard normal quantile function (`qnorm()`). This gives you similar results, but statisicians don't like it because it's less interpretable than the logit.
+- Another example is probit regression (more popular in econ) where $g(\mu_i) = \Phi^{-1}(\mu_i)$, the standard normal quantile function (`qnorm()`). This gives you almost identical results (and so can rarely be distinguished using data), but statisicians don't like the probit because it's less interpretable than the logit.
 
     ```{r, echo = FALSE, fig.width = 5}
     tibble(x = seq(-5, 5, length.out = 200)) %>%
-      mutate(probit = pnorm(x),
+      mutate(probit = pnorm(x, sd = pi / sqrt(3)),
              logit = exp(x) / (1 + exp(x))) %>%
       gather(-x, key = "Link Function", value = "g") %>%
       ggplot(aes(x = x, y = g, color = `Link Function`)) +
       geom_line() +
-      ylab("g(x)")
+      ylab("g(x)") +
+      scale_color_colorblind()
     ```
     
-- In [log-linear models](https://en.wikipedia.org/wiki/Poisson_regression) (which we might later), we model counts with $Y_i \sim Poi(\mu_i)$ ([Poisson Distribution](https://en.wikipedia.org/wiki/Poisson_distribution)) and $g(\mu_i) = \log(\mu_i)$.
+    - **Technical, unimportant note**: The above plots the quantile function of a $N(0, \pi^2/3)$ distribution for the probit to account for the difference in variances between the normal and logit distributions. This makes the two curves comparable.
+    
+- In [log-linear models](https://en.wikipedia.org/wiki/Poisson_regression) (which we might discuss later), we model counts with $Y_i \sim Poi(\mu_i)$ ([Poisson Distribution](https://en.wikipedia.org/wiki/Poisson_distribution)) and $g(\mu_i) = \log(\mu_i)$.
 
-# Estimation
-
-## Maximum Likelihood Estimation
+# Maximum Likelihood Estimation
 
 - We don't use least squares for estimation. Rather, we use Maximum Likelihood.
 
@@ -226,6 +229,7 @@ library(lmtest)
 - So the probability of the data is a function of $\beta_0,\beta_1,\ldots,\beta_{p-1}$.
 
 - IDEA: Choose the $\beta_k$'s that make our observed data as probable as possible.
+    - PHILOSOPHY: we observed our data (that's why we have it), so it is probably likely to have been generated. Choose the parameters that would maximize the probability of seeing the data we actually saw.
 
 - The objective function is called the "likelihood".
 
@@ -283,11 +287,17 @@ saveGIF(expr = {
 }, movie.name = "./06_figs/logistic_mle.gif", interval = 1)
 ```
 
-- Below, the expit curve is morphing according to different values of $\beta_0$ and $\beta_1$. The text by the points is the probability of the those observed points, which in this case is just the height (or one minus the height) of the expit function. The likelihood is the product of those probabilities, and the log-likelihood is the sum of the log of those probabilities.
+- Below, the expit curve is morphing according to different values of $\beta_0$ and $\beta_1$. The text by the points is the probability of the those observed points, which in this case is just the height (when $Y_i = 1$) or one minus the height (when $Y_i = 0$) of the expit function. The likelihood is the product of those probabilities, and the log-likelihood is the sum of the log of those probabilities.
 
   ![](./06_figs/logistic_mle.gif)\ 
 
-## Practical Use in R
+# Implementation in R
+
+- You should transform your binary variable to have 0's and 1's. You should call your new variable the value when $Y_i = 1$. E.g. in the Donner party we created the "Survived" variable.
+
+```{r}
+donner <- mutate(donner, Survived = if_else(Status == "Survived", 1, 0))
+```
 
 - Let $Y_i$ be an indicator for survival for individual $i$, let $X_{i1}$ be the age of individual $i$, and let $X_{i2}$ be an indicator for male Then we fit the model
     \begin{align}
@@ -351,6 +361,13 @@ saveGIF(expr = {
     2/3
     ```
 
+- **Exercise**: As I write this, FiveThirtyEight has the Democrats with a 2/3 probability of keeping the Senate in the 2022 midterm election. What are the odds of a Democrat victory?
+
+    ```{block, eval = FALSE, echo = FALSE}
+    (2/3) / (1/3) = 2
+    ```
+
+
 ## Interpreting Logistic Regression Model
 
 - Let $\omega_{old}$ be the odds of an individual. We can write the logistic regression model as
@@ -407,7 +424,45 @@ saveGIF(expr = {
 
 - The reason is that the odds ratios for prospective studies and retrospective studies are the same, even though the probabilities are not.
 
-- You can interpret slopes in the usual way in retrospective studies, but you cannot interpret the $Y$-intercept, or **any** fixed estimate of the probability. In these studies, **only** the slope (the odds ratio) is interpretable.
+- You can interpret slopes in the usual way in retrospective studies, but 
+    - You cannot interpret the $Y$-intercept.
+    - You cannot interpret **any** fixed estimate of the probability. 
+    - You can **only** interpret the slope (the odds ratio).
+    
+### Proof
+
+- Let's suppose that we have model
+  $$
+  Pr(Y = 1|X) = \text{expit}(\beta_0 + \beta_1X) = \frac{e^{\beta_0 + \beta_1X}}{1 + e^{\beta_0 + \beta_1X}}
+  $$
+
+- Let's introduce a binary variable $Z$ which is 1 if a unit is sampled, and 0 if it is not sampled. Let
+    $$
+    Pr(Z = 1|Y = 1) = \pi_1\\
+    Pr(Z = 1|Y = 0) = \pi_0\\
+    $$
+    
+- So we sample a $Y_i = 1$ individual with probability $\pi_1$ and a $Y_i = 0$ individual with probability $\pi_0$. This is a retrospective design, where the $\pi$'s are **not** functions of the $X_i$'s.
+
+- We can only model the data we observe, so we want $Pr(Y = 1|Z=1, X)$, which we can calculate using [Bayes theorem](https://en.wikipedia.org/wiki/Bayes%27_theorem)
+    \begin{align}
+    Pr(Y = 1|Z=1, X) &= \frac{Pr(Z = 1|Y = 1, X) Pr(Y = 1|X)}{Pr(Z = 1|Y = 1, X) Pr(Y = 1|X) + Pr(Z = 1|Y = 0, X) Pr(Y = 0|X)}\\
+    &= \frac{\pi_1 Pr(Y = 1|X)}{\pi_1 Pr(Y = 1|X) + \pi_0 Pr(Y = 0|X)}\\
+    &= \frac{\pi_1 \text{expit}(\beta_0 + \beta_1X)}{\pi_1 \text{expit}(\beta_0 + \beta_1X) + \pi_0 (1 - \text{expit}(\beta_0 + \beta_1X))}\\
+    &= \frac{\pi_1 \frac{e^{\beta_0 + \beta_1X}}{1 + e^{\beta_0 + \beta_1X}}}{\pi_1 \frac{e^{\beta_0 + \beta_1X}}{1 + e^{\beta_0 + \beta_1X}} + \pi_0 \frac{1}{1 + e^{\beta_0 + \beta_1X}}}\\
+    &= \frac{\pi_1 e^{\beta_0 + \beta_1X}}{\pi_1 e^{\beta_0 + \beta_1X} + \pi_0}\\
+    &= \frac{\frac{\pi_1}{\pi_0} e^{\beta_0 + \beta_1X}}{\frac{\pi_1}{\pi_0} e^{\beta_0 + \beta_1X} + 1}\\
+    &= \frac{e^{(\beta_0 + \log(\pi_1 / \pi_0)) + \beta_1X}}{e^{(\beta_0 + \log(\pi_1 / \pi_0)) + \beta_1X} + 1}\\
+    &= \frac{e^{\tilde{\beta}_0 + \beta_1X}}{e^{\tilde{\beta}_0 + \beta_1X} + 1}\\
+    &= \text{expit}(\tilde{\beta}_0 + \beta_1X),
+    \end{align}
+    where $\tilde{\beta}_0 = \beta_0 + \log(\pi_1 / \pi_0)$.
+
+- Thus, in a retrospective study, we are estimating $\beta_1$ and $\tilde{\beta}_0$ (not $\beta_0$).
+
+- So, it is impossible to estimate $\beta_0$ (and hence, impossible to estimate the probability of $Y_i = 1$ at any value of $X$).
+
+- **BUT** it is possible to estimate $\beta_1$ (and thus, the relationship between variables).
 
 # Inference
 
@@ -417,29 +472,70 @@ saveGIF(expr = {
 2. Equations for standard deviation calculations are available.
 3. Sampling distribution of MLE's is approximately normal for moderate to large sample sizes.
 
-- That means that we can take
+- That means that we can take take the same approaches as in linear regression to run hypothesis tests and obtain confidence intervals.
+
+- For large samples, we have that the MLE's have the following sampling distribution:
+$$
+\frac{\hat{\beta}_i - \beta_i}{s(\hat{\beta}_i)} \sim N(0, 1)
+$$
+
+- Hypothesis test:
+    - $H_0: \beta_i = 0$
+    - $H_A: \beta_i \neq 0$
+    
+- $z^* = \frac{\hat{\beta}_i}{s(\hat{\beta}_i)}$
+
+- Under the null, $z^*$ asymptotically follows a standard normal distribution. Use this to calculate a $p$-value in the usual way.
+
+  ![](./06_hyp/logistic_hyp.png)\ 
+
+- We can also use this property to obtain a confidence interval for $\beta_i$.
+
+- Let $u = \text{qnorm}(1 - \alpha / 2)$, which is 1.96 when $\alpha = 0.05$.
+    $$
+    Pr\left(-u \leq \frac{\hat{\beta}_i - \beta_i}{s(\hat{\beta}_i)} \leq u\right) = 0.95
+    $$
+    
+- Solving for $\beta_i$, we get the following $(1 - \alpha)\times 100\%$ confidence interval:
+    $$
+    \hat{\beta}_i \pm \text{qnorm}(1 - \alpha / 2) s(\hat{\beta}_i)
+    $$
+
+- We do not use the $t$-distribution here because the $t$ results from assuming normal error terms, which is not the case here.
+
+- In R, you get these quantities by `tidy()`.
+
+    ```{r}
+    glm_out <- glm(Survived ~ Age + Sex, data = donner, family = binomial)
+    tidy(glm_out, conf.int = TRUE)
+    ```
+    
+# Estimation and Prediction
+
+- You again obtain point-wise estimates for probabilities by `predict()`.
+
+```{r}
+glm_out <- glm(Survived ~ Age + Sex, data = donner, family = binomial)
+newdf <- data.frame(Age = 30, Sex = "Female")
+predict(glm_out, newdata = newdf)
+```
 
 
 # Bias reduction
 
 - For small sample sizes, the MLE's of the logistic regression coefficients can be biased. A quick way to reduce this bias is through the [`{brglm2}`](https://cran.r-project.org/package=brglm2) package, which uses the method of @firth1993bias.
 
-Their example:
+- Let's try this out on the Donner party example
 
-```{r, warning=FALSE}
-## The lizards example from ?brglm::brglm
-data("lizards", package = "brglm2")
-# Fit the model using maximum likelihood
-lizardsML <- glm(cbind(grahami, opalinus) ~ height + diameter +
-                   light + time, family = binomial(logit), data = lizards)
-# Mean bias-reduced fit:
-lizardsBR <- glm(cbind(grahami, opalinus) ~ height + diameter +
-                   light + time, family = binomial(logit), data = lizards,
-                 method = brglm2::brglmFit)
-tidy(lizardsML)
-tidy(lizardsBR)
-```
+    ```{r, warning = FALSE}
+    library(brglm2)
+    glm_out2 <- glm(Survived ~ Age + Sex,
+                    data = donner, 
+                    family = binomial, 
+                    method = brglm2::brglm_fit)
+    tidy(glm_out2, conf.int = TRUE)
+    ```
 
+- This actually resulted in some moderate differences!
 
 # References
-
