@@ -127,6 +127,8 @@ library(lmtest)
     ```
 
 - When the probability of a "1" is between about 0.2 and 0.8, then the linear and logistic (see below) models produce about the same results.
+    - This is a **conditional** probability. So all values of $E[Y|X]$ must be between 0.2 and 0.8 for all values of $X$ for this to hold.
+    - I.e., you **cannot** just look at the marginal proportions of 1's and 0's and use this to say if the LPM is good.
 
 - Let's look at the differences in the Donner party example:
 
@@ -187,7 +189,7 @@ library(lmtest)
 
 - In logistic regression, $Y_i \sim Bern(\mu_i)$ and $g(\mu_i) = \text{logit}(\mu_i)$.
 
-- Another example is probit regression (more popular in econ) where $g(\mu_i) = \Phi^{-1}(\mu_i)$, the standard normal quantile function (`qnorm()`). This gives you almost identical results (and so can rarely be distinguished using data), but statisicians don't like the probit because it's less interpretable than the logit.
+- Another example is probit regression (more popular in econ) where $g(\mu_i) = \Phi^{-1}(\mu_i)$, the standard normal quantile function (`qnorm()`). This gives you almost identical results (except in the tails), but statisicians don't like the probit because it's less interpretable than the logit.
 
     ```{r, echo = FALSE, fig.width = 5}
     tibble(x = seq(-5, 5, length.out = 200)) %>%
@@ -297,9 +299,9 @@ saveGIF(expr = {
 
 - You should transform your binary variable to have 0's and 1's. You should call your new variable the value when $Y_i = 1$. E.g. in the Donner party we created the "Survived" variable.
 
-```{r}
-donner <- mutate(donner, Survived = if_else(Status == "Survived", 1, 0))
-```
+    ```{r}
+    donner <- mutate(donner, Survived = if_else(Status == "Survived", 1, 0))
+    ```
 
 - Let $Y_i$ be an indicator for survival for individual $i$, let $X_{i1}$ be the age of individual $i$, and let $X_{i2}$ be an indicator for male Then we fit the model
     \begin{align}
@@ -724,7 +726,7 @@ $$
 
 - For one-dimensional logistic regression, compare logistic curve to a non-parametric smoother.
 
-    ```{r}
+    ```{r, warning = FALSE}
     qplot(x = Age, y = Survived, data = donner, geom = "point") +
       geom_smooth(method = "glm", 
                   se = FALSE,
@@ -732,65 +734,7 @@ $$
       geom_smooth(color = "red", lty = 2, se = FALSE)
     ```
     
-```{r, eval = FALSE, echo = FALSE}
-#' Kernel regression plot demonstration
-#' 
-#' @param x The observed x-values
-#' @param y The observed y-values
-#' @param x0 The point at which we want to make a prediction
-#' @param bandwidth The bandwidth
-ksquart <- function(x, y, x0, bandwidth = 0.5) {
-  ksdf <- as.data.frame(ksmooth(x = x, 
-                                y = y,
-                                kernel = "box",
-                                bandwidth = 2 * bandwidth))
-  
-  df <- tibble(x = x,
-               y = y,
-               w = 1 * (abs((x0 - x) / bandwidth) <= 1)
-               )
-  y0 <- sum(df$w * df$y / sum(df$w))
-  
-  # df2 <- data.frame(x = seq(min(df$x), max(df$x), length.out = 200))
-  # df2$w <- 1 * (abs((x0 - df2$x) / bandwidth) <= 1)
-  # ggplot(df, aes(x = x, y = w)) +
-  #   geom_point() +
-  #   ylab("Gaussian Kernel Weight") +
-  #   geom_line(data = df2)
 
-  ggplot(df, aes(x = x, y = y, alpha = w)) +
-    geom_point() +
-    annotate(geom = "point", x = x0, y = y0, color = "red", shape = 2) +
-    geom_vline(xintercept = x0 - bandwidth, lty = 2) +
-    geom_vline(xintercept = x0 + bandwidth, lty = 2) +
-    annotate(geom = "segment", 
-             x = x0 - bandwidth,
-             xend = x0 + bandwidth,
-             y = y0, 
-             yend = y0,
-             col = 2) +
-    geom_line(data = ksdf, mapping = aes(x = x, y = y), alpha = 1) +
-    guides(alpha = "none") +
-    coord_cartesian(xlim = c(min(x), max(x))) +
-    theme_bw()
-}
-
-x <- mtcars$wt
-y <- mtcars$mpg
-ksquart(x = x, y = y, x0 = 2)
-
-x0seq <- seq(min(x), max(x), length.out = 200)
-pl_list <- list()
-for (i in seq_along(x0seq)) {
-  pl_list[[i]] <- ksquart(x = x, y = y, x0 = x0seq[[i]])
-}
-library(animation)
-saveGIF(expr = {
-  for (i in seq_along(pl_list)) {
-    print(pl_list[[i]])
-  }
-}, movie.name = "./ksreg.gif", interval = 0.1)
-```
     
 
 # References

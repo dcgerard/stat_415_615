@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-10-03" />
+<meta name="date" content="2022-10-04" />
 
 <title>Logistic Regression</title>
 
@@ -375,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Logistic Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-10-03</h4>
+<h4 class="date">2022-10-04</h4>
 
 </div>
 
@@ -519,7 +519,15 @@ no sense:</p>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>When the probability of a “1” is between about 0.2 and 0.8, then
 the linear and logistic (see below) models produce about the same
-results.</p></li>
+results.</p>
+<ul>
+<li>This is a <strong>conditional</strong> probability. So all values of
+<span class="math inline">\(E[Y|X]\)</span> must be between 0.2 and 0.8
+for all values of <span class="math inline">\(X\)</span> for this to
+hold.</li>
+<li>I.e., you <strong>cannot</strong> just look at the marginal
+proportions of 1’s and 0’s and use this to say if the LPM is good.</li>
+</ul></li>
 <li><p>Let’s look at the differences in the Donner party example:</p>
 <pre class="r"><code>ggplot(donner, aes(x = Age, y = Survived)) +
   geom_point() +
@@ -586,9 +594,8 @@ Bern(\mu_i)\)</span> and <span class="math inline">\(g(\mu_i) =
 <li><p>Another example is probit regression (more popular in econ) where
 <span class="math inline">\(g(\mu_i) = \Phi^{-1}(\mu_i)\)</span>, the
 standard normal quantile function (<code>qnorm()</code>). This gives you
-almost identical results (and so can rarely be distinguished using
-data), but statisicians don’t like the probit because it’s less
-interpretable than the logit.</p>
+almost identical results (except in the tails), but statisicians don’t
+like the probit because it’s less interpretable than the logit.</p>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-10-1.png" width="480" style="display: block; margin: auto;" /></p>
 <ul>
 <li><strong>Technical, unimportant note</strong>: The above plots the
@@ -669,13 +676,11 @@ and the log-likelihood is the sum of the log of those probabilities.</p>
 <div id="implementation-in-r" class="section level2">
 <h2>Implementation in R</h2>
 <ul>
-<li>You should transform your binary variable to have 0’s and 1’s. You
-should call your new variable the value when <span
+<li><p>You should transform your binary variable to have 0’s and 1’s.
+You should call your new variable the value when <span
 class="math inline">\(Y_i = 1\)</span>. E.g. in the Donner party we
-created the “Survived” variable.</li>
-</ul>
-<pre class="r"><code>donner &lt;- mutate(donner, Survived = if_else(Status == &quot;Survived&quot;, 1, 0))</code></pre>
-<ul>
+created the “Survived” variable.</p>
+<pre class="r"><code>donner &lt;- mutate(donner, Survived = if_else(Status == &quot;Survived&quot;, 1, 0))</code></pre></li>
 <li><p>Let <span class="math inline">\(Y_i\)</span> be an indicator for
 survival for individual <span class="math inline">\(i\)</span>, let
 <span class="math inline">\(X_{i1}\)</span> be the age of individual
