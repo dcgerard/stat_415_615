@@ -361,7 +361,7 @@ klippy::klippy()
 
 - A full interpretation might go something like this:
 
-    > We estimate that incumbants tend to have 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
+    > We estimate that incumbants to have on average 3.1\% higher vote-share in years which experience 1\% more growth (95\% confidence interval of 1.6\% higher to 4.6\% higher). We have strong evidence that this association is not due to chance alone ($p = 0.00061$, $n = 16$).
     
 - **Exercise**: Make a plot of `qt(1 - alpha, 10)` from `alpha = 0.01` to `alpha = 0.1`. What does the the plot tell you about the width of confidence intervals as `alpha` increases?
 

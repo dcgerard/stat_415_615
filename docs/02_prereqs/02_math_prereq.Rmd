@@ -536,7 +536,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
       geom_line(data = df, aes(x = x, y = y))
     ```
 
-    - So islands that are twice as large tend to have $2^{\beta_1} = 2^{`r beta1`} = `r 2^beta1`$ times as many species. Or, islands that are twice as large tend to have 19\% more species.
+    - So islands that are twice as large have $2^{\beta_1} = 2^{`r beta1`} = `r 2^beta1`$ times as many species on average. Or, islands that are twice as large have 19\% more species on average.
     
     - Notice that I didn't use the language "change" or "increase", because those would imply causal connections.
     
@@ -578,7 +578,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
     1. Interpret `r beta1`.
     
     ```{block, eval = FALSE, echo = FALSE}
-    Countries that drink twice as much wine tend to have mortality rates 22% lower. This is since 2^-0.3556 = 0.7815.
+    Countries that drink twice as much wine have mortality rates 22% lower on average. This is since 2^-0.3556 = 0.7815.
     ```
     
     2. Interpret `r beta0` (the value of $\beta_0$).
@@ -633,7 +633,7 @@ beta1 <- tout$estimate[[2]]
       geom_line(data = df, mapping = aes(x = x, y = y))
     ```
 
-- So cars that are 50\% heavier tend to have $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon.
+- So cars that are 50\% heavier have $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon on average.
 
 ## Summary of relationships on different scales
 

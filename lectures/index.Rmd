@@ -42,6 +42,7 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 4 of KNNL.
   - [Lab 03-1: Inference Lab](./03_inference_lab.html).
   - [Lab 03-2: Diagnostics Lab](./03_diagnostics_lab.html).
+  - [Demo on Nonparametric Regression](./03_npr.html)
 - 04 Linear algebra
   - [Lecture 04-1: Linear Algebra](./04_linear_algebra.html). 
       - Chapter 5 of KNNL.

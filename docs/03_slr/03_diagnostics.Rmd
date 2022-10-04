@@ -945,7 +945,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     tidy(lm_mt, conf.int = TRUE)
     ```
 
-- Interpretation: Cars that are 50\% heavier tend to have $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon.
+- Interpretation: Cars that are 50\% heavier have on average $-17.0 \times \log(1.5) = -6.9$ worse miles per gallon.
 
 - Confidence interval: $-20.2 \times \log(1.5) = -8.2$ to $-14.0 \times \log(1.5) = -5.7$. Notice that we applied the same transformation on the bounds as we did on the estimate.
 
@@ -1018,7 +1018,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     tidy(lm_wine, conf.int = TRUE)
     ```
 
-- Countries that drink twice as much wine per capita tend to have ($2^{-0.3556} = 0.78$) 22\% fewer deaths per 1000 individuals.
+- Countries that drink twice as much wine per capita have on average ($2^{-0.3556} = 0.78$) 22\% fewer deaths per 1000 individuals.
 
 - Confidence interval: $2^{-0.4678} = 0.7231$ to $2^{-0.2434} = 0.8448$, so anywhere from 16\% fewer deaths per 1000 individuals, to 28\% fewer deaths per 1000 individuals. Notice that I applied the same transformation to the bounds of the confidence interval as I did to the estimate.
 
@@ -1029,7 +1029,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     predict(object = lm_wine, newdata = newdf, interval = "prediction")
     ```
 
-    - So countries that drink 20 liters per person per year tend to have mortality rates of about $\exp(1.49) = 4.4$ deaths per 1000 individuals. With a prediction interval of $\exp(0.984) = 2.7$ to $\exp(1.997) = 7.4$ deaths per 1000 individuals.
+    - So countries that drink 20 liters per person per year have on average mortality rates of about $\exp(1.49) = 4.4$ deaths per 1000 individuals. With a prediction interval of $\exp(0.984) = 2.7$ to $\exp(1.997) = 7.4$ deaths per 1000 individuals.
 
 # Smoothers
 
