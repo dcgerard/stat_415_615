@@ -1448,9 +1448,12 @@ smoothers:</p></li>
 <div id="kernel-regression" class="section level3">
 <h3>Kernel Regression</h3>
 <ul>
-<li>Estimate mean of points in the window (because we are using the <a
+<li><p>Estimate mean of points in the window (because we are using the
+<a
 href="https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use">box
-kernel</a>).</li>
+kernel</a>).</p></li>
+<li><p>Use <code>ksmooth()</code> to implement kernel
+smoothing.</p></li>
 </ul>
 <p><img src="03_figs/ksreg.gif" /> </p>
 </div>
@@ -1463,6 +1466,7 @@ using the <a
 href="https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use">box
 kernel</a>).</p></li>
 <li><p>Use regression line to estimate point at red triangle.</p></li>
+<li><p>Use <code>loess()</code> to implement LOESS.</p></li>
 </ul>
 <p><img src="03_figs/lsreg.gif" /> </p>
 </div>
@@ -1472,13 +1476,13 @@ kernel</a>).</p></li>
 <li><p>Piecewise cubic between knots (red triangles).</p></li>
 <li><p>Derivatives on both sides of knots must be equal.</p></li>
 <li><p>Minimize sum of squares.</p></li>
+<li><p>Because splines are piece-wise cubic, they are parametric (though
+flexible), and so we can include them as covariates in regression. We’ll
+talk about this later.</p></li>
+<li><p>You use <code>lm(y ~ splines::bs(x))</code> to estimate a
+smoothing spline.</p></li>
 </ul>
 <p><img src="03_figs/spreg.gif" /> </p>
-<ul>
-<li>Because splines are piece-wise cubic, they are parametric (though
-flexible), and so we can include them as covariates in regression. We’ll
-talk about this later.</li>
-</ul>
 </div>
 <div id="trend-filtering" class="section level3">
 <h3>Trend Filtering</h3>
@@ -1494,14 +1498,22 @@ class="math inline">\(\mu_i\)</span>’s to be equal</p></li>
 </ul>
 <p><img src="03_figs/tfreg.gif" /> </p>
 <ul>
-<li>You can generalize this to minimize the “second difference” between
-triples of points, so the result is not just a step function: <span
-class="math display">\[
+<li><p>You can generalize this to include the “second order discrete
+difference operator” as a penalty, so the result is not just a step
+function: <span class="math display">\[
   \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-2}|\mu_{i+2} -
 2\mu_{i+1} + \mu_i|
-  \]</span></li>
+  \]</span></p></li>
+<li><p>You can think about the right term as the discrete analogue of
+the second derivative. This is penalized to 0. The second derivative of
+a line has 0 dervative, so this pushes the solution toward a
+line.</p></li>
 </ul>
 <p><img src="03_figs/tfreg2.gif" /> </p>
+<ul>
+<li>Use <code>genlasso::trendfilter()</code> to implement trend
+filtering.</li>
+</ul>
 </div>
 </div>
 
