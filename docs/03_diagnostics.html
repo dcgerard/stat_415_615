@@ -1466,8 +1466,8 @@ kernel</a>).</p></li>
 </ul>
 <p><img src="03_figs/lsreg.gif" /> </p>
 </div>
-<div id="smoothing-splines" class="section level3">
-<h3>Smoothing Splines</h3>
+<div id="regression-splines" class="section level3">
+<h3>Regression Splines</h3>
 <ul>
 <li><p>Piecewise cubic between knots (red triangles).</p></li>
 <li><p>Derivatives on both sides of knots must be equal.</p></li>
@@ -1479,6 +1479,29 @@ kernel</a>).</p></li>
 flexible), and so we can include them as covariates in regression. We’ll
 talk about this later.</li>
 </ul>
+</div>
+<div id="trend-filtering" class="section level3">
+<h3>Trend Filtering</h3>
+<ul>
+<li><p>Minimize over <span class="math inline">\(\mu_i\)</span>’s: <span
+class="math display">\[
+  \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-1}|\mu_{i+1} -
+\mu_i|
+  \]</span></p></li>
+<li><p>Larger <span class="math inline">\(\lambda\)</span> puts more
+weight on second term, pushing adjacent <span
+class="math inline">\(\mu_i\)</span>’s to be equal</p></li>
+</ul>
+<p><img src="03_figs/tfreg.gif" /> </p>
+<ul>
+<li>You can generalize this to minimize the “second difference” between
+triples of points, so the result is not just a step function: <span
+class="math display">\[
+  \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-2}|\mu_{i+2} -
+2\mu_{i+1} + \mu_i|
+  \]</span></li>
+</ul>
+<p><img src="03_figs/tfreg2.gif" /> </p>
 </div>
 </div>
 

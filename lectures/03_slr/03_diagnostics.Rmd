@@ -1068,7 +1068,7 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 ![](./03_figs/lsreg.gif)\ 
 
-### Smoothing Splines
+### Regression Splines
 
 - Piecewise cubic between knots (red triangles).
 
@@ -1080,3 +1080,20 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 - Because splines are piece-wise cubic, they are parametric (though flexible), and so we can include them as covariates in regression. We'll talk about this later.
 
+### Trend Filtering
+
+- Minimize over $\mu_i$'s:
+    $$
+    \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-1}|\mu_{i+1} - \mu_i|
+    $$
+
+- Larger $\lambda$ puts more weight on second term, pushing adjacent $\mu_i$'s to be equal
+
+![](./03_figs/tfreg.gif)\ 
+
+- You can generalize this to minimize the "second difference" between triples of points, so the result is not just a step function:
+    $$
+    \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-2}|\mu_{i+2} - 2\mu_{i+1} + \mu_i|
+    $$
+
+![](./03_figs/tfreg2.gif)\ 
