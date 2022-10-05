@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-10-04" />
+<meta name="date" content="2022-10-05" />
 
 <title>Logistic Regression</title>
 
@@ -375,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Logistic Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-10-04</h4>
+<h4 class="date">2022-10-05</h4>
 
 </div>
 
@@ -388,7 +388,8 @@ div.tocify {
 <h1>Learning Objectives</h1>
 <ul>
 <li>Logistic Regression for Binary Response Variables</li>
-<li>Chapters 20 and 21 of the <em>Statistical Sleuth</em></li>
+<li>Chapter 20 of the <em>Statistical Sleuth</em></li>
+<li>Sections 14.1–14.10 of KNNL</li>
 </ul>
 <pre class="r"><code>library(tidyverse)
 library(Sleuth3)
@@ -1224,8 +1225,9 @@ be fine ignoring this I think.</li>
 href="https://en.wikipedia.org/wiki/Hosmer%E2%80%93Lemeshow_test">Hosmer-Lemeshow</a>
 goodness-of-fit test for logistic regression.</p>
 <ul>
-<li>Basically, divides the points into bins and compares a group-wise
-probability model to the logistic model.</li>
+<li>Basically, divides the points into bins (via their estimated
+probabilities of 1) and compares a group-wise probability model to the
+logistic model.</li>
 <li>Null is fitted model, alternative is deviation from fitted
 model.</li>
 <li>Large <span class="math inline">\(p\)</span>-values indicate no
@@ -1249,14 +1251,16 @@ evidence of lack-of-fit.</li>
 ##          Statistic =  9.32 
 ## degrees of freedom =  7 
 ##            p-value =  0.23</code></pre></li>
-<li><p>For one-dimensional logistic regression, compare logistic curve
-to a non-parametric smoother.</p>
-<pre class="r"><code>qplot(x = Age, y = Survived, data = donner, geom = &quot;point&quot;) +
-  geom_smooth(method = &quot;glm&quot;, 
-              se = FALSE,
-              method.args = list(family = binomial)) +
-  geom_smooth(color = &quot;red&quot;, lty = 2, se = FALSE)</code></pre>
-<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<li><p>The residuals should still have mean 0, so plot the residuals
+versus fits with a non-parametric smoother.</p>
+<pre class="r"><code>glm_out &lt;- glm(Survived ~ Sex + Age,
+               data = donner,
+               family = binomial)
+aout &lt;- augment(glm_out)
+
+qplot(x = .fitted, y = .std.resid, data = aout) +
+  geom_hline(yintercept = 0) +
+  geom_smooth()</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
