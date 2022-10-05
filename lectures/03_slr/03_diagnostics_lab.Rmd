@@ -20,6 +20,9 @@ knitr::opts_chunk$set(echo = params$solutions,
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
 
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy()
+```
 
 # Plastic Hardness
 
@@ -63,7 +66,7 @@ plastic <- tribble(~hardness, ~time,
     The constant variance assumption looks OK, but it also looks like it might be curvilinear, but it is hard to be sure.
     ```
 
-2. Is an F-test lack-of-fit appropriate here? If so, un and F-test lack of fit and state your conclusions.
+2. Is an F-test lack-of-fit appropriate here? If so, run an F-test lack of fit and state your conclusions.
 
     ```{block, eval = FALSE}
     Yes, we have replications at multiple $X$ values.
@@ -103,7 +106,7 @@ plastic <- tribble(~hardness, ~time,
 
 Refer to the [Prostate Cancer](https://dcgerard.github.io/stat_415_615/data.html#Prostate_Cancer) dataset that you can download here: <https://dcgerard.github.io/stat_415_615/data/prostate.csv>
 
-Build a regression model to predict PSA as a function of cancer volume. The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. Include remedial measures where necessary. Use the final model to predict the PSA for an individual with a cancer volume of 20 cc.
+Build a regression model to predict PSA as a function of cancer volume. The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. Include remedial measures where necessary. Provide an interpretation and describe measures of uncertainty in your analysis. Use best practices. Use the final model to predict the PSA for an individual with a cancer volume of 20 cc.
 
 ```{r, message = FALSE}
 prostate <- read_csv("https://dcgerard.github.io/stat_415_615/data/prostate.csv")

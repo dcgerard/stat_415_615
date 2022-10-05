@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-21" />
+<meta name="date" content="2022-10-05" />
 
 <title>Diagnostics and Remedial Measures</title>
 
@@ -353,7 +353,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-21</h4>
+<h4 class="date">2022-10-05</h4>
 
 </div>
 
@@ -1442,7 +1442,44 @@ works.</li>
 don’t say that the above is evidence for a leveling off between 1 and 2,
 then increasing again. Lowess does not provide inference. It can only
 generate questions.</p></li>
+<li><p>There is large literature on different types of
+smoothers:</p></li>
 </ul>
+<div id="kernel-regression" class="section level3">
+<h3>Kernel Regression</h3>
+<ul>
+<li>Estimate mean of points in the window (because we are using the <a
+href="https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use">box
+kernel</a>).</li>
+</ul>
+<p><img src="03_figs/ksreg.gif" /> </p>
+</div>
+<div id="local-linear-regression-simplified-loess"
+class="section level3">
+<h3>Local Linear Regression (Simplified LOESS)</h3>
+<ul>
+<li><p>Fit a regression line using only points in window (because we are
+using the <a
+href="https://en.wikipedia.org/wiki/Kernel_(statistics)#Kernel_functions_in_common_use">box
+kernel</a>).</p></li>
+<li><p>Use regression line to estimate point at red triangle.</p></li>
+</ul>
+<p><img src="03_figs/lsreg.gif" /> </p>
+</div>
+<div id="smoothing-splines" class="section level3">
+<h3>Smoothing Splines</h3>
+<ul>
+<li><p>Piecewise cubic between knots (red triangles).</p></li>
+<li><p>Derivatives on both sides of knots must be equal.</p></li>
+<li><p>Minimize sum of squares.</p></li>
+</ul>
+<p><img src="03_figs/spreg.gif" /> </p>
+<ul>
+<li>Because splines are piece-wise cubic, they are parametric (though
+flexible), and so we can include them as covariates in regression. We’ll
+talk about this later.</li>
+</ul>
+</div>
 </div>
 
 
