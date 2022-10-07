@@ -33,6 +33,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `like`: The degree of brand liking, on a 0-100 scale.
     - `moisture`: The moisture content (higher is more moisture).
     - `sweetness`: The sweetness content (higher is sweeter).
+    
+# Car Purchase
+
+- [carpurch.csv](./data/carpurch.csv): Dataset from problem 14.13 of KNNL. A marketing research firm was engaged by an automobile manufacturer to conduct a pilot study to examine the feasibility of using logistic regression for ascertaining the likelihood that a family will purchase a new car during the next year. A random sample of 33 suburban families was selected. Variables include
+    - `purchased`: An indicator on whether the family actually purchased a new car 12 months later (`1`) or not (`0`).
+    - `income`: The annual family income in thousands of dollars.
+    - `age`: The age of the oldest family automobile in years.
 
 # Copiers
 
@@ -303,7 +310,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     
 # Taxes in Tudor England
 
-- [tax.csv](./data/tax.csv): These data were extracted from the scatterplot of Figure 1 of @cesaretti2020. Economists think moderng cities are more efficient engines of economic growth, producing more output per individual. This is because of various factors like easier access to skilled labor, logistical cost savings because folks are closer together, etc. @cesaretti2020 wanted to test if this was also true in old England. They collected data from the 1524--1525 tax years from 93 towns. Variables include:
+- [tax.csv](./data/tax.csv): These data were extracted from the scatterplot of Figure 1 of @cesaretti2020. Economists think modern cities are more efficient engines of economic growth, producing more output per individual. This is because of various factors like easier access to skilled labor, logistical cost savings because folks are closer together, etc. @cesaretti2020 wanted to test if this was also true in old England. They collected data from the 1524--1525 tax years from 93 towns. Variables include:
     - `taxpayers`: Number of taxpayers in the town.
     - `tax`: The total tax collected by from the town, in British pounds £.
     

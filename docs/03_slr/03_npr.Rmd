@@ -164,7 +164,7 @@ saveGIF(expr = {
 
 ![](./03_figs/lsreg.gif)\ 
 
-# Smoothing Splines
+# Regression Splines
 
 ```{r, eval = FALSE, echo = FALSE}
 set.seed(7)
@@ -226,7 +226,76 @@ saveGIF(expr = {
 
 ![](./03_figs/spreg.gif)\ 
 
+# Trend Filtering
 
+- Minimize over $\mu_i$'s
+    $$
+    \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-1}|\mu_{i+1} - \mu_i|
+    $$
 
+- Larger $\lambda$ puts more weight on second term, pushing adjacent $\mu_i$'s to be equal
 
+```{r}
+library(genlasso)
+library(tidyverse)
+library(latex2exp)
+cars %>%
+  arrange(speed) ->
+  cars
+x <- cars$speed
+y <- cars$dist
+tout <- trendfilter(y, ord = 0)
 
+pl_list <- list()
+for (i in rev(seq_along(tout$lambda))) {
+  ggplot() +
+    geom_point(data = data.frame(x = x, y = y), mapping = aes(x = x, y = y)) +
+    theme_bw() +
+    geom_step(data = data.frame(x = x, y = tout$fit[, i]), mapping = aes(x = x, y = y)) +
+    ggtitle(TeX(paste0("$\\lambda = ", tout$lambda[[i]], "$"))) ->
+    pl_list[[length(tout$lambda) - i + 1]]
+}
+
+library(animation)
+saveGIF(expr = {
+  for (i in seq_along(pl_list)) {
+    print(pl_list[[i]])
+  }
+}, movie.name = "./tfreg.gif", interval = 0.2, ani.height = 250, ani.width = 325)
+```
+
+- This doesn't work well on our data since it is not relatively flat.
+
+- You can generalize this to minimize the "second difference" between triples of points
+    $$
+    \sum_{i=1}^n(y_i - \mu_i)^2 + \lambda \sum_{1 = 1}^{n-2}|\mu_{i+2} - 2\mu_{i+1} + \mu_i|
+    $$
+
+```{r}
+library(genlasso)
+library(tidyverse)
+library(latex2exp)
+cars %>%
+  arrange(speed) ->
+  cars
+x <- cars$speed
+y <- cars$dist
+tout <- trendfilter(y)
+
+pl_list <- list()
+for (i in rev(seq_along(tout$lambda))) {
+  ggplot() +
+    geom_point(data = data.frame(x = x, y = y), mapping = aes(x = x, y = y)) +
+    theme_bw() +
+    geom_line(data = data.frame(x = x, y = tout$fit[, i]), mapping = aes(x = x, y = y)) +
+    ggtitle(TeX(paste0("$\\lambda = ", tout$lambda[[i]], "$"))) ->
+    pl_list[[length(tout$lambda) - i + 1]]
+}
+
+library(animation)
+saveGIF(expr = {
+  for (i in seq_along(pl_list)) {
+    print(pl_list[[i]])
+  }
+}, movie.name = "./tfreg2.gif", interval = 0.1, ani.height = 250, ani.width = 325)
+```
