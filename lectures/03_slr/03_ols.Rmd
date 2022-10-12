@@ -456,66 +456,21 @@ saveGIF(expr = {
     
 - Recall **sampling distribution**: The distribution of an estimator across many theoretical samples. The sampling variance is the variance of the sampling distribution.
 
-- Let's demonstrate the unbiased property through simulation. Let's choose $\beta_0$, $\beta_1$, and the $X_i$'s:
+- Let's demonstrate the unbiased property through simulation. 
 
-    ```{r}
-    x <- runif(n = 100)
-    beta0 <- 1
-    beta1 <- 2
-    ```
-
-- To simulate $Y_i$'s, we generate new errors each replication.
-
-    ```{r}
-    epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
-    qplot(epsilon, bins = 10)
-    y <- beta0 + beta1 * x + epsilon
-    qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)
-    ```
-
-- We then use `lm()` to find $\hat{\beta}_0$ and $\hat{\beta}_1$ each replication.
-    ```{r}
-    lmout <- lm(y ~ x)
-    beta0_hat <- tidy(lmout)$estimate[[1]]
-    beta1_hat <- tidy(lmout)$estimate[[2]]
-    beta0_hat
-    beta1_hat
-    ```
-
-- We can use a for-loop to generate many samples, and for each sample we collect the $\hat{\beta}_0$ and the $\hat{\beta}_1$
-
-    ```{r}
-    nrep <- 1000
-    beta0_hat <- rep(NA, nrep)
-    beta1_hat <- rep(NA, nrep)
-    for (i in 1:nrep) {
-      epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
-      y <- beta0 + beta1 * x + epsilon
-      lmout <- lm(y ~ x)
-      beta0_hat[[i]] <- tidy(lmout)$estimate[[1]]
-      beta1_hat[[i]] <- tidy(lmout)$estimate[[2]]
-    }
-    ```
-
-- The average of the estimates are near the parameters
-
-    ```{r}
-    mean(beta0_hat)
-    beta0
-    ```
+    ![](./03_figs/sampling_bi.gif)\ 
     
-    ```{r}
-    mean(beta1_hat)
-    beta1
-    ```
-
-- We can visualize the variability about the estimates
-
-    ```{r}
-    qplot(beta0_hat, bins = 20) + geom_vline(xintercept = beta0, color = "red")
-    
-    qplot(beta1_hat, bins = 20) + geom_vline(xintercept = beta1, color = "red")
-    ```
+    - Above Left: 
+        - Red dashed line is true regression relationship between $x$ and $y$.
+        - New samples are collected.
+        - Blue line is the OLS line of the sample. This line corresponds to $\hat{\beta}_0$ and $\hat{\beta}_1$.
+        - Note that the vertical error terms are decidedly not normal, but this is fine.
+        
+    - Above Right:
+        - Histogram of the the $\hat{\beta}_1$'s from the various samples.
+        - Red dashed line is the true $\beta_1$.
+        - Blue line is the mean of the $\hat{\beta}_1$'s.
+        - Blue line is approximately red line after many repeated samples.
 
 - Note: In this simulation process, the $X_i$'s were **fixed** each replication (from sample to sample). This is an assumption of most sampling properties that we'll discuss.
 
