@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-10-12" />
+<meta name="date" content="2022-10-13" />
 
 <title>Simple Linear Regression: The Model</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -66,6 +66,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 
 
@@ -187,8 +209,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "\e259";
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -196,9 +218,16 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "\e258";
-  font-family: 'Glyphicons Halflings';
+  content: "&#xe258;";
   border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -346,7 +375,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-10-12</h4>
+<h4 class="date">2022-10-13</h4>
 
 </div>
 
@@ -630,7 +659,14 @@ consider minimizing the <em>sum of squares</em>:</p>
   \sum_{i=1}^n \left[Y_i - (\beta_0 + \beta_1 X_i)\right]^2
   \]</span></p></li>
 <li><p>Visualization:</p>
-<p><img src="03_figs/ols.gif" /></p></li>
+<p><img src="03_figs/ols.gif" /> </p></li>
+<li><p>Intuitively, you can think of the sum of squares objective as
+representing a rigid rod being pulled by springs in the vertical
+directions of the data points. The OLS line is the equilibrium value at
+which all of the springs are equally cancelling out the forces of each
+other, resulting in a stationary rod. See Section 3.3 of <span
+class="citation">Levi (2009)</span> for more details.</p>
+<p><img src="03_figs/ols_springs.gif" /> </p></li>
 <li><p>We can solve for the <span class="math inline">\(\beta_0\)</span>
 and <span class="math inline">\(\beta_1\)</span> that minimize this sum
 of squares.</p></li>
@@ -1135,6 +1171,16 @@ squares!</p></li>
 <li><p>Maximum likelihood estimation is a very general approach to
 estimating a parameter given a data generative model.</p></li>
 </ul>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-levi2009mathematical" class="csl-entry">
+Levi, M. 2009. <em>The Mathematical Mechanic: Using Physical Reasoning
+to Solve Problems</em>. Princeton University Press. <a
+href="https://books.google.com/books?id=2Jp3FKRcZbEC">https://books.google.com/books?id=2Jp3FKRcZbEC</a>.
+</div>
+</div>
 </div>
 
 

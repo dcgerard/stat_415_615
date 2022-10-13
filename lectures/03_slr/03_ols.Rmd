@@ -8,6 +8,7 @@ output:
     toc_depth: 4
     toc_float: true
 urlcolor: "blue"
+bibliography: "../data.bib"
 ---
 
 ```{r setup, include=FALSE}
@@ -322,7 +323,6 @@ saveGIF(expr = {
 }, movie.name = "ols.gif", interval = 0.1)
 ```
 
-
 - We have data $(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)$, and we want to estimate $\beta_0$ and $\beta_1$ in the equation
 
     $$
@@ -339,7 +339,11 @@ saveGIF(expr = {
 
 - Visualization:
 
-    ![](./03_figs/ols.gif)
+    ![](./03_figs/ols.gif)\ 
+
+- Intuitively, you can think of the sum of squares objective as representing a rigid rod being pulled by springs in the vertical directions of the data points. The OLS line is the equilibrium value at which all of the springs are equally cancelling out the forces of each other, resulting in a stationary rod. See Section 3.3 of @levi2009mathematical for more details.
+
+    ![](./03_figs/ols_springs.gif)\ 
 
 - We can solve for the $\beta_0$ and $\beta_1$ that minimize this sum of squares.
 
@@ -791,3 +795,5 @@ saveGIF(expr = {
     the second term. But this is equivalent to minimizing the sum of squares!
     
 - Maximum likelihood estimation is a very general approach to estimating a parameter given a data generative model.
+
+# References
