@@ -103,9 +103,9 @@ klippy::klippy()
     E[Y_i] = \beta_0 + \beta_1 X_{i1} + \beta_2X_{i2}
     $$
 
-- We can visualize this model using KNNL's figure 6.1:
+- We can visualize this model via:
 
-    ![](./figs/plane.png)\ 
+    ![](./figs/plane_me.png)\ 
 
 - The regression function (the deterministic part) is often called the **regression surface** or the **response surface**.
 

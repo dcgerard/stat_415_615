@@ -8,6 +8,7 @@ output:
     toc_depth: 4
     toc_float: true
 urlcolor: "blue"
+bibliography: "../data.bib"
 ---
 
 ```{r setup, include=FALSE}
@@ -322,7 +323,6 @@ saveGIF(expr = {
 }, movie.name = "ols.gif", interval = 0.1)
 ```
 
-
 - We have data $(X_1, Y_1), (X_2, Y_2), \ldots, (X_n, Y_n)$, and we want to estimate $\beta_0$ and $\beta_1$ in the equation
 
     $$
@@ -339,7 +339,11 @@ saveGIF(expr = {
 
 - Visualization:
 
-    ![](./03_figs/ols.gif)
+    ![](./03_figs/ols.gif)\ 
+
+- Intuitively, you can think of the sum of squares objective as representing a rigid rod being pulled by springs in the vertical directions of the data points. The OLS line is the equilibrium value at which all of the springs are equally cancelling out the forces of each other, resulting in a stationary rod. See Section 3.3 of @levi2009mathematical for more details.
+
+    ![](./03_figs/ols_springs.gif)\ 
 
 - We can solve for the $\beta_0$ and $\beta_1$ that minimize this sum of squares.
 
@@ -456,66 +460,21 @@ saveGIF(expr = {
     
 - Recall **sampling distribution**: The distribution of an estimator across many theoretical samples. The sampling variance is the variance of the sampling distribution.
 
-- Let's demonstrate the unbiased property through simulation. Let's choose $\beta_0$, $\beta_1$, and the $X_i$'s:
+- Let's demonstrate the unbiased property through simulation. 
 
-    ```{r}
-    x <- runif(n = 100)
-    beta0 <- 1
-    beta1 <- 2
-    ```
-
-- To simulate $Y_i$'s, we generate new errors each replication.
-
-    ```{r}
-    epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
-    qplot(epsilon, bins = 10)
-    y <- beta0 + beta1 * x + epsilon
-    qplot(x, y) + geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2)
-    ```
-
-- We then use `lm()` to find $\hat{\beta}_0$ and $\hat{\beta}_1$ each replication.
-    ```{r}
-    lmout <- lm(y ~ x)
-    beta0_hat <- tidy(lmout)$estimate[[1]]
-    beta1_hat <- tidy(lmout)$estimate[[2]]
-    beta0_hat
-    beta1_hat
-    ```
-
-- We can use a for-loop to generate many samples, and for each sample we collect the $\hat{\beta}_0$ and the $\hat{\beta}_1$
-
-    ```{r}
-    nrep <- 1000
-    beta0_hat <- rep(NA, nrep)
-    beta1_hat <- rep(NA, nrep)
-    for (i in 1:nrep) {
-      epsilon <- rbeta(n = 100, shape1 = 0.2, shape2 = 0.2) - 0.5
-      y <- beta0 + beta1 * x + epsilon
-      lmout <- lm(y ~ x)
-      beta0_hat[[i]] <- tidy(lmout)$estimate[[1]]
-      beta1_hat[[i]] <- tidy(lmout)$estimate[[2]]
-    }
-    ```
-
-- The average of the estimates are near the parameters
-
-    ```{r}
-    mean(beta0_hat)
-    beta0
-    ```
+    ![](./03_figs/sampling_bi.gif)\ 
     
-    ```{r}
-    mean(beta1_hat)
-    beta1
-    ```
-
-- We can visualize the variability about the estimates
-
-    ```{r}
-    qplot(beta0_hat, bins = 20) + geom_vline(xintercept = beta0, color = "red")
-    
-    qplot(beta1_hat, bins = 20) + geom_vline(xintercept = beta1, color = "red")
-    ```
+    - Above Left: 
+        - Red dashed line is true regression relationship between $x$ and $y$.
+        - New samples are collected.
+        - Blue line is the OLS line of the sample. This line corresponds to $\hat{\beta}_0$ and $\hat{\beta}_1$.
+        - Note that the vertical error terms are decidedly not normal, but this is fine.
+        
+    - Above Right:
+        - Histogram of the the $\hat{\beta}_1$'s from the various samples.
+        - Red dashed line is the true $\beta_1$.
+        - Blue line is the mean of the $\hat{\beta}_1$'s.
+        - Blue line is approximately red line after many repeated samples.
 
 - Note: In this simulation process, the $X_i$'s were **fixed** each replication (from sample to sample). This is an assumption of most sampling properties that we'll discuss.
 
@@ -836,3 +795,5 @@ saveGIF(expr = {
     the second term. But this is equivalent to minimizing the sum of squares!
     
 - Maximum likelihood estimation is a very general approach to estimating a parameter given a data generative model.
+
+# References

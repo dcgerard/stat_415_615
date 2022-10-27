@@ -451,3 +451,40 @@ ggplot() +
   xlab("log(Time)") ->
   pl
 ggsave(filename = "./03_figs/inverse_pred.pdf", plot = pl, family = "Times")
+
+## Unbiased
+library(tidyverse)
+library(patchwork)
+library(latex2exp)
+library(animation)
+set.seed(1)
+x <- runif(n = 30)
+beta0 <- 1
+beta1 <- 2
+
+nsamp <- 100
+beta1hat <- rep(NA_real_, length.out = nsamp)
+pl_list <- list()
+saveGIF(expr = {
+    for (i in seq_len(nsamp)) {
+      epsilon <- rbeta(n = length(x), shape1 = 0.2, shape2 = 0.2) - 0.5
+      y <- beta0 + beta1 * x + epsilon
+      qplot(x, y) +
+        geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2) +
+        geom_smooth(method = "lm", se = FALSE, formula = y~x) +
+        theme_bw() +
+        ylim(0.5, 3.5) ->
+        pl1
+      beta1hat[[i]] <- coef(lm(y ~ x))[[2]]
+      qplot(beta1hat, bins = 30) +
+        theme_bw() +
+        xlim(1, 2.9) +
+        ylim(0, 14) +
+        geom_vline(xintercept = mean(beta1hat, na.rm = TRUE), col = "blue", lty = 1, lwd = 1.5) +
+        geom_vline(xintercept = 2, lty = 2, col = 2) +
+        xlab(TeX("$\\hat{\\beta}_1$")) ->
+        pl2
+      print(pl1 + pl2)
+    }
+}, movie.name = "sampling_bi.gif", interval = 0.2, ani.width = 1000)
+
