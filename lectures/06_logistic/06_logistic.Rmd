@@ -316,7 +316,7 @@ saveGIF(expr = {
     - `family`: The distribution of $Y_i$. 
         - `gaussian` will assume normal errors (like in `lm()`).
         - `binomial` in this case will fit the bernoulli model since $Bern(p_i) = Bin(1, p_i)$.
-    - You can specify the link function here as well. So for probit models you would do `binomial(link = "probit")`.
+    - You can specify the link function here as well. So for probit models you would do `binomial(link = "probit")`. The default is for logistic regression, so you just need to say "binomial" for this argument.
     
 - Let's fit the model
     ```{r}
@@ -414,7 +414,7 @@ saveGIF(expr = {
     \text{logit}(p_i) = 3.23 -0.08X_{1} - 1.60X_{2}
     $$
     
-- So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.08} \times 10 = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
+- So individuals of the same sex that are 10 years younger have about twice the odds of surviving ($e^{0.0782 \times 10} = 2.186$). Also, a woman's odds of survival were about 5 times that of a man of the same age ($e^{1.6} = 4.95$).
 
 - **Exercise**: The nocturia data set, described [here](https://dcgerard.github.io/stat_415_615/data.html#Nocturia) and dowloadable from [here](https://dcgerard.github.io/stat_415_615/data/nocturia.csv), contains patient covariates that are believed to be associated with whether the individual has nocturia (wakes up to pee). Download the data, the fit of logistic regression model of nocturia on age. Interpret the resulting coefficients.
 
