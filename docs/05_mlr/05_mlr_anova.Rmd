@@ -917,6 +917,8 @@ R^2_{Y123} &= \frac{SSR(X_1, X_2, X_3)}{SSTO}\\
     - This is what other statistics like $R^2$, partial $R^2$, sums of squares, and Cohen's $d$ are meant for.
 
 - Only use $p$-values to describe the strength of the **evidence that there is a relationship** between two variables.
+    - This relationship might be very weak. 
+    - The $p$-value tells you **nothing** about the strength of the relationship, just that one might exist.
 
 - Coefficients of determination are useful for determining practical significance.
 

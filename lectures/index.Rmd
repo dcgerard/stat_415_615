@@ -66,6 +66,8 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 10 of KNNL.
 - 06 Logistic Regression
   - [Lecture 06-1: Logistic Regression](./06_logistic.html).
+    - Chapter 20 of Statistical Sleuth
+    - Sections 14.1–14.10 of KNNL
 - Review Sheets
   - [Equations](./rr_equations.html).
 
