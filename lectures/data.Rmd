@@ -19,6 +19,25 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplot2::element_rect(fill = "white")))
 ```
 
+# Baldur's Gate Characters
+
+- [baldur.csv](./data/baldur.csv): Data scraped from the [Baldur's Gate Fandom Wiki](https://baldursgate.fandom.com/wiki/Companions). This contains the ability scores, alignments, races, and classes for the playable companions in the [Baldur's Gate](https://en.wikipedia.org/wiki/Baldur%27s_Gate) I and II video games. Variables include:
+    - `companion`: Name of the companion.
+    - `ethics`: [Law versus chaos](https://en.wikipedia.org/wiki/Alignment_(Dungeons_%26_Dragons)#Law_versus_chaos) alignment of the companion. Possible values are `"Lawful"`, `"Neutral"`, and `"Chaotic"`.
+    - `morals`: [Good versus evil](https://en.wikipedia.org/wiki/Alignment_(Dungeons_%26_Dragons)#Good_versus_evil) alignment of the companion. Possible values are `"Good"`, `"Neutral"`, and `"Evil"`.
+    - `race`: The race of the companion. There are 13 possible values.
+    - `class`: The class of the companion. Some individuals have more than one class, and some individuals changed class. Both of these scenarios are delimited with `/`.
+    - `str`: The strength of the companion.
+    - `dex`: The dexterity of the companion.
+    - `con`: The constitution of the companion.
+    - `int`: The intelligence of the companion.
+    - `wis`: The wisdom of the companion.
+    - `cha`: The charisma of the companion.
+    - `warrior`: An indicator for if the companion belongs to the "warrior" class group.
+    - `rogue`: An indicator for if the companion belongs to the "rogue" class group.
+    - `priest`: An indicator for if the companion belongs to the "priest" class group.
+    - `wizard`: An indicator for if the companion belongs to the "wizard" class group.
+
 # Body Fat
 
 - [body.csv](./data/body.csv): Dataset from Section 7.1 of KNNL. Data were collected from 20 healthy females, 25--34 years old, to study the relationship between body fat and three predictors. Variables include
