@@ -53,4 +53,8 @@ baldur %>%
 
 baldur <- clean_names(baldur)
 
+baldur %>%
+  filter(!duplicated(companion)) ->
+  baldur
+
 write_csv(x = baldur, file = "./baldur.csv")
