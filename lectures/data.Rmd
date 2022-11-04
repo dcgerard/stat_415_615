@@ -278,6 +278,13 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `lot`: Lot size (in square feet)
     - `highway`: `"yes"` = highway adjacent, `"no"` = highway not adjacent.
     
+# Roman Wheat Prices
+
+- [rome.csv](./data/rome.csv): Data from Figure 1 of @temin2019words. The researcher was interested in the association between the price of wheat and the distance from Rome. Data were collected during various time points between the late Roman republic and early Roman empire. Variables include.
+    - `distance`: Distance from Rome (in km).
+    - `discount`: Difference in wheat price between Rome and the location, in units of [*sestertius*](https://en.wikipedia.org/wiki/Sestertius) per [*modius*](https://en.wikipedia.org/wiki/Ancient_Roman_units_of_measurement#Dry_measure). Think about this as cost per unit of wheat. Negative numbers mean that wheat was more expensive in Rome.
+    - `location`: The name of the location where the price was measured.
+    
 # Soap Production Line
 
 - [soap.csv](./data/soap.csv): Table 8.5 of KNNL. Researchers were studying the relationship between line speed and the amount of scrap for two production lines in a soap production company. The variables include
