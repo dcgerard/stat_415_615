@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-21" />
+<meta name="date" content="2022-11-09" />
 
 <title>MLR III: Special Predictors</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -187,8 +187,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -196,16 +196,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -353,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-21</h4>
+<h4 class="date">2022-11-09</h4>
 
 </div>
 
@@ -483,6 +476,36 @@ class="math inline">\(X_{i2}\)</span> is quadratic (and so the model is
 linear in <span class="math inline">\(X_{i1}\)</span>). Use the repeated
 indexing that we just introduced.</p></li>
 </ul>
+<div id="i" class="section level2">
+<h2><code>I()</code></h2>
+<ul>
+<li><p>It is easier, but less conceptually clear, to apply
+transformations directly in the <code>lm()</code> call.</p></li>
+<li><p>For polynomial transformations, you need to use <code>I()</code>
+to inhibit R from interpreting <code>^</code> as a formula operator.</p>
+<pre class="r"><code>lm_mass &lt;- lm(mass ~ age + I(age^2), data = muscle)
+tidy(lm_mass)</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   term        estimate std.error statistic       p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+## 1 (Intercept) 207.      29.2          7.09 0.00000000221
+## 2 age          -2.96     1.00        -2.96 0.00453      
+## 3 I(age^2)      0.0148   0.00836      1.78 0.0811</code></pre></li>
+<li><p>For predictions, you just need to specify <code>age</code> (not
+also <code>age2</code>)</p>
+<pre class="r"><code>newdf &lt;- data.frame(age = 65)
+predict(object = lm_mass, newdata = newdf)</code></pre>
+<pre><code>##     1 
+## 77.37</code></pre></li>
+<li><p>You can use <code>I()</code> inside <code>geom_smooth()</code> to
+show quadratic terms directly on the plot</p>
+<pre class="r"><code>qplot(x = age, y = mass, data = muscle) +
+  geom_smooth(method = lm,
+              formula = y ~ x + I(x^2),
+              se = FALSE)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
 <div id="practical-considerations-for-using-quadratic-terms"
 class="section level2">
 <h2>Practical considerations for using quadratic terms</h2>
@@ -530,7 +553,7 @@ newdf$mass &lt;- predict(object = lm_mspline, newdata = newdf)
 ggplot() +
   geom_line(data = newdf, mapping = aes(x = age, y = mass)) +
   geom_point(data = muscle, mapping = aes(x = age, y = mass))</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Do <strong>not</strong> interpret the coefficient estimates and
 <span class="math inline">\(p\)</span>-values here</p>
 <pre class="r"><code>tidy(lm_mspline)</code></pre>
@@ -854,9 +877,9 @@ this is called an interaction of the <strong>interference</strong> or
 positive levels of <span class="math inline">\(X_1\)</span> or <span
 class="math inline">\(X_2\)</span>.</p></li>
 <li><p>Synergistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Antagonistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>If you include an interaction term, make sure that you include
 all lower-order terms. That is, <strong>Never</strong> fit a model like
 <span class="math display">\[
@@ -905,7 +928,7 @@ newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
 qplot(x = drat, y = mpg, color = wt, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## wt versus mpg at different levels of drat
 wt_seq &lt;- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
 dr_seq &lt;- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
@@ -913,7 +936,7 @@ newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
 qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>So we could tell a client something like:</p>
 <ol style="list-style-type: decimal">
 <li>In general, higher weight tends to have lower fuel-mileage.</li>
@@ -925,7 +948,7 @@ ratios”</li>
 <li><p>BUT, we have to be emphasize the scope of our conclusions. E.g.
 there are no cars with a rear-axle ratio of 3 and a weight of 2.</p>
 <pre class="r"><code>qplot(x = wt, y = drat, data = mtcars)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="interactions-and-categorical-variables."
 class="section level2">
@@ -986,7 +1009,7 @@ variable:</p>
 <pre class="r"><code>qplot(x = displ, y = cty, color = drv, data = mpg) +
   geom_smooth(method = &quot;lm&quot;, se = FALSE) +
   scale_y_log10()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-34-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as
 you like via <code>parse_factor()</code> or <code>fct_relevel()</code>.
 Then use <code>lm()</code> the same way with interactions as before
@@ -1149,7 +1172,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, charge = as_factor(charge))
 qplot(x = temp, y = cycles, color = charge, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-40-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Conditional effects plot for temperature
 temp_seq &lt;- unique(power$temp)
 charge_seq &lt;- seq(min(power$charge), max(power$charge), length.out = 200)
@@ -1160,7 +1183,7 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, temp = as_factor(temp))
 qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot;)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-40-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">

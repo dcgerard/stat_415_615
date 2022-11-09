@@ -42,7 +42,7 @@ klippy::klippy()
     ```
 
 - These data look like a quadratic fit could help
-    ```{r, message = FALSE}
+    ```{r, message = FALSE, warning = FALSE}
     qplot(x = age, y = mass, data = muscle) +
       geom_smooth(se = FALSE)
     
@@ -135,6 +135,32 @@ klippy::klippy()
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_{11}X_{i1}^2 + \beta_{2}X_{i2} + \epsilon_i
     $$
+    ```
+    
+## `I()`
+
+- It is easier, but less conceptually clear, to apply transformations directly in the `lm()` call.
+
+- For polynomial transformations, you need to use `I()` to inhibit R from interpreting `^` as a formula operator.
+
+    ```{r}
+    lm_mass <- lm(mass ~ age + I(age^2), data = muscle)
+    tidy(lm_mass)
+    ```
+
+- For predictions, you just need to specify `age` (not also `age2`)
+
+    ```{r}
+    newdf <- data.frame(age = 65)
+    predict(object = lm_mass, newdata = newdf)
+    ```
+
+- You can use `I()` inside `geom_smooth()` to show quadratic terms directly on the plot
+    ```{r}
+    qplot(x = age, y = mass, data = muscle) +
+      geom_smooth(method = lm,
+                  formula = y ~ x + I(x^2),
+                  se = FALSE)
     ```
     
 ## Practical considerations for using quadratic terms
