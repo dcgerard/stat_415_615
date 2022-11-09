@@ -249,7 +249,7 @@ From the *Statistical Sleuth*:
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i
     $$
     
-- The interpretation of $\beta_1$ is as usual. Firms that are the same type, but are 10 million dollars larger, take on average $10 \times \beta_1$ months less to innovate.
+- The interpretation of $\beta_1$ is as usual. Firms that are the same type, but are 10 million dollars larger, take on average $10 \times \beta_1$ months longer to innovate.
     
 - To interpret $\beta_2$, consider that the model for mutual companies is
     $$
@@ -496,7 +496,7 @@ From the *Statistical Sleuth*:
     $$
     - Why? The above model says that the effect of $X_1$ depends on the level of $X_2$, but there is no effect of $X_1$. This is a logical inconsistency.
 
-- For the `mtcars` dataset, suppose we are fitting a model for mpg ($Y$) on the rear-axle ration ($X_1$) and weight ($X_2$). The model with interactions is:
+- For the `mtcars` dataset, suppose we are fitting a model for mpg ($Y$) on the rear-axle ratio ($X_1$) and weight ($X_2$). The model with interactions is:
     $$
     Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \beta_{12}X_{i1}X_{i2} + \epsilon_i
     $$
@@ -706,7 +706,7 @@ From the *Statistical Sleuth*:
 
 - We do not have evidence of a lack-of-fit ($p=0.55$)
 
-- **Exercise**: What is $SSE(F)$? $SSE(R)$? $dr_F$? $df_R$?
+- **Exercise**: What is $SSE(F)$? $SSE(R)$? $df_F$? $df_R$?
     ```{block, eval = FALSE, echo = FALSE}
     - $SSE(F)$: 5240
     - $SSE(R)$: 7700
