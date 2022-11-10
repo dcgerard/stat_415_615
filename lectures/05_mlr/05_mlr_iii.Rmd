@@ -281,7 +281,7 @@ From the *Statistical Sleuth*:
       ## ggsave(filename = "./figs/cat_interp.pdf", plot = pl, height = 4, width = 5.5)
     ```
     
-    ```{r,echo = FALSE}
+    ```{r,echo = FALSE, out.width="150%"}
     knitr::include_graphics(path = "./figs/cat_interp.png")
     ```
 
