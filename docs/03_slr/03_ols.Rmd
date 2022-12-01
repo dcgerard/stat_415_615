@@ -98,7 +98,8 @@ klippy::klippy()
     library(readr)
     library(ggplot2)
     hibbs <- read_csv("https://dcgerard.github.io/stat_415_615/data/hibbs.csv")
-    qplot(x = growth, y = vote, data = hibbs) +
+    ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     ```
 
@@ -431,9 +432,11 @@ saveGIF(expr = {
     data("mtcars")
     ```
 
-    ```{r, eval = FALSE, echo = FALSE}
+    ```{r, eval = FALSE, echo = FALSE, message = FALSE}
     ## always plot the data first
-    qplot(x = wt, y = mpg, data = mtcars) + geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = mtcars, mapping = aes(x = wt, y = mpg)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     
     tout <- tidy(lm(mpg ~ wt, data = mtcars))
     tout$estimate

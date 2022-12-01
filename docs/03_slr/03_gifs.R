@@ -42,7 +42,7 @@ for (i in seq_len(100)) {
     theme_bw() +
     ylim(ymin, ymax) +
     geom_abline(slope = beta1, intercept = beta0) +
-    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = ifelse(isin, "black", "red"), lwd = 1.5) +
+    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = ifelse(isin, "black", "red"), linewidth = 1.5) +
     xlab("Growth") +
     ylab("Vote") +
     ggtitle(paste0("# Samples: ", i, ", ", "Proportion Covered: ", round(totin / i, digits = 2)))->
@@ -99,7 +99,7 @@ for (i in seq_len(50)) {
     xlab("Growth") +
     ylab("Vote") +
     ggtitle(paste0("# Samples: ", i)) +
-    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = "black", lwd = 1.5) ->
+    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = "black", linewidth = 1.5) ->
     pl
 
   pllist[[2 * i - 1]] <- pl
@@ -108,7 +108,7 @@ for (i in seq_len(50)) {
   totin <- totin + isin
 
   pl <- pl +
-    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = ifelse(isin, "black", "red"), lwd = 1.5) +
+    geom_errorbar(data = segdf, mapping = aes(x = x, ymin = ymin, ymax = ymax), width = 0.1, color = ifelse(isin, "black", "red"), linewidth = 1.5) +
     annotate(geom = "point", x = newx, y = newy, color = "orange", size = 5) +
     ggtitle(paste0("# Samples: ", i, ", ", "Proportion Covered: ", round(totin / i, digits = 2)))
 
@@ -169,8 +169,8 @@ for (i in seq_len(100)) {
     xlab("Growth") +
     ylab("Vote") +
     ggtitle(paste0("# Samples: ", i, ", ", "Proportion Covered: ", round(totin / i, digits = 2))) +
-    geom_line(data = band_df, mapping = aes(x = growth, y = lower), lwd = 1.5, color = ifelse(isin, "black", "red")) +
-    geom_line(data = band_df, mapping = aes(x = growth, y = upper), lwd = 1.5, color = ifelse(isin, "black", "red")) ->
+    geom_line(data = band_df, mapping = aes(x = growth, y = lower), linewidth = 1.5, color = ifelse(isin, "black", "red")) +
+    geom_line(data = band_df, mapping = aes(x = growth, y = upper), linewidth = 1.5, color = ifelse(isin, "black", "red")) ->
     pl
   pllist[[i]] <- pl
 }
@@ -280,7 +280,7 @@ for (i in seq_len(nrow(tdat))) {
   tdat %>%
     filter(sample <= i) %>%
     ggplot(aes(x = sample, xend = sample, y = conf.low, yend = conf.high, color = cover)) +
-    geom_segment(lwd = 2) +
+    geom_segment(linewidth = 2) +
     geom_hline(yintercept = meanval, lty = 2) +
     theme_classic() +
     theme(legend.position = "none", text = element_text(size = 30)) +
@@ -327,7 +327,7 @@ for (i in seq_along(qvec)) {
       ggplot(aes(x = x, fill = islow)) +
       geom_histogram(bins = 25, color = "black") +
       scale_fill_manual(values = c("white", "blue")) +
-      geom_vline(xintercept = xq, lty = 2, col = 2, lwd = 2) +
+      geom_vline(xintercept = xq, lty = 2, col = 2, linewidth = 2) +
       theme_bw() +
       theme(legend.position = "none",
             title = element_text(size = 25)) +
@@ -339,7 +339,7 @@ for (i in seq_along(qvec)) {
     ggplot() +
       geom_line(data = tdf, mapping = aes(x = x, y = y)) +
       geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
-      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, lwd = 2) +
+      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, linewidth = 2) +
       theme_bw() +
       theme(title = element_text(size = 25)) +
       ggtitle(paste0("Theoretical ", qvec[[i]], "th Quantile")) ->
@@ -388,7 +388,7 @@ for (i in seq_along(qvec)) {
       ggplot(aes(x = x, fill = islow)) +
       geom_histogram(bins = 25, color = "black") +
       scale_fill_manual(values = c("white", "blue")) +
-      geom_vline(xintercept = xq, lty = 2, col = 2, lwd = 2) +
+      geom_vline(xintercept = xq, lty = 2, col = 2, linewidth = 2) +
       theme_bw() +
       theme(legend.position = "none",
             title = element_text(size = 25)) +
@@ -400,7 +400,7 @@ for (i in seq_along(qvec)) {
     ggplot() +
       geom_line(data = tdf, mapping = aes(x = x, y = y)) +
       geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
-      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, lwd = 2) +
+      geom_vline(xintercept = qnorm(qvec[[i]]), lty = 2, col = 2, linewidth = 2) +
       theme_bw() +
       theme(title = element_text(size = 25)) +
       ggtitle(paste0("Theoretical ", qvec[[i]], "th Quantile")) ->
@@ -469,18 +469,20 @@ saveGIF(expr = {
     for (i in seq_len(nsamp)) {
       epsilon <- rbeta(n = length(x), shape1 = 0.2, shape2 = 0.2) - 0.5
       y <- beta0 + beta1 * x + epsilon
-      qplot(x, y) +
+      ggplot(data.frame(x = x, y = y), aes(x = x, y = y)) +
+        geom_point() +
         geom_abline(slope = beta1, intercept = beta0, lty = 2, col = 2) +
         geom_smooth(method = "lm", se = FALSE, formula = y~x) +
         theme_bw() +
         ylim(0.5, 3.5) ->
         pl1
       beta1hat[[i]] <- coef(lm(y ~ x))[[2]]
-      qplot(beta1hat, bins = 30) +
+      ggplot(data.frame(beta1hat = beta1hat), aes(x = beta1hat)) +
+        geom_histogram(bins = 30) +
         theme_bw() +
         xlim(1, 2.9) +
         ylim(0, 14) +
-        geom_vline(xintercept = mean(beta1hat, na.rm = TRUE), col = "blue", lty = 1, lwd = 1.5) +
+        geom_vline(xintercept = mean(beta1hat, na.rm = TRUE), col = "blue", lty = 1, linewidth = 1.5) +
         geom_vline(xintercept = 2, lty = 2, col = 2) +
         xlab(TeX("$\\hat{\\beta}_1$")) ->
         pl2

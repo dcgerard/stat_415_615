@@ -95,7 +95,8 @@ klippy::klippy()
 - A 1 inch difference in height is more reasonable.
 
     ```{r}
-    qplot(x = height_in, data = earnings, bins = 20)
+    ggplot(data = earnings, mapping = aes(x = height_in)) +
+      geom_histogram(bins = 20)
     ```
 
 - You can use the standard deviation of the variables to help guide you. If the standard deviation is between 0.5 and 10, then you have a good scale. But this is a rough rule of thumb.
@@ -134,7 +135,8 @@ klippy::klippy()
     library(Sleuth3)
     data("ex0823")
     wine <- ex0823
-    qplot(x = Wine, y = Mortality, data = wine)
+    ggplot(data = wine, mapping = aes(x = Wine, y = Mortality)) +
+      geom_point()
     ```
     
     ```{block, echo = FALSE, eval = TRUE}
@@ -166,7 +168,8 @@ klippy::klippy()
     ```
     ```{r, echo = FALSE, eval = FALSE}
     mile <- mutate(mile, year_dec = year / 10)
-    qplot(x = year_dec, y = seconds, data = mile) +
+    ggplot(data = mile, mapping = aes(x = year_dec, y = seconds)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     lm_mile <- lm(seconds ~ year_dec, data = mile)
     tidy(lm_mile, conf.int = TRUE)
@@ -203,8 +206,12 @@ klippy::klippy()
     ```
     Centering and scaling does not change the underlying information.
     ```{r, message = FALSE}
-    qplot(x = height, y = earn, data = earnings) + geom_smooth(method = "lm", se = FALSE)
-    qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = earnings, mapping = aes(x = height, y = earn)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
+    ggplot(data = earnings, mapping = aes(x = height_z, y = earn_z)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     ```
     But this will make interpretation a little easier.
     ```{r}
@@ -582,7 +589,9 @@ select(tidy(lm_tr_th_m), term, std.error)
     ```{r}
     echo %>%
       filter(Type != "non-echolocating birds") %>%
-      qplot(x = Type, y = l_mass, data = ., ylab = "log(Mass)")
+      ggplot(mapping = aes(x = Type, y = l_mass)) +
+      geom_point() +
+      ylab("log(Mass)")
     ```
 
     This is an example of multicollinearity.

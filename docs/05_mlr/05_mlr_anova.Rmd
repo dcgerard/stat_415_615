@@ -934,7 +934,8 @@ R^2_{Y123} &= \frac{SSR(X_1, X_2, X_3)}{SSTO}\\
     earnings <- read_csv("https://dcgerard.github.io/stat_415_615/data/earnings.csv")
     earnings <- mutate(earnings, log_earn = log(earn))
     earnings <- filter(earnings, is.finite(log_earn))
-    qplot(x = height, y = log_earn, data = earnings)
+    ggplot(data = earnings, mapping = aes(x = height, y = log_earn)) +
+      geom_point()
     lm_earn <- lm(log_earn ~ height, data = earnings)
     ```
     

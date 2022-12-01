@@ -79,7 +79,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
                         z = factor(rep(c(1, 2, 3), each = length(x))))
     
     ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
-      geom_line(lwd=1) + 
+      geom_line(linewidth=1) + 
       ggthemes::scale_color_colorblind() +
       theme(legend.position="none") +
       ylab("f(x)") +
@@ -97,7 +97,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
                         z = factor(rep(c(1, 2, 3), each = length(x))))
     
     ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
-      geom_line(lwd=1) + 
+      geom_line(linewidth=1) + 
       ggthemes::scale_color_colorblind() +
       theme(legend.position="none") +
       ylab("f(x)") +
@@ -112,7 +112,10 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     ```{r, echo = FALSE}
     x <- seq(-2, 4, length = 100)
     y <- dnorm(x, mean = 1, sd = 1)
-    qplot(x, y, geom = "line", ylab = "f(x)") +
+    dftemp <- data.frame(x = x, y = y)
+    ggplot(data = dftemp, mapping = aes(x = x, y = y)) +
+      geom_line() +
+      ylab("f(x)") +
       geom_segment(dat = data.frame(x = 2, xend = 2, y = 0, 
                                     yend = dnorm(x = 2, mean = 1, sd = 1)), 
                    aes(x = x, y = y, xend = xend, yend = yend), lty = 2, col = 2)
@@ -126,7 +129,8 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     ```
     
     ```{r, echo = FALSE}
-    qplot(samp, geom = "histogram", fill = I("white"), color = I("black"), bins = 20)
+    ggplot(data.frame(samp), aes(x = samp)) +
+      geom_histogram(color = "blacK", fill = "white", bins = 20)
     ```
   
 - Cumulative Distribution Function (probability of being less than or equal to some value).
@@ -140,7 +144,9 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     y <- dnorm(x, mean = 1, sd = 1)
     polydf <- data.frame(x = c(min(x), x[x < 2], 2, 0), 
                          y = c(0, y[x < 2], 0, 0))
-    qplot(x, y, geom = "line", ylab = "f(x)") +
+    ggplot(data.frame(x = x, y = y), aes(x = x, y = y)) +
+      geom_line() +
+      ylab("f(x)") +
       geom_polygon(data = polydf, mapping = aes(x = x, y = y), 
                    fill = "blue", alpha = 1/4)
     ```
@@ -156,7 +162,9 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     y <- dnorm(x, mean = 1, sd = 1)
     polydf <- data.frame(x = c(min(x), x[x < 2], 2, 0), 
                          y = c(0, y[x < 2], 0, 0))
-    qplot(x, y, geom = "line", ylab = "f(x)") +
+    ggplot(data.frame(x = x, y = y), aes(x = x, y = y)) +
+      geom_line() +
+      ylab("f(x)") +
       geom_polygon(data = polydf, mapping = aes(x = x, y = y), 
                    fill = "blue", alpha = 1/4) +
       annotate(geom = "text", x = 0.5, y = 0.1, label = "0.8413", color = "black")

@@ -151,11 +151,14 @@ klippy::klippy()
     ```{r}
     lm_man <- lm(insurance ~ income + risk, data = managers)
     a_man <- augment(lm_man)
-    qplot(x = .fitted, y = .resid, data = a_man) +
+    ggplot(data = a_man, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
-    qplot(x = income, y = .resid, data = a_man) +
+    ggplot(data = a_man, mapping = aes(x = income, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
-    qplot(x = risk, y = .resid, data = a_man) +
+    ggplot(data = a_man, mapping = aes(x = risk, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     ```
     The big issue appears to be from income.
@@ -169,9 +172,13 @@ klippy::klippy()
     ```
     Then plot the residuals from each fit.
     ```{r, message = FALSE}
-    qplot(x = resid(lm_xk), y = resid(lm_y), xlab = "e(income|risk)", ylab = "e(insurance|risk)") +
-      geom_smooth(method = "lm", se = FALSE) +
-      geom_hline(yintercept = 0, lty = 2)
+    resdf <- data.frame(x = resid(lm_xk), y = resid(lm_y))
+    ggplot(data = resdf, mapping = aes(x = x, y = y)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE) +
+      geom_hline(yintercept = 0, lty = 2) +
+      xlab("e(income|risk)") +
+      ylab("e(insurance|risk)")
     ```
 
 - A faster way (but not for written reports or homeworks since it looks less nice) is to use the `avPlot()` function from the  `{car}` package
@@ -335,7 +342,8 @@ klippy::klippy()
     body <- read_csv("https://dcgerard.github.io/stat_415_615/data/body.csv")
     lm_bod <- lm(fat ~ thigh + triceps, data = body)
     a_bod <- augment(lm_bod)
-    qplot(x = .fitted, y = .std.resid, data = a_bod) +
+    ggplot(data = a_bod, mapping = aes(x = .fitted, y = .std.resid)) +
+      geom_point() +
       geom_hline(yintercept = 0) +
       geom_hline(yintercept = -2, lty = 2)  +
       geom_hline(yintercept = 2, lty = 2)
@@ -354,10 +362,11 @@ klippy::klippy()
 
     ```{r}
     a_bod$.dstd.resid <- rstudent(lm_bod)
-    qplot(x = .fitted, y = .dstd.resid, data = a_bod) +
-          geom_hline(yintercept = 0) +
-          geom_hline(yintercept = -2, lty = 2)  +
-          geom_hline(yintercept = 2, lty = 2)
+    ggplot(data = a_bod, mapping = aes(x = .fitted, y = .dstd.resid)) +
+      geom_point() +
+      geom_hline(yintercept = 0) +
+      geom_hline(yintercept = -2, lty = 2)  +
+      geom_hline(yintercept = 2, lty = 2)
     ```
     
 - In this case, the studentized and studentized deleted residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.
@@ -403,12 +412,9 @@ klippy::klippy()
     
     cutoff <- 2 * ncol(model.matrix(lm_bod)) / nrow(model.matrix(lm_bod))
     a_bod <- mutate(a_bod, i = row_number())
-    qplot(x = .hat, 
-          y = .std.resid, 
-          label = i,
-          data = a_bod,
-          main = "Residuals vs Leverage",
-          geom = "label") +
+    ggplot(data = a_bod, mapping = aes(x = .hat, y = .std.resid, label = i)) +
+      geom_label() +
+      ggtitle("Residuals vs Leverage") +
       geom_vline(xintercept = cutoff, lty = 2)
     ```
 
@@ -434,7 +440,8 @@ klippy::klippy()
 
 - Show $h_{new, new}$ is reasonable:
     ```{r}
-    qplot(x = .hat, data = a_bod, bins = 6, fill = I("white"), color = I("black")) +
+    ggplot(data = a_bod, mapping = aes(x = .hat)) +
+      geom_histogram(bins = 6, fill = "white", color = "black") +
       geom_vline(xintercept = hnew, lty = 2, col = 2)
     ```
     

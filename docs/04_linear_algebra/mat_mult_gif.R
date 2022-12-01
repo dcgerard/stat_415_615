@@ -97,8 +97,8 @@ for (ival in 3:1) {
       segdf3
 
     pl +
-      geom_segment(data = segdf2, mapping = aes(x = x, xend = xend, y = y, yend = yend), col = "blue", lwd = 12, lineend = "round", alpha = 1/4) +
-      geom_segment(data = segdf3, mapping = aes(x = x, xend = xend, y = y, yend = yend), col = "red", lwd = 12, lineend = "round", alpha = 1/4) +
+      geom_segment(data = segdf2, mapping = aes(x = x, xend = xend, y = y, yend = yend), col = "blue", linewidth = 12, lineend = "round", alpha = 1/4) +
+      geom_segment(data = segdf3, mapping = aes(x = x, xend = xend, y = y, yend = yend), col = "red", linewidth = 12, lineend = "round", alpha = 1/4) +
       annotate(geom = "point", x = segdf$x[segdf$mat == "c"], y = segdf$y[segdf$mat == "c"], size = 13, color = "purple", alpha = 1/4) +
       ggtitle(gtitle) ->
       pllist[[k]]

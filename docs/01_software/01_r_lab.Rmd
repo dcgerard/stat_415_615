@@ -55,19 +55,23 @@ Complete this lab by writing solutions in an R markdown document, knitting to wo
 5. Use an appropriate plot to explore the association between population and number of physicians.
 
     ```{r}
-    qplot(data = cdi, x = pop, y = physicians, geom = "point")
+    ggplot(data = cdi, mapping = aes(x = pop, y = physicians)) +
+      geom_point()
     ```
 
 6. Use an appropriate plot to explore the association between region and population.
 
     ```{r}
-    qplot(data = cdi, x = region, y = pop, geom = "boxplot")
+    ggplot(data = cdi, mapping = aes(x = region, y = pop)) +
+      geom_boxplot()
     ```
 
 7. Use an appropriate plot to explore the association between population and number of physicians in each region.
 
     ```{r}
-    qplot(data = cdi, x = pop, y = physicians, facets = . ~ region)
+    ggplot(data = cdi, mapping = aes(x = pop, y = physicians)) +
+      geom_point() +
+      facet_wrap( . ~region)
     ```
 
 8. Create four datasets, one for each region.

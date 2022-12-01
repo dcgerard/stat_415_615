@@ -58,7 +58,8 @@ plastic <- tribble(~hardness, ~time,
     ```{r}
     lmout <- lm(hardness ~ time, data = plastic)
     aout <- augment(lmout)
-    qplot(x = .fitted, y = .resid, data = aout) +
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     ```
 
@@ -84,7 +85,8 @@ plastic <- tribble(~hardness, ~time,
 3. Make a normal probability plot. How does the normality assumption look?
 
     ```{r}
-    qplot(sample = .resid, data = aout) +
+    ggplot(data = aout, mapping = aes(sample = .resid)) +
+      geom_qq() +
       geom_qq_line()
     ```
 
@@ -110,7 +112,8 @@ Build a regression model to predict PSA as a function of cancer volume. The anal
 
 ```{r, message = FALSE}
 prostate <- read_csv("https://dcgerard.github.io/stat_415_615/data/prostate.csv")
-qplot(x = volume, y = psa, data = prostate)
+ggplot(data = prostate, mapping = aes(x = volume, y = psa)) +
+  geom_point()
 ```
 
 ```{block, eval = FALSE}
@@ -121,7 +124,8 @@ It looks like we'll need to take some logs (curved relationship, increasing vari
 ```{r}
 lm_1 <- lm(psa ~ volume, data = prostate)
 a_1 <- augment(lm_1)
-qplot(x = .fitted, y = .resid, data = a_1) +
+ggplot(data = a_1, mapping = aes(x = .fitted, y =.resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)
 ```
 
@@ -138,7 +142,8 @@ First, let's log `psa` since we have unequal variances.
 ```{r}
 lm_2 <- lm(log_psa ~ volume, data = prostate)
 a_2 <- augment(lm_2)
-qplot(x = .fitted, y = .resid, data = a_2) +
+ggplot(data = a_2, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)
 ```
 
@@ -150,7 +155,8 @@ This fixed the equal variance assumption, but it still looks curved. Let's log v
 ```{r}
 lm_3 <- lm(log_psa ~ log_vol, data = prostate)
 a_3 <- augment(lm_3)
-qplot(x = .fitted, y = .resid, data = a_3) +
+ggplot(data = a_3, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)
 ```
 
@@ -161,7 +167,8 @@ Let's look at normality.
 ```
 
 ```{r}
-qplot(sample = .resid, data = a_3, geom = "qq") +
+ggplot(data = a_3, mapping = aes(sample = .resid)) +
+  geom_qq() +
   geom_qq_line()
 ```
 

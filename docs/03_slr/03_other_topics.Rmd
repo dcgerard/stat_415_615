@@ -141,7 +141,8 @@ klippy::klippy()
     ```
     
     ```{r, eval = FALSE, echo = FALSE}
-    qplot(x = work, y = cost, data = plumb) +
+    ggplot(data = plumb, mapping = aes(x = work, y = cost)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     lev <- 1 - 0.1 / (2 * 3)
     lmout <- lm(cost ~ work, data = plumb)
@@ -453,7 +454,8 @@ klippy::klippy()
     library(investr)
     steer <- mutate(steer, log_Time = log(Time))
     ## always plot data first
-    qplot(x = log_Time, y = pH, data = steer) +
+    ggplot(data = steer, mapping = aes(x = log_Time, y = pH)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     lmout <- lm(pH ~ log_Time, data = steer)
     cout <- calibrate(object = lmout, y0 = 6)
@@ -480,7 +482,8 @@ klippy::klippy()
 
     ```{r, eval = FALSE, echo = FALSE, message=FALSE}
     ## always plot data first.
-    qplot(x = time, y = weight, data = crystal) +
+    ggplot(data = crystal, mapping = aes(x = time, y = weight)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     lmc <- lm(weight ~ time, data = crystal)
     calibrate(object = lmc, y0 = 10)
