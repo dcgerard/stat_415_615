@@ -390,5 +390,10 @@ Here is the list of basic R stuff I expect you to know off the top of your head.
   - `mutate()`: Variable transformation.
   - `rename()`: Variable renaming.
   - `filter()`: Select rows based on variable values.
-- From `{ggplot2}`
-  - `qplot()`: Make a histogram or scatterplot (see [01_qplot](./01_qplot.html)).
+- From `{ggplot2}` (see [01_ggplot](./01_ggplot.html)).
+  - `ggplot2()`: Set a dataset and aesthetic map.
+  - `geom_point()`: Make a scatterplot.
+  - `geom_histogram()`: Make a histogram.
+  - `geom_bar()`: Make a bar plot.
+  - `geom_boxplot()`: Make a box plot.
+  - `geom_smooth()`: Add a smoother.

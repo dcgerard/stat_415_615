@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-21" />
+<meta name="date" content="2022-12-01" />
 
 <title>Math Prerequisites</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -187,8 +187,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -196,16 +196,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -353,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Math Prerequisites</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-21</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -518,7 +511,8 @@ class="math inline">\(y = 1007 - 0.393x\)</span></p>
 <pre class="r"><code>library(readr)
 library(ggplot2)
 mile &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/mile.csv&quot;)
-qplot(x = year, y = seconds, data = mile) + 
+ggplot(data = mile, mapping = aes(x = year, y = seconds)) +
+  geom_point() +
   geom_abline(slope = -0.393, intercept = 1007, lty = 2, col = 2)</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>The world record in 1950 was about <span class="math display">\[
@@ -730,14 +724,16 @@ in DC</a> looked exponential:</p>
 <pre class="r"><code>dc &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/dccovid.csv&quot;)
 dc &lt;- select(dc, day, positives)
 dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
-qplot(x = day, y = positives, data = dc)</code></pre>
+ggplot(data = dc, mapping = aes(x = day, y = positives)) +
+  geom_point()</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>We determine if an exponential growth model is appropriate by seeing
 if day versus log-positives is approximately linear:</p>
 <pre class="r"><code>dc &lt;- mutate(dc, 
              lpos = log(positives),
              daysin = as.numeric(day) - as.numeric(day[[1]]))
-qplot(x = daysin, y = lpos, data = dc)</code></pre>
+ggplot(data = dc, mapping = aes(x = daysin, y = lpos)) +
+  geom_point()</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>A curve that fits this growth well is <span class="math inline">\(y =
 8.8815e^{0.218x}\)</span>.</p>
@@ -766,7 +762,8 @@ href="https://en.wikipedia.org/wiki/Washington,_D.C.#Demographics">Wikipedia</a>
                  1930L, 486869,
                  1940L, 663091,
                  1950L, 802178)
-qplot(x = year, y = pop, data = dcpop)</code></pre>
+ggplot(data = dcpop, mapping = aes(x = year, y = pop)) +
+  geom_point()</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>A researcher has determined that the following relationship
 approximates this growth well:</p>
@@ -927,7 +924,8 @@ relationship between these two variables, which has applications in
 conservation.</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;case0801&quot;)
-qplot(x = Area, y = Species, data = case0801)</code></pre>
+ggplot(data = case0801, mapping = aes(x = Area, y = Species)) +
+  geom_point()</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li>This relationship is well-approximated by the curve <span
@@ -956,7 +954,8 @@ year)</li>
 1,000)</li>
 </ul>
 <pre class="r"><code>data(&quot;ex0823&quot;)
-qplot(x = Wine, y = Mortality, data = ex0823)</code></pre>
+ggplot(data = ex0823, mapping = aes(x = Wine, y = Mortality)) +
+  geom_point()</code></pre>
 <p><img src="02_math_prereq_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li>Researchers have determined that this relationship is

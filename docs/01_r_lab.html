@@ -11,12 +11,12 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-08-30" />
+<meta name="date" content="2022-12-01" />
 
 <title>R Lab</title>
 
-<script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -62,6 +62,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -82,6 +83,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -139,11 +143,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -172,8 +180,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -181,16 +189,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -234,7 +235,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -265,28 +266,43 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R Lab</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-08-30</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#county-demographic-information-cdi">County Demographic Information (CDI)</a></li>
+<li><a href="#county-demographic-information-cdi"
+id="toc-county-demographic-information-cdi">County Demographic
+Information (CDI)</a></li>
 </ul>
 </div>
 
 <div id="county-demographic-information-cdi" class="section level1">
 <h1>County Demographic Information (CDI)</h1>
-<p>You can read about the CDI dataset <a href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">here</a>, and download it from here: <a href="https://dcgerard.github.io/stat_415_615/data/cdi.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/cdi.csv</a></p>
-<p>Complete this lab by writing solutions in an R markdown document, knitting to word or PDF.</p>
+<p>You can read about the CDI dataset <a
+href="https://dcgerard.github.io/stat_415_615/data.html#County_Demographic_Information">here</a>,
+and download it from here: <a
+href="https://dcgerard.github.io/stat_415_615/data/cdi.csv"
+class="uri">https://dcgerard.github.io/stat_415_615/data/cdi.csv</a></p>
+<p>Complete this lab by writing solutions in an R markdown document,
+knitting to word or PDF.</p>
 <ol style="list-style-type: decimal">
-<li><p>Load the CDI dataset into R, saving the data frame in a variable called <code>cdi</code>.</p></li>
-<li><p>Use a function that provides a rough glimpse at these data.</p></li>
-<li><p>Calculate the mean and standard deviation of the population of the counties.</p></li>
-<li><p>Convert the <code>pop</code> variable to be in units of 100,000 individuals (so 1 corresponds to 100,000, 2 corresponds to 200,000, etc).</p></li>
-<li><p>Use an appropriate plot to explore the association between population and number of physicians.</p></li>
-<li><p>Use an appropriate plot to explore the association between region and population.</p></li>
-<li><p>Use an appropriate plot to explore the association between population and number of physicians in each region.</p></li>
+<li><p>Load the CDI dataset into R, saving the data frame in a variable
+called <code>cdi</code>.</p></li>
+<li><p>Use a function that provides a rough glimpse at these
+data.</p></li>
+<li><p>Calculate the mean and standard deviation of the population of
+the counties.</p></li>
+<li><p>Convert the <code>pop</code> variable to be in units of 100,000
+individuals (so 1 corresponds to 100,000, 2 corresponds to 200,000,
+etc).</p></li>
+<li><p>Use an appropriate plot to explore the association between
+population and number of physicians.</p></li>
+<li><p>Use an appropriate plot to explore the association between region
+and population.</p></li>
+<li><p>Use an appropriate plot to explore the association between
+population and number of physicians in each region.</p></li>
 <li><p>Create four datasets, one for each region.</p></li>
 <li><p>Reproduce the following using markdown:</p>
 <ol style="list-style-type: decimal">
@@ -296,7 +312,8 @@ $(document).ready(function () {
 <ul>
 <li><strong>it was the age of wisdom</strong>,</li>
 <li><em>it was the age of foolishness,</em></li>
-<li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">it was the epoch of belief</a> …</li>
+<li><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">it was the
+epoch of belief</a> …</li>
 </ul></li>
 </ol>
 </div>
