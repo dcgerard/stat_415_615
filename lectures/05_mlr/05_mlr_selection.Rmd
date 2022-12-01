@@ -184,9 +184,9 @@ From the Statistical Sleuth:
         pred$y <- y
         ggplot(pred, mapping = aes(x = x, y = y)) +
           geom_point() +
-          geom_line(mapping = aes(x = x, y = fit), col = "blue", lwd = 1) +
-          geom_line(mapping = aes(x = x, y = lwr), col = "red", lwd = 1, lty = 2) +
-          geom_line(mapping = aes(x = x, y = upr), col = "red", lwd = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = fit), col = "blue", linewidth = 1) +
+          geom_line(mapping = aes(x = x, y = lwr), col = "red", linewidth = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = upr), col = "red", linewidth = 1, lty = 2) +
           ggtitle("Prediction Intervals with X")
         ```
  
@@ -197,9 +197,9 @@ From the Statistical Sleuth:
         pred$y <- y
         ggplot(pred, mapping = aes(x = x, y = y)) +
           geom_point() +
-          geom_line(mapping = aes(x = x, y = fit), col = "blue", lwd = 1) +
-          geom_line(mapping = aes(x = x, y = lwr), col = "red", lwd = 1, lty = 2) +
-          geom_line(mapping = aes(x = x, y = upr), col = "red", lwd = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = fit), col = "blue", linewidth = 1) +
+          geom_line(mapping = aes(x = x, y = lwr), col = "red", linewidth = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = upr), col = "red", linewidth = 1, lty = 2) +
           ggtitle("Prediction Intervals without X")
         ```
 
@@ -212,9 +212,9 @@ From the Statistical Sleuth:
         pred$y <- y
         ggplot(pred, mapping = aes(x = x, y = y)) +
           geom_point() +
-          geom_line(mapping = aes(x = x, y = fit), col = "blue", lwd = 1) +
-          geom_line(mapping = aes(x = x, y = lwr), col = "red", lwd = 1, lty = 2) +
-          geom_line(mapping = aes(x = x, y = upr), col = "red", lwd = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = fit), col = "blue", linewidth = 1) +
+          geom_line(mapping = aes(x = x, y = lwr), col = "red", linewidth = 1, lty = 2) +
+          geom_line(mapping = aes(x = x, y = upr), col = "red", linewidth = 1, lty = 2) +
           ggtitle("Prediction Intervals without X") +
           theme(axis.text.x = element_blank(),
                 axis.title.x = element_blank(),

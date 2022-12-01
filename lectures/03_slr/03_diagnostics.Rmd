@@ -259,7 +259,7 @@ quad_lm <- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout <- augment(quad_lm)
 ggplot(data = aout, mapping = aes(x = x, y = y)) +
   geom_point() +
-  geom_line(mapping = aes(x = x, y = .fitted), col = "blue", lwd = 1)
+  geom_line(mapping = aes(x = x, y = .fitted), col = "blue", linewidth = 1)
 ```
 
 ## Dataset 3: Solution 1 Residuals
@@ -679,7 +679,7 @@ ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
     ggplot(df, aes(x = x, fill = islow)) +
       geom_histogram(bins = 25, color = "black") +
       scale_fill_manual(values = c("white", "blue")) +
-      geom_vline(xintercept = x25, lty = 2, col = 2, lwd = 2) +
+      geom_vline(xintercept = x25, lty = 2, col = 2, linewidth = 2) +
       theme(legend.position = "none") +
       xlim(-3, 3)
     ```
@@ -694,7 +694,7 @@ ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
     ggplot() +
       geom_line(data = df, mapping = aes(x = x, y = y)) +
       geom_ribbon(data = sdf, mapping = aes(x = x, ymin = 0, ymax = y), fill = "blue") +
-      geom_vline(xintercept = qnorm(0.25), lty = 2, col = 2, lwd = 2)
+      geom_vline(xintercept = qnorm(0.25), lty = 2, col = 2, linewidth = 2)
     ```
     
 - If the residuals were approximately normal, then we would expect the 0.25 quantile of the data to be about the 0.25 quantile of the normal, the 0.7 quantile of the data to be about the 0.7 quantile of the normal, etc.
@@ -851,9 +851,9 @@ ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
     lm_r <- lm(accounts ~ gift, data = bank)
     aout <- augment(lm_r)
     ggplot(data = aout) +
-      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, lwd = 2) +
+      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, linewidth = 2) +
       geom_point(aes(x = gift, y = accounts)) +
-      geom_line(aes(x = gift, y = .fitted), color = "blue", lwd = 2) +
+      geom_line(aes(x = gift, y = .fitted), color = "blue", linewidth = 2) +
       xlab("Gift Size") +
       ylab("Number of Accounts")
     ```
@@ -878,10 +878,9 @@ ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
              gu = gift + 3) ->
       gmean
     
-    
     ggplot(data = aout) +
-      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, lwd = 2) +
-      geom_segment(data = gmean, aes(x = gl, xend = gu, y = .fitted, yend = .fitted), color = "blue", lwd = 2) +
+      geom_segment(aes(x = gift, xend = gift, y = accounts, yend = .fitted), alpha = 1/4, linewidth = 2) +
+      geom_segment(data = gmean, aes(x = gl, xend = gu, y = .fitted, yend = .fitted), color = "blue", linewidth = 2) +
       geom_point(aes(x = gift, y = accounts)) +
       xlab("Gift Size") +
       ylab("Number of Accounts")

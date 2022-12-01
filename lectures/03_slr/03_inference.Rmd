@@ -538,8 +538,8 @@ We will go through these three intervals in turn.
       mutate(Line = parse_factor(Line, levels = c("Truth", "Estimated")))
     
     ggplot() +
-      geom_line(data = dfline, mapping = aes(x = x, y = y, color = Line), lwd = 2) +
-      geom_errorbar(data = df, mapping = aes(x = x, ymin = y, ymax = yend), width = 0.05, lwd = 2) +
+      geom_line(data = dfline, mapping = aes(x = x, y = y, color = Line), linewidth = 2) +
+      geom_errorbar(data = df, mapping = aes(x = x, ymin = y, ymax = yend), width = 0.05, linewidth = 2) +
       theme_classic() +
       theme(axis.text = element_blank(),
             axis.title = element_blank(),
@@ -689,8 +689,8 @@ data.frame(
 
 ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
   geom_point() +
-  geom_line(data = newdf, mapping = aes(x = growth, y = Fit), lty = 1, col = "black", lwd = 1, alpha = 1/2) +
-  geom_line(data = banddf, mapping = aes(x = growth, y = Value, group = Group, color = Type), lwd = 1) +
+  geom_line(data = newdf, mapping = aes(x = growth, y = Fit), lty = 1, col = "black", linewidth = 1, alpha = 1/2) +
+  geom_line(data = banddf, mapping = aes(x = growth, y = Value, group = Group, color = Type), linewidth = 1) +
   scale_color_colorblind() +
   xlab("Growth") +
   ylab("Vote")
@@ -747,7 +747,7 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
     ```{r, echo = FALSE}
     ggplot(data = hibbs) +
       geom_point(aes(x = growth, y = vote)) +
-      geom_line(aes(x = growth, y = ybar), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = ybar), linewidth = 2, col = "blue", alpha = 1/3) +
       xlab("Growth") +
       ylab("Vote") +
       geom_segment(aes(x = growth, xend = growth, y = vote, yend = ybar))
@@ -762,7 +762,7 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
     ```{r, echo = FALSE}
     ggplot(data = hibbs) +
       geom_point(aes(x = growth, y = vote)) +
-      geom_line(aes(x = growth, y = yhat), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = yhat), linewidth = 2, col = "blue", alpha = 1/3) +
       xlab("Growth") +
       ylab("Vote") +
       geom_segment(aes(x = growth, xend = growth, y = vote, yend = yhat))
@@ -843,7 +843,7 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
     ```{r, echo = FALSE}
     ggplot(data = hibbs) +
       geom_point(aes(x = growth, y = vote)) +
-      geom_line(aes(x = growth, y = yhat), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = yhat), linewidth = 2, col = "blue", alpha = 1/3) +
       xlab("Growth") +
       ylab("Vote") +
       geom_segment(aes(x = growth, xend = growth, y = vote, yend = yhat))
@@ -858,7 +858,7 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
     ```{r, echo = FALSE}
     ggplot(data = hibbs) +
       geom_point(aes(x = growth, y = vote)) +
-      geom_line(aes(x = growth, y = ybar), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = ybar), linewidth = 2, col = "blue", alpha = 1/3) +
       xlab("Growth") +
       ylab("Vote") +
       geom_segment(aes(x = growth, xend = growth, y = vote, yend = ybar))
@@ -873,10 +873,10 @@ ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
     ```{r, echo = FALSE}
     ggplot(data = hibbs) +
       geom_point(aes(x = growth, y = vote)) +
-      geom_line(aes(x = growth, y = yhat), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = yhat), linewidth = 2, col = "blue", alpha = 1/3) +
       xlab("Growth") +
       ylab("Vote") +
-      geom_line(aes(x = growth, y = ybar), lwd = 2, col = "blue", alpha = 1/3) +
+      geom_line(aes(x = growth, y = ybar), linewidth = 2, col = "blue", alpha = 1/3) +
       geom_segment(aes(x = growth, xend = growth, y = ybar, yend = yhat))
     ```
 

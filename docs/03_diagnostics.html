@@ -599,9 +599,7 @@ quad_lm &lt;- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout &lt;- augment(quad_lm)
 ggplot(data = aout, mapping = aes(x = x, y = y)) +
   geom_point() +
-  geom_line(mapping = aes(x = x, y = .fitted), col = &quot;blue&quot;, lwd = 1)</code></pre>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.</code></pre>
+  geom_line(mapping = aes(x = x, y = .fitted), col = &quot;blue&quot;, linewidth = 1)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-solution-1-residuals" class="section level2">
