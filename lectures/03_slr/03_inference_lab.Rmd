@@ -45,7 +45,8 @@ You can read about the copiers dataset [here](https://dcgerard.github.io/stat_41
 2. Plot the estimated regression function and the data. How well does the estimated regression function fit the data?
 
     ```{r, message=FALSE}
-    qplot(x = copiers, y = minutes, data = copiers) +
+    ggplot(data = copiers, mapping = aes(x = copiers, y = minutes)) +
+      geom_point() +
       geom_smooth(method = "lm", se = FALSE)
     ```
 

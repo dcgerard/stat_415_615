@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-30" />
+<meta name="date" content="2022-12-01" />
 
 <title>MLR: More Complicated Model Diagnostics</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -61,6 +61,7 @@ if (window.hljs) {
   }
 }
 </script>
+
 
 
 
@@ -111,6 +112,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -168,11 +172,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -201,8 +209,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -210,16 +218,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -336,7 +337,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -365,9 +366,10 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">MLR: More Complicated Model Diagnostics</h1>
+<h1 class="title toc-ignore">MLR: More Complicated Model
+Diagnostics</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-30</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -379,50 +381,97 @@ div.tocify {
 <div id="learning-objectives" class="section level1">
 <h1>Learning Objectives</h1>
 <ul>
-<li>Studentized residuals, Leverage values, DFFits, Cook’s Distance, Variance Inflation Factor</li>
+<li>Studentized residuals, Leverage values, DFFits, Cook’s Distance,
+Variance Inflation Factor</li>
 <li>Chapter 10 of KNNL</li>
 </ul>
 </div>
 <div id="added-variable-plots" class="section level1">
 <h1>Added Variable Plots</h1>
 <ul>
-<li><p><em>Goal</em>: Visualization to determine model adequacy for a single predictor.</p></li>
-<li><p><em>Motivation</em>: <a href="./05_mlr_i.html">Recall</a> that we said to plot residuals versus predictors to see if there were curvature.</p>
+<li><p><em>Goal</em>: Visualization to determine model adequacy for a
+single predictor.</p></li>
+<li><p><em>Motivation</em>: <a href="./05_mlr_i.html">Recall</a> that we
+said to plot residuals versus predictors to see if there were
+curvature.</p>
 <ul>
-<li>This shows the relationship between the predictor and the residuals, but <strong>not</strong> after adjusting for other variables.</li>
+<li>This shows the relationship between the predictor and the residuals,
+but <strong>not</strong> after adjusting for other variables.</li>
 </ul></li>
-<li><p><strong>Added-variable plots</strong> (aka “partial regression plots” and “adjusted variables plots”)</p>
+<li><p><strong>Added-variable plots</strong> (aka “partial regression
+plots” and “adjusted variables plots”)</p>
 <ol style="list-style-type: decimal">
-<li>Regress <span class="math inline">\(Y\)</span> (as the response) on every predictor <em>except</em> <span class="math inline">\(X_k\)</span>. Obtain the residuals, and call these <span class="math inline">\(e_i(Y)\)</span></li>
-<li>Regress <span class="math inline">\(X_k\)</span> (as the response) on every other predictor. Obtain the residuals, and call these <span class="math inline">\(e_i(X_k)\)</span></li>
-<li>Make a scatterplot of <span class="math inline">\(e_i(X_k)\)</span> versus <span class="math inline">\(e_i(Y)\)</span>.</li>
+<li>Regress <span class="math inline">\(Y\)</span> (as the response) on
+every predictor <em>except</em> <span
+class="math inline">\(X_k\)</span>. Obtain the residuals, and call these
+<span class="math inline">\(e_i(Y)\)</span></li>
+<li>Regress <span class="math inline">\(X_k\)</span> (as the response)
+on every other predictor. Obtain the residuals, and call these <span
+class="math inline">\(e_i(X_k)\)</span></li>
+<li>Make a scatterplot of <span class="math inline">\(e_i(X_k)\)</span>
+versus <span class="math inline">\(e_i(Y)\)</span>.</li>
 </ol></li>
 <li><p><em>Intuition</em>:</p>
 <ul>
-<li><span class="math inline">\(e_i(Y)\)</span> and <span class="math inline">\(e_i(X_k)\)</span> reflect the part of each variable that is not linearly associated with the other predictors.</li>
+<li><span class="math inline">\(e_i(Y)\)</span> and <span
+class="math inline">\(e_i(X_k)\)</span> reflect the part of each
+variable that is not linearly associated with the other predictors.</li>
 </ul></li>
 <li><p><em>Conclusions</em>:</p>
 <ol style="list-style-type: decimal">
-<li>If <span class="math inline">\(e_i(Y)\)</span> and <span class="math inline">\(e_i(X_k)\)</span> do not appear to be linearly related, then <span class="math inline">\(X_k\)</span> is not associated with <span class="math inline">\(Y\)</span> given all other predictors. <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></li>
-<li>If <span class="math inline">\(e_i(Y)\)</span> and <span class="math inline">\(e_i(X_k)\)</span> appear to be linearly related, then <span class="math inline">\(X_k\)</span> is linearly associated with <span class="math inline">\(Y\)</span> given all other predictors.
+<li>If <span class="math inline">\(e_i(Y)\)</span> and <span
+class="math inline">\(e_i(X_k)\)</span> do not appear to be linearly
+related, then <span class="math inline">\(X_k\)</span> is not associated
+with <span class="math inline">\(Y\)</span> given all other predictors.
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-1-1.png" width="384" style="display: block; margin: auto;" /></li>
+<li>If <span class="math inline">\(e_i(Y)\)</span> and <span
+class="math inline">\(e_i(X_k)\)</span> appear to be linearly related,
+then <span class="math inline">\(X_k\)</span> is linearly associated
+with <span class="math inline">\(Y\)</span> given all other predictors.
 <ul>
-<li>The slope of the least squares line through the origin in this plot turns out to be <span class="math inline">\(\hat{\beta}_k\)</span> in the MLR fit. <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></li>
+<li>The slope of the least squares line through the origin in this plot
+turns out to be <span class="math inline">\(\hat{\beta}_k\)</span> in
+the MLR fit.
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></li>
 </ul></li>
-<li>If <span class="math inline">\(e_i(Y)\)</span> and <span class="math inline">\(e_i(X_k)\)</span> appear to have a curved relationship, then <span class="math inline">\(X_k\)</span> has a curved relationship with <span class="math inline">\(Y\)</span> given all other predictors. <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></li>
-<li>If you see an outlying point, this might be an influential point for predictor <span class="math inline">\(X_k\)</span> given all other predictors. <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></li>
+<li>If <span class="math inline">\(e_i(Y)\)</span> and <span
+class="math inline">\(e_i(X_k)\)</span> appear to have a curved
+relationship, then <span class="math inline">\(X_k\)</span> has a curved
+relationship with <span class="math inline">\(Y\)</span> given all other
+predictors.
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></li>
+<li>If you see an outlying point, this might be an influential point for
+predictor <span class="math inline">\(X_k\)</span> given all other
+predictors.
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></li>
 </ol></li>
-<li><p>Added variable plots can also help us visualize how much the variability will be reduced if we add predictor <span class="math inline">\(X_k\)</span> to the model.</p>
+<li><p>Added variable plots can also help us visualize how much the
+variability will be reduced if we add predictor <span
+class="math inline">\(X_k\)</span> to the model.</p>
 <ul>
-<li>Variability of <span class="math inline">\(e_i(Y)\)</span> about the horizontal <span class="math inline">\(y=0\)</span> line gives us the SSE of model <em>without</em> <span class="math inline">\(X_k\)</span>.</li>
-<li>Variability of <span class="math inline">\(e_i(y)\)</span> about the OLS line in the scatterplot of <span class="math inline">\(e(X_k)\)</span> on <span class="math inline">\(e(Y)\)</span> gives us the SSE of the model <em>with</em> <span class="math inline">\(X_k\)</span>.</li>
-<li>Figure 10.2 from KNNL: <img src="figs/avplot.png" width="644" style="display: block; margin: auto;" /></li>
+<li>Variability of <span class="math inline">\(e_i(Y)\)</span> about the
+horizontal <span class="math inline">\(y=0\)</span> line gives us the
+SSE of model <em>without</em> <span
+class="math inline">\(X_k\)</span>.</li>
+<li>Variability of <span class="math inline">\(e_i(y)\)</span> about the
+OLS line in the scatterplot of <span
+class="math inline">\(e(X_k)\)</span> on <span
+class="math inline">\(e(Y)\)</span> gives us the SSE of the model
+<em>with</em> <span class="math inline">\(X_k\)</span>.</li>
+<li>Figure 10.2 from KNNL:
+<img src="figs/avplot.png" width="644" style="display: block; margin: auto;" /></li>
 </ul></li>
 </ul>
 </div>
 <div id="life-insurance-example" class="section level1">
 <h1>Life Insurance Example</h1>
 <ul>
-<li><p>Researchers were interested in the association between income in thousands of dollars (<span class="math inline">\(X_1\)</span>), a risk aversion score (<span class="math inline">\(X_2\)</span>) found via a questionnaire, and the amount of life insurance carried in thousands of dollars (<span class="math inline">\(Y\)</span>). You can load these data into R via:</p>
+<li><p>Researchers were interested in the association between income in
+thousands of dollars (<span class="math inline">\(X_1\)</span>), a risk
+aversion score (<span class="math inline">\(X_2\)</span>) found via a
+questionnaire, and the amount of life insurance carried in thousands of
+dollars (<span class="math inline">\(Y\)</span>). You can load these
+data into R via:</p>
 <pre class="r"><code>library(tidyverse)
 library(broom)
 managers &lt;- tibble::tribble(
@@ -446,210 +495,372 @@ managers &lt;- tibble::tribble(
    30.366,     3,         14,
     39.06,     5,         63
   )</code></pre></li>
-<li><p>We typically make added variable plots after we notice something fishy via the usual residual plots.</p></li>
-<li><p>Lets fit a full of line insurance on income and risk aversion and plot the residuals</p>
+<li><p>We typically make added variable plots after we notice something
+fishy via the usual residual plots.</p></li>
+<li><p>Lets fit a full of line insurance on income and risk aversion and
+plot the residuals</p>
 <pre class="r"><code>lm_man &lt;- lm(insurance ~ income + risk, data = managers)
 a_man &lt;- augment(lm_man)
-qplot(x = .fitted, y = .resid, data = a_man) +
+ggplot(data = a_man, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = income, y = .resid, data = a_man) +
+<pre class="r"><code>ggplot(data = a_man, mapping = aes(x = income, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-7-2.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = risk, y = .resid, data = a_man) +
+<pre class="r"><code>ggplot(data = a_man, mapping = aes(x = risk, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0)</code></pre>
-<p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-7-3.png" width="384" style="display: block; margin: auto;" /> The big issue appears to be from income.</p></li>
-<li><p>Let’s see the form of the relationship between income and insurance, adjusting for risk aversion.</p></li>
-<li><p>To make an added variable plot, first regression <span class="math inline">\(Y\)</span> on the other predictors, then <span class="math inline">\(X_k\)</span> on the other predictors.</p>
+<p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-7-3.png" width="384" style="display: block; margin: auto;" />
+The big issue appears to be from income.</p></li>
+<li><p>Let’s see the form of the relationship between income and
+insurance, adjusting for risk aversion.</p></li>
+<li><p>To make an added variable plot, first regression <span
+class="math inline">\(Y\)</span> on the other predictors, then <span
+class="math inline">\(X_k\)</span> on the other predictors.</p>
 <pre class="r"><code>lm_y &lt;- lm(insurance ~ risk, data = managers)
 lm_xk &lt;- lm(income ~ risk, data = managers)</code></pre>
 <p>Then plot the residuals from each fit.</p>
-<pre class="r"><code>qplot(x = resid(lm_xk), y = resid(lm_y), xlab = &quot;e(income|risk)&quot;, ylab = &quot;e(insurance|risk)&quot;) +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
-  geom_hline(yintercept = 0, lty = 2)</code></pre>
+<pre class="r"><code>resdf &lt;- data.frame(x = resid(lm_xk), y = resid(lm_y))
+ggplot(data = resdf, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE) +
+  geom_hline(yintercept = 0, lty = 2) +
+  xlab(&quot;e(income|risk)&quot;) +
+  ylab(&quot;e(insurance|risk)&quot;)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-9-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>A faster way (but not for written reports or homeworks since it looks less nice) is to use the <code>avPlot()</code> function from the <code>{car}</code> package</p>
+<li><p>A faster way (but not for written reports or homeworks since it
+looks less nice) is to use the <code>avPlot()</code> function from the
+<code>{car}</code> package</p>
 <pre class="r"><code>library(car)
 avPlot(lm_man, variable = &quot;income&quot;)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>From this plot, we see that</p>
 <ol style="list-style-type: decimal">
-<li>The relationship between income and insurance is very strong, adjusting for risk. The variability about the OLS line is much smaller than the variability about the <span class="math inline">\(y=0\)</span> line.</li>
-<li>Income appears to have a monotone curved relationship with insurance, adjusting for risk.</li>
-<li>Even though the relationship is clearly curved, most of the variability can be explained by the linear effect, indicating that using a linear assumption would be a fine first order approximation (depending on the goals of the study).</li>
-<li>There is one observation in the upper right that might be influential.</li>
+<li>The relationship between income and insurance is very strong,
+adjusting for risk. The variability about the OLS line is much smaller
+than the variability about the <span class="math inline">\(y=0\)</span>
+line.</li>
+<li>Income appears to have a monotone curved relationship with
+insurance, adjusting for risk.</li>
+<li>Even though the relationship is clearly curved, most of the
+variability can be explained by the linear effect, indicating that using
+a linear assumption would be a fine first order approximation (depending
+on the goals of the study).</li>
+<li>There is one observation in the upper right that might be
+influential.</li>
 </ol></li>
-<li><p><strong>Exercise</strong>: Recall the body fat data, that you can read about <a href="https://dcgerard.github.io/stat_415_615/data.html#Body_Fat">here</a> and download from here: <a href="https://dcgerard.github.io/stat_415_615/data/body.csv" class="uri">https://dcgerard.github.io/stat_415_615/data/body.csv</a></p>
-<p>Make an added variable plot for triceps given thigh, and thigh given triceps (omit midarm for this exercise). What conclusions do you draw from the added variable plots?</p></li>
+<li><p><strong>Exercise</strong>: Recall the body fat data, that you can
+read about <a
+href="https://dcgerard.github.io/stat_415_615/data.html#Body_Fat">here</a>
+and download from here: <a
+href="https://dcgerard.github.io/stat_415_615/data/body.csv"
+class="uri">https://dcgerard.github.io/stat_415_615/data/body.csv</a></p>
+<p>Make an added variable plot for triceps given thigh, and thigh given
+triceps (omit midarm for this exercise). What conclusions do you draw
+from the added variable plots?</p></li>
 <li><p>Notes:</p>
 <ol style="list-style-type: decimal">
-<li>Added variable plots will change based on what other predictors you are adjusting for. The nature of the relationship between <span class="math inline">\(X_k\)</span> and <span class="math inline">\(Y\)</span> might change based on what other predictors are there.</li>
-<li>Added variable plots are only appropriate when the assumptions of the linear model are fulfilled for the other predictors that you are adjusting for.</li>
+<li>Added variable plots will change based on what other predictors you
+are adjusting for. The nature of the relationship between <span
+class="math inline">\(X_k\)</span> and <span
+class="math inline">\(Y\)</span> might change based on what other
+predictors are there.</li>
+<li>Added variable plots are only appropriate when the assumptions of
+the linear model are fulfilled for the other predictors that you are
+adjusting for.</li>
 </ol></li>
 </ul>
 </div>
 <div id="plots-to-detect-outliers" class="section level1">
 <h1>Plots to Detect Outliers</h1>
 <ul>
-<li><p><strong>Goal</strong>: Visualization to flag outlying observations.</p></li>
-<li><p>Consider this plot of outliers <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p><strong>Goal</strong>: Visualization to flag outlying
+observations.</p></li>
+<li><p>Consider this plot of outliers
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Outliers have minor effects if</p>
 <ol style="list-style-type: decimal">
-<li>They are well in the range of typical <span class="math inline">\(X\)</span> values. This is since many other <span class="math inline">\(X\)</span> values are there to keep the OLS line from getting too displaced. This is Case 3 above.</li>
-<li>They are consistent with the general trend between the predictors and <span class="math inline">\(Y\)</span>. This is Case 2 above.</li>
+<li>They are well in the range of typical <span
+class="math inline">\(X\)</span> values. This is since many other <span
+class="math inline">\(X\)</span> values are there to keep the OLS line
+from getting too displaced. This is Case 3 above.</li>
+<li>They are consistent with the general trend between the predictors
+and <span class="math inline">\(Y\)</span>. This is Case 2 above.</li>
 </ol></li>
-<li><p>Outliers can have huge effects if they both (i) have atypical <span class="math inline">\(X\)</span> values and (ii) are not consistent with the general trend. This is Case 1 above.</p></li>
-<li><p>Recall that outliers are hard to detect when there is multicollinearity</p>
+<li><p>Outliers can have huge effects if they both (i) have atypical
+<span class="math inline">\(X\)</span> values and (ii) are not
+consistent with the general trend. This is Case 1 above.</p></li>
+<li><p>Recall that outliers are hard to detect when there is
+multicollinearity</p>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
-<div id="detect-extreme-y-values-studentized-residuals" class="section level2">
-<h2>Detect Extreme <span class="math inline">\(Y\)</span>-values: Studentized Residuals</h2>
+<div id="detect-extreme-y-values-studentized-residuals"
+class="section level2">
+<h2>Detect Extreme <span class="math inline">\(Y\)</span>-values:
+Studentized Residuals</h2>
 <ul>
-<li><p>So far, I have just been having you “feel” for outliers via looking at residual plot.</p></li>
+<li><p>So far, I have just been having you “feel” for outliers via
+looking at residual plot.</p></li>
 <li><p>Let’s try and detect outliers more systematically.</p></li>
-<li><p>To know how extreme a residual is, we need to know its standard deviation (how far it should be from 0 on average).</p></li>
-<li><p>Let <span class="math inline">\(h_{ii}\)</span> be the <span class="math inline">\(i\)</span>th diagonal element of the hat matrix <span class="math inline">\(\mathbf{H} = \mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\)</span>.</p>
+<li><p>To know how extreme a residual is, we need to know its standard
+deviation (how far it should be from 0 on average).</p></li>
+<li><p>Let <span class="math inline">\(h_{ii}\)</span> be the <span
+class="math inline">\(i\)</span>th diagonal element of the hat matrix
+<span class="math inline">\(\mathbf{H} =
+\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\)</span>.</p>
 <ul>
-<li>There are <span class="math inline">\(n\)</span> diagonal elements, one for each observation.</li>
+<li>There are <span class="math inline">\(n\)</span> diagonal elements,
+one for each observation.</li>
 </ul></li>
-<li><p>You can show that the variance of the <span class="math inline">\(i\)</span>th residual, <span class="math inline">\(e_i\)</span>, is <span class="math display">\[
+<li><p>You can show that the variance of the <span
+class="math inline">\(i\)</span>th residual, <span
+class="math inline">\(e_i\)</span>, is <span class="math display">\[
   \sigma^2(e_i) = \sigma^2(1 - h_{ii}).
   \]</span></p></li>
-<li><p>So we estimate the standard deviation of the <span class="math inline">\(i\)</span>th residual via <span class="math display">\[
+<li><p>So we estimate the standard deviation of the <span
+class="math inline">\(i\)</span>th residual via <span
+class="math display">\[
   s(e_i) = \sqrt{MSE(1 - h_{ii})}.
   \]</span></p></li>
-<li><p>Note that each residual has a different standard deviation depending on its value of <span class="math inline">\(h_{ii}\)</span>. So</p>
+<li><p>Note that each residual has a different standard deviation
+depending on its value of <span class="math inline">\(h_{ii}\)</span>.
+So</p>
 <ul>
-<li>Larger <span class="math inline">\(h_{ii}\)</span> means smaller standard deviation.</li>
-<li>Smaller <span class="math inline">\(h_{ii}\)</span> means larger standard deviation.</li>
+<li>Larger <span class="math inline">\(h_{ii}\)</span> means smaller
+standard deviation.</li>
+<li>Smaller <span class="math inline">\(h_{ii}\)</span> means larger
+standard deviation.</li>
 </ul></li>
-<li><p>The <strong>studentized</strong> residual is the residual divided by its standard deviation. <span class="math display">\[
+<li><p>The <strong>studentized</strong> residual is the residual divided
+by its standard deviation. <span class="math display">\[
   r_i = \frac{e_i}{s(e_i)}
   \]</span></p></li>
-<li><p>The idea is that we making all of the residuals to have about the same standard deviation.</p></li>
-<li><p>In a normal distribution 95% of observations will be within 2 standard deviations of the mean, and 99.7% of observations will be within 3 standard deviations of the mean.</p></li>
-<li><p>So residuals have potentially large <span class="math inline">\(Y\)</span> values if they outside of <span class="math inline">\([-2,2]\)</span>.</p></li>
-<li><p>But remember, we would still expect about 5% of observations to lie outside of <span class="math inline">\([-2, 2]\)</span>. So be chill here.</p></li>
-<li><p>R calls these “standardized residuals,” and you can gent them from the <code>.std.resid</code> variable from the output of <code>augment()</code> from the <code>{broom}</code> package.</p>
+<li><p>The idea is that we making all of the residuals to have about the
+same standard deviation.</p></li>
+<li><p>In a normal distribution 95% of observations will be within 2
+standard deviations of the mean, and 99.7% of observations will be
+within 3 standard deviations of the mean.</p></li>
+<li><p>So residuals have potentially large <span
+class="math inline">\(Y\)</span> values if they outside of <span
+class="math inline">\([-2,2]\)</span>.</p></li>
+<li><p>But remember, we would still expect about 5% of observations to
+lie outside of <span class="math inline">\([-2, 2]\)</span>. So be chill
+here.</p></li>
+<li><p>R calls these “standardized residuals”, and you can gent them
+from the <code>.std.resid</code> variable from the output of
+<code>augment()</code> from the <code>{broom}</code> package.</p>
 <pre class="r"><code>body &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/body.csv&quot;)
 lm_bod &lt;- lm(fat ~ thigh + triceps, data = body)
 a_bod &lt;- augment(lm_bod)
-qplot(x = .fitted, y = .std.resid, data = a_bod) +
+ggplot(data = a_bod, mapping = aes(x = .fitted, y = .std.resid)) +
+  geom_point() +
   geom_hline(yintercept = 0) +
   geom_hline(yintercept = -2, lty = 2)  +
   geom_hline(yintercept = 2, lty = 2)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-15-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>It is common to also obtain the <strong>studentized deleted residuals</strong> where you calculate the error variance by leave-one-out regression.</p>
+<li><p>It is common to also obtain the <strong>studentized deleted
+residuals</strong> where you calculate the error variance by
+leave-one-out regression.</p>
 <ol style="list-style-type: decimal">
-<li>For each observation <span class="math inline">\(i\)</span>, fit the MLR model without <span class="math inline">\(i\)</span> to get the MSE. Call this <span class="math inline">\(MSE_{(i)}\)</span>.</li>
-<li>Calculate the studentized deleted residuals by <span class="math display">\[
- t_i = \frac{e_i}{\sqrt{MSE_{(i)}(1-h_{ii})}}
- \]</span></li>
+<li>For each observation <span class="math inline">\(i\)</span>, fit the
+MLR model without <span class="math inline">\(i\)</span> to get the MSE.
+Call this <span class="math inline">\(MSE_{(i)}\)</span>.</li>
+<li>Calculate the studentized deleted residuals by <span
+class="math display">\[
+t_i = \frac{e_i}{\sqrt{MSE_{(i)}(1-h_{ii})}}
+\]</span></li>
 </ol></li>
-<li><p>The intuition is that a real outlier might have undue influence on the OLS line, so we should standardize when it is not used to calculate the OLS line. See Chapter 10 of KNNL for a deeper discussion.</p></li>
-<li><p>You can get the studentized deleted residuals via the base R function <code>rstudent()</code>.</p>
+<li><p>The intuition is that a real outlier might have undue influence
+on the OLS line, so we should standardize when it is not used to
+calculate the OLS line. See Chapter 10 of KNNL for a deeper
+discussion.</p></li>
+<li><p>You can get the studentized deleted residuals via the base R
+function <code>rstudent()</code>.</p>
 <pre class="r"><code>a_bod$.dstd.resid &lt;- rstudent(lm_bod)
-qplot(x = .fitted, y = .dstd.resid, data = a_bod) +
-      geom_hline(yintercept = 0) +
-      geom_hline(yintercept = -2, lty = 2)  +
-      geom_hline(yintercept = 2, lty = 2)</code></pre>
+ggplot(data = a_bod, mapping = aes(x = .fitted, y = .dstd.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = -2, lty = 2)  +
+  geom_hline(yintercept = 2, lty = 2)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>In this case, the studentized and studentized deleted residuals produced the same conclusions (that everything is fine), but they can be very different if there is a single highly influential point. The deleted studentized residual would be preferred.</p></li>
-<li><p>R terminology NOTE: R calls the studentized residuals “standardized residuals” and uses the base R function <code>rstandard()</code>. R calls the studentized deleted residuals just “studentized residuals” and uses the base R function <code>rstudent()</code>. I’m sorry.</p></li>
+<li><p>In this case, the studentized and studentized deleted residuals
+produced the same conclusions (that everything is fine), but they can be
+very different if there is a single highly influential point. The
+deleted studentized residual would be preferred.</p></li>
+<li><p>R terminology NOTE: R calls the studentized residuals
+“standardized residuals” and uses the base R function
+<code>rstandard()</code>. R calls the studentized deleted residuals just
+“studentized residuals” and uses the base R function
+<code>rstudent()</code>. I’m sorry.</p></li>
 </ul>
 </div>
-<div id="detect-extreme-x-values-leverage-values" class="section level2">
-<h2>Detect Extreme <span class="math inline">\(X\)</span> values: Leverage Values</h2>
+<div id="detect-extreme-x-values-leverage-values"
+class="section level2">
+<h2>Detect Extreme <span class="math inline">\(X\)</span> values:
+Leverage Values</h2>
 <ul>
-<li><p><strong>Goal</strong>: Numerically quantify how outlying an observation’s predictor values are.</p></li>
-<li><p>The diagonal elements of the hat matrix <span class="math inline">\(h_{ii}\)</span> are called <strong>leverage values</strong>.</p></li>
-<li><p><span class="math inline">\(h_{ii}\)</span> is a measure of the distance between the <span class="math inline">\(X\)</span> values for the <span class="math inline">\(i\)</span>th case and the means of the <span class="math inline">\(X\)</span> values for all <span class="math inline">\(n\)</span> cases.</p>
+<li><p><strong>Goal</strong>: Numerically quantify how outlying an
+observation’s predictor values are.</p></li>
+<li><p>The diagonal elements of the hat matrix <span
+class="math inline">\(h_{ii}\)</span> are called <strong>leverage
+values</strong>.</p></li>
+<li><p><span class="math inline">\(h_{ii}\)</span> is a measure of the
+distance between the <span class="math inline">\(X\)</span> values for
+the <span class="math inline">\(i\)</span>th case and the means of the
+<span class="math inline">\(X\)</span> values for all <span
+class="math inline">\(n\)</span> cases.</p>
 <ul>
-<li>The larger <span class="math inline">\(h_{ii}\)</span> is, the further from the center of the cloud of <span class="math inline">\(X\)</span> values it is.</li>
+<li>The larger <span class="math inline">\(h_{ii}\)</span> is, the
+further from the center of the cloud of <span
+class="math inline">\(X\)</span> values it is.</li>
 </ul></li>
 <li><p>Properties: <span class="math display">\[
   0 \leq h_{ii} \leq 1\\
   \sum_{i=1}^nh_{ii} = p
   \]</span></p></li>
-<li><p><span class="math inline">\(h_{ii}\)</span> is a function only the <span class="math inline">\(X\)</span> values, not <span class="math inline">\(Y\)</span>, and so is a measure of how extreme the observational units <span class="math inline">\(X\)</span> value is, not considering <span class="math inline">\(Y\)</span>.</p></li>
-<li><p>Example red dot is <span class="math inline">\((\bar{X}_1, \bar{X}_2)\)</span>. Numbers are leverage values: <img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>Rule-of-thumb: A hat value is large if it is greater than <span class="math inline">\(2p/n\)</span>.</p></li>
-<li><p>The <code>.hat</code> variable from the output of <code>augment()</code> from the <code>{broom}</code> package contains the leverage values.</p></li>
-<li><p>Body fat example: Observation 3 appears to have a high leverage:</p>
+<li><p><span class="math inline">\(h_{ii}\)</span> is a function only
+the <span class="math inline">\(X\)</span> values, not <span
+class="math inline">\(Y\)</span>, and so is a measure of how extreme the
+observational units <span class="math inline">\(X\)</span> value is, not
+considering <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>Example red dot is <span class="math inline">\((\bar{X}_1,
+\bar{X}_2)\)</span>. Numbers are leverage values:
+<img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>Rule-of-thumb: A hat value is large if it is greater than <span
+class="math inline">\(2p/n\)</span>.</p></li>
+<li><p>The <code>.hat</code> variable from the output of
+<code>augment()</code> from the <code>{broom}</code> package contains
+the leverage values.</p></li>
+<li><p>Body fat example: Observation 3 appears to have a high
+leverage:</p>
 <pre class="r"><code>lm_bod &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 a_bod &lt;- augment(lm_bod)
 
 cutoff &lt;- 2 * ncol(model.matrix(lm_bod)) / nrow(model.matrix(lm_bod))
 a_bod &lt;- mutate(a_bod, i = row_number())
-qplot(x = .hat, 
-      y = .std.resid, 
-      label = i,
-      data = a_bod,
-      main = &quot;Residuals vs Leverage&quot;,
-      geom = &quot;label&quot;) +
+ggplot(data = a_bod, mapping = aes(x = .hat, y = .std.resid, label = i)) +
+  geom_label() +
+  ggtitle(&quot;Residuals vs Leverage&quot;) +
   geom_vline(xintercept = cutoff, lty = 2)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-18-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="hat-matrix-for-hidden-extrapolation" class="section level3">
 <h3>Hat-matrix for hidden extrapolation</h3>
 <ul>
-<li><p>Since the leverage values are a measure for extremeness, it can be used to flag possible hidden extrapolations.</p>
+<li><p>Since the leverage values are a measure for extremeness, it can
+be used to flag possible hidden extrapolations.</p>
 <ul>
-<li>Not a perfect measure, since it could still be a hidden extrapolation, but it’s better than nothing.</li>
+<li>Not a perfect measure, since it could still be a hidden
+extrapolation, but it’s better than nothing.</li>
 </ul></li>
-<li><p>Let <span class="math inline">\(\mathbf{X}_{new}\)</span> be the vector of length <span class="math inline">\(p-1\)</span> that contains the <span class="math inline">\(X\)</span> values for the new observation. Then consider <span class="math display">\[
-  h_{new, new} = \mathbf{X}_{new}^{\intercal}(\mathbf{X}^{\intercal}\mathbf{X})^{-1}\mathbf{X}_{new}
+<li><p>Let <span class="math inline">\(\mathbf{X}_{new}\)</span> be the
+vector of length <span class="math inline">\(p-1\)</span> that contains
+the <span class="math inline">\(X\)</span> values for the new
+observation. Then consider <span class="math display">\[
+  h_{new, new} =
+\mathbf{X}_{new}^{\intercal}(\mathbf{X}^{\intercal}\mathbf{X})^{-1}\mathbf{X}_{new}
   \]</span></p></li>
-<li><p>If <span class="math inline">\(h_{new, new}\)</span> is much larger than the leverage values <span class="math inline">\(h_{ii}\)</span>, then this is an indication that you have a hidden extrapolation.</p>
+<li><p>If <span class="math inline">\(h_{new, new}\)</span> is much
+larger than the leverage values <span
+class="math inline">\(h_{ii}\)</span>, then this is an indication that
+you have a hidden extrapolation.</p>
 <pre class="r"><code>X &lt;- model.matrix(lm_bod)
 Xnew &lt;- c(1, 22.1, 49.9, 23)
 hnew &lt;- t(Xnew) %*% solve(t(X) %*% X) %*% Xnew
 hnew</code></pre>
 <pre><code>##        [,1]
 ## [1,] 0.2813</code></pre></li>
-<li><p>Show <span class="math inline">\(h_{new, new}\)</span> is reasonable:</p>
-<pre class="r"><code>qplot(x = .hat, data = a_bod, bins = 6, fill = I(&quot;white&quot;), color = I(&quot;black&quot;)) +
+<li><p>Show <span class="math inline">\(h_{new, new}\)</span> is
+reasonable:</p>
+<pre class="r"><code>ggplot(data = a_bod, mapping = aes(x = .hat)) +
+  geom_histogram(bins = 6, fill = &quot;white&quot;, color = &quot;black&quot;) +
   geom_vline(xintercept = hnew, lty = 2, col = 2)</code></pre>
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 </div>
-<div id="detect-influential-values-cooks-distance" class="section level2">
+<div id="detect-influential-values-cooks-distance"
+class="section level2">
 <h2>Detect Influential values: Cook’s Distance</h2>
 <ul>
-<li><p>A case is <strong>influential</strong> if its exclusion causes major changes in the fitted regression function.</p></li>
-<li><p>Cook’s Distance: How much on average all <span class="math inline">\(n\)</span> fits change when the <span class="math inline">\(i\)</span>th observation is removed. <span class="math display">\[
-  D_i = \frac{\sum_{j=1}^n\left(\hat{Y}_j - \hat{Y}_{j(i)}\right)^2}{pMSE}
+<li><p>A case is <strong>influential</strong> if its exclusion causes
+major changes in the fitted regression function.</p></li>
+<li><p>Cook’s Distance: How much on average all <span
+class="math inline">\(n\)</span> fits change when the <span
+class="math inline">\(i\)</span>th observation is removed. <span
+class="math display">\[
+  D_i = \frac{\sum_{j=1}^n\left(\hat{Y}_j -
+\hat{Y}_{j(i)}\right)^2}{pMSE}
   \]</span></p>
 <ul>
-<li><p><span class="math inline">\(\hat{Y}_{j(i)}\)</span>: The fit of observation <span class="math inline">\(j\)</span> when observation <span class="math inline">\(i\)</span> is not in the data.</p></li>
-<li><p>Cook’s distance is large if it is close to or greater than 1.</p></li>
-<li><p>More sophisticated: To see if it is large, calculate its quantile in an <span class="math inline">\(F(p, n-p)\)</span> distribution. If it is at the 50th percentile or higher, then this is considered to have high influence.</p></li>
+<li><p><span class="math inline">\(\hat{Y}_{j(i)}\)</span>: The fit of
+observation <span class="math inline">\(j\)</span> when observation
+<span class="math inline">\(i\)</span> is not in the data.</p></li>
+<li><p>Cook’s distance is large if it is close to or greater than
+1.</p></li>
+<li><p>More sophisticated: To see if it is large, calculate its quantile
+in an <span class="math inline">\(F(p, n-p)\)</span> distribution. If it
+is at the 50th percentile or higher, then this is considered to have
+high influence.</p></li>
 </ul></li>
-<li><p>Cook’s distance is the most widely use “case-influence” statistic, but there are a couple others that you should be aware of:</p></li>
-<li><p>DFFITS (difference in fits): Number of standard deviations of <span class="math inline">\(\hat{Y}_i\)</span> that the fitted values <span class="math inline">\(\hat{Y}_i\)</span> increases or decreases with the inclusion of the <span class="math inline">\(i\)</span>th case in fitting the regression model. <span class="math display">\[
+<li><p>Cook’s distance is the most widely use “case-influence”
+statistic, but there are a couple others that you should be aware
+of:</p></li>
+<li><p>DFFITS (difference in fits): Number of standard deviations of
+<span class="math inline">\(\hat{Y}_i\)</span> that the fitted values
+<span class="math inline">\(\hat{Y}_i\)</span> increases or decreases
+with the inclusion of the <span class="math inline">\(i\)</span>th case
+in fitting the regression model. <span class="math display">\[
   (DFFITS)_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\sqrt{MSE_{(i)}h_{ii}}}
   \]</span></p>
 <ul>
-<li><span class="math inline">\(\hat{Y}_i\)</span>: Fit of observation <span class="math inline">\(i\)</span>.</li>
-<li><span class="math inline">\(\hat{Y}_{i(i)}\)</span>: Estimate of observation <span class="math inline">\(i\)</span> when observation <span class="math inline">\(i\)</span> is not in the data.</li>
-<li><span class="math inline">\(MSE_{(i)}\)</span>: Mean squared error when observation <span class="math inline">\(i\)</span> is not in the data.</li>
-<li><span class="math inline">\(h_{ii}\)</span>: <span class="math inline">\(i\)</span>th leverage value.</li>
+<li><span class="math inline">\(\hat{Y}_i\)</span>: Fit of observation
+<span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\hat{Y}_{i(i)}\)</span>: Estimate of
+observation <span class="math inline">\(i\)</span> when observation
+<span class="math inline">\(i\)</span> is not in the data.</li>
+<li><span class="math inline">\(MSE_{(i)}\)</span>: Mean squared error
+when observation <span class="math inline">\(i\)</span> is not in the
+data.</li>
+<li><span class="math inline">\(h_{ii}\)</span>: <span
+class="math inline">\(i\)</span>th leverage value.</li>
 <li>Higher means more influence (bad).</li>
-<li>If DFFITS exceeds 1 for a small dataset, or if it exceeds <span class="math inline">\(2\sqrt{p/n}\)</span> for a large dataset, then the observation has high influence.</li>
+<li>If DFFITS exceeds 1 for a small dataset, or if it exceeds <span
+class="math inline">\(2\sqrt{p/n}\)</span> for a large dataset, then the
+observation has high influence.</li>
 </ul></li>
-<li><p>DFBETAS (difference in betas): How much the coefficient estimates change when you omit an observation. <span class="math display">\[
-  (DFBETAS)_k(i) = \frac{\hat{\beta}_k - \hat{\beta}_{k(i)}}{\sqrt{MSE_{(i)}c_{kk}}}
+<li><p>DFBETAS (difference in betas): How much the coefficient estimates
+change when you omit an observation. <span class="math display">\[
+  (DFBETAS)_k(i) = \frac{\hat{\beta}_k -
+\hat{\beta}_{k(i)}}{\sqrt{MSE_{(i)}c_{kk}}}
   \]</span></p>
 <ul>
-<li><span class="math inline">\(\hat{\beta}_k\)</span>: OLS estimate of <span class="math inline">\(\beta_k\)</span>.</li>
-<li><span class="math inline">\(\hat{\beta}_{k(i)}\)</span>: OLS estimate of <span class="math inline">\(\beta_k\)</span> when observation <span class="math inline">\(i\)</span> is not in the data.</li>
-<li><span class="math inline">\(MSE_{(i)}\)</span>: Mean squared error when observation <span class="math inline">\(i\)</span> is not in the data.</li>
-<li><span class="math inline">\(c_{kk}\)</span>: <span class="math inline">\(k\)</span>th diagonal entry of <span class="math inline">\((\mathbf{X}^{\intercal}\mathbf{X})^{-1}\)</span>.</li>
-<li>Large if it exceeds 1 for small to medium datasets, or <span class="math inline">\(2/\sqrt{n}\)</span> for large datasets.</li>
+<li><span class="math inline">\(\hat{\beta}_k\)</span>: OLS estimate of
+<span class="math inline">\(\beta_k\)</span>.</li>
+<li><span class="math inline">\(\hat{\beta}_{k(i)}\)</span>: OLS
+estimate of <span class="math inline">\(\beta_k\)</span> when
+observation <span class="math inline">\(i\)</span> is not in the
+data.</li>
+<li><span class="math inline">\(MSE_{(i)}\)</span>: Mean squared error
+when observation <span class="math inline">\(i\)</span> is not in the
+data.</li>
+<li><span class="math inline">\(c_{kk}\)</span>: <span
+class="math inline">\(k\)</span>th diagonal entry of <span
+class="math inline">\((\mathbf{X}^{\intercal}\mathbf{X})^{-1}\)</span>.</li>
+<li>Large if it exceeds 1 for small to medium datasets, or <span
+class="math inline">\(2/\sqrt{n}\)</span> for large datasets.</li>
 </ul></li>
-<li><p>Note: These “case influence” statistics all assume that there is only one outlier in the dataset. If there are two outliers in the same region of the space of <span class="math inline">\(X\)</span> values, then these case influence statistics might not be able to detect that they are outliers.</p></li>
-<li><p>In R, Cook’s distance is provided by <code>augment()</code> from the <code>{broom}</code> package. We get DFFITS by the base R function <code>dffits()</code> and DFBETAS by the base R function <code>dfbetas()</code>.</p>
+<li><p>Note: These “case influence” statistics all assume that there is
+only one outlier in the dataset. If there are two outliers in the same
+region of the space of <span class="math inline">\(X\)</span> values,
+then these case influence statistics might not be able to detect that
+they are outliers.</p></li>
+<li><p>In R, Cook’s distance is provided by <code>augment()</code> from
+the <code>{broom}</code> package. We get DFFITS by the base R function
+<code>dffits()</code> and DFBETAS by the base R function
+<code>dfbetas()</code>.</p>
 <pre class="r"><code>lm_bod &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 a_bod &lt;- augment(lm_bod)
 a_bod$.dffits &lt;- dffits(lm_bod)
@@ -678,7 +889,8 @@ glimpse(a_bod)</code></pre>
 <h2>Use of outlier statistics</h2>
 <ul>
 <li><p>Use outlier statistics to flag unusual values.</p></li>
-<li><p>It is common to make an “Index Influence Plot” to see what cases are most influential.</p>
+<li><p>It is common to make an “Index Influence Plot” to see what cases
+are most influential.</p>
 <pre class="r"><code>lm_bod &lt;- lm(fat ~ triceps + thigh + midarm, data = body)
 a_bod &lt;- augment(lm_bod)
 a_bod %&gt;%
@@ -698,33 +910,56 @@ a_bod %&gt;%
 <p><img src="05_mlr_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>If you have some unusual values, go through this pipeline:</p>
 <ol style="list-style-type: decimal">
-<li>Do the conclusions change when the case is deleted? If No, then proceed with the case included.</li>
-<li>If Yes, is there reason to believe the case belongs to a population other than the one under consideration? E.g., was it a numerical error, is there some expectation that this point would behave differently (e.g. DC versus states). If Yes, then omit the case.</li>
-<li>If No, then does the case have an unusually distant explanatory variable (measured by leverage value)? If yes, then omit the case and report conclusions based on the subset of data, limiting the scope of the study to the range of predictor variables.</li>
-<li>If Yes, then you can try a more robust approach (e.g. quantile regression).</li>
+<li>Do the conclusions change when the case is deleted? If No, then
+proceed with the case included.</li>
+<li>If Yes, is there reason to believe the case belongs to a population
+other than the one under consideration? E.g., was it a numerical error,
+is there some expectation that this point would behave differently
+(e.g. DC versus states). If Yes, then omit the case.</li>
+<li>If No, then does the case have an unusually distant explanatory
+variable (measured by leverage value)? If yes, then omit the case and
+report conclusions based on the subset of data, limiting the scope of
+the study to the range of predictor variables.</li>
+<li>If Yes, then you can try a more robust approach (e.g. quantile
+regression).</li>
 </ol></li>
 </ul>
 </div>
 </div>
-<div id="multicollinearity-variance-inflation-factor" class="section level1">
+<div id="multicollinearity-variance-inflation-factor"
+class="section level1">
 <h1>Multicollinearity: Variance Inflation Factor</h1>
 <ul>
-<li><p><strong>Goal</strong>: Quantify degree of multicollinearity.</p></li>
+<li><p><strong>Goal</strong>: Quantify degree of
+multicollinearity.</p></li>
 <li><p>Informal diagnostics:</p>
 <ol style="list-style-type: decimal">
-<li>Matrix scatterplots (but not sufficient to detect all kinds of multicollinearity).</li>
-<li>Large changes in estimated regression coefficients and their estimated standard errors when a variable is added.</li>
-<li>Non-significant results in individual tests on anticipated important variables.</li>
+<li>Matrix scatterplots (but not sufficient to detect all kinds of
+multicollinearity).</li>
+<li>Large changes in estimated regression coefficients and their
+estimated standard errors when a variable is added.</li>
+<li>Non-significant results in individual tests on anticipated important
+variables.</li>
 <li>Different sign than expected on coefficient of a predictor.</li>
 </ol></li>
-<li><p><strong>Variance Inflation Factor</strong>: How much the variances of the estimated regression coefficients are inflated as compared to when the predictor variables are not correlated.</p>
+<li><p><strong>Variance Inflation Factor</strong>: How much the
+variances of the estimated regression coefficients are inflated as
+compared to when the predictor variables are not correlated.</p>
 <p><span class="math display">\[
   (VIF)_k = \frac{1}{1 - R_k^2}
-  \]</span> where <span class="math inline">\(R_k^2\)</span> is the coefficient of multiple determination using <span class="math inline">\(X_k\)</span> as the response and every other <span class="math inline">\(X\)</span> as the predictor.</p></li>
-<li><p><span class="math inline">\((VIF)_k\)</span> is equal to 1 when there is no multicollinearity.</p></li>
-<li><p><span class="math inline">\((VIF)_k\)</span> is greater than 1 when there is multicollinearity.</p></li>
-<li><p>If the maximum VIF value is greater than 10, then this is an indication of extreme multicollinearity (I have no idea where this rule-of-thumb comes from).</p></li>
-<li><p>You can get the variance inflation factors by the <code>vif()</code> function from the <code>{car}</code> package.</p>
+  \]</span> where <span class="math inline">\(R_k^2\)</span> is the
+coefficient of multiple determination using <span
+class="math inline">\(X_k\)</span> as the response and every other <span
+class="math inline">\(X\)</span> as the predictor.</p></li>
+<li><p><span class="math inline">\((VIF)_k\)</span> is equal to 1 when
+there is no multicollinearity.</p></li>
+<li><p><span class="math inline">\((VIF)_k\)</span> is greater than 1
+when there is multicollinearity.</p></li>
+<li><p>If the maximum VIF value is greater than 10, then this is an
+indication of extreme multicollinearity (I have no idea where this
+rule-of-thumb comes from).</p></li>
+<li><p>You can get the variance inflation factors by the
+<code>vif()</code> function from the <code>{car}</code> package.</p>
 <pre class="r"><code>library(car)
 vif(lm_bod)</code></pre>
 <pre><code>## triceps   thigh  midarm 
@@ -735,9 +970,14 @@ vif(lm_bod)</code></pre>
 vif(lm_tt)</code></pre>
 <pre><code>## triceps   thigh 
 ##   6.825   6.825</code></pre></li>
-<li><p>Condition Numbers: Ratio of the maximum singular value of <span class="math inline">\(X\)</span> divided by minimum singular value of <span class="math inline">\(X\)</span>.</p>
+<li><p>Condition Numbers: Ratio of the maximum singular value of <span
+class="math inline">\(X\)</span> divided by minimum singular value of
+<span class="math inline">\(X\)</span>.</p>
 <ul>
-<li>Intuition: If <span class="math inline">\(X\)</span> is almost singular than <span class="math inline">\((\mathbf{X}^{\intercal}\mathbf{X})^{-1}\)</span> will blow up.</li>
+<li>Intuition: If <span class="math inline">\(X\)</span> is almost
+singular than <span
+class="math inline">\((\mathbf{X}^{\intercal}\mathbf{X})^{-1}\)</span>
+will blow up.</li>
 </ul>
 <pre class="r"><code>svals &lt;- svd(model.matrix(lm_bod))$d
 svals[[1]] / svals[[length(svals)]]</code></pre>
@@ -746,8 +986,10 @@ svals[[1]] / svals[[length(svals)]]</code></pre>
 <li>Value of 5–10 indicates weak multicollinearity.</li>
 <li>Value of 30–100 indicates moderate to strong multicollinearity.</li>
 <li>Value &gt; 100 indicates very strong multicollinearity.</li>
-<li>NOTE: Condition numbers are not directly comparable to one another.</li>
-<li>For more information on condition numbers, see <span class="citation">Anderson and Wells (2008)</span>.</li>
+<li>NOTE: Condition numbers are not directly comparable to one
+another.</li>
+<li>For more information on condition numbers, see <span
+class="citation">Anderson and Wells (2008)</span>.</li>
 </ul></li>
 </ul>
 </div>
@@ -755,7 +997,11 @@ svals[[1]] / svals[[length(svals)]]</code></pre>
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-anderson2008numerical" class="csl-entry">
-Anderson, William, and Martin T. Wells. 2008. <span>“Numerical Analysis in Least Squares Regression with an Application to the Abortion-Crime Debate.”</span> <em>Journal of Empirical Legal Studies</em> 5 (4): 647–81. <a href="https://doi.org/10.1111/j.1740-1461.2008.00137.x">https://doi.org/10.1111/j.1740-1461.2008.00137.x</a>.
+Anderson, William, and Martin T. Wells. 2008. <span>“Numerical Analysis
+in Least Squares Regression with an Application to the Abortion-Crime
+Debate.”</span> <em>Journal of Empirical Legal Studies</em> 5 (4):
+647–81. <a
+href="https://doi.org/10.1111/j.1740-1461.2008.00137.x">https://doi.org/10.1111/j.1740-1461.2008.00137.x</a>.
 </div>
 </div>
 </div>

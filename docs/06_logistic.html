@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-11-01" />
+<meta name="date" content="2022-12-01" />
 
 <title>Logistic Regression</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -368,7 +368,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Logistic Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-11-01</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -423,7 +423,8 @@ glimpse(donner)</code></pre>
 predictor <span class="math inline">\(x\)</span> and the binary response
 <span class="math inline">\(y\)</span>. E.g. older folks tended to die
 at a higher frequency:</p>
-<pre class="r"><code>qplot(x = Age, y = Status, data = donner, geom = &quot;point&quot;)</code></pre>
+<pre class="r"><code>ggplot(data = donner, mapping = aes(x = Age, y = Status)) +
+  geom_point()</code></pre>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
@@ -485,7 +486,9 @@ tidy(cout)</code></pre>
 ## 2 Age          -0.0134   0.00413     -3.23 0.00235</code></pre></li>
 <li><p>Residual plots are useless here, so never show them:</p>
 <pre class="r"><code>aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="issues" class="section level2">
@@ -1253,10 +1256,11 @@ versus fits with a non-parametric smoother.</p>
                family = binomial)
 aout &lt;- augment(glm_out)
 
-qplot(x = .fitted, y = .std.resid, data = aout) +
+ggplot(data = aout, mapping = aes(x = .fitted, y = .std.resid)) +
+  geom_point() +
   geom_hline(yintercept = 0) +
   geom_smooth()</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
 <p><img src="06_logistic_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>

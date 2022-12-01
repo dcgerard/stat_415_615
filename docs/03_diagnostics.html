@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-10-05" />
+<meta name="date" content="2022-12-01" />
 
 <title>Diagnostics and Remedial Measures</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -187,8 +187,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -196,16 +196,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -353,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-10-05</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -432,14 +425,18 @@ library(broom)
 x &lt;- runif(100, -3, 3)
 y &lt;- x + rnorm(100)
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-1-residual-plot" class="section level2">
 <h2>Dataset 1: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-1-summary" class="section level2">
@@ -465,14 +462,18 @@ class="section level1">
 x &lt;- x - min(x) + 0.5
 y &lt;- log(x) * 20 + rnorm(100, sd = 4)
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE, formula = y~x)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-residual-plot" class="section level2">
 <h2>Dataset 2: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-summary" class="section level2">
@@ -521,7 +522,9 @@ class="math inline">\(y\)</span>.</p></li>
 <h2>Dataset 2: Transformed <span class="math inline">\(x\)</span>
 Scatterplot</h2>
 <pre class="r"><code>df &lt;- mutate(df, x_log = log(x))
-qplot(x = x_log, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+ggplot(data = df, mapping = aes(x = x_log, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-2-transformed-x-residual-plot" class="section level2">
@@ -529,7 +532,9 @@ qplot(x = x_log, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = F
 Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x_log, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
@@ -541,14 +546,18 @@ class="section level1">
 <pre class="r"><code>x &lt;- runif(100, -3, 3)
 y &lt;- -x^2 + rnorm(100)
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-residual-plot" class="section level2">
 <h2>Dataset 3: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-summary" class="section level2">
@@ -588,13 +597,18 @@ class="section level2">
 <pre class="r"><code>df &lt;- mutate(df, x2 = x^2) ## create x^2 first
 quad_lm &lt;- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout &lt;- augment(quad_lm)
-qplot(x = x, y = y, data = aout) +
+ggplot(data = aout, mapping = aes(x = x, y = y)) +
+  geom_point() +
   geom_line(mapping = aes(x = x, y = .fitted), col = &quot;blue&quot;, lwd = 1)</code></pre>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-solution-1-residuals" class="section level2">
 <h2>Dataset 3: Solution 1 Residuals</h2>
-<pre class="r"><code>qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-3-peak-estimation" class="section level2">
@@ -636,14 +650,18 @@ class="section level1">
 <pre class="r"><code>x &lt;- runif(100, 0, 2)
 y &lt;- exp(x + rnorm(100, sd = 1/2))
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-4-residual-plot" class="section level2">
 <h2>Dataset 4: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-4-summary" class="section level2">
@@ -665,7 +683,9 @@ the left.</p></li>
 <li><p>Take a log-transformation of <span
 class="math inline">\(y\)</span>.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y))
-qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+ggplot(data = df, mapping = aes(x = x, y = y_log)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
@@ -673,7 +693,9 @@ qplot(x = x, y = y_log, data = df) + geom_smooth(method = &quot;lm&quot;, se = F
 <h2>Dataset 4: Solution</h2>
 <pre class="r"><code>lmout &lt;- lm(y_log ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li><strong>Exercise</strong>: What if you see something like this? Do
@@ -692,14 +714,18 @@ Distribution</h1>
 <pre class="r"><code>x &lt;- runif(200)
 y &lt;- 15 * x + rexp(200, 0.2)
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x, y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-5-residual-plot" class="section level2">
 <h2>Dataset 5: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-5-summary" class="section level2">
@@ -736,14 +762,18 @@ class="section level1">
 <pre class="r"><code>x &lt;- runif(100)
 y &lt;- x + rnorm(100, sd = (x + 0.3)^2 / 2)
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-6-residual-plot" class="section level2">
 <h2>Dataset 6: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="dataset-6-summary" class="section level2">
@@ -767,8 +797,9 @@ that won’t work here. Be careful about negative values.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y + 0.5),
              x_log = log(x))</code></pre>
 <pre><code>## Warning in log(y + 0.5): NaNs produced</code></pre>
-<pre class="r"><code>qplot(x = x_log, y = y_log, data = df)</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x_log, y = y_log)) +
+  geom_point()</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>The book will suggest weighted least squares (with weights
 inverse to the variance).</p></li>
@@ -847,13 +878,17 @@ y &lt;- x + rnorm(100)
 x[[100]] &lt;- 2.6
 y[[100]] &lt;- 10
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="dataset-7-residual-plot" class="section level2">
 <h2>Dataset 7: Residual Plot</h2>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
 <ul>
 <li>So we see one observation very high in residual plot compared to the
@@ -911,7 +946,7 @@ outliers.</p></li>
 <p>Make a scatterplot of <code>y</code> on <code>x</code>, then make a
 residual versus fits plot for a regression of <code>y</code> on
 <code>x</code>. Does the residual plot suggest that outliers are the
-issue, or is it decieving you into thinking something else is the
+issue, or is it deceiving you into thinking something else is the
 issue?</p></li>
 </ul>
 </div>
@@ -932,12 +967,16 @@ for (i in 2:length(epsilon)) {
 }
 y &lt;- x + epsilon
 df &lt;- data.frame(x = x, y = y)</code></pre>
-<pre class="r"><code>qplot(x = x, y = y, data = df) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 aout &lt;- mutate(aout, index = row_number())
-qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = aout, mapping = aes(x = index, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>This is a specific issue with the <strong>independence</strong>
 assumption.</p></li>
@@ -1047,11 +1086,12 @@ example.</p>
 <pre class="r"><code>hibbs &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/hibbs.csv&quot;)
 lmhibbs &lt;- lm(vote ~ growth, data = hibbs)</code></pre></li>
 <li><p>Use <code>augment()</code> from the <code>{broom}</code> package
-to obtain the residuals. Then use the <code>geom = "qq"</code> argument
-in the <code>qplot()</code> function. Make sure you specify
+to obtain the residuals. Map the residuals to the <code>sample</code>
+aesthetic, then use <code>geom_qq()</code>. Make sure you specify
 <code>sample = .resid</code>, <em>not</em> <code>x = .resid</code>.</p>
 <pre class="r"><code>aout &lt;- augment(lmhibbs)
-qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
+ggplot(data = aout, mapping = aes(sample = .resid)) +
+  geom_qq() +
   geom_qq_line()</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-60-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There is a small deviation, but it’s not too bad.</p></li>
@@ -1094,7 +1134,8 @@ aout &lt;- augment(lmpen)
 penguins %&gt;%
   mutate(.rownames = as.character(row_number())) %&gt;%
   left_join(aout) %&gt;%
-  qplot(x = species, y  = .resid, data = ., geom = &quot;boxplot&quot;)</code></pre>
+  ggplot(mapping = aes(x = species, y = .resid)) +
+  geom_boxplot()</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Whenever you see a systematic pattern between the residuals and
 an omitted predictor (as above), this indicates that you should include
@@ -1287,7 +1328,8 @@ class="math inline">\(Y\)</span></h2>
 <ul>
 <li><p>From the <code>mtcars</code> dataset:</p>
 <pre class="r"><code>data(&quot;mtcars&quot;)
-qplot(x = log(wt), y = mpg, data = mtcars)</code></pre>
+ggplot(data = mtcars, mapping = aes(x = log(wt), y = mpg)) +
+  geom_point()</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-69-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>mtcars &lt;- mutate(mtcars, log_wt = log(wt))
 lm_mt &lt;- lm(mpg ~ log_wt, data = mtcars)
@@ -1327,7 +1369,8 @@ in DC</a> looked exponential:</p>
 <pre class="r"><code>dc &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/dccovid.csv&quot;)
 dc &lt;- select(dc, day, positives)
 dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
-qplot(x = day, y = log(positives), data = dc)</code></pre>
+ggplot(data = dc, mapping = aes(x = day, y = log(positives))) +
+  geom_point()</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-71-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>dc &lt;- mutate(dc, log_positives = log(positives), day_num = as.numeric(day - day[[1]]))
 lm_cov &lt;- lm(log_positives ~ day_num, data = dc)
@@ -1370,7 +1413,8 @@ class="math inline">\(Y\)</span></h2>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;ex0823&quot;)
 wine &lt;- ex0823
-qplot(x = log(Wine), y = log(Mortality), data = wine)</code></pre>
+ggplot(data = wine, mapping = aes(x = log(Wine), y = log(Mortality))) +
+  geom_point()</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-75-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Fit linear model</p>
 <pre class="r"><code>wine &lt;- mutate(wine, log_wine = log(Wine),
@@ -1435,7 +1479,8 @@ works.</li>
 </ul></li>
 <li><p>In practice, you don’t need to know any of this. Just add
 <code>geom_smooth(se = FALSE)</code> after you make a scatterplot.</p>
-<pre class="r"><code>qplot(x = growth, y = vote, data = hibbs) +
+<pre class="r"><code>ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
+  geom_point() +
   geom_smooth(se = FALSE)</code></pre>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-78-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Be careful not to over-interpret these.</strong> E.g.,

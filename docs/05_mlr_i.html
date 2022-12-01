@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-10-12" />
+<meta name="date" content="2022-12-01" />
 
 <title>Multiple Linear Regression I</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-10-12</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -909,9 +909,11 @@ community (thousands of dollars).</li>
 <li><p>The goal is to predict sales from these other two
 variables.</p></li>
 <li><p>Let’s begin with an EDA</p>
-<pre class="r"><code>qplot(x = disp, y = sales, data = portrait)</code></pre>
+<pre class="r"><code>ggplot(data = portrait, mapping = aes(x = disp, y = sales)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = young, y = sales, data = portrait)</code></pre>
+<pre class="r"><code>ggplot(data = portrait, mapping = aes(x = young, y = sales)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-13-2.png" width="384" style="display: block; margin: auto;" /></p>
 <p>There seems to be a strong linear relationship between portrait and
 disp and portrait and young.</p></li>
@@ -1179,15 +1181,22 @@ predictor, then you might want to include that predictor.</li>
 </ul></li>
 <li><p>Obtain residuals in MLR using the same code as in SLR:</p>
 <pre class="r"><code>aout &lt;- augment(x = lmout)
-qplot(x = .fitted, y = .resid, data = aout)</code></pre>
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = young, y = .resid, data = aout)</code></pre>
+<pre class="r"><code>ggplot(data = aout, mapping = aes(x = young, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-2.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = disp, y = .resid, data = aout)</code></pre>
+<pre class="r"><code>ggplot(data = aout, mapping = aes(x = disp, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-32-3.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Everything looks good for our portrait example. Even the QQ-plot
 looks good.</p>
-<pre class="r"><code>qplot(sample = .resid, data = aout, geom = &quot;qq&quot;) +
+<pre class="r"><code>ggplot(data = aout, mapping = aes(sample = .resid)) +
+  geom_qq() +
   geom_qq_line()</code></pre>
 <p><img src="05_mlr_i_files/figure-html/unnamed-chunk-33-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: Recall the real estate data that you

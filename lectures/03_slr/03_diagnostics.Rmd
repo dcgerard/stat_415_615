@@ -70,9 +70,10 @@ y <- x + rnorm(100)
 df <- data.frame(x = x, y = y)
 ```
 
-
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
 ```
 
 ## Dataset 1: Residual Plot
@@ -80,7 +81,9 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 1: Summary
@@ -98,7 +101,10 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     x <- c(runif(30, -3, -2), rep(0, 10), runif(30, 2, 3))
     y <- x + rnorm(length(x))
     df <- data.frame(x = x, y = y)
-    qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = df, mapping = aes(x = x, y = y)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE,
+                  formula = y~x)
     ```
     
     ```{block, eval = FALSE, echo = FALSE}
@@ -118,7 +124,9 @@ df <- data.frame(x = x, y = y)
 
 
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE, formula = y~x)
 ```
 
 ## Dataset 2: Residual Plot
@@ -126,7 +134,9 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 2: Summary
@@ -155,9 +165,12 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     Plot $x$ versus $y$. Then log-transform $x$ and plot $\log(x)$ versus $y$. Then try log-transforming $y$ and plotting $x$ versus $\log(y)$. Discuss how variation changes (vertically or horizontally) when we log $x$ versus logging $y$.
     
     ```{r, echo = FALSE, eval = FALSE}
-    qplot(x = x, y = y, data = dftoy)
-    qplot(x = log(x), y = y, data = dftoy)
-    qplot(x = x, y = log(y), data = dftoy)
+    ggplot(data = dftoy, mapping = aes(x = x, y = y)) +
+      geom_point()
+    ggplot(data = dftoy, mapping = aes(x = log(x), y = y)) +
+      geom_point()
+    ggplot(data = dftoy, mapping = aes(x = x, y = log(y))) +
+      geom_point()
     ```
     
     ```{block, eval = FALSE, echo = FALSE}
@@ -168,7 +181,9 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
 ```{r, echo = TRUE, message=FALSE}
 df <- mutate(df, x_log = log(x))
-qplot(x = x_log, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x_log, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 ## Dataset 2: Transformed $x$ Residual Plot
@@ -176,7 +191,9 @@ qplot(x = x_log, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x_log, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 # Dataset 3: Curved Non-monotone Relationship, Equal Variances
@@ -191,7 +208,9 @@ df <- data.frame(x = x, y = y)
 
 
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 
@@ -200,7 +219,9 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 3: Summary
@@ -236,14 +257,17 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 df <- mutate(df, x2 = x^2) ## create x^2 first
 quad_lm <- lm(y ~ x + x2, data = df) ## lm of x^2 + x
 aout <- augment(quad_lm)
-qplot(x = x, y = y, data = aout) +
+ggplot(data = aout, mapping = aes(x = x, y = y)) +
+  geom_point() +
   geom_line(mapping = aes(x = x, y = .fitted), col = "blue", lwd = 1)
 ```
 
 ## Dataset 3: Solution 1 Residuals
 
 ```{r, echo = TRUE}
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 3: Peak estimation
@@ -282,7 +306,9 @@ df <- data.frame(x = x, y = y)
 ```
 
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 
@@ -291,9 +317,10 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
-
 
 ## Dataset 4: Summary
 
@@ -311,7 +338,9 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 
     ```{r, echo = TRUE, message = FALSE}
     df <- mutate(df, y_log = log(y))
-    qplot(x = x, y = y_log, data = df) + geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = df, mapping = aes(x = x, y = y_log)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     ```
 
 ## Dataset 4: Solution
@@ -319,7 +348,9 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y_log ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 - **Exercise**: What if you see something like this? Do you think logging $y$ will help?
@@ -327,7 +358,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     x <- runif(100, 0, 2)
     y <- exp(-x + rnorm(100, sd = 1/2))
     df <- data.frame(x = x, y = y)
-    qplot(x = x, y = y, data = df)
+    ggplot(data = df, mapping = aes(x = x, y = y)) +
+      geom_point()
     ```
 
     ```{block, eval = FALSE, echo = FALSE}
@@ -335,7 +367,9 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     ```
     
     ```{r, echo = FALSE, eval = FALSE}
-    qplot(x = x, y = log(y), data = df)
+    ggplot(data = df, mapping = aes(x = x, y = y)) +
+      geom_point() +
+      scale_y_log10()
     ```
 
 # Dataset 5: Linear Relationship, Equal Variances, Skewed Distribution
@@ -349,7 +383,9 @@ df <- data.frame(x = x, y = y)
 ```
 
 ```{r, echo = TRUE, message = FALSE}
-qplot(x, y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 ## Dataset 5: Residual Plot
@@ -357,7 +393,9 @@ qplot(x, y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 5: Summary
@@ -393,7 +431,9 @@ df <- data.frame(x = x, y = y)
 ```
 
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 ## Dataset 6: Residual Plot
@@ -401,7 +441,9 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 ## Dataset 6: Summary
@@ -418,9 +460,9 @@ qplot(x = .fitted, y = .resid, data = lmout) + geom_hline(yintercept = 0)
     ```{r}
     df <- mutate(df, y_log = log(y + 0.5),
                  x_log = log(x))
-    qplot(x = x_log, y = y_log, data = df)
+    ggplot(data = df, mapping = aes(x = x_log, y = y_log)) +
+      geom_point()
     ```
-
 
 - The book will suggest weighted least squares (with weights inverse to the variance).
 
@@ -486,7 +528,9 @@ df <- data.frame(x = x, y = y)
 ```
 
 ```{r, echo = TRUE, message=FALSE}
-qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+ggplot(data = df, mapping = aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
 ## Dataset 7: Residual Plot
@@ -494,7 +538,9 @@ qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
 ```{r, echo = TRUE, message=FALSE}
 lmout <- lm(y ~ x, data = df)
 aout <- augment(lmout)
-qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
 ```
 
 - So we see one observation very high in residual plot compared to the other points around that area.
@@ -541,12 +587,14 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
                      9, 37,
                      12, 54)
     ```
-    Make a scatterplot of `y` on `x`, then make a residual versus fits plot for a regression of `y` on `x`. Does the residual plot suggest that outliers are the issue, or is it decieving you into thinking something else is the issue?
+    Make a scatterplot of `y` on `x`, then make a residual versus fits plot for a regression of `y` on `x`. Does the residual plot suggest that outliers are the issue, or is it deceiving you into thinking something else is the issue?
     ```{r, eval = FALSE, echo = FALSE}
-    qplot(x = x, y = y, data = dftoy)
+    ggplot(data = dftoy, mapping = aes(x = x, y = y)) +
+      geom_point()
     lmtoy <- lm(y ~ x, data = dftoy)
     atoy <- augment(lmtoy)
-    qplot(x = .fitted, y = .resid, data = atoy) +
+    ggplot(data = atoy, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     ```
     ```{block, echo = FALSE, eval = FALSE}
@@ -570,14 +618,18 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     ```
     
     ```{r, message = FALSE}
-    qplot(x = x, y = y, data = df) + geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = df, mapping = aes(x = x, y = y)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     ```
 
     ```{r}
     lmout <- lm(y ~ x, data = df)
     aout <- augment(lmout)
     aout <- mutate(aout, index = row_number())
-    qplot(x = index, y = .resid, data = aout) + geom_hline(yintercept = 0)
+    ggplot(data = aout, mapping = aes(x = index, y = .resid)) +
+      geom_point() +
+      geom_hline(yintercept = 0)
     ```
     
 - This is a specific issue with the **independence** assumption.
@@ -677,7 +729,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - QQ-plot indicating right skew.
     ```{r, echo = FALSE}
     x <- rexp(100)
-    qplot(sample = x, geom = "qq") +
+    ggplot(data = data.frame(x), mapping = aes(sample = x)) +
+      geom_qq() +
       geom_qq_line() +
       xlab("Theoretical") +
       ylab("Sample")
@@ -686,7 +739,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - QQ-plot indicating left skew.
     ```{r, echo = FALSE}
     x <- -rexp(100)
-    qplot(sample = x, geom = "qq") +
+    ggplot(data = data.frame(x), mapping = aes(sample = x)) +
+      geom_qq() +
       geom_qq_line() +
       xlab("Theoretical") +
       ylab("Sample")
@@ -694,7 +748,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - QQ-plot indicating heavy tails.
     ```{r, echo = FALSE}
     x <- -rt(100, 1)
-    qplot(sample = x, geom = "qq") +
+    ggplot(data = data.frame(x), mapping = aes(sample = x)) +
+      geom_qq() +
       geom_qq_line() +
       xlab("Theoretical") +
       ylab("Sample")
@@ -703,7 +758,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - QQ-plot indicating light tails.
     ```{r, echo = FALSE}
     x <- -runif(100)
-    qplot(sample = x, geom = "qq") +
+    ggplot(data = data.frame(x), mapping = aes(sample = x)) +
+      geom_qq() +
       geom_qq_line() +
       xlab("Theoretical") +
       ylab("Sample")
@@ -719,11 +775,12 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     lmhibbs <- lm(vote ~ growth, data = hibbs)
     ```
 
-- Use `augment()` from the `{broom}` package to obtain the residuals. Then use the `geom = "qq"` argument in the `qplot()` function. Make sure you specify `sample = .resid`, *not* `x = .resid`.
+- Use `augment()` from the `{broom}` package to obtain the residuals. Map the residuals to the `sample` aesthetic, then use `geom_qq()`. Make sure you specify `sample = .resid`, *not* `x = .resid`.
 
     ```{r}
     aout <- augment(lmhibbs)
-    qplot(sample = .resid, data = aout, geom = "qq") +
+    ggplot(data = aout, mapping = aes(sample = .resid)) +
+      geom_qq() +
       geom_qq_line()
     ```
     
@@ -749,7 +806,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     penguins %>%
       mutate(.rownames = as.character(row_number())) %>%
       left_join(aout) %>%
-      qplot(x = species, y  = .resid, data = ., geom = "boxplot")
+      ggplot(mapping = aes(x = species, y = .resid)) +
+      geom_boxplot()
     ```
     
 - Whenever you see a systematic pattern between the residuals and an omitted predictor (as above), this indicates that you should include that predictor in your model.
@@ -939,7 +997,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - From the `mtcars` dataset:
     ```{r}
     data("mtcars")
-    qplot(x = log(wt), y = mpg, data = mtcars)
+    ggplot(data = mtcars, mapping = aes(x = log(wt), y = mpg)) +
+      geom_point()
     mtcars <- mutate(mtcars, log_wt = log(wt))
     lm_mt <- lm(mpg ~ log_wt, data = mtcars)
     tidy(lm_mt, conf.int = TRUE)
@@ -965,7 +1024,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     dc <- read_csv("https://dcgerard.github.io/stat_415_615/data/dccovid.csv")
     dc <- select(dc, day, positives)
     dc <- filter(dc, day <= "2020-04-01", day >= "2020-03-11") 
-    qplot(x = day, y = log(positives), data = dc)
+    ggplot(data = dc, mapping = aes(x = day, y = log(positives))) +
+      geom_point()
     ```
 
     ```{r}
@@ -1007,7 +1067,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
     library(Sleuth3)
     data("ex0823")
     wine <- ex0823
-    qplot(x = log(Wine), y = log(Mortality), data = wine)
+    ggplot(data = wine, mapping = aes(x = log(Wine), y = log(Mortality))) +
+      geom_point()
     ```
 
 - Fit linear model
@@ -1046,7 +1107,8 @@ qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
 - In practice, you don't need to know any of this. Just add `geom_smooth(se = FALSE)` after you make a scatterplot.
 
     ```{r, message = FALSE}
-    qplot(x = growth, y = vote, data = hibbs) +
+    ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
+      geom_point() +
       geom_smooth(se = FALSE)
     ```
 

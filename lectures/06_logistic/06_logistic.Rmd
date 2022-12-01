@@ -61,7 +61,8 @@ library(lmtest)
     
 - We often want to quantify the association between a quantitative predictor $x$ and the binary response $y$. E.g. older folks tended to die at a higher frequency:
     ```{r}
-    qplot(x = Age, y = Status, data = donner, geom = "point")
+    ggplot(data = donner, mapping = aes(x = Age, y = Status)) +
+      geom_point()
     ```
 
 # Linear Probability Model (LPM)
@@ -105,7 +106,9 @@ library(lmtest)
 
     ```{r}
     aout <- augment(lmout)
-    qplot(x = .fitted, y = .resid, data = aout) + geom_hline(yintercept = 0)
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
+      geom_hline(yintercept = 0)
     ```
 
 
@@ -420,7 +423,8 @@ saveGIF(expr = {
 
     ```{r, eval = FALSE, echo = FALSE}
     nocturia <- read_csv("https://dcgerard.github.io/stat_415_615/data/nocturia.csv")
-    qplot(x = age, y = nocturia, data = nocturia, geom = "jitter", width = 0, height = 0.05) +
+    ggplot(data = nocturia, mapping = aes(x = age, y = nocturia)) +
+      geom_jitter(width = 0, height = 0.05) +
       geom_smooth(method = "glm", se = FALSE, method.args = list(family = binomial))
     
     glmout <- glm(nocturia ~ age, data = nocturia, family = binomial)
@@ -733,12 +737,10 @@ $$
                    family = binomial)
     aout <- augment(glm_out)
     
-    qplot(x = .fitted, y = .std.resid, data = aout) +
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .std.resid)) +
+      geom_point() +
       geom_hline(yintercept = 0) +
       geom_smooth()
     ```
-    
-
-    
 
 # References

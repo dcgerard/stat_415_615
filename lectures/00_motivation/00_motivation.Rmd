@@ -37,14 +37,16 @@ data("mtcars")
 2. Have cloud of points
 
     ```{r, echo = FALSE, fig.width=4.65, fig.height=3.6}
-    qplot(x = drat, y = mpg, data = mtcars)
+    ggplot(data = mtcars, mapping = aes(x = drat, y = mpg)) +
+      geom_point()
     ```
     
 3. Fit line to cloud of points
 
     ```{r, message=FALSE, fig.width = 4.65, fig.height = 3.6, echo = FALSE}
-    qplot(x = drat, y = mpg, data = mtcars) +
-      geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = mtcars, mapping = aes(x = drat, y = mpg)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     ```
     
 4. Infer slope from fitted line

@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2021-11-30" />
+<meta name="date" content="2022-12-01" />
 
 <title>MLR: Model Selection and Validation</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -69,6 +69,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -89,6 +90,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -146,11 +150,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -179,8 +187,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -188,16 +196,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -314,7 +315,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -345,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Model Selection and Validation</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2021-11-30</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -366,9 +367,12 @@ div.tocify {
 <h1>Motivation</h1>
 <ul>
 <li><p>You often have many predictor variables.</p></li>
-<li><p>Including too few and you are potentially not controlling for key variables.</p></li>
-<li><p>Including too many and your regression coefficient estimates might be unstable.</p></li>
-<li><p><strong>Model selection</strong>: Choosing which variables (and transformations of these variables) to include.</p></li>
+<li><p>Including too few and you are potentially not controlling for key
+variables.</p></li>
+<li><p>Including too many and your regression coefficient estimates
+might be unstable.</p></li>
+<li><p><strong>Model selection</strong>: Choosing which variables (and
+transformations of these variables) to include.</p></li>
 </ul>
 </div>
 <div id="steps-of-selecting-a-model" class="section level1">
@@ -376,45 +380,69 @@ div.tocify {
 <p>From the Statistical Sleuth:</p>
 <ol style="list-style-type: decimal">
 <li>Identify the key objectives.</li>
-<li>Screen the available variables, deciding on a list that is sensitive to the objectives and excludes obvious redundancies.</li>
+<li>Screen the available variables, deciding on a list that is sensitive
+to the objectives and excludes obvious redundancies.</li>
 </ol>
 <ul>
 <li>Steps 3, 4, and 5: Repeat the following until satisfied:
 <ol start="3" style="list-style-type: decimal">
-<li>Perform exploratory analysis, examining graphical displays and correlation coeﬃcients.</li>
+<li>Perform exploratory analysis, examining graphical displays and
+correlation coeﬃcients.</li>
 <li>Perform transformations as necessary.</li>
-<li>Examine a residual plot after fitting a rich model, performing further transformations and considering outliers.</li>
+<li>Examine a residual plot after fitting a rich model, performing
+further transformations and considering outliers.</li>
 </ol></li>
 </ul>
 <ol start="6" style="list-style-type: decimal">
-<li>Use a computer-assisted technique for finding a suitable subset of explanatory variables, exerting enough control over the process to be sensitive to the questions of interest.</li>
-<li>Proceed with the analysis, using the selected explanatory variables.</li>
+<li>Use a computer-assisted technique for finding a suitable subset of
+explanatory variables, exerting enough control over the process to be
+sensitive to the questions of interest.</li>
+<li>Proceed with the analysis, using the selected explanatory
+variables.</li>
 </ol>
 </div>
-<div id="step-1-identify-objectives-and-questions-of-interest" class="section level1">
+<div id="step-1-identify-objectives-and-questions-of-interest"
+class="section level1">
 <h1>Step 1: Identify Objectives and Questions of Interest</h1>
-<div id="objective-association-between-x-and-y-controlling-for-z" class="section level2">
+<div id="objective-association-between-x-and-y-controlling-for-z"
+class="section level2">
 <h2>Objective: Association between X and Y controlling for Z</h2>
 <ul>
-<li><p>Goal is to determine the association between a response and some interesting predictors <em>after adjusting for other nuisance predictors</em>.</p></li>
-<li><p><em>Example</em>: Is there evidence of an association between salary and sex after adjusting for other, legitimate, determinants of salary?</p>
+<li><p>Goal is to determine the association between a response and some
+interesting predictors <em>after adjusting for other nuisance
+predictors</em>.</p></li>
+<li><p><em>Example</em>: Is there evidence of an association between
+salary and sex after adjusting for other, legitimate, determinants of
+salary?</p>
 <ul>
 <li>Association of interest: sex versus salary</li>
-<li>Nuisance variables to adjust for: Seniority, age, education, experience</li>
+<li>Nuisance variables to adjust for: Seniority, age, education,
+experience</li>
 </ul></li>
-<li><p>Generally, a good strategy is to (during steps 6 and 7 from above)</p>
+<li><p>Generally, a good strategy is to (during steps 6 and 7 from
+above)</p>
 <ol style="list-style-type: decimal">
-<li>Perform automatic variable selection techniques with everything <em>except</em> the explanatory variables of interest, then</li>
-<li>Include the explanatory variables of interest to test for associations.</li>
+<li>Perform automatic variable selection techniques with everything
+<em>except</em> the explanatory variables of interest, then</li>
+<li>Include the explanatory variables of interest to test for
+associations.</li>
 </ol></li>
-<li><p>Automatic variable selection techinques destroy the interpretation of <span class="math inline">\(p\)</span>-values. So</p>
+<li><p>Automatic variable selection techinques destroy the
+interpretation of <span class="math inline">\(p\)</span>-values. So</p>
 <ul>
-<li>Do <strong>not</strong> interpret what set of nuisance variables were chosen,</li>
-<li>Do <strong>not</strong> interpret the p-values of the nuisance variables</li>
-<li>Do <strong>not</strong> interpret the the coefficients of the nuisance variables.</li>
-<li><strong>Only</strong> interpret the coefficients and <em>p</em>-values corresponding to the variables of interest.</li>
+<li>Do <strong>not</strong> interpret what set of nuisance variables
+were chosen,</li>
+<li>Do <strong>not</strong> interpret the p-values of the nuisance
+variables</li>
+<li>Do <strong>not</strong> interpret the the coefficients of the
+nuisance variables.</li>
+<li><strong>Only</strong> interpret the coefficients and
+<em>p</em>-values corresponding to the variables of interest.</li>
 </ul></li>
-<li><p><strong>Example</strong>: Using automatic selection procedures, it was determined to include experience, seniority, and education, but not age in the final model. After adding in sex, the resulting fit to the final model was</p>
+<li><p><strong>Example</strong>: Using automatic selection procedures,
+it was determined to include experience, seniority, and education, but
+not age in the final model. After adding in sex, the resulting fit to
+the final model was</p>
 <pre><code>## # A tibble: 5 × 5
 ##   term         estimate std.error statistic  p.value
 ##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -424,54 +452,93 @@ div.tocify {
 ## 4 Exper        0.000261  0.000107      2.45 1.62e- 2
 ## 5 SexMale      0.130     0.0214        6.06 3.30e- 8</code></pre>
 <ul>
-<li><p>It is tempting to say that Age is not associated with salary, adjusting for other variables, while the other variables are associated with salary, adjusting for other variables. However, <strong>this is wrong</strong>.</p></li>
-<li><p>Since we used an automatic variable selection procedure for Age, Seniority, Education, and Experience, we cannot interpret those coefficients or <span class="math inline">\(p\)</span>-values.</p></li>
-<li><p>We can only interpret the coefficient and <span class="math inline">\(p\)</span>-value for sex, which we did not use a automatic variable selection technique on.</p></li>
-<li><p>We estimate that females make about 89% the salary of males, adjusting for other, legitimate, predictors of base salary. The evidence is strong that this association is not due to chance alone (<span class="math inline">\(p = 3.3\times 10^{-8}\)</span>).</p></li>
-<li><p>Technically, we are also adjusting for age in this statement, even though it was not in the model, because it had the chance to be in the model.</p></li>
+<li><p>It is tempting to say that Age is not associated with salary,
+adjusting for other variables, while the other variables are associated
+with salary, adjusting for other variables. However, <strong>this is
+wrong</strong>.</p></li>
+<li><p>Since we used an automatic variable selection procedure for Age,
+Seniority, Education, and Experience, we cannot interpret those
+coefficients or <span class="math inline">\(p\)</span>-values.</p></li>
+<li><p>We can only interpret the coefficient and <span
+class="math inline">\(p\)</span>-value for sex, which we did not use a
+automatic variable selection technique on.</p></li>
+<li><p>We estimate that females make about 89% the salary of males,
+adjusting for other, legitimate, predictors of base salary. The evidence
+is strong that this association is not due to chance alone (<span
+class="math inline">\(p = 3.3\times 10^{-8}\)</span>).</p></li>
+<li><p>Technically, we are also adjusting for age in this statement,
+even though it was not in the model, because it had the chance to be in
+the model.</p></li>
 </ul></li>
 </ul>
 </div>
 <div id="objective-fishing" class="section level2">
 <h2>Objective: Fishing</h2>
 <ul>
-<li><p>You have a response variable and many explanatory variables, and you want to know what variables are possibly associated with your response.</p></li>
-<li><p>Then iterate through adding/removing variables, making transformations, checking residuals, until you develop a model with significant terms and no major issues.</p></li>
-<li><p><span class="math inline">\(p\)</span>-values/confidence intervals don’t have proper interpretation.</p>
+<li><p>You have a response variable and many explanatory variables, and
+you want to know what variables are possibly associated with your
+response.</p></li>
+<li><p>Then iterate through adding/removing variables, making
+transformations, checking residuals, until you develop a model with
+significant terms and no major issues.</p></li>
+<li><p><span class="math inline">\(p\)</span>-values/confidence
+intervals don’t have proper interpretation.</p>
 <ul>
-<li>Same problems with multiple comparisons — ran many tests and looked at data a lot to come to final model.</li>
+<li>Same problems with multiple comparisons — ran many tests and looked
+at data a lot to come to final model.</li>
 </ul></li>
 <li><p>You generally build a model and tell stories with it.</p></li>
 <li><p>Issues:</p>
 <ol style="list-style-type: decimal">
-<li>Explanatory variables are not necessarily special. Inclusion/exclusion strongly affected by multicollinearity.
+<li>Explanatory variables are not necessarily special.
+Inclusion/exclusion strongly affected by multicollinearity.
 <ul>
-<li>I.e., You are just generating hypotheses, <strong>not</strong> conclusions.</li>
+<li>I.e., You are just generating hypotheses, <strong>not</strong>
+conclusions.</li>
 </ul></li>
-<li>Causal interpretations are not allowed, as usual, with observational studies.</li>
+<li>Causal interpretations are not allowed, as usual, with observational
+studies.</li>
 <li><span class="math inline">\(p\)</span>-values are meaningless.</li>
 </ol></li>
-<li><p>This is a strict interpretation, but folks in the real world typically fudge a little bit. How bad this is depends on how much fudging you do. My opinion:</p>
+<li><p>This is a strict interpretation, but folks in the real world
+typically fudge a little bit. How bad this is depends on how much
+fudging you do. My opinion:</p>
 <ul>
-<li>If you have many variables, a small sample size, and use automatic variable selection to come up with a model with a few predictors, then you are out of luck.</li>
-<li>If you have a large sample size, a small number of predictors, and you use some automatic procedures to come up with a couple models that you are going to use your expertise to choose between, then you are only fudging a little bit.</li>
+<li>If you have many variables, a small sample size, and use automatic
+variable selection to come up with a model with a few predictors, then
+you are out of luck.</li>
+<li>If you have a large sample size, a small number of predictors, and
+you use some automatic procedures to come up with a couple models that
+you are going to use your expertise to choose between, then you are only
+fudging a little bit.</li>
 </ul></li>
-<li><p>If your dataset is large, then you can split your data into a training set and a test set. You can do whatever variable selection techniques you want on your training set, then fit your final model on your test set to obtain <span class="math inline">\(p\)</span>-values that have the proper interpretation.</p>
+<li><p>If your dataset is large, then you can split your data into a
+training set and a test set. You can do whatever variable selection
+techniques you want on your training set, then fit your final model on
+your test set to obtain <span class="math inline">\(p\)</span>-values
+that have the proper interpretation.</p>
 <ul>
 <li>Test set could be about 25% and the training set about 75%.</li>
-<li>Splitting data is feasible if you have more than 6 observations per predictor variable in the training set.</li>
-<li>As soon as you look at how well your method works on your test set, you can no longer do anything.</li>
-<li>I.e. if you cheat and redo your analysis to better fit the test set, then you are back to the problems of fishing and there was no point in splitting the data in the first place.</li>
+<li>Splitting data is feasible if you have more than 6 observations per
+predictor variable in the training set.</li>
+<li>As soon as you look at how well your method works on your test set,
+you can no longer do anything.</li>
+<li>I.e. if you cheat and redo your analysis to better fit the test set,
+then you are back to the problems of fishing and there was no point in
+splitting the data in the first place.</li>
 </ul></li>
 </ul>
 </div>
 <div id="objective-prediction" class="section level2">
 <h2>Objective: Prediction</h2>
 <ul>
-<li><p>Include variables to maximize predictive power, don’t worry about interpretation.</p></li>
+<li><p>Include variables to maximize predictive power, don’t worry about
+interpretation.</p></li>
 <li><p>This lecture is not when prediction is the goal.</p></li>
-<li><p>The automatic variable selection procedures described in this lecture are not often used when the goal is prediction.</p></li>
-<li><p>Take the Machine Learning course for details when the goal is prediction.</p>
+<li><p>The automatic variable selection procedures described in this
+lecture are not often used when the goal is prediction.</p></li>
+<li><p>Take the Machine Learning course for details when the goal is
+prediction.</p>
 <ul>
 <li>Typical methods include regularization and cross validation.</li>
 </ul></li>
@@ -481,18 +548,28 @@ div.tocify {
 <div id="step-2-screen-available-variables" class="section level1">
 <h1>Step 2: Screen Available Variables</h1>
 <ul>
-<li><p>Choose a list of explanatory variables that are important to the objective.</p></li>
+<li><p>Choose a list of explanatory variables that are important to the
+objective.</p></li>
 <li><p>Screen out redundant variables.</p></li>
 <li><p>Use your domain expertise for screening variables.</p></li>
-<li><p>Note: What variables are important will depend on the question being asked.</p></li>
-<li><p><strong>Example</strong>: Researchers were interested in what variables were associated with state average SAT scores. Possible predictors include</p>
+<li><p>Note: What variables are important will depend on the question
+being asked.</p></li>
+<li><p><strong>Example</strong>: Researchers were interested in what
+variables were associated with state average SAT scores. Possible
+predictors include</p>
 <ul>
-<li><code>Takers</code>: Percentage of high school seniors in the state who took the exam.</li>
-<li><code>Income</code>: Median income of families of test-takers (hundreds of dollars).</li>
-<li><code>Years</code>: Average number of years test-takers had formal studies.</li>
-<li><code>Public</code>: Percentage of test-takers who attended public schools.</li>
-<li><code>Expend</code>: Total state expenditure on secondary schools, in hundreds of dollars per student.</li>
-<li><code>Rank</code>: Median percentile ranking of test-takers within their secondary school classes.</li>
+<li><code>Takers</code>: Percentage of high school seniors in the state
+who took the exam.</li>
+<li><code>Income</code>: Median income of families of test-takers
+(hundreds of dollars).</li>
+<li><code>Years</code>: Average number of years test-takers had formal
+studies.</li>
+<li><code>Public</code>: Percentage of test-takers who attended public
+schools.</li>
+<li><code>Expend</code>: Total state expenditure on secondary schools,
+in hundreds of dollars per student.</li>
+<li><code>Rank</code>: Median percentile ranking of test-takers within
+their secondary school classes.</li>
 </ul>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;case1201&quot;)
@@ -509,36 +586,57 @@ glimpse(sat)</code></pre>
 ## $ Expend &lt;dbl&gt; 25.60, 19.95, 20.62, 27.14, 21.05, 29.48, 24.84, 17.42, 25.96, …
 ## $ Rank   &lt;dbl&gt; 89.7, 90.6, 89.8, 86.3, 88.5, 86.4, 83.4, 85.9, 87.5, 84.2, 85.…</code></pre>
 <ul>
-<li>Goal 1: Business firm looking for a place to build a new facility. They want to know if SAT scores accurately reflect educational training of the labor market in that state.
+<li>Goal 1: Business firm looking for a place to build a new facility.
+They want to know if SAT scores accurately reflect educational training
+of the labor market in that state.
 <ul>
-<li>Only care if SAT score is associated with <code>Rank</code> (the educational training variable) after accounting for selection bias (<code>Takers</code>).</li>
+<li>Only care if SAT score is associated with <code>Rank</code> (the
+educational training variable) after accounting for selection bias
+(<code>Takers</code>).</li>
 </ul></li>
-<li>Goal 2: Government wants to determine impact of state expenditures on SAT scores. Then include all variables as possible predictors to so we can see what effect expenditures has that cannot be accounted by other variables.</li>
+<li>Goal 2: Government wants to determine impact of state expenditures
+on SAT scores. Then include all variables as possible predictors to so
+we can see what effect expenditures has that cannot be accounted by
+other variables.</li>
 </ul></li>
 <li><p>Problems with Including Too Few Variables</p>
 <ul>
-<li><p>You are only picking up <strong>marginal</strong> associations.</p></li>
-<li><p>E.g., we already know that men make more money than women. We want to see if men <strong>still</strong> make more money than women when we control for other variables.</p></li>
+<li><p>You are only picking up <strong>marginal</strong>
+associations.</p></li>
+<li><p>E.g., we already know that men make more money than women. We
+want to see if men <strong>still</strong> make more money than women
+when we control for other variables.</p></li>
 <li><p>Predictions are less accurate.</p>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p></li>
-<li><p>If you fit a model with <span class="math inline">\(X\)</span>, then this is what the model is seeing:</p>
+<li><p>If you fit a model with <span class="math inline">\(X\)</span>,
+then this is what the model is seeing:</p>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul></li>
 <li><p>Problems with too many variables</p>
 <ul>
 <li><p>Harder to estimate more parameters.</p></li>
-<li><p>Formally, the variances of the sampling distributions of the coefficients in the model will get much larger.</p></li>
-<li><p>Including highly correlated explanatory variables will <strong>really</strong> increase the variance of the sampling distributions of the coefficient estimates.</p></li>
-<li><p>Intuitively, we are less sure if the association of <span class="math inline">\(Y\)</span> and <span class="math inline">\(X_1\)</span> is due to that actual associate or is it mediated through <span class="math inline">\(X_2\)</span>?</p></li>
+<li><p>Formally, the variances of the sampling distributions of the
+coefficients in the model will get much larger.</p></li>
+<li><p>Including highly correlated explanatory variables will
+<strong>really</strong> increase the variance of the sampling
+distributions of the coefficient estimates.</p></li>
+<li><p>Intuitively, we are less sure if the association of <span
+class="math inline">\(Y\)</span> and <span
+class="math inline">\(X_1\)</span> is due to that actual associate or is
+it mediated through <span class="math inline">\(X_2\)</span>?</p></li>
 <li><p>Predictions are less accurate.</p></li>
 </ul></li>
 <li><p>Demonstration when have too many variables</p>
 <ul>
-<li><p>True model: <span class="math inline">\(E(Y|X_1) = X_1\)</span></p></li>
-<li><p>Fit Model: <span class="math inline">\(E(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2X_2\)</span></p></li>
-<li><p>Correlation between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> is 0.9994.</p></li>
-<li><p>We will simulate <span class="math inline">\(Y\)</span> and plot the resulting OLS estimates.</p></li>
+<li><p>True model: <span class="math inline">\(E(Y|X_1) =
+X_1\)</span></p></li>
+<li><p>Fit Model: <span class="math inline">\(E(Y|X_1, X_2) = \beta_0 +
+\beta_1 X_1 + \beta_2X_2\)</span></p></li>
+<li><p>Correlation between <span class="math inline">\(X_1\)</span> and
+<span class="math inline">\(X_2\)</span> is 0.9994.</p></li>
+<li><p>We will simulate <span class="math inline">\(Y\)</span> and plot
+the resulting OLS estimates.</p></li>
 <li><p>Black is truth</p>
 <p><img src="figs/sim_pred.gif" style="display: block; margin: auto;" /></p></li>
 </ul></li>
@@ -568,9 +666,12 @@ glimpse(sat)</code></pre>
 <pre class="r"><code>library(GGally)
 ggpairs(sat, columns = 2:8)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Curvature between SAT scores and percentage takers. But it looks like constant variance at first, so maybe taking a log of percentage takers would help.</p>
+<li><p>Curvature between SAT scores and percentage takers. But it looks
+like constant variance at first, so maybe taking a log of percentage
+takers would help.</p>
 <pre class="r"><code>sat &lt;- mutate(sat, l_takers = log(Takers))
-qplot(x = l_takers, y = SAT, data = sat)</code></pre>
+ggplot(data = sat, mapping = aes(x = l_takers, y = SAT)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>There is a huge outlier in expenditures caused by Alaska</p>
 <pre class="r"><code>arrange(sat, desc(Expend)) %&gt;%
@@ -583,25 +684,43 @@ qplot(x = l_takers, y = SAT, data = sat)</code></pre>
 ## 4        Oregon  30.49
 ## 5       Montana  29.48
 ## 6  Pennsylvania  27.98</code></pre></li>
-<li><p>Let’s fit a rich model to identify any other transformations and other possible issues.</p>
+<li><p>Let’s fit a rich model to identify any other transformations and
+other possible issues.</p>
 <pre class="r"><code>lm_rich &lt;- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
 a_rich &lt;- augment(lm_rich)
-qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+ggplot(data = a_rich, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = l_takers, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = l_takers, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-2.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = Income, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = Income, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-3.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = Years, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = Years, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-4.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = Public, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = Public, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-5.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = Expend, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = Expend, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-6.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = Rank, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code></pre>
+<pre class="r"><code>ggplot(data = a_rich, mapping = aes(x = Rank, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)</code></pre>
 <p><img src="05_mlr_selection_files/figure-html/unnamed-chunk-12-7.png" width="384" style="display: block; margin: auto;" /></p>
-<p>The only worry is the expenditures residual plot where, again, we see Alaska.</p></li>
-<li><p>In Chapter 10, we will learn about leverage values, and we see that Alaska has a very high Cook’s distance (<code>.cooksd</code>) and a high leverage (<code>.hat</code>).</p>
+<p>The only worry is the expenditures residual plot where, again, we see
+Alaska.</p></li>
+<li><p>In Chapter 10, we will learn about leverage values, and we see
+that Alaska has a very high Cook’s distance (<code>.cooksd</code>) and a
+high leverage (<code>.hat</code>).</p>
 <pre class="r"><code>a_rich %&gt;%
   bind_cols(select(sat, State)) %&gt;%
   select(State, .cooksd, .hat) %&gt;%
@@ -621,28 +740,45 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 ## 10 Illinois       0.0339 0.106 
 ## # … with 40 more rows</code></pre>
 <ul>
-<li><p>A high leverage is typically above <span class="math inline">\(2p/n\)</span>, or in this case <span class="math inline">\(2 * 7 / 50 = 0.28\)</span></p></li>
+<li><p>A high leverage is typically above <span
+class="math inline">\(2p/n\)</span>, or in this case <span
+class="math inline">\(2 * 7 / 50 = 0.28\)</span></p></li>
 <li><p>A high Cook’s distance is around or above 1.</p></li>
 </ul></li>
-<li><p>Let’s remove Alaska. This is probably OK since Alaska uses expenditures on things like long distance travel for teachers, and higher heating bills, which do not have a direct effect on educational attainment. Thus, this expenditure value is likely not representative of our objective.</p>
+<li><p>Let’s remove Alaska. This is probably OK since Alaska uses
+expenditures on things like long distance travel for teachers, and
+higher heating bills, which do not have a direct effect on educational
+attainment. Thus, this expenditure value is likely not representative of
+our objective.</p>
 <pre class="r"><code>sat &lt;- filter(sat, State != &quot;Alaska&quot;)</code></pre></li>
-<li><p>We would go through the above steps again to see if everything looks good in our rich model.</p></li>
-<li><p>This is also the stage where we would include quadratic terms, do other variable transformations, etc.</p></li>
+<li><p>We would go through the above steps again to see if everything
+looks good in our rich model.</p></li>
+<li><p>This is also the stage where we would include quadratic terms, do
+other variable transformations, etc.</p></li>
 </ul>
 </div>
 </div>
 <div id="step-6-automated-variable-selection" class="section level1">
 <h1>Step 6: Automated Variable Selection</h1>
 <ul>
-<li><p>If appropriate, use an automatic variable selection technique to choose a suitable subset of explanatory variables.</p></li>
-<li><p>An automatic variable selection technique has a criterion where a higher or lower value indicates a better fit.</p></li>
-<li><p>The computer adds/deletes variables from the model until it reaches a point where it cannot increase the criterion any more.</p></li>
+<li><p>If appropriate, use an automatic variable selection technique to
+choose a suitable subset of explanatory variables.</p></li>
+<li><p>An automatic variable selection technique has a criterion where a
+higher or lower value indicates a better fit.</p></li>
+<li><p>The computer adds/deletes variables from the model until it
+reaches a point where it cannot increase the criterion any
+more.</p></li>
 <li><p>The selected model is considered the “best” one.</p></li>
-<li><p>You need to make sure your “rich” model has no major issues before implementing these approaches.</p></li>
-<li><p>Most statisticians dislike automatic variable selection approaches, since they have bad sampling properties, but they can be useful to</p>
+<li><p>You need to make sure your “rich” model has no major issues
+before implementing these approaches.</p></li>
+<li><p>Most statisticians dislike automatic variable selection
+approaches, since they have bad sampling properties, but they can be
+useful to</p>
 <ol style="list-style-type: decimal">
-<li>Control for many predictors when your objective is the relationship between a couple key predictors and a response variables, and</li>
-<li>Fishing for hypotheses, as long as you don’t take your results too seriously and always hedge when you present results.</li>
+<li>Control for many predictors when your objective is the relationship
+between a couple key predictors and a response variables, and</li>
+<li>Fishing for hypotheses, as long as you don’t take your results too
+seriously and always hedge when you present results.</li>
 </ol></li>
 </ul>
 <div id="criteria" class="section level2">
@@ -654,58 +790,91 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 <ul>
 <li>Lower AIC is better.</li>
 <li>Fit (in terms of SSE) + penalty on the number of parameters.</li>
-<li>As <span class="math inline">\(p\)</span> increases, SSE decreases, but this is possibly offset by the penalty.</li>
-<li>This is the criterion base R includes by default for stepwise procedures.</li>
+<li>As <span class="math inline">\(p\)</span> increases, SSE decreases,
+but this is possibly offset by the penalty.</li>
+<li>This is the criterion base R includes by default for stepwise
+procedures.</li>
 </ul></li>
-<li>BIC (SBC): The Bayesian information Criterion (aka Schwarz’s Bayesian Criterion) penalizes the parameters a little more than AIC. <span class="math display">\[
+<li>BIC (SBC): The Bayesian information Criterion (aka Schwarz’s
+Bayesian Criterion) penalizes the parameters a little more than AIC.
+<span class="math display">\[
   BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
   \]</span>
 <ul>
 <li>Lower BIC is better.</li>
 <li>Again, fit + penalty.</li>
-<li>As <span class="math inline">\(p\)</span> increases, SSE decreases, but this is possibly offset by the penalty.</li>
-<li>Better than AIC when you have not been as careful about deleting redundant predictors.</li>
+<li>As <span class="math inline">\(p\)</span> increases, SSE decreases,
+but this is possibly offset by the penalty.</li>
+<li>Better than AIC when you have not been as careful about deleting
+redundant predictors.</li>
 </ul></li>
-<li>Mallows <span class="math inline">\(C_p\)</span> <span class="math display">\[
-  C_p = p + (n-p)\frac{\hat{\sigma}^2 - \hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
+<li>Mallows <span class="math inline">\(C_p\)</span> <span
+class="math display">\[
+  C_p = p + (n-p)\frac{\hat{\sigma}^2 -
+\hat{\sigma}^2_{full}}{\hat{\sigma}^2_{full}},
   \]</span>
 <ul>
-<li><span class="math inline">\(\hat{\sigma}^2\)</span> is the MSE under the model under consideration.</li>
-<li><span class="math inline">\(\hat{\sigma}^2_{full}\)</span> is the MSE under the model that uses all possible explanatory variables.</li>
+<li><span class="math inline">\(\hat{\sigma}^2\)</span> is the MSE under
+the model under consideration.</li>
+<li><span class="math inline">\(\hat{\sigma}^2_{full}\)</span> is the
+MSE under the model that uses all possible explanatory variables.</li>
 <li>Lower <span class="math inline">\(C_p\)</span> is better.</li>
-<li>Mallow’s <span class="math inline">\(C_p\)</span> is an estimate of the “Total Mean Squared Error” which is the sum of the bias squared and the variance. Small values of Mallow’s <span class="math inline">\(C_p\)</span> indicate that the model both has low bias and low variance.</li>
-<li>If there is no bias, then <span class="math inline">\(C_p \approx p\)</span> (since <span class="math inline">\(\hat{\sigma}^2 \approx \hat{\sigma}^2_{full}\)</span>). So all models withere <span class="math inline">\(C_p\)</span> is near <span class="math inline">\(p\)</span> are considered “good” models.</li>
+<li>Mallow’s <span class="math inline">\(C_p\)</span> is an estimate of
+the “Total Mean Squared Error” which is the sum of the bias squared and
+the variance. Small values of Mallow’s <span
+class="math inline">\(C_p\)</span> indicate that the model both has low
+bias and low variance.</li>
+<li>If there is no bias, then <span class="math inline">\(C_p \approx
+p\)</span> (since <span class="math inline">\(\hat{\sigma}^2 \approx
+\hat{\sigma}^2_{full}\)</span>). So all models withere <span
+class="math inline">\(C_p\)</span> is near <span
+class="math inline">\(p\)</span> are considered “good” models.</li>
 </ul></li>
-<li><span class="math inline">\(R^2\)</span>: <span class="math display">\[
+<li><span class="math inline">\(R^2\)</span>: <span
+class="math display">\[
   R^2 = 1 - \frac{SSE}{SSTO}
   \]</span>
 <ul>
-<li>Higher <span class="math inline">\(R^2\)</span> is better (explains more variation..</li>
+<li>Higher <span class="math inline">\(R^2\)</span> is better (explains
+more variation..</li>
 <li>Do not use this one for variable selection.</li>
-<li>Recall that <span class="math inline">\(R^2\)</span> will decrease as we add more predictors, so we cannot use it to compare models with differen numbers of predictors.</li>
+<li>Recall that <span class="math inline">\(R^2\)</span> will decrease
+as we add more predictors, so we cannot use it to compare models with
+differen numbers of predictors.</li>
 </ul></li>
-<li>Adjusted <span class="math inline">\(R_a^2\)</span>: Look at whether there is a “plateau” when you add predictors. <span class="math display">\[
+<li>Adjusted <span class="math inline">\(R_a^2\)</span>: Look at whether
+there is a “plateau” when you add predictors. <span
+class="math display">\[
   R^2_a = 1 - \frac{SSE/(n-p)}{SSTO/(n-1)}
   \]</span>
 <ul>
-<li>Higher <span class="math inline">\(R^2_a\)</span> is better (explains more variation).</li>
+<li>Higher <span class="math inline">\(R^2_a\)</span> is better
+(explains more variation).</li>
 </ul></li>
 </ul>
 </div>
 <div id="automated-procedures" class="section level2">
 <h2>Automated Procedures</h2>
 <ul>
-<li><p>“Best” subsets: Look at all possible models given the set of predictors, choose the one with the best criterion.</p></li>
-<li><p>Forward/Backward Selection: Start with a model with no predictors <span class="math inline">\(Y_i = \beta_0 + \epsilon_i\)</span>.</p>
+<li><p>“Best” subsets: Look at all possible models given the set of
+predictors, choose the one with the best criterion.</p></li>
+<li><p>Forward/Backward Selection: Start with a model with no predictors
+<span class="math inline">\(Y_i = \beta_0 + \epsilon_i\)</span>.</p>
 <ul>
-<li>Fit all models where you <strong>add</strong> a predictor. Choose the one that improves the criterion the best.</li>
-<li>Fit all models where you <strong>remove</strong> a predictor. Choose the one that improves the criterion the best.<br />
+<li>Fit all models where you <strong>add</strong> a predictor. Choose
+the one that improves the criterion the best.</li>
+<li>Fit all models where you <strong>remove</strong> a predictor. Choose
+the one that improves the criterion the best.<br />
 </li>
 <li>Iterate until you cannot add/remove any more predictors.</li>
 </ul></li>
-<li><p>The forward/backward approach is not gauranteed to find the model with the “best” criterion.</p></li>
-<li><p>When you add/subtract a categorical variable, you should add/subtract all of the indicators associated with that categorical variable.</p></li>
-<li><p>Make sure you also include first-order terms if second order terms are kept in the model.</p></li>
+<li><p>The forward/backward approach is not gauranteed to find the model
+with the “best” criterion.</p></li>
+<li><p>When you add/subtract a categorical variable, you should
+add/subtract all of the indicators associated with that categorical
+variable.</p></li>
+<li><p>Make sure you also include first-order terms if second order
+terms are kept in the model.</p></li>
 </ul>
 </div>
 </div>
@@ -713,15 +882,22 @@ qplot(x = .fitted, y = .resid, data = a_rich) + geom_hline(yintercept = 0)</code
 <h1>Step 7: Proceed with Caution</h1>
 <ul>
 <li><p>Proceed with analysis with chosen explanatory variables.</p></li>
-<li><p>Evaluate residual plots for your final model. Perform other model checks.</p></li>
-<li><p>Tell stories with the data using <span class="math inline">\(p\)</span>-values, coefficient estimates, confidence intervals, coefficients of determination, etc…</p></li>
-<li><p>Step 7 is what we’ve been discussing this whole semester.</p></li>
+<li><p>Evaluate residual plots for your final model. Perform other model
+checks.</p></li>
+<li><p>Tell stories with the data using <span
+class="math inline">\(p\)</span>-values, coefficient estimates,
+confidence intervals, coefficients of determination, etc…</p></li>
+<li><p>Step 7 is what we’ve been discussing this whole
+semester.</p></li>
 </ul>
 </div>
 <div id="implementation-in-r" class="section level1">
 <h1>Implementation in R</h1>
 <ul>
-<li><p>You can get a version of AIC, a version of BIC, <span class="math inline">\(R^2\)</span>, and <span class="math inline">\(R_a^2\)</span> via <code>glance()</code> from <code>{broom}</code></p>
+<li><p>You can get a version of AIC, a version of BIC, <span
+class="math inline">\(R^2\)</span>, and <span
+class="math inline">\(R_a^2\)</span> via <code>glance()</code> from
+<code>{broom}</code></p>
 <pre class="r"><code>lm_rich &lt;- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
 glance(lm_rich)  %&gt;%
   select(AIC, BIC, r.squared, adj.r.squared)</code></pre>
@@ -731,10 +907,14 @@ glance(lm_rich)  %&gt;%
 ## 1  453.  468.     0.913         0.900</code></pre></li>
 <li><p>AIC Note:</p>
 <ul>
-<li><p><code>{broom}</code> uses the base <code>AIC()</code> function which returns <span class="math display">\[
+<li><p><code>{broom}</code> uses the base <code>AIC()</code> function
+which returns <span class="math display">\[
   AIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + 2(p+1)
-  \]</span> (the “<span class="math inline">\(p+1\)</span>” comes from including estimation of <span class="math inline">\(\sigma^2\)</span> as a parameter).</p></li>
-<li><p>Use <code>extractAIC()</code> to get the book’s definition of AIC <span class="math display">\[
+  \]</span> (the “<span class="math inline">\(p+1\)</span>” comes from
+including estimation of <span class="math inline">\(\sigma^2\)</span> as
+a parameter).</p></li>
+<li><p>Use <code>extractAIC()</code> to get the book’s definition of AIC
+<span class="math display">\[
   AIC = n\log\left(\frac{SSE}{n}\right) + 2p
   \]</span></p></li>
 <li><p>We can verify the equivalence manually</p>
@@ -746,13 +926,17 @@ AIC(lm_rich) - n - n * log(2 * pi) - 2</code></pre>
 </ul></li>
 <li><p>BIC Note:</p>
 <ul>
-<li><p>Similarly, <code>{broom}</code> uses the <code>AIC()</code> function to get a different version of BIC. <span class="math display">\[
+<li><p>Similarly, <code>{broom}</code> uses the <code>AIC()</code>
+function to get a different version of BIC. <span
+class="math display">\[
   BIC = n\log\left(\frac{SSE}{n}\right) + n + n\log(2\pi) + \log(n)(p+1)
   \]</span></p></li>
-<li><p>Use <code>extractAIC()</code> to get the book’s definition of BIC <span class="math display">\[
+<li><p>Use <code>extractAIC()</code> to get the book’s definition of BIC
+<span class="math display">\[
   BIC = n\log\left(\frac{SSE}{n}\right) + \log(n)p
   \]</span></p></li>
-<li><p>For both functions, to get BIC, set the <code>k</code> argument to be <span class="math inline">\(\log(n)\)</span>.</p></li>
+<li><p>For both functions, to get BIC, set the <code>k</code> argument
+to be <span class="math inline">\(\log(n)\)</span>.</p></li>
 <li><p>We can verify the equivalence manually</p>
 <pre class="r"><code>n &lt;- nrow(sat)
 AIC(lm_rich, k = log(n)) - n - n * log(2 * pi) - log(n)</code></pre>
@@ -760,7 +944,10 @@ AIC(lm_rich, k = log(n)) - n - n * log(2 * pi) - log(n)</code></pre>
 <pre class="r"><code>extractAIC(lm_rich, k = log(n))[[2]]</code></pre>
 <pre><code>## [1] 325.1</code></pre></li>
 </ul></li>
-<li><p>You can get Mallow’s <span class="math inline">\(C_p\)</span> by using <code>extractAIC()</code> and specifying the <code>scale</code> argument to be the estimated residual variance under the <strong>biggest</strong> model.</p>
+<li><p>You can get Mallow’s <span class="math inline">\(C_p\)</span> by
+using <code>extractAIC()</code> and specifying the <code>scale</code>
+argument to be the estimated residual variance under the
+<strong>biggest</strong> model.</p>
 <pre class="r"><code>sigma_full &lt;- sigma(lm_rich)
 lm_smaller &lt;- lm(SAT ~ l_takers + Years + Expend + Rank, data = sat)
 extractAIC(fit = lm_smaller, scale = sigma_full^2)[[2]]</code></pre>
@@ -772,15 +959,22 @@ sigma_full &lt;- sigma(lm_rich)
 sigma_reduced &lt;- sigma(lm_smaller)
 p + (n - p) * (sigma_reduced^2 - sigma_full^2) / sigma_full^2</code></pre>
 <pre><code>## [1] 4.031</code></pre></li>
-<li><p>Use the <code>step()</code> function to choose a model by AIC/BIC via automated search.</p>
+<li><p>Use the <code>step()</code> function to choose a model by AIC/BIC
+via automated search.</p>
 <ul>
-<li>The <code>object</code> argument is the intial model that it will search from.</li>
-<li>The <code>scope</code> argument specifies the simplest and the most complicated models possible.
+<li>The <code>object</code> argument is the intial model that it will
+search from.</li>
+<li>The <code>scope</code> argument specifies the simplest and the most
+complicated models possible.
 <ul>
-<li>If you give it a single formula, this is the most complicated model possible.</li>
-<li>If you give it a list of formulas, these are the most complicated and simplest models possible.</li>
+<li>If you give it a single formula, this is the most complicated model
+possible.</li>
+<li>If you give it a list of formulas, these are the most complicated
+and simplest models possible.</li>
 </ul></li>
-<li>You can use the output of <code>step()</code> like the output of <code>lm()</code> (via <code>tidy()</code>, <code>augment()</code>, etc).</li>
+<li>You can use the output of <code>step()</code> like the output of
+<code>lm()</code> (via <code>tidy()</code>, <code>augment()</code>,
+etc).</li>
 </ul></li>
 <li><p>To use both a lower and upper bound, do:</p>
 <pre class="r"><code>lm_init &lt;- lm(SAT ~ Income + Years, data = sat)
@@ -909,7 +1103,8 @@ sout &lt;- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Publ
 ## 3 Rank            4.40     1.90       2.32 0.0252    
 ## 4 Expend          4.00     0.764      5.23 0.00000452
 ## 5 l_takers      -38.1     11.9       -3.20 0.00257</code></pre></li>
-<li><p>Modify the <code>k</code> argument to be <span class="math inline">\(log(n)\)</span> to fit by BIC</p>
+<li><p>Modify the <code>k</code> argument to be <span
+class="math inline">\(log(n)\)</span> to fit by BIC</p>
 <pre class="r"><code>sout &lt;- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank, k = log(nrow(sat)))</code></pre>
 <pre><code>## Start:  AIC=399.6
 ## SAT ~ Income + Years
@@ -979,7 +1174,8 @@ sout &lt;- step(object = lm_init, scope = SAT ~ l_takers + Income + Years + Publ
 ## 3 Rank            4.40     1.90       2.32 0.0252    
 ## 4 Expend          4.00     0.764      5.23 0.00000452
 ## 5 l_takers      -38.1     11.9       -3.20 0.00257</code></pre></li>
-<li><p>Modify the <code>scale</code> argument to fit by <span class="math inline">\(C_p\)</span></p>
+<li><p>Modify the <code>scale</code> argument to fit by <span
+class="math inline">\(C_p\)</span></p>
 <pre class="r"><code>lm_rich &lt;- lm(SAT ~ l_takers + Income + Years + Public + Expend + Rank, data = sat)
 sigma_full &lt;- sigma(lm_rich)
 sout &lt;- step(object = lm_init, scale = sigma_full^2, scope = SAT ~ l_takers + Income + Years + Public + Expend + Rank)</code></pre>
@@ -1056,10 +1252,29 @@ sout &lt;- step(object = lm_init, scale = sigma_full^2, scope = SAT ~ l_takers +
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 <p>The following is from the <em>Statistical Sleuth</em>.</p>
-<p>Southwestern U.S. desert wildflower enthusiasts know that a triggering rainfall between late September and early December and regular rains through March often lead to a good wildflower show in the spring. The dataset for this exercise might help with the prediction. It includes monthly rainfalls from September to March and the subjectively rated quality of the following spring wildflower display for each of a number of years at each of four desert locations in the southwestern United States (Upland Sonoran Desert near Tucson, the lower Colorado River Valley section of the Sonoran Desert, the Baja California region of the Sonoran Desert, and the Mojave Desert). The quality of the display was judged subjectively with ordered rating categories of poor, fair, good, great, and spectacular. The column labeled <code>Score</code> is a numerical representation of the rating, with <code>0</code> for poor, <code>1</code> for fair, <code>2</code> for good, <code>3</code> for great, and <code>4</code> for spectacular. Although this is a made-up number and the suitability of regression for such a discrete response is questionable, an informal regression analysis might nevertheless be helpful for casual prediction. Variables include</p>
+<p>Southwestern U.S. desert wildflower enthusiasts know that a
+triggering rainfall between late September and early December and
+regular rains through March often lead to a good wildflower show in the
+spring. The dataset for this exercise might help with the prediction. It
+includes monthly rainfalls from September to March and the subjectively
+rated quality of the following spring wildflower display for each of a
+number of years at each of four desert locations in the southwestern
+United States (Upland Sonoran Desert near Tucson, the lower Colorado
+River Valley section of the Sonoran Desert, the Baja California region
+of the Sonoran Desert, and the Mojave Desert). The quality of the
+display was judged subjectively with ordered rating categories of poor,
+fair, good, great, and spectacular. The column labeled
+<code>Score</code> is a numerical representation of the rating, with
+<code>0</code> for poor, <code>1</code> for fair, <code>2</code> for
+good, <code>3</code> for great, and <code>4</code> for spectacular.
+Although this is a made-up number and the suitability of regression for
+such a discrete response is questionable, an informal regression
+analysis might nevertheless be helpful for casual prediction. Variables
+include</p>
 <ul>
 <li><code>Year</code>: year of observed wildflower season</li>
-<li><code>Region</code>: a factor variable with 4 levels: “baja”, “colorado”, “mojave”, and “upland”</li>
+<li><code>Region</code>: a factor variable with 4 levels: “baja”,
+“colorado”, “mojave”, and “upland”</li>
 <li><code>Sep</code>: the September rainfall, in inches</li>
 <li><code>Oct</code>: the October rainfall, in inches</li>
 <li><code>Nov</code>: the November rainfall, in inches</li>
@@ -1067,9 +1282,14 @@ sout &lt;- step(object = lm_init, scale = sigma_full^2, scope = SAT ~ l_takers +
 <li><code>Jan</code>: the January rainfall, in inches</li>
 <li><code>Feb</code>: the February rainfall, in inches</li>
 <li><code>Mar</code>: the March rainfall, in inches</li>
-<li><code>Total</code>: the total rainfall from September through March, in inches</li>
-<li><code>Rating</code>: a factor with a subjective assessment of the quality of wildflower bloom with levels “FAIR”, “GOOD”, “GREAT”, “POOR”, and “SPECTACULAR”</li>
-<li><code>Score</code>: a numerical variable corresponding to the order of rating categories, with Poor=0, Fair=1, Good=2, Great=3, and Spectacular=4</li>
+<li><code>Total</code>: the total rainfall from September through March,
+in inches</li>
+<li><code>Rating</code>: a factor with a subjective assessment of the
+quality of wildflower bloom with levels “FAIR”, “GOOD”, “GREAT”, “POOR”,
+and “SPECTACULAR”</li>
+<li><code>Score</code>: a numerical variable corresponding to the order
+of rating categories, with Poor=0, Fair=1, Good=2, Great=3, and
+Spectacular=4</li>
 </ul>
 <p>You can load these data into R via</p>
 <pre class="r"><code>library(Sleuth3)
@@ -1091,14 +1311,25 @@ glimpse(ex1221)</code></pre>
 ## $ Rating &lt;fct&gt; POOR, POOR, POOR, POOR, POOR, POOR, POOR, GOOD, GOOD, POOR, POO…
 ## $ Score  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2, 3, 3, 0, 1, 0, 3, 2, 0, …</code></pre>
 <ol style="list-style-type: decimal">
-<li>Perform an exploratory data analysis on these data. What do you see?</li>
-<li>Fit a rich model to these data, determine what variable transformations might be necessary.</li>
-<li>Apply these variable transformations until you obtain a rich model that appears to meet the assumptions of the linear model.</li>
-<li>Use an automatic variable selection technique to come up with a (or a couple) model(s) from which to choose a final predictive model.</li>
+<li>Perform an exploratory data analysis on these data. What do you
+see?</li>
+<li>Fit a rich model to these data, determine what variable
+transformations might be necessary.</li>
+<li>Apply these variable transformations until you obtain a rich model
+that appears to meet the assumptions of the linear model.</li>
+<li>Use an automatic variable selection technique to come up with a (or
+a couple) model(s) from which to choose a final predictive model.</li>
 <li>State your final predictive model, and state any conclusions.</li>
-<li>What is the predicted quality score for a season with these rainfall amounts in the Upland region: Sep: 0.45, Oct: 0.02, Nov: 0.80, Dec: 0.76, Jan: 0.17, Feb: 1.22, and Mar: 0.37? Appropriately quantify your uncertainty in these predictions.</li>
+<li>What is the predicted quality score for a season with these rainfall
+amounts in the Upland region: Sep: 0.45, Oct: 0.02, Nov: 0.80, Dec:
+0.76, Jan: 0.17, Feb: 1.22, and Mar: 0.37? Appropriately quantify your
+uncertainty in these predictions.</li>
 </ol>
-<p>Although the conditions are far from the ideal normality assumptions for the justification of the prediction interval, the rough prediction interval might be a useful way to clarify the precision with which the quality score can actually be predicted. (Data from Arizona-Sonora Desert Museum, “Wildflower Flourishes and Flops—a 50-Year History,”)</p>
+<p>Although the conditions are far from the ideal normality assumptions
+for the justification of the prediction interval, the rough prediction
+interval might be a useful way to clarify the precision with which the
+quality score can actually be predicted. (Data from Arizona-Sonora
+Desert Museum, “Wildflower Flourishes and Flops—a 50-Year History,”)</p>
 </div>
 
 

@@ -43,12 +43,14 @@ klippy::klippy()
 
 - These data look like a quadratic fit could help
     ```{r, message = FALSE, warning = FALSE}
-    qplot(x = age, y = mass, data = muscle) +
+    ggplot(data = muscle, mapping = aes(x = age, y = mass)) +
+      geom_point() +
       geom_smooth(se = FALSE)
     
     lm_musc <- lm(mass ~ age, data = muscle)
     a_musc <- augment(lm_musc)
-    qplot(x = .fitted, y = .resid, data = a_musc) +
+    ggplot(data = a_musc, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0, lty = 2, col = 2)
     ```
     
@@ -157,7 +159,8 @@ klippy::klippy()
 
 - You can use `I()` inside `geom_smooth()` to show quadratic terms directly on the plot
     ```{r}
-    qplot(x = age, y = mass, data = muscle) +
+    ggplot(data = muscle, mapping = aes(x = age, y = mass)) +
+      geom_point() +
       geom_smooth(method = lm,
                   formula = y ~ x + I(x^2),
                   se = FALSE)
@@ -272,8 +275,8 @@ From the *Statistical Sleuth*:
       ggplot(mapping = aes(x = size, y = months, color = Type)) +
       geom_point() +
       theme_classic() +
-      geom_abline(slope = -0.102, intercept = 33.874, color = "#005AB5", lwd = 1.5) +
-      geom_abline(slope = -0.102, intercept = 41.93, color = "#DC3220", lwd = 1.5) +
+      geom_abline(slope = -0.102, intercept = 33.874, color = "#005AB5", linewidth = 1.5) +
+      geom_abline(slope = -0.102, intercept = 41.93, color = "#DC3220", linewidth = 1.5) +
       xlab("Size of Firm (millions of dollars)") +
       ylab("Number of Months Elapsed") +
       scale_color_manual(values = c("#005AB5", "#DC3220")) ->
@@ -370,9 +373,9 @@ From the *Statistical Sleuth*:
       ylim(range(log(mpg$cty))) +
       xlab("Engine Displacement (liters)") +
       ylab("log(City mpg)") +
-      geom_abline(slope = -0.14256, intercept = 3.37044+0.3, color = "#005AB5", lwd = 1.5) +
-      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.1, color = "#DC3220", lwd = 1.5) +
-      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.3, color = "#FFC107", lwd = 1.5) +
+      geom_abline(slope = -0.14256, intercept = 3.37044+0.3, color = "#005AB5", linewidth = 1.5) +
+      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.1, color = "#DC3220", linewidth = 1.5) +
+      geom_abline(slope = -0.14256, intercept = 3.37044 - 0.3, color = "#FFC107", linewidth = 1.5) +
       theme_classic() +
       theme(axis.text.y = element_blank(),
             axis.ticks.y = element_blank()) ->
@@ -520,15 +523,17 @@ From the *Statistical Sleuth*:
     newdf <- expand.grid(wt = wt_seq, drat = dr_seq)
     newdf$mpg <- predict(object = lm_mt, newdata = newdf)
     newdf <- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
-    qplot(x = drat, y = mpg, color = wt, data = newdf, geom = "line")
-    
+    ggplot(data = newdf, mapping = aes(x = drat, y = mpg, color = wt)) +
+      geom_line()
+
     ## wt versus mpg at different levels of drat
     wt_seq <- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
     dr_seq <- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
     newdf <- expand.grid(wt = wt_seq, drat = dr_seq)
     newdf$mpg <- predict(object = lm_mt, newdata = newdf)
     newdf <- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
-    qplot(x = wt, y = mpg, color = drat, data = newdf, geom = "line")
+    ggplot(data = newdf, mapping = aes(x = wt, y = mpg, color = drat)) +
+      geom_line()
     ```
 
 - So we could tell a client something like:
@@ -538,7 +543,8 @@ From the *Statistical Sleuth*:
 - BUT, we have to be emphasize the scope of our conclusions. E.g. there are no cars with a rear-axle ratio of 3 and a weight of 2.
 
     ```{r}
-    qplot(x = wt, y = drat, data = mtcars)
+    ggplot(data = mtcars, mapping = aes(x = wt, y = drat)) +
+      geom_point()
     ```
 
 
@@ -583,8 +589,9 @@ From the *Statistical Sleuth*:
 - But it is better to just interpret interactions here by making conditional effects plots. This is the default output of `geom_smooth()` when you color code by a categorical variable:
 
     ```{r, message = FALSE}
-    qplot(x = displ, y = cty, color = drv, data = mpg) +
-      geom_smooth(method = "lm", se = FALSE) +
+    ggplot(data = mpg, mapping = aes(x = displ, y = cty, color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE) +
       scale_y_log10()
     ```
 
@@ -726,7 +733,8 @@ From the *Statistical Sleuth*:
       newdf
     newdf$cycles <- predict(object = lm_full, newdata = newdf)
     newdf <- mutate(newdf, charge = as_factor(charge))
-    qplot(x = temp, y = cycles, color = charge, data = newdf, geom = "line")
+    ggplot(data = newdf, mapping = aes(x = temp, y = cycles, color = charge)) +
+      geom_line()
     
     ## Conditional effects plot for temperature
     temp_seq <- unique(power$temp)
@@ -737,7 +745,8 @@ From the *Statistical Sleuth*:
       newdf
     newdf$cycles <- predict(object = lm_full, newdata = newdf)
     newdf <- mutate(newdf, temp = as_factor(temp))
-    qplot(x = charge, y = cycles, color = temp, data = newdf, geom = "line")
+    ggplot(data = newdf, mapping = aes(x = charge, y = cycles, color = temp)) +
+      geom_line()
     ```
 
 
@@ -760,8 +769,9 @@ From the *Statistical Sleuth*:
 1. Run an exploratory data analysis. Does one line seem to produce less scrap than the other, controlling for speed? Does the association between scrap and speed differ between the different lines?
 
     ```{r, echo = FALSE, eval = FALSE, message = FALSE}
-    qplot(x = speed, y = scrap, color = line, data = soap) +
-      geom_smooth(method = "lm", se = FALSE)
+    ggplot(data = soap, mapping = aes(x = speed, y = scrap, color = line)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE)
     ```
     
     ```{block, eval = FALSE, echo = FALSE}
@@ -796,16 +806,20 @@ From the *Statistical Sleuth*:
     
     ```{r, echo = FALSE, eval = FALSE}
     aout <- augment(lm_int)
-    qplot(x = .fitted, y = .resid, color = line, data = aout) +
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .resid, color = line)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     
-    qplot(x = line, y = .resid, data = aout, geom = "boxplot") +
+    ggplot(data = aout, mapping = aes(x = line, y = .resid)) +
+      geom_boxplot() +
       geom_hline(yintercept = 0)
     
-    qplot(x = speed, y = .resid, data = aout) +
+    ggplot(data = aout, mapping = aes(x = speed, y = .resid, color = line)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     
-    qplot(sample = .resid, data = aout, geom = "qq") +
+    ggplot(data = aout, mapping = aes(sample = .resid)) +
+      geom_qq() +
       geom_qq_line()
     ```
 

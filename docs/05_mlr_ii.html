@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-09-21" />
+<meta name="date" content="2022-12-01" />
 
 <title>MLR: Practical Considerations</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -187,8 +187,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -196,16 +196,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -353,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR: Practical Considerations</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-09-21</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -458,7 +451,8 @@ units.</p></li>
 difference, in terms of the distribution of human heights.</p></li>
 <li><p>A 1 mile difference in height is unrealistic.</p></li>
 <li><p>A 1 inch difference in height is more reasonable.</p>
-<pre class="r"><code>qplot(x = height_in, data = earnings, bins = 20)</code></pre>
+<pre class="r"><code>ggplot(data = earnings, mapping = aes(x = height_in)) +
+  geom_histogram(bins = 20)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>You can use the standard deviation of the variables to help guide
 you. If the standard deviation is between 0.5 and 10, then you have a
@@ -516,7 +510,8 @@ rule of thumb above.</p>
 <pre class="r"><code>library(Sleuth3)
 data(&quot;ex0823&quot;)
 wine &lt;- ex0823
-qplot(x = Wine, y = Mortality, data = wine)</code></pre>
+ggplot(data = wine, mapping = aes(x = Wine, y = Mortality)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-8-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Exercise</strong>: World record mile time progressions
 from 1913 to 1999. Data are from Figure A.1 of ROS. Variables
@@ -582,9 +577,13 @@ glimpse(select(earnings, earn_z, height_z))</code></pre>
 ## $ earn_z   &lt;dbl&gt; 1.28053, 1.72435, 0.39290, 0.17099, 1.28053, 1.81312, 1.32492…
 ## $ height_z &lt;dbl&gt; 1.9393, -0.1484, -0.6704, -0.4094, -0.9314, 0.3735, -0.9314, …</code></pre>
 <p>Centering and scaling does not change the underlying information.</p>
-<pre class="r"><code>qplot(x = height, y = earn, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = earnings, mapping = aes(x = height, y = earn)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qplot(x = height_z, y = earn_z, data = earnings) + geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+<pre class="r"><code>ggplot(data = earnings, mapping = aes(x = height_z, y = earn_z)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-17-2.png" width="384" style="display: block; margin: auto;" />
 But this will make interpretation a little easier.</p>
 <pre class="r"><code>lm_earn_z &lt;- lm(earn_z ~ height_z, data = earnings)
@@ -592,7 +591,7 @@ tidy(lm_earn_z, conf.int = TRUE)</code></pre>
 <pre><code>## # A tibble: 2 × 7
 ##   term        estimate std.error statistic  p.value conf.low conf.high
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept) 4.70e-16    0.0226  2.08e-14 1.00e+ 0  -0.0443    0.0443
+## 1 (Intercept) 4.57e-16    0.0226  2.02e-14 1.00e+ 0  -0.0443    0.0443
 ## 2 height_z    2.71e- 1    0.0226  1.20e+ 1 5.42e-32   0.227     0.316</code></pre>
 <p>So a 1 standard deviation difference in height corresponds to 0.27
 standard deviations higher earnings.</p></li>
@@ -1166,7 +1165,9 @@ bats of about the same mass.”</p></li>
 non-echolocating bats of the same mass.</p>
 <pre class="r"><code>echo %&gt;%
   filter(Type != &quot;non-echolocating birds&quot;) %&gt;%
-  qplot(x = Type, y = l_mass, data = ., ylab = &quot;log(Mass)&quot;)</code></pre>
+  ggplot(mapping = aes(x = Type, y = l_mass)) +
+  geom_point() +
+  ylab(&quot;log(Mass)&quot;)</code></pre>
 <p><img src="05_mlr_ii_files/figure-html/unnamed-chunk-45-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>This is an example of multicollinearity.</p>
 <p>So this interpretation is suspect.</p></li>

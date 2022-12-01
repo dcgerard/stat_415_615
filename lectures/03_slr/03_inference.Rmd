@@ -368,7 +368,8 @@ klippy::klippy()
     ```{r, echo = FALSE, eval = FALSE}
     alpha <- seq(from = 0.01, to = 0.1, length.out = 100)
     u <- qt(1 - alpha, 10)
-    qplot(alpha, u, geom = "line")
+    ggplot(data = data.frame(alpha = alpha, u = u), mapping =  aes(x = alpha, y = u)) +
+      geom_line()
     ```
     ```{block, eval = FALSE, echo = FALSE}
     As $\alpha$ increases, the multiplier to the standard error decreases, making the width of the confidence intervals smaller. Since the confidence level is $1-\alpha$, this means that as as the confidence level increases, the width of the confidence interval increases.
@@ -1012,7 +1013,8 @@ Residuals    SSE  dfE
         df$y <- (df$x-0.3)^2
         lmtemp <- lm(y ~ x, data = df)
         
-        qplot(x, y, data = df) +
+        ggplot(data = df, mapping = aes(x = x, y = y)) +
+          geom_point() +
           ggtitle(TeX(paste0("$R^2 = $", round(summary(lmtemp)$r.square, digits = 2))))
         ```
     - $R^2$ only tells you about the *linear* relationship, the $R^2$ could be 0 but the relationship is very strongly curved.
@@ -1022,7 +1024,8 @@ Residuals    SSE  dfE
         df$y <- (df$x-0.5)^2
         lmtemp <- lm(y ~ x, data = df)
         
-        qplot(x, y, data = df) +
+        ggplot(data = df, mapping = aes(x = x, y = y)) +
+          geom_point() +
           ggtitle(TeX(paste0("$R^2 = $", round(summary(lmtemp)$r.square, digits = 2))))
         ```
         
@@ -1041,7 +1044,8 @@ Residuals    SSE  dfE
     for (i in seq_along(sigseq)) {
       y <- x + rnorm(length(x), sd = sigseq[[i]])
       r2 <- summary(lm(y ~ x))$r.square
-      qplot(x = x, y = y) +
+      ggplot(data = data.frame(x = x, y = y), mapping = aes(x = x, y = y)) +
+        geom_point() +
         ggtitle(TeX(paste0("$R^2 = ", round(r2, digits = 2), "$"))) +
         theme(axis.text = element_blank(),
               axis.title = element_blank(),

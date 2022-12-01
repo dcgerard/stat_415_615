@@ -67,14 +67,16 @@ klippy::klippy()
 - **The first thing you should always do is plot your data**.
 
     ```{r}
-    qplot(x = alpha, y = act, data = plut)
+    ggplot(data = plut, mapping = aes(x = alpha, y = act)) +
+      geom_point()
     ```
 
 - There is one clear outlier. If I was collaborating with someone who collected the data, I would ask them about that point. The authors did so and it was determined that lab conditions were not properly maintained for that observation, so we'll remove it.
 
     ```{r}
     plut <- filter(plut, !(alpha == 0  & act > 0.1))
-    qplot(x = alpha, y = act, data = plut)
+    ggplot(data = plut, mapping = aes(x = alpha, y = act)) +
+      geom_point()
     ```
     
     
@@ -82,7 +84,8 @@ klippy::klippy()
 
     ```{r, message = FALSE, warning = FALSE}
     plut <- filter(plut, !(alpha == 0  & act > 0.1))
-    qplot(x = alpha, y = act, data = plut) +
+    ggplot(data = plut, mapping = aes(x = alpha, y = act)) +
+      geom_point() +
       geom_smooth(se = FALSE)
     ```
 
@@ -91,7 +94,8 @@ klippy::klippy()
     ```{r}
     lmout <- lm(act ~ alpha, data = plut)
     aout <- augment(lmout)
-    qplot(x = .fitted, y = .resid, data = aout) +
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     ```
 
@@ -109,14 +113,16 @@ klippy::klippy()
 - However, if the goal is to provide prediction, along with interval estimates of those predictions, then I would try working a little harder. First, a log-transformation of $y$ might help, but we couldn't do a log transformation of $x$ because we have 0 counts. Adding a small constant doesn't seem to help much
 
     ```{r, message = FALSE, warning = FALSE}
-    qplot(x = log(alpha + 1), y = log(act), data = plut) +
-          geom_smooth(se = FALSE)
+    ggplot(data = plut, mapping = aes(x = log(alpha + 1), y = log(act))) +
+      geom_point() +
+      geom_smooth(se = FALSE)
     ```
 
 - We could try a different transformation, like a square root:
     ```{r, message = FALSE, warning = FALSE}
-    qplot(x = sqrt(alpha), y = sqrt(act), data = plut) +
-          geom_smooth(se = FALSE)
+    ggplot(data = plut, mapping = aes(x = sqrt(alpha), y = sqrt(act))) +
+      geom_point() +
+      geom_smooth(se = FALSE)
     ```
 
     That does seem to work better.
@@ -128,7 +134,8 @@ klippy::klippy()
     lm_sq <- lm(sq_act ~ sq_alpha, data = plut)
     lm_sq
     aout <- augment(lm_sq)
-    qplot(x = .fitted, y = .resid, data = aout) +
+    ggplot(data = aout, mapping = aes(x = .fitted, y = .resid)) +
+      geom_point() +
       geom_hline(yintercept = 0)
     ```
     
@@ -161,7 +168,6 @@ klippy::klippy()
                     lwr = lwr^2,
                     upr = upr^2)
     ```
-
 
 - I would work hard on a visualization to my client (see STAT 412/612)
 

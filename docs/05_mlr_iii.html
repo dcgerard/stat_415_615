@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-11-10" />
+<meta name="date" content="2022-12-01" />
 
 <title>MLR III: Special Predictors</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-11-10</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -380,12 +380,14 @@ glimpse(muscle)</code></pre>
 ## $ mass &lt;dbl&gt; 106, 106, 97, 113, 96, 119, 92, 112, 92, 102, 107, 107, 102, 115,…
 ## $ age  &lt;dbl&gt; 43, 41, 47, 46, 45, 41, 47, 41, 48, 48, 42, 47, 43, 44, 42, 55, 5…</code></pre></li>
 <li><p>These data look like a quadratic fit could help</p>
-<pre class="r"><code>qplot(x = age, y = mass, data = muscle) +
+<pre class="r"><code>ggplot(data = muscle, mapping = aes(x = age, y = mass)) +
+  geom_point() +
   geom_smooth(se = FALSE)</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_musc &lt;- lm(mass ~ age, data = muscle)
 a_musc &lt;- augment(lm_musc)
-qplot(x = .fitted, y = .resid, data = a_musc) +
+ggplot(data = a_musc, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() +
   geom_hline(yintercept = 0, lty = 2, col = 2)</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>A quadratic regression model with one predictor variable is <span
@@ -499,7 +501,8 @@ predict(object = lm_mass, newdata = newdf)</code></pre>
 ## 77.37</code></pre></li>
 <li><p>You can use <code>I()</code> inside <code>geom_smooth()</code> to
 show quadratic terms directly on the plot</p>
-<pre class="r"><code>qplot(x = age, y = mass, data = muscle) +
+<pre class="r"><code>ggplot(data = muscle, mapping = aes(x = age, y = mass)) +
+  geom_point() +
   geom_smooth(method = lm,
               formula = y ~ x + I(x^2),
               se = FALSE)</code></pre>
@@ -927,7 +930,8 @@ dr_seq &lt;- seq(min(mtcars$drat), max(mtcars$drat), length.out = 100)
 newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
-qplot(x = drat, y = mpg, color = wt, data = newdf, geom = &quot;line&quot;)</code></pre>
+ggplot(data = newdf, mapping = aes(x = drat, y = mpg, color = wt)) +
+  geom_line()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## wt versus mpg at different levels of drat
 wt_seq &lt;- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
@@ -935,7 +939,8 @@ dr_seq &lt;- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
 newdf &lt;- expand.grid(wt = wt_seq, drat = dr_seq)
 newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
-qplot(x = wt, y = mpg, color = drat, data = newdf, geom = &quot;line&quot;)</code></pre>
+ggplot(data = newdf, mapping = aes(x = wt, y = mpg, color = drat)) +
+  geom_line()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>So we could tell a client something like:</p>
 <ol style="list-style-type: decimal">
@@ -947,7 +952,8 @@ ratios”</li>
 </ol></li>
 <li><p>BUT, we have to be emphasize the scope of our conclusions. E.g.
 there are no cars with a rear-axle ratio of 3 and a weight of 2.</p>
-<pre class="r"><code>qplot(x = wt, y = drat, data = mtcars)</code></pre>
+<pre class="r"><code>ggplot(data = mtcars, mapping = aes(x = wt, y = drat)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="interactions-and-categorical-variables."
@@ -1006,8 +1012,9 @@ cars.</p></li>
 conditional effects plots. This is the default output of
 <code>geom_smooth()</code> when you color code by a categorical
 variable:</p>
-<pre class="r"><code>qplot(x = displ, y = cty, color = drv, data = mpg) +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+<pre class="r"><code>ggplot(data = mpg, mapping = aes(x = displ, y = cty, color = drv)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE) +
   scale_y_log10()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-34-1.png" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as
@@ -1171,7 +1178,8 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
   newdf
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, charge = as_factor(charge))
-qplot(x = temp, y = cycles, color = charge, data = newdf, geom = &quot;line&quot;)</code></pre>
+ggplot(data = newdf, mapping = aes(x = temp, y = cycles, color = charge)) +
+  geom_line()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Conditional effects plot for temperature
 temp_seq &lt;- unique(power$temp)
@@ -1182,7 +1190,8 @@ expand.grid(charge = charge_seq, temp = temp_seq) %&gt;%
   newdf
 newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, temp = as_factor(temp))
-qplot(x = charge, y = cycles, color = temp, data = newdf, geom = &quot;line&quot;)</code></pre>
+ggplot(data = newdf, mapping = aes(x = charge, y = cycles, color = temp)) +
+  geom_line()</code></pre>
 <p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-2.png" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>

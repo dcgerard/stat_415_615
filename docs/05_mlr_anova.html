@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-11-01" />
+<meta name="date" content="2022-12-01" />
 
 <title>ANOVA View of Linear Models</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -368,7 +368,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">ANOVA View of Linear Models</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-11-01</h4>
+<h4 class="date">2022-12-01</h4>
 
 </div>
 
@@ -1711,7 +1711,8 @@ height:</p>
 earnings &lt;- read_csv(&quot;https://dcgerard.github.io/stat_415_615/data/earnings.csv&quot;)
 earnings &lt;- mutate(earnings, log_earn = log(earn))
 earnings &lt;- filter(earnings, is.finite(log_earn))
-qplot(x = height, y = log_earn, data = earnings)</code></pre>
+ggplot(data = earnings, mapping = aes(x = height, y = log_earn)) +
+  geom_point()</code></pre>
 <p><img src="05_mlr_anova_files/figure-html/unnamed-chunk-49-1.png" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_earn &lt;- lm(log_earn ~ height, data = earnings)</code></pre>
 <pre class="r"><code>library(broom)

@@ -79,7 +79,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
                         z = factor(rep(c(1, 2, 3), each = length(x))))
     
     ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
-      geom_line(lwd=1) + 
+      geom_line(linewidth=1) + 
       ggthemes::scale_color_colorblind() +
       theme(legend.position="none") +
       ylab("f(x)") +
@@ -97,7 +97,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
                         z = factor(rep(c(1, 2, 3), each = length(x))))
     
     ggplot(data = dfdat, mapping = aes(x = x, y = y, color = z, lty = z)) +
-      geom_line(lwd=1) + 
+      geom_line(linewidth=1) + 
       ggthemes::scale_color_colorblind() +
       theme(legend.position="none") +
       ylab("f(x)") +
