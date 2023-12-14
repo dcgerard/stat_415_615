@@ -20,11 +20,9 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw())
 ```
 
-- **Time**: Wednesdays 5:30 PM to 8:00 PM
 - **Instructor**: Dr. David Gerard
 - **Email**: <dgerard@american.edu>
 - **Office**: DMTI 106E
-- **Office Hours**: Wednesdays 3:00 PM to 5:00 PM
 
 # Overview of Topics and Course Objectives
 
@@ -104,16 +102,28 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
 
 - If you are taking this class for graduate credit, I am going to require you to learn the linear algebra behind linear regression.
 
-- I am going to have an optional Zoom lecture outside of class time that you can attend where I will teach an introduction to linear algebra. This will be recorded, so you can learn this on your own if you want.
+- I am going to have a recorded lecture on linear algebra that you will be required to watch.
 
 - I will give you separate homework and exam questions that use linear algebra in linear regression (e.g. create design matrices, implement linear regression in R using matrix algebra, etc)
 
 # Important Dates
 
-- *10/12/2022: Midterm 1
-- 11/23/2022: Thanksgiving holiday. No classes.
-- *12/07/2022: Midterm 2
-- 12/14/2022: Present final projects during final exam period. 
+- *02/27/2024: Section 001: Midterm 1 
+- *02/28/2024: Section 002: Midterm 1 
+
+- 03/01/2024: Dune: Part Two release date.
+
+- 03/12/2024: Section 001: Spring break. No class.
+- 03/13/2024: Section 002: Spring break. No class.
+
+- *04/23/2024: Section 001: Midterm 2 
+- *04/24/2024: Section 002: Midterm 2
+
+- 04/30/2024: Section 001: Spring study day. No class.
+- 05/01/2024: Section 002: Spring study day. No class.
+
+- 05/07/2024: Section 001: Present final projects during final exam period (By Zoom).
+- 05/08/2024: Section 002: Present final projects during final exam period (By Zoom).
 
 - *These dates are subject to change.
     - Midterm 1 will be the week after we finish simple linear regression.
@@ -162,12 +172,14 @@ Students are not permitted to make visual or audio recordings (including livestr
 
 - I expect you to work with others and me, and I expect you to use online resources as you work on your assignments/projects. However, your submissions must be composed of your own thoughts, coding, and words. You should be able to explain your work on assignments/projects and your rationale.  **Based on your explanation (or lack thereof), I may modify your grade.** 
 
-- If you use an online resource, please cite it with a URL (this is perfectly fine!).
+- If you use an online resource, please cite it with a URL. This includes any generative AI source (e.g. ChatGPT, Bard, or Copilot). **Failure to include a URL citation for an online resource will be considered a violation of the Academic Integrity Code**.
 
 - If you do not understand an online resource, but believe it to be useful for a project/assignment, please ask me for help.
 
-- It is a violation of the Academic Code of Integrity if you obtain past homework solutions from students who took the course previously (whether they wrote those solutions, or I wrote those solutions). There are mistakes in my solutions that students point out to me. I look out for these while I grade to see if you have access to my solutions.
+- It is a violation of the Academic Code of Integrity if you obtain past homework solutions from students who took the course previously (whether they wrote those solutions, or I wrote those solutions).
 
 - All solutions that I provide are under my copyright. These solutions are for personal use only and may not be distributed to anyone else. Giving these solutions to others, including other students or posting them on the internet, is a violation of my copyright and a violation of the student code of conduct.
 
-A [short guide for students](https://american0.sharepoint.com/sites/ctrl-allstaff/Shared%20Documents/Content%20Management/Academic%20Integrity%20Advice%202019.pdf) on how to meet the expectations of the AU’s Academic Integrity Code
+# Syllabus Change Policy
+
+This syllabus is a guide for the course and is subject to change with advanced notice. These changes may come via email. Make sure to check your university-supplied email regularly. You are accountable for all such communications.

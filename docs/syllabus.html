@@ -14,7 +14,7 @@
 
 <title>STAT 415/615 Regression</title>
 
-<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -30,7 +30,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -145,11 +145,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -178,8 +182,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -187,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -344,18 +341,16 @@ div.tocify {
 
 <h1 class="title toc-ignore">STAT 415/615 Regression</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">Updated: 2022-08-31</h4>
+<h4 class="date">Updated: 2023-12-14</h4>
 
 </div>
 
 
 <ul>
-<li><strong>Time</strong>: Wednesdays 5:30 PM to 8:00 PM</li>
 <li><strong>Instructor</strong>: Dr. David Gerard</li>
 <li><strong>Email</strong>: <a href="mailto:dgerard@american.edu"
 class="email">dgerard@american.edu</a></li>
 <li><strong>Office</strong>: DMTI 106E</li>
-<li><strong>Office Hours</strong>: Wednesdays 3:00 PM to 5:00 PM</li>
 </ul>
 <div id="overview-of-topics-and-course-objectives"
 class="section level1">
@@ -570,10 +565,8 @@ for the project.</p>
 <li><p>If you are taking this class for graduate credit, I am going to
 require you to learn the linear algebra behind linear
 regression.</p></li>
-<li><p>I am going to have an optional Zoom lecture outside of class time
-that you can attend where I will teach an introduction to linear
-algebra. This will be recorded, so you can learn this on your own if you
-want.</p></li>
+<li><p>I am going to have a recorded lecture on linear algebra that you
+will be required to watch.</p></li>
 <li><p>I will give you separate homework and exam questions that use
 linear algebra in linear regression (e.g. create design matrices,
 implement linear regression in R using matrix algebra, etc)</p></li>
@@ -582,11 +575,19 @@ implement linear regression in R using matrix algebra, etc)</p></li>
 <div id="important-dates" class="section level1">
 <h1>Important Dates</h1>
 <ul>
-<li><p>*10/12/2022: Midterm 1</p></li>
-<li><p>11/23/2022: Thanksgiving holiday. No classes.</p></li>
-<li><p>*12/07/2022: Midterm 2</p></li>
-<li><p>12/14/2022: Present final projects during final exam
-period.</p></li>
+<li><p>*02/27/2024: Section 001: Midterm 1</p></li>
+<li><p>*02/28/2024: Section 002: Midterm 1</p></li>
+<li><p>03/01/2024: Dune: Part Two release date.</p></li>
+<li><p>03/12/2024: Section 001: Spring break. No class.</p></li>
+<li><p>03/13/2024: Section 002: Spring break. No class.</p></li>
+<li><p>*04/23/2024: Section 001: Midterm 2</p></li>
+<li><p>*04/24/2024: Section 002: Midterm 2</p></li>
+<li><p>04/30/2024: Section 001: Spring study day. No class.</p></li>
+<li><p>05/01/2024: Section 002: Spring study day. No class.</p></li>
+<li><p>05/07/2024: Section 001: Present final projects during final exam
+period (By Zoom).</p></li>
+<li><p>05/08/2024: Section 002: Present final projects during final exam
+period (By Zoom).</p></li>
 <li><p>*These dates are subject to change.</p>
 <ul>
 <li>Midterm 1 will be the week after we finish simple linear
@@ -707,26 +708,29 @@ submissions must be composed of your own thoughts, coding, and words.
 You should be able to explain your work on assignments/projects and your
 rationale. <strong>Based on your explanation (or lack thereof), I may
 modify your grade.</strong></p></li>
-<li><p>If you use an online resource, please cite it with a URL (this is
-perfectly fine!).</p></li>
+<li><p>If you use an online resource, please cite it with a URL. This
+includes any generative AI source (e.g. ChatGPT, Bard, or Copilot).
+<strong>Failure to include a URL citation for an online resource will be
+considered a violation of the Academic Integrity Code</strong>.</p></li>
 <li><p>If you do not understand an online resource, but believe it to be
 useful for a project/assignment, please ask me for help.</p></li>
 <li><p>It is a violation of the Academic Code of Integrity if you obtain
 past homework solutions from students who took the course previously
-(whether they wrote those solutions, or I wrote those solutions). There
-are mistakes in my solutions that students point out to me. I look out
-for these while I grade to see if you have access to my
-solutions.</p></li>
+(whether they wrote those solutions, or I wrote those
+solutions).</p></li>
 <li><p>All solutions that I provide are under my copyright. These
 solutions are for personal use only and may not be distributed to anyone
 else. Giving these solutions to others, including other students or
 posting them on the internet, is a violation of my copyright and a
 violation of the student code of conduct.</p></li>
 </ul>
-<p>A <a
-href="https://american0.sharepoint.com/sites/ctrl-allstaff/Shared%20Documents/Content%20Management/Academic%20Integrity%20Advice%202019.pdf">short
-guide for students</a> on how to meet the expectations of the AU’s
-Academic Integrity Code</p>
+</div>
+<div id="syllabus-change-policy" class="section level1">
+<h1>Syllabus Change Policy</h1>
+<p>This syllabus is a guide for the course and is subject to change with
+advanced notice. These changes may come via email. Make sure to check
+your university-supplied email regularly. You are accountable for all
+such communications.</p>
 </div>
 
 
