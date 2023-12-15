@@ -54,11 +54,12 @@ We will use the R computing language to complete assignments. R is free and may 
 
 # Assignments and Grading
 
-- Weekly homeworks: 35%
-- First Midterm: 20%
+- Weekly homeworks: 25%
+  - Only a random subset of the questions each week will be graded.
+- First Midterm: 25%
   - In class, closed notes, closed book.
   - Covers simple linear regression
-- Second Midterm: 20%
+- Second Midterm: 25%
   - In class, closed notes, closed book.
   - Covers multiple linear regression. But you can't know this without knowing simple linear regression, so this second midterm is effectively cumulative.
 - Final Project: 25%
