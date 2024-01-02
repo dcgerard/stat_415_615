@@ -40,7 +40,7 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 - **Required**: Applied Linear Statistical Models (Fifth Edition) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book, and this is fine too. I will generally abbreviate this book as KNNL.
 
-- **Supplemental**: The *free* [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
+- **Supplemental**: The **free** [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
 
 - **Optional**: The **free** [Regression and Other Stories](https://users.aalto.fi/~ave/ROS.pdf) (ROS). Code and data for this book are available [here](https://avehtari.github.io/ROS-Examples/) as well. It's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
 
@@ -56,6 +56,7 @@ We will use the R computing language to complete assignments. R is free and may 
 
 - Weekly homeworks: 25%
   - Only a random subset of the questions each week will be graded.
+  - Lowest graded assignment will be dropped.
 - First Midterm: 25%
   - In class, closed notes, closed book.
   - Covers simple linear regression
@@ -97,7 +98,7 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
     a. Theoretical considerations.
     b. The limited usability of automated procedures.
 7. Logistic Regression Models (Chapter 14)
-8. Mixed Effects Models
+8. Mixed Effects Models (if we have time)
 
 # STAT 615 Students Only
 
@@ -149,9 +150,13 @@ The learning objective of this course is to give you the main concepts and a wor
     
 # Late Work Policy
 
-All assignments must be submitted, in class, on the day they are due. You will be penalized 15% every day an assignment is late. I will not accept assignments submitted over three days after the deadline. If you become ill or the victim of an emergency, please let me know within 48 hours.
-
-Students requiring a temporary leave of absence for medical or mental health reasons must provide documentation to the Office of the Dean of Students (<dos@american.edu>), which will verify with the academic unit that the documentation is appropriate and supports the leave. Students with an ASAC-approved accommodation for disability reasons should, to the greatest extent possible, make arrangements in advance of the due date or deadline.
+- All assignments must be submitted on the day they are due.
+- Homeworks will typically be due on Thursdays by end-of-day. 
+- Each student will have **two** three-day extensions, where you can turn in the assignment on Sunday by end-of-day. 
+- Please just let me know ahead of time that you will be using one of your two extensions. 
+- Please do **not** tell me why you need the extension. 
+- You cannot use an extension for elements of the final project. 
+- Any homeworks not submitted by the due date will recieve a grade of 0.
 
 # Incomplete Policy
 
@@ -183,4 +188,4 @@ Students are not permitted to make visual or audio recordings (including livestr
 
 # Syllabus Change Policy
 
-This syllabus is a guide for the course and is subject to change with advanced notice. These changes may come via email. Make sure to check your university-supplied email regularly. You are accountable for all such communications.
+This syllabus is a guide for the course and is subject to change with advanced notice. These changes may come via Canvas. Make sure to check Canvas announcements regularly. You are accountable for all such communications.
