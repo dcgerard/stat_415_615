@@ -190,7 +190,7 @@ $$
     
 - Interpretation of $\beta_0$: Can we interpret 1007 seconds (16.8 minutes) as the approximate world record in ancient times? No! Our data are only from 1913 to 1999, so this is an obviously improper extrapolation. It is just the $y$-intercept, with no other interpretation.
 
-- Interpretation of $\beta_1$: For two adjacent years, the world record is about 0.393 seconds less for the more recent year.
+- Interpretation of $\beta_1$: Each year, on average, the world record is 0.393 seconds lower.
 
 - Do *not* say "the world record decreases by about 0.393 seconds each year" as this creates an implicit causal connection.
 
@@ -222,18 +222,18 @@ $$
         ```
     c. Interpret 0.189
         ```{block, eval = FALSE, echo = FALSE}
-        The life expectancy is about 0.189 years higher each subsequent year.
+        Each year, on average, life expectancy is 0.189 years higher.
         ```
 
-# Additive/Multiplicative differences
+# Additive/Multiplicative Comparisons
 
 - This semester, we will spend a lot of time talking about differences in one variable associated with differences in another variable.
 
-- We need to know how to properly speak about "differences".
+- We need to know how to properly speak about "differences", or "numerical comparisons".
 
-- Suppose car $A$ has a gas mileage of 30 mpg, and car $B$ has a gas mileage of 20 mpg. Then obviously car $A$ has 10 mpg better gas mileage. This is called an *additive* difference since we can write it as $A + -B = 10$.
+- Suppose car $A$ has a gas mileage of 30 mpg, and car $B$ has a gas mileage of 20 mpg. Then obviously car $A$ has 10 mpg better gas mileage. This is called an *additive* comparison since we can write it as $A + -B = 10$.
 
-- We can also describe this difference as *multiplicative*. Here are some common ways to describe multiplicative differences.
+- We can also describe this comparison as *multiplicative*. Here are some common ways to describe multiplicative comparisons.
 
 - $A$ has 50 percent more gas mileage than $B$. 
     - $A = B(1 + 0.5) = B + 0.5B = B + 50\% B$
@@ -253,7 +253,7 @@ $$
     - Thus, $B$ is $A$ minus 33.3 percent of $A$'s value. This is why we say "33.3 percent less".
     - In general, $B$ is $\frac{A-B}{A}\times 100\%$ smaller than $A$.
     
-- **Exercise**: Suppose John makes \$40,000 a year and Alina makes \$50,000 a year. Provide four different ways to describe the multiplicative difference between John's and Alina's salaries.
+- **Exercise**: Suppose John makes \$40,000 a year and Alina makes \$50,000 a year. Provide four different ways to describe the multiplicative comparison between John's and Alina's salaries.
 
     ```{block, eval = FALSE, echo = FALSE}
     - Alina makes 25\% more money than John.
@@ -262,17 +262,17 @@ $$
     - Anlina's salary is 125\% that of John's.
     ```
 
-- Sometimes we have additive differences for a varaible whose scale is percent.
+- Sometimes we have additive comparsons for a variable whose scale is percent.
 
 - For example, candidate $A$ won 40\% of the vote, and candidate $B$ won 30\% of the vote.
 
-- If we want to describe the *additive* difference between these two candidates, we cannot say "percent" because that would imply a mulitiplicative difference.
+- If we want to describe the *additive* comparison between these two candidates, we cannot say "percent" because that would imply a mulitiplicative comparison.
 
-- To describe additive differences of a variable whose units are percent, we say **percentage point**. 
+- To describe additive comparisons of a variable whose units are percent, we say **percentage point**. 
 
 - Thus, candidate $A$'s vote share is 10 percentage points higher than candidate $B$'s.
 
-- We can still describe multiplicative differences for these variables. E.g. Candidate $A$'s vote share is 33.3 percent higher than candidate $B$'s.
+- We can still describe multiplicative comparisons for these variables. E.g. Candidate $A$'s vote share is 33.3 percent higher than candidate $B$'s.
 
 # Logarithms and Exponentials
 
