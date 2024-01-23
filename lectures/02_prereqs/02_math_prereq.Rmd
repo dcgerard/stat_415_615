@@ -479,7 +479,7 @@ $$
 ```{r, echo = FALSE}
 tibble(beta1 = seq(0, 0.2, length = 11)) %>%
   mutate(`exp(beta1)` = exp(beta1),
-         `Percent Change` = (`exp(beta1)` - 1) * 100) %>%
+         `Percent Difference` = (`exp(beta1)` - 1) * 100) %>%
   knitr::kable()
 ```
 
@@ -487,7 +487,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
 
 - This relationship does not hold with other bases. E.g. $10^{0.02} = `r 10^0.02` \not\approx 1 + 0.02$.
 
-- **Example**: From the DC population example above, we had $\beta_1 = `r beta1`$ and $e^{\beta_1} = `r exp(beta1)`$. So, a 3\% increase in population each year, and you can get that either from $\beta_1$ or $e^{\beta_1}$.
+- **Example**: From the DC population example above, we had $\beta_1 = `r beta1`$ and $e^{\beta_1} = `r exp(beta1)`$. So, a 3\% larger population each year, and you can get that either from $\beta_1$ or $e^{\beta_1}$.
 
 ## Power-law growth/decline
 
@@ -505,7 +505,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
 - Interpret $\beta_1$: 
     - When you double $x$, you multiply $y$ by $2^{\beta_1}$.
     - When you multiply $x$ by 10, you multiply $y$ by $10^{\beta_1}$.
-    - When you multiply $x$ by 1.1 (10\% increase), you multiply $y$ by $1.1^{\beta_1}$.
+    - When you multiply $x$ by 1.1 (10\% larger), you multiply $y$ by $1.1^{\beta_1}$.
     - Choose a multiplier that makes sense for the range of your data. E.g., if it is never the case that one value is 10 times larger than another, don't use that as the interpretation.
     
 - This follows from:
@@ -611,7 +611,7 @@ tibble(beta1 = seq(0, 0.2, length = 11)) %>%
 - You intrepret $\beta_1$ with the following:
     - When you double $x$, you add $\beta_1\log(2)$ to $y$.
     - When you multiply $x$ by 10, you add $\beta_1\log(10)$ to $y$.
-    - When you multiply $x$ by 1.1 (10\% increase), you add $\beta_1\log(1.1)$ to $y$.
+    - When you multiply $x$ by 1.1 (10\% larger), you add $\beta_1\log(1.1)$ to $y$.
     - Choose a multiplier that makes sense for the range of your data. E.g. if it is never the case that one value is 10 times larger than another, don't use that as the interpretation.
     
 - This follows from
