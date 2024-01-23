@@ -232,8 +232,10 @@ $$
 - We need to know how to properly speak about "differences", or "numerical comparisons".
 
 - Suppose car $A$ has a gas mileage of 30 mpg, and car $B$ has a gas mileage of 20 mpg. Then obviously car $A$ has 10 mpg better gas mileage. This is called an *additive* comparison since we can write it as $A + -B = 10$.
+    - Wikipedia calls this an "[absolute difference](https://en.wikipedia.org/wiki/Absolute_difference)".
 
 - We can also describe this comparison as *multiplicative*. Here are some common ways to describe multiplicative comparisons.
+    - Wikipedia calls this a "[relative difference](https://en.wikipedia.org/wiki/Relative_change)"
 
 - $A$ has 50 percent more gas mileage than $B$. 
     - $A = B(1 + 0.5) = B + 0.5B = B + 50\% B$
