@@ -47,7 +47,7 @@ klippy::klippy()
     - E.g.: height, weight, area, income.
     - Counterexample: Phone numbers, social security numbers.
 
-- **Regression Analysis**: Study relationship between or more *quantitative* variables.
+- **Regression Analysis**: Study relationship between two or more *quantitative* variables.
 
 - **Response Variable**: 
     - What we think is either caused by or explained by the predictor variable. 

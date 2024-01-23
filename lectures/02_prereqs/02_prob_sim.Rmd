@@ -151,7 +151,7 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
                    fill = "blue", alpha = 1/4)
     ```
     
-- Quantile function (find value that has a given the probability of being less than or equal to it).
+- Quantile function (find value that has a given probability of being less than or equal to it).
   
     ```{r}
     qnorm(p = 0.8413, mean = 1, sd = 1)
