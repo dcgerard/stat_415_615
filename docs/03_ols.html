@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2024-01-23" />
+<meta name="date" content="2024-01-29" />
 
 <title>Simple Linear Regression: The Model</title>
 
@@ -368,7 +368,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: The Model</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2024-01-23</h4>
+<h4 class="date">2024-01-29</h4>
 
 </div>
 
@@ -601,10 +601,10 @@ class="math inline">\(X_i\)</span>’s.</li>
 </ul></li>
 <li><p><span class="math inline">\(\beta_1\)</span>:</p>
 <ul>
-<li>Difference in average of <span class="math inline">\(Y_i\)</span>’s
+<li>Average difference of <span class="math inline">\(Y_i\)</span>’s
 when <span class="math inline">\(X_i\)</span>’s differ by 1.</li>
-<li>Do <strong>not</strong> use implicitely causal language like
-“change” or “increase” or “decrease”.</li>
+<li>Do <strong>not</strong> use implicitly causal language like “change”
+or “increase” or “decrease”.</li>
 </ul></li>
 <li><p>Relationships are <strong>positive</strong> if <span
 class="math inline">\(\beta_1 &gt; 0\)</span> (larger <span
@@ -624,7 +624,7 @@ class="math inline">\(y\)</span> tends to stay the same).</p>
 <li><p><strong>Example</strong>: In the bread and peace example, a
 regression line that fits the data well is</p>
 <p><span class="math display">\[
-  y = 46.25 + 3.06
+  y = 46.25 + 3.06 x
   \]</span></p>
 <p><strong>Correct</strong>: Years that show 1 percentage point more
 growth have on average 3 percentage points larger vote shares for the
