@@ -127,7 +127,7 @@ klippy::klippy()
 
 - The model: 
     $$
-    Y_i = \beta_0 + \beta_i X_i + \epsilon_i
+    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
     $$
     
     - $Y_i$: The response value for unit $i$. 
