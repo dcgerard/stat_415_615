@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-12-01" />
+<meta name="date" content="2024-02-09" />
 
 <title>Simple Linear Regression: Inference</title>
 
-<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Simple Linear Regression: Inference</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-12-01</h4>
+<h4 class="date">2024-02-09</h4>
 
 </div>
 
@@ -513,8 +513,8 @@ estimator is called the <strong>standard error</strong>.</p></li>
 about an estimate.</p></li>
 <li><p>The standard error <span
 class="math inline">\(\hat{\beta}_1\)</span> is <span
-class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^n (X_i -
-\bar{X})^2}\)</span>.</p></li>
+class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^n (X_i -
+\bar{X})^2}}\)</span>.</p></li>
 <li><p>We don’t know <span class="math inline">\(\sigma^2\)</span>, but
 we have an estimator for it, the mean squared error (MSE).</p>
 <p><span class="math display">\[
@@ -522,9 +522,8 @@ we have an estimator for it, the mean squared error (MSE).</p>
   \]</span></p></li>
 <li><p>So the estimated standard error of <span
 class="math inline">\(\hat{\beta}_1\)</span> is <span
-class="math inline">\(s(\hat{\beta}_1)\)</span> where <span
 class="math display">\[
-  s^2(\hat{\beta}_1) = \frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}
+  s(\hat{\beta}_1) = \sqrt{\frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}}
   \]</span></p></li>
 <li><p>We usually just say “standard error”, even when we are talking
 about the estimated standard error.</p></li>
@@ -1430,11 +1429,10 @@ very strongly curved.
 package.</p>
 <pre class="r"><code>glance(lmhibbs)</code></pre>
 <pre><code>## # A tibble: 1 × 12
-##   r.squ…¹ adj.r…² sigma stati…³ p.value    df logLik   AIC   BIC devia…⁴ df.re…⁵
-##     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;int&gt;
-## 1   0.580   0.550  3.76    19.3 6.10e-4     1  -42.8  91.7  94.0    198.      14
-## # … with 1 more variable: nobs &lt;int&gt;, and abbreviated variable names
-## #   ¹​r.squared, ²​adj.r.squared, ³​statistic, ⁴​deviance, ⁵​df.residual</code></pre></li>
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.580         0.550  3.76      19.3 0.000610     1  -42.8  91.7  94.0
+## # ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre></li>
 <li><p>Different R^2 values
 <img src="03_inference_files/figure-html/unnamed-chunk-52-1.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-2.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-3.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-4.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-5.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-6.png" width="288" style="display: block; margin: auto;" /><img src="03_inference_files/figure-html/unnamed-chunk-52-7.png" width="288" style="display: block; margin: auto;" /></p></li>
 </ul>
