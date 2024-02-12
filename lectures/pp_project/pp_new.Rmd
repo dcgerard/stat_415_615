@@ -24,16 +24,17 @@ klippy::klippy()
 
 # Important Dates
 
-- 11/02/2022: Journal article selected.
-- 11/16/2022: Progress report due.
-- 12/14/2022: 
+- 04/11/2024: Journal article selected.
+- 04/25/2024: Progress report due.
+- 05/07/2024 (Section 001) or 05/08/2024 (Section 002): 
     - Final project presentations. 
     - Written report due.
     - Code due.
+    - All of this is due **before** the final project presentations (**not** on the following Thursday).
 
 # General Description
 
-- For the final project you will work in teams of 2--3 to select a journal article from 2022 and reproduce their results. 
+- For the final project you will work in teams of 2--3 to select a journal article from 2023 or later and reproduce their results. 
 
 # Dataset
 
@@ -42,9 +43,11 @@ Criteria for an appropriate journal article are:
 1. Data are publicly available
 2. The authors' code (R or otherwise) is **not** available.
 3. Authors used regression for analysis.
-4. You have not used these data before.
-5. It is a relatively complicated dataset. Ways that a dataset can be "relatively complicated" are:
-    a. There are at $\gtrapprox$ 20 predictor variables, or
+4. You have not used these data before, and are not using them for anything else (including other classes) this semester.
+5. The data are from 2023 or later.
+6. No other group is using that data.
+7. It is a relatively complicated dataset. Ways that a dataset can be "relatively complicated" are:
+    a. There are at $\gtrapprox$ 10 predictor variables, or
     b. The authors use a method not taught in this class (e.g. principal components regression, lasso, etc).
   
 I will let you propose a journal article with a dataset, but I retain the right to decide if the dataset is "relatively complicated".
@@ -55,43 +58,61 @@ You can get a sense of the type of articles I am looking for (or use one of thes
 
 If the data are in a weird format (like "sav" or "dta"), then try to use the [`{haven}`](https://cran.r-project.org/package=haven) package to load it into R.
 
-- @goli2022estimates: 
-    - This project seems to require a lot of data download and data munging to obtain the same variables as in the study.
-    - You don't need to do the spatial stuff in this paper (a little too advanced). But let me know if you want to try!
-- @eseta2022factors
-    - They perform principal components analysis (PCA) to extract features.
-    - The data are sav.
-- @yin2022does
-    - They use factor analysis (related to PCA).
-    - No need to do the path analysis.
-- @haile2022predictors
-    - The data are dta.
-- @taillie2022developing
-    - One of their analyses uses mixed-effects modeling.
-    - The data are dta.
-- @karnaze2022association
-    - They do both logistic and linear regressions here.
-    - The data are sav.
-- @tekle2022length
-    - The data are sav.
-- @hettich2022conspiracy
-- @lu2022emojis
-    - Only do this one if you have had some machine learning experience.
-- @han2022using
-    - No need to do the neural network.
-    - Data are in a PDF file. Try [`{pdftables}`](https://cran.r-project.org/web/packages/pdftables/index.html).
-- @luedeker2022relationship
 
-# Progress Report (5 pts)
+- @fu2024unveiling
+- @zhao2024sex
+- @frikha2024towards
+- @khanthik2024factors
+- @shinozuka2024peripapillary
 
-- You should turn in a 1 page written report affirming:
 
-    1. That you have downloaded the data and have successfully loaded it into R.
-    2. That you have checked that all variables described in the paper are available in the dataset.
-    3. That you have made scatterplots and histograms of the variables in the dataset.
-    4. If a new method is needed (e.g. PCA), that you have downloaded a tutorial from the web and can now implement the new method in R code.
-    
-- I want to see evidence that all of the above has been accomplished.
+<!-- - @goli2022estimates:  -->
+<!--     - This project seems to require a lot of data download and data munging to obtain the same variables as in the study. -->
+<!--     - You don't need to do the spatial stuff in this paper (a little too advanced). But let me know if you want to try! -->
+<!-- - @eseta2022factors -->
+<!--     - They perform principal components analysis (PCA) to extract features. -->
+<!--     - The data are sav. -->
+<!-- - @yin2022does -->
+<!--     - They use factor analysis (related to PCA). -->
+<!--     - No need to do the path analysis. -->
+<!-- - @haile2022predictors -->
+<!--     - The data are dta. -->
+<!-- - @taillie2022developing -->
+<!--     - One of their analyses uses mixed-effects modeling. -->
+<!--     - The data are dta. -->
+<!-- - @karnaze2022association -->
+<!--     - They do both logistic and linear regressions here. -->
+<!--     - The data are sav. -->
+<!-- - @tekle2022length -->
+<!--     - The data are sav. -->
+<!-- - @hettich2022conspiracy -->
+<!-- - @lu2022emojis -->
+<!--     - Only do this one if you have had some machine learning experience. -->
+<!-- - @han2022using -->
+<!--     - No need to do the neural network. -->
+<!--     - Data are in a PDF file. Try [`{pdftables}`](https://cran.r-project.org/web/packages/pdftables/index.html). -->
+<!-- - @luedeker2022relationship -->
+
+# Progress Report (10 pts)
+
+- It often (not always) takes about two weeks to reproduce the results of a paper. 
+
+- Sometimes, you find out right away that reproducing the paper is impossible, and you need to switch papers. This takes up time.
+
+- For the progress report you will turn in an R markdown file that loads in the data (that is already cleaned by some other script), fits a regression and reproduces the tables in the paper you have selected.
+
+- If your numbers are not the same as in the paper, you should switch projects. This takes up time.
+
+- From past experience, students don't believe me when I say it often takes two weeks to reproduce the results of a paper, so they start the day before the progress report is due and ask for extensions.
+
+- **There will be no extensions** on the progress report, even if you need to switch papers. Instead, there will be an upper bound on the grade of your progress report grade based on how late you turn it in.
+
+- < Two days late: 9 out of 10 pts max
+- < Four days late: 8 out of 10 pts max
+- < Six days late: 7 out of 10 pts max
+- < Eight days late: 6 out of 10 pts max
+- < Ten days late: 5 out of 10 pts max
+- More than ten days late: 0 out of 10 pts
 
 # Presentation/Written Report
 
@@ -105,7 +126,7 @@ You will provide a presentation and a written report. They should both follow th
 - Critiques / expansion of analyses.
 - Summary/Conclusion
 
-## Presentation (10 pts)
+## Presentation (5 pts)
 
 - Your presentation should be 15 minutes long.
 
@@ -113,9 +134,18 @@ You will provide a presentation and a written report. They should both follow th
 
 - I will ask questions at the end of the presentation.
 
-## Final Written Report (10 pts)
+## Final Written Report (5 pts)
 
-- The text of your final written report should be max 4 pages, double spaced, 12 point font. This does not include figures/tables/references/code.
+- This should be an executive summary with lots of bullet points. Don't make me read text not immediate relevant to the project. No yapping.
+    - Summarize paper's goals.
+    - Summarize data.
+    - Summarize model.
+    - Check assumptions.
+    - Interpret results.
+    - Provide critiques (this is what I am most interested in)
+    - Summarize your findings.
+
+- Limit your write-up to 4 pages, double spaced, 12 point font. This does not include figures/tables/references/code.
 
 # Code (5 pts)
 

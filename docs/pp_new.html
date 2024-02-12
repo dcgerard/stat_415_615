@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2023-09-05" />
+<meta name="date" content="2024-02-12" />
 
 <title>Final Project</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -368,7 +368,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Final Project</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2023-09-05</h4>
+<h4 class="date">2024-02-12</h4>
 
 </div>
 
@@ -380,13 +380,15 @@ div.tocify {
 <div id="important-dates" class="section level1">
 <h1>Important Dates</h1>
 <ul>
-<li>11/02/2022: Journal article selected.</li>
-<li>11/16/2022: Progress report due.</li>
-<li>12/14/2022:
+<li>04/11/2024: Journal article selected.</li>
+<li>04/25/2024: Progress report due.</li>
+<li>05/07/2024 (Section 001) or 05/08/2024 (Section 002):
 <ul>
 <li>Final project presentations.</li>
 <li>Written report due.</li>
 <li>Code due.</li>
+<li>All of this is due <strong>before</strong> the final project
+presentations (<strong>not</strong> on the following Thursday).</li>
 </ul></li>
 </ul>
 </div>
@@ -394,7 +396,7 @@ div.tocify {
 <h1>General Description</h1>
 <ul>
 <li>For the final project you will work in teams of 2–3 to select a
-journal article from 2022 and reproduce their results.</li>
+journal article from 2023 or later and reproduce their results.</li>
 </ul>
 </div>
 <div id="dataset" class="section level1">
@@ -405,11 +407,14 @@ journal article from 2022 and reproduce their results.</li>
 <li>The authors’ code (R or otherwise) is <strong>not</strong>
 available.</li>
 <li>Authors used regression for analysis.</li>
-<li>You have not used these data before.</li>
+<li>You have not used these data before, and are not using them for
+anything else (including other classes) this semester.</li>
+<li>The data are from 2023 or later.</li>
+<li>No other group is using that data.</li>
 <li>It is a relatively complicated dataset. Ways that a dataset can be
 “relatively complicated” are:
 <ol style="list-style-type: lower-alpha">
-<li>There are at <span class="math inline">\(\gtrapprox\)</span> 20
+<li>There are at <span class="math inline">\(\gtrapprox\)</span> 10
 predictor variables, or</li>
 <li>The authors use a method not taught in this class (e.g. principal
 components regression, lasso, etc).</li>
@@ -431,74 +436,66 @@ use the <a
 href="https://cran.r-project.org/package=haven"><code>{haven}</code></a>
 package to load it into R.</p>
 <ul>
-<li><span class="citation">Goli (2022)</span>:
-<ul>
-<li>This project seems to require a lot of data download and data
-munging to obtain the same variables as in the study.</li>
-<li>You don’t need to do the spatial stuff in this paper (a little too
-advanced). But let me know if you want to try!</li>
-</ul></li>
-<li><span class="citation">Eseta (2022)</span>
-<ul>
-<li>They perform principal components analysis (PCA) to extract
-features.</li>
-<li>The data are sav.</li>
-</ul></li>
-<li><span class="citation">Yin (2022)</span>
-<ul>
-<li>They use factor analysis (related to PCA).</li>
-<li>No need to do the path analysis.</li>
-</ul></li>
-<li><span class="citation">Haile (2022)</span>
-<ul>
-<li>The data are dta.</li>
-</ul></li>
-<li><span class="citation">Taillie (2022)</span>
-<ul>
-<li>One of their analyses uses mixed-effects modeling.</li>
-<li>The data are dta.</li>
-</ul></li>
-<li><span class="citation">Karnaze (2022)</span>
-<ul>
-<li>They do both logistic and linear regressions here.</li>
-<li>The data are sav.</li>
-</ul></li>
-<li><span class="citation">Tigabe Tekle (2022)</span>
-<ul>
-<li>The data are sav.</li>
-</ul></li>
-<li><span class="citation">Hettich (2022)</span></li>
-<li><span class="citation">Lu (2022)</span>
-<ul>
-<li>Only do this one if you have had some machine learning
-experience.</li>
-</ul></li>
-<li><span class="citation">Han (2022)</span>
-<ul>
-<li>No need to do the neural network.</li>
-<li>Data are in a PDF file. Try <a
-href="https://cran.r-project.org/web/packages/pdftables/index.html"><code>{pdftables}</code></a>.</li>
-</ul></li>
-<li><span class="citation">Luedeker (2022)</span></li>
+<li><span class="citation">Fu (2024)</span></li>
+<li><span class="citation">Zhao (2024)</span></li>
+<li><span class="citation">Frikha (2024)</span></li>
+<li><span class="citation">Khanthik (2024)</span></li>
+<li><span class="citation">Shinozuka (2024)</span></li>
 </ul>
+<!-- - @goli2022estimates:  -->
+<!--     - This project seems to require a lot of data download and data munging to obtain the same variables as in the study. -->
+<!--     - You don't need to do the spatial stuff in this paper (a little too advanced). But let me know if you want to try! -->
+<!-- - @eseta2022factors -->
+<!--     - They perform principal components analysis (PCA) to extract features. -->
+<!--     - The data are sav. -->
+<!-- - @yin2022does -->
+<!--     - They use factor analysis (related to PCA). -->
+<!--     - No need to do the path analysis. -->
+<!-- - @haile2022predictors -->
+<!--     - The data are dta. -->
+<!-- - @taillie2022developing -->
+<!--     - One of their analyses uses mixed-effects modeling. -->
+<!--     - The data are dta. -->
+<!-- - @karnaze2022association -->
+<!--     - They do both logistic and linear regressions here. -->
+<!--     - The data are sav. -->
+<!-- - @tekle2022length -->
+<!--     - The data are sav. -->
+<!-- - @hettich2022conspiracy -->
+<!-- - @lu2022emojis -->
+<!--     - Only do this one if you have had some machine learning experience. -->
+<!-- - @han2022using -->
+<!--     - No need to do the neural network. -->
+<!--     - Data are in a PDF file. Try [`{pdftables}`](https://cran.r-project.org/web/packages/pdftables/index.html). -->
+<!-- - @luedeker2022relationship -->
 </div>
-<div id="progress-report-5-pts" class="section level1">
-<h1>Progress Report (5 pts)</h1>
+<div id="progress-report-10-pts" class="section level1">
+<h1>Progress Report (10 pts)</h1>
 <ul>
-<li><p>You should turn in a 1 page written report affirming:</p>
-<ol style="list-style-type: decimal">
-<li>That you have downloaded the data and have successfully loaded it
-into R.</li>
-<li>That you have checked that all variables described in the paper are
-available in the dataset.</li>
-<li>That you have made scatterplots and histograms of the variables in
-the dataset.</li>
-<li>If a new method is needed (e.g. PCA), that you have downloaded a
-tutorial from the web and can now implement the new method in R
-code.</li>
-</ol></li>
-<li><p>I want to see evidence that all of the above has been
-accomplished.</p></li>
+<li><p>It often (not always) takes about two weeks to reproduce the
+results of a paper.</p></li>
+<li><p>Sometimes, you find out right away that reproducing the paper is
+impossible, and you need to switch papers. This takes up time.</p></li>
+<li><p>For the progress report you will turn in an R markdown file that
+loads in the data (that is already cleaned by some other script), fits a
+regression and reproduces the tables in the paper you have
+selected.</p></li>
+<li><p>If your numbers are not the same as in the paper, you should
+switch projects. This takes up time.</p></li>
+<li><p>From past experience, students don’t believe me when I say it
+often takes two weeks to reproduce the results of a paper, so they start
+the day before the progress report is due and ask for
+extensions.</p></li>
+<li><p><strong>There will be no extensions</strong> on the progress
+report, even if you need to switch papers. Instead, there will be an
+upper bound on the grade of your progress report grade based on how late
+you turn it in.</p></li>
+<li><p>&lt; Two days late: 9 out of 10 pts max</p></li>
+<li><p>&lt; Four days late: 8 out of 10 pts max</p></li>
+<li><p>&lt; Six days late: 7 out of 10 pts max</p></li>
+<li><p>&lt; Eight days late: 6 out of 10 pts max</p></li>
+<li><p>&lt; Ten days late: 5 out of 10 pts max</p></li>
+<li><p>More than ten days late: 0 out of 10 pts</p></li>
 </ul>
 </div>
 <div id="presentationwritten-report" class="section level1">
@@ -514,20 +511,31 @@ both follow this outline:</p>
 <li>Critiques / expansion of analyses.</li>
 <li>Summary/Conclusion</li>
 </ul>
-<div id="presentation-10-pts" class="section level2">
-<h2>Presentation (10 pts)</h2>
+<div id="presentation-5-pts" class="section level2">
+<h2>Presentation (5 pts)</h2>
 <ul>
 <li><p>Your presentation should be 15 minutes long.</p></li>
 <li><p>All group members should speak.</p></li>
 <li><p>I will ask questions at the end of the presentation.</p></li>
 </ul>
 </div>
-<div id="final-written-report-10-pts" class="section level2">
-<h2>Final Written Report (10 pts)</h2>
+<div id="final-written-report-5-pts" class="section level2">
+<h2>Final Written Report (5 pts)</h2>
 <ul>
-<li>The text of your final written report should be max 4 pages, double
-spaced, 12 point font. This does not include
-figures/tables/references/code.</li>
+<li>This should be an executive summary with lots of bullet points.
+Don’t make me read text not immediate relevant to the project. No
+yapping.
+<ul>
+<li>Summarize paper’s goals.</li>
+<li>Summarize data.</li>
+<li>Summarize model.</li>
+<li>Check assumptions.</li>
+<li>Interpret results.</li>
+<li>Provide critiques (this is what I am most interested in)</li>
+<li>Summarize your findings.</li>
+</ul></li>
+<li>Limit your write-up to 4 pages, double spaced, 12 point font. This
+does not include figures/tables/references/code.</li>
 </ul>
 </div>
 </div>
@@ -554,78 +562,39 @@ failing grade.</p>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-eseta2022factors" class="csl-entry">
-Eseta, Shimeles Ololo, Wakuma Akafu AND Sinkie. 2022. <span>“Factors
-Affecting Households’ Trust in the Community Based Health Insurance
-Scheme in Ethiopia.”</span> <em>PLOS Global Public Health</em> 2 (5):
-1–14. <a
-href="https://doi.org/10.1371/journal.pgph.0000375">https://doi.org/10.1371/journal.pgph.0000375</a>.
+<div id="ref-frikha2024towards" class="csl-entry">
+Frikha, Nourhen AND Chaâri, Mohamed AND Mezghanni. 2024. <span>“Towards
+Improving Online Learning in Physical Education: Gender Differences and
+Determinants of Motivation, Psychological Needs Satisfaction, and
+Academic Achievement in Saudi Students.”</span> <em>PLOS ONE</em> 19
+(2): 1–17. <a
+href="https://doi.org/10.1371/journal.pone.0297822">https://doi.org/10.1371/journal.pone.0297822</a>.
 </div>
-<div id="ref-goli2022estimates" class="csl-entry">
-Goli, Parul AND Salve, Srinivas AND Puri. 2022. <span>“Estimates and
-Correlates of District-Level Maternal Mortality Ratio in India.”</span>
-<em>PLOS Global Public Health</em> 2 (7): 1–18. <a
-href="https://doi.org/10.1371/journal.pgph.0000441">https://doi.org/10.1371/journal.pgph.0000441</a>.
+<div id="ref-fu2024unveiling" class="csl-entry">
+Fu, Ghulam Rasool, Zhiyuan AND Madni. 2024. <span>“Unveiling the
+Affecting Mechanism of Digital Transformation on Total Factor
+Productivity of Chinese Firms.”</span> <em>PLOS ONE</em> 19 (2): 1–23.
+<a
+href="https://doi.org/10.1371/journal.pone.0298428">https://doi.org/10.1371/journal.pone.0298428</a>.
 </div>
-<div id="ref-haile2022predictors" class="csl-entry">
-Haile, Dawit AND Ejajo, Solomon AND Sullamo. 2022. <span>“Predictors of
-Uncircumcised Primary School Girls’ Intention to Genital Cutting in
-South Ethiopia: Application of Theory of Planned Behavior.”</span>
-<em>PLOS ONE</em> 17 (6): 1–18. <a
-href="https://doi.org/10.1371/journal.pone.0270738">https://doi.org/10.1371/journal.pone.0270738</a>.
+<div id="ref-khanthik2024factors" class="csl-entry">
+Khanthik, Ngamjit AND Yaisawang, Apisit AND Kasetsuwan. 2024.
+<span>“Factors Predicting the Visual Outcome of Intracorneal Ring
+Segment for Keratoconus.”</span> <em>PLOS ONE</em> 19 (2): 1–13. <a
+href="https://doi.org/10.1371/journal.pone.0288181">https://doi.org/10.1371/journal.pone.0288181</a>.
 </div>
-<div id="ref-han2022using" class="csl-entry">
-Han, Jinliang AND Yan, Shuo AND Xu. 2022. <span>“Using Multiple Linear
-Regression and BP Neural Network to Predict Critical Meteorological
-Conditions of Expressway Bridge Pavement Icing.”</span> <em>PLOS
-ONE</em> 17 (2): 1–15. <a
-href="https://doi.org/10.1371/journal.pone.0263539">https://doi.org/10.1371/journal.pone.0263539</a>.
+<div id="ref-shinozuka2024peripapillary" class="csl-entry">
+Shinozuka, Mizuho AND Hirayama, Masato AND Arai. 2024.
+<span>“Peripapillary Vessel Density in Eyes with Cone-Rod
+Dystrophy.”</span> <em>PLOS ONE</em> 19 (1): 1–8. <a
+href="https://doi.org/10.1371/journal.pone.0296167">https://doi.org/10.1371/journal.pone.0296167</a>.
 </div>
-<div id="ref-hettich2022conspiracy" class="csl-entry">
-Hettich, Manfred E. AND Ernst, Nora AND Beutel. 2022. <span>“Conspiracy
-Endorsement and Its Associations with Personality Functioning, Anxiety,
-Loneliness, and Sociodemographic Characteristics During the COVID-19
-Pandemic in a Representative Sample of the German Population.”</span>
-<em>PLOS ONE</em> 17 (1): 1–15. <a
-href="https://doi.org/10.1371/journal.pone.0263301">https://doi.org/10.1371/journal.pone.0263301</a>.
-</div>
-<div id="ref-karnaze2022association" class="csl-entry">
-Karnaze, John AND Bloss, Melissa M. AND Bellettiere. 2022.
-<span>“Association of Compassion and Empathy with Prosocial Health
-Behaviors and Attitudes in a Pandemic.”</span> <em>PLOS ONE</em> 17 (7):
-1–16. <a
-href="https://doi.org/10.1371/journal.pone.0271829">https://doi.org/10.1371/journal.pone.0271829</a>.
-</div>
-<div id="ref-lu2022emojis" class="csl-entry">
-Lu, Wei AND Chen, Xuan AND Ai. 2022. <span>“Emojis Predict Dropouts of
-Remote Workers: An Empirical Study of Emoji Usage on GitHub.”</span>
-<em>PLOS ONE</em> 17 (1): 1–21. <a
-href="https://doi.org/10.1371/journal.pone.0261262">https://doi.org/10.1371/journal.pone.0261262</a>.
-</div>
-<div id="ref-luedeker2022relationship" class="csl-entry">
-Luedeker, Monnie, Bianca AND McGee. 2022. <span>“Relationship Between
-Judges’ Scores and Dive Attributes from a Video Recording of a Diving
-Competition.”</span> <em>PLOS ONE</em> 17 (8): 1–15. <a
-href="https://doi.org/10.1371/journal.pone.0273374">https://doi.org/10.1371/journal.pone.0273374</a>.
-</div>
-<div id="ref-taillie2022developing" class="csl-entry">
-Taillie, Carmen E. AND Hall, Lindsey Smith AND Prestemon. 2022.
-<span>“Developing Health and Environmental Warning Messages about Red
-Meat: An Online Experiment.”</span> <em>PLOS ONE</em> 17 (6): 1–23. <a
-href="https://doi.org/10.1371/journal.pone.0268121">https://doi.org/10.1371/journal.pone.0268121</a>.
-</div>
-<div id="ref-tekle2022length" class="csl-entry">
-Tigabe Tekle, Abaynesh Fentahun AND Tefera, Masho AND Bekalu. 2022.
-<span>“Length of Hospital Stay and Associated Factors Among Heart
-Failure Patients Admitted to the University Hospital in Northwest
-Ethiopia.”</span> <em>PLOS ONE</em> 17 (7): 1–15. <a
-href="https://doi.org/10.1371/journal.pone.0270809">https://doi.org/10.1371/journal.pone.0270809</a>.
-</div>
-<div id="ref-yin2022does" class="csl-entry">
-Yin, Hai-ying AND Zeng, Jing-hua AND Song. 2022. <span>“Does a Smart
-Business Environment Promote Corporate Investment? A Case Study of
-Hangzhou.”</span> <em>PLOS ONE</em> 17 (7): 1–22. <a
-href="https://doi.org/10.1371/journal.pone.0269089">https://doi.org/10.1371/journal.pone.0269089</a>.
+<div id="ref-zhao2024sex" class="csl-entry">
+Zhao, Jingjing AND for the Alzheimer’s Disease Neuroimaging Initiative,
+Guanan AND Guan. 2024. <span>“Sex-Dependent Association of Serum Uric
+Acid Levels with Amyloid Accumulation Among Amyloid-Positive Older
+Adults.”</span> <em>PLOS ONE</em> 19 (2): 1–8. <a
+href="https://doi.org/10.1371/journal.pone.0296738">https://doi.org/10.1371/journal.pone.0296738</a>.
 </div>
 </div>
 </div>

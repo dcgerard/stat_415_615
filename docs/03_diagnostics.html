@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-12-01" />
+<meta name="date" content="2024-02-10" />
 
 <title>Diagnostics and Remedial Measures</title>
 
-<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Diagnostics and Remedial Measures</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-12-01</h4>
+<h4 class="date">2024-02-10</h4>
 
 </div>
 
@@ -794,7 +794,10 @@ and <span class="math inline">\(y\)</span>, sometimes that works. But
 that won’t work here. Be careful about negative values.</p>
 <pre class="r"><code>df &lt;- mutate(df, y_log = log(y + 0.5),
              x_log = log(x))</code></pre>
-<pre><code>## Warning in log(y + 0.5): NaNs produced</code></pre>
+<pre><code>## Warning: There was 1 warning in `mutate()`.
+## ℹ In argument: `y_log = log(y + 0.5)`.
+## Caused by warning in `log()`:
+## ! NaNs produced</code></pre>
 <pre class="r"><code>ggplot(data = df, mapping = aes(x = x_log, y = y_log)) +
   geom_point()</code></pre>
 <pre><code>## Warning: Removed 2 rows containing missing values (`geom_point()`).</code></pre>
@@ -948,6 +951,27 @@ issue, or is it deceiving you into thinking something else is the
 issue?</p></li>
 </ul>
 </div>
+<div id="different-types-of-outliers" class="section level2">
+<h2>Different types of outliers</h2>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>If a point has a clearly large residual, but a common <span
+class="math inline">\(X\)</span>, then this is likely
+<strong>not</strong> an issue (Case 3). This is because there are lots
+of other points that can ameliorate its effects on the OLS
+estimate.</p></li>
+<li><p>If the point has a clearly extreme <span
+class="math inline">\(X\)</span>, but is in line with the linear trend,
+then this is likely <strong>not</strong> an issue (Case 2). Recall, we
+do not make assumptions on the values of <span
+class="math inline">\(X\)</span>. We would say that such a point has
+high “leverage” but is not “influential”.</p></li>
+<li><p>Only when points have a large residual and an extreme <span
+class="math inline">\(X\)</span> do we have a possible issue.</p></li>
+<li><p>In Chapter 10, we will learn about specific measures of influence
+and leverage.</p></li>
+</ul>
+</div>
 </div>
 <div id="dataset-8-sequence-plots-of-residuals-to-check-independence"
 class="section level1">
@@ -968,14 +992,14 @@ df &lt;- data.frame(x = x, y = y)</code></pre>
 <pre class="r"><code>ggplot(data = df, mapping = aes(x = x, y = y)) +
   geom_point() +
   geom_smooth(method = lm, se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lmout &lt;- lm(y ~ x, data = df)
 aout &lt;- augment(lmout)
 aout &lt;- mutate(aout, index = row_number())
 ggplot(data = aout, mapping = aes(x = index, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>This is a specific issue with the <strong>independence</strong>
 assumption.</p></li>
 <li><p>The OLS fit is still unbiased, but the standard errors will be
@@ -1036,9 +1060,9 @@ class="math inline">\(q\)</span>th quantile of a variable is the value
 at with <span class="math inline">\(q\)</span> proportion of the
 observations fall.</p></li>
 <li><p>Sample 0.25-quantile</p>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Theoretical 0.25-quantile</p>
 <p><img src="03_diagnostics_files/figure-html/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Theoretical 0.25-quantile</p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-53-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>If the residuals were approximately normal, then we would expect
 the 0.25 quantile of the data to be about the 0.25 quantile of the
 normal, the 0.7 quantile of the data to be about the 0.7 quantile of the
@@ -1068,13 +1092,13 @@ QQ-plot?</p></li>
 <li><p>QQ-plots Can show us deviations from normality</p>
 <p><img src="03_figs/bad_qqplot.gif" /> </p></li>
 <li><p>QQ-plot indicating right skew.
-<img src="03_diagnostics_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating left skew.
 <img src="03_diagnostics_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating heavy tails.
+<li><p>QQ-plot indicating left skew.
 <img src="03_diagnostics_files/figure-html/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>QQ-plot indicating light tails.
+<li><p>QQ-plot indicating heavy tails.
 <img src="03_diagnostics_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>QQ-plot indicating light tails.
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-59-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="qq-plots-in-r" class="section level2">
 <h2>QQ-plots in R</h2>
@@ -1091,7 +1115,7 @@ aesthetic, then use <code>geom_qq()</code>. Make sure you specify
 ggplot(data = aout, mapping = aes(sample = .resid)) +
   geom_qq() +
   geom_qq_line()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-60-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There is a small deviation, but it’s not too bad.</p></li>
 </ul>
 </div>
@@ -1134,7 +1158,7 @@ penguins %&gt;%
   left_join(aout) %&gt;%
   ggplot(mapping = aes(x = species, y = .resid)) +
   geom_boxplot()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-61-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-62-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Whenever you see a systematic pattern between the residuals and
 an omitted predictor (as above), this indicates that you should include
 that predictor in your model.</p></li>
@@ -1184,9 +1208,9 @@ residuals under a “saturated” model where each level of <span
 class="math inline">\(X\)</span> is allowed to have its own
 mean.</p></li>
 <li><p>Reduced Model: SSE(R)
-<img src="03_diagnostics_files/figure-html/unnamed-chunk-63-1.png" width="672" style="display: block; margin: auto;" /></p></li>
-<li><p>Full Model: SSE(F)
 <img src="03_diagnostics_files/figure-html/unnamed-chunk-64-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<li><p>Full Model: SSE(F)
+<img src="03_diagnostics_files/figure-html/unnamed-chunk-65-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>There are 11 observations.</p></li>
 <li><p>In the reduced model, there are two parameter (<span
 class="math inline">\(y\)</span>-intercept and slope), so <span
@@ -1328,7 +1352,7 @@ class="math inline">\(Y\)</span></h2>
 <pre class="r"><code>data(&quot;mtcars&quot;)
 ggplot(data = mtcars, mapping = aes(x = log(wt), y = mpg)) +
   geom_point()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-69-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-70-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>mtcars &lt;- mutate(mtcars, log_wt = log(wt))
 lm_mt &lt;- lm(mpg ~ log_wt, data = mtcars)
 tidy(lm_mt, conf.int = TRUE)</code></pre>
@@ -1369,7 +1393,7 @@ dc &lt;- select(dc, day, positives)
 dc &lt;- filter(dc, day &lt;= &quot;2020-04-01&quot;, day &gt;= &quot;2020-03-11&quot;) 
 ggplot(data = dc, mapping = aes(x = day, y = log(positives))) +
   geom_point()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-71-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-72-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>dc &lt;- mutate(dc, log_positives = log(positives), day_num = as.numeric(day - day[[1]]))
 lm_cov &lt;- lm(log_positives ~ day_num, data = dc)
 tidy(lm_cov, conf.int = TRUE)</code></pre>
@@ -1413,7 +1437,7 @@ data(&quot;ex0823&quot;)
 wine &lt;- ex0823
 ggplot(data = wine, mapping = aes(x = log(Wine), y = log(Mortality))) +
   geom_point()</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-75-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-76-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p>Fit linear model</p>
 <pre class="r"><code>wine &lt;- mutate(wine, log_wine = log(Wine),
                log_mort = log(Mortality))
@@ -1480,7 +1504,7 @@ works.</li>
 <pre class="r"><code>ggplot(data = hibbs, mapping = aes(x = growth, y = vote)) +
   geom_point() +
   geom_smooth(se = FALSE)</code></pre>
-<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-78-1.png" width="672" style="display: block; margin: auto;" /></p></li>
+<p><img src="03_diagnostics_files/figure-html/unnamed-chunk-79-1.png" width="672" style="display: block; margin: auto;" /></p></li>
 <li><p><strong>Be careful not to over-interpret these.</strong> E.g.,
 don’t say that the above is evidence for a leveling off between 1 and 2,
 then increasing again. Lowess does not provide inference. It can only
