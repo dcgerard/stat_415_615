@@ -339,7 +339,7 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
     ```
 
 
-- This parameterization allows for a different mean for each class. This is the **exact same** as ANOVA.
+- This parameterization allows for a different mean for each class. This is the **exact same** as one-way ANOVA.
 
 - We'll talk more about indicator variables in Chapter 8.
 
@@ -651,11 +651,11 @@ $$
 
 - What is the interpretation of the 31.17 coefficient?
 
-    > Communities that have a per-capita disposable income that is \$1000 more have about \$31,000 more sales on average.
+    > Communities that have a per-capita disposable income that is \$1000 more have \$31,000 more sales on average.
     
 - What is the interpretation of the 9.366 coefficient?
 
-    > Communities that have a per-capita disposable income that is \$1000 more, but the same number of young people, have about \$9400 more sales on average.
+    > Communities that have a per-capita disposable income that is \$1000 more, but the same number of young people, have \$9400 more sales on average.
   
     > Or, adjusting for the number of young people in a community, communities that have \$1000 more in per capita income have \$9400 more sales on average.
     
@@ -940,9 +940,9 @@ $$
     ```
     
     ```{block, eval = FALSE, echo = FALSE}
-    Houses that are twice as large, but the same lot size, are worth about 2.3 (2^1.22) times as much, on average.
+    Houses that are twice as large, but the same lot size, are worth 2.3 (2^1.22) times as much, on average.
     
-    Houses that have twice the lot-size, but are the same area, are worth about 8\% (2^0.11 = 1.08) more, on average.
+    Houses that have twice the lot-size, but are the same area, are worth 8\% (2^0.11 = 1.08) more, on average.
     ```
     
     6. A new house is on sale. It has an area of 1000 square feet and a lot-size of 10,000. The realter wants you to give them a range of possible selling prices.
