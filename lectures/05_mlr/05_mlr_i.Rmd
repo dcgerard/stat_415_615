@@ -296,7 +296,7 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
     \begin{align}
     X_{i1} &= 
     \begin{cases}
-    1 & \text{ if forward-wheel drive}\\
+    1 & \text{ if front-wheel drive}\\
     0 & \text{ otherwise}
     \end{cases}\\
     X_{i2} &= 
@@ -317,7 +317,7 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
     Y_i = \beta_0 + \epsilon_i
     $$
 
-- The model for forward-wheel drive cars is
+- The model for front-wheel drive cars is
     $$
     Y_i = \beta_0 + \beta_1 + \epsilon_i
     $$
@@ -329,11 +329,11 @@ ggsave(filename = "./figs/quad.pdf", plot = pl, height = 3, width = 3)
 
 - $\beta_0$ is interpreted as the mean city mpg for rear-wheel drive cars.
 
-- $\beta_1$ is interpreted as the mean difference in city mpg between rear-wheel drive and forward-wheel drive cars.
+- $\beta_1$ is interpreted as the mean difference in city mpg between rear-wheel drive and front-wheel drive cars.
 
 - $\beta_2$ is interpreted as the mean difference in city mpg between rear-wheel drive and 4-wheel drive cars.
 
-- **Exercise**: What is the mean difference in city mpg between 4-wheel drive and forward-wheel drive cars?
+- **Exercise**: What is the mean difference in city mpg between 4-wheel drive and front-wheel drive cars?
     ```{block, eval = FALSE, echo = FALSE}
     $\beta_2 - \beta_1$
     ```

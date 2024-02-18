@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-12-01" />
+<meta name="date" content="2024-02-18" />
 
 <title>Multiple Linear Regression I</title>
 
-<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Multiple Linear Regression I</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-12-01</h4>
+<h4 class="date">2024-02-18</h4>
 
 </div>
 
@@ -640,7 +640,7 @@ indicator variables to represent this categorical variable.</p></li>
 two variables <span class="math display">\[\begin{align}
   X_{i1} &amp;=
   \begin{cases}
-  1 &amp; \text{ if forward-wheel drive}\\
+  1 &amp; \text{ if front-wheel drive}\\
   0 &amp; \text{ otherwise}
   \end{cases}\\
   X_{i2} &amp;=
@@ -658,7 +658,7 @@ the response) becomes</p>
 class="math display">\[
   Y_i = \beta_0 + \epsilon_i
   \]</span></p></li>
-<li><p>The model for forward-wheel drive cars is <span
+<li><p>The model for front-wheel drive cars is <span
 class="math display">\[
   Y_i = \beta_0 + \beta_1 + \epsilon_i
   \]</span></p></li>
@@ -668,13 +668,13 @@ class="math display">\[
 <li><p><span class="math inline">\(\beta_0\)</span> is interpreted as
 the mean city mpg for rear-wheel drive cars.</p></li>
 <li><p><span class="math inline">\(\beta_1\)</span> is interpreted as
-the mean difference in city mpg between rear-wheel drive and
-forward-wheel drive cars.</p></li>
+the mean difference in city mpg between rear-wheel drive and front-wheel
+drive cars.</p></li>
 <li><p><span class="math inline">\(\beta_2\)</span> is interpreted as
 the mean difference in city mpg between rear-wheel drive and 4-wheel
 drive cars.</p></li>
 <li><p><strong>Exercise</strong>: What is the mean difference in city
-mpg between 4-wheel drive and forward-wheel drive cars?</p></li>
+mpg between 4-wheel drive and front-wheel drive cars?</p></li>
 <li><p>This parameterization allows for a different mean for each class.
 This is the <strong>exact same</strong> as ANOVA.</p></li>
 <li><p>We’ll talk more about indicator variables in Chapter 8.</p></li>
@@ -1072,7 +1072,7 @@ class="math display">\[
 ##  8  163.  52    17.2    168.  -4.67  0.0916  11.3  0.00665      -0.445 
 ##  9  145.  48.9  16.6    158. -12.3   0.0724  10.9  0.0353       -1.16  
 ## 10  137.  38.4  16      137.   0.354 0.133   11.3  0.0000607     0.0345
-## # … with 11 more rows</code></pre></li>
+## # ℹ 11 more rows</code></pre></li>
 <li><p>If we have a new set of predictors, then we need to first create
 the data frame representing <span
 class="math inline">\(\mathbf{X}_h\)</span> before using
