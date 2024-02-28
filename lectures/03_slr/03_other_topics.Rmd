@@ -36,17 +36,17 @@ klippy::klippy()
 
 ## Motivation
 
-- Suppose we run $p$ hypotheses, each rejecting the null when $p < 0.05$.
+- Suppose we run $m$ hypotheses, each rejecting the null when $p < 0.05$.
 
 - If all of the null's are true, what is the probability that we would reject at least one null?
 
 - If these hypotheses are all independent, then we have
     \begin{align}
     Pr(\text{at least one reject }|\text{ all null}) &= 1 - Pr(\text{no reject }|\text{ all null})\\
-    &=1 - 0.95^p
+    &=1 - 0.95^m
     \end{align}
     
-- That means that if we ran 100 hypothesis tests, the probability that at least one would be rejected is $1 - 0.95^{100} = 0.9941$. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.
+- That means that if we ran $m = 100$ hypothesis tests, the probability that at least one would be rejected is $1 - 0.95^{100} = 0.9941$. So we would be almost guaranteed to have a false positive (falsely rejecting the null) somewhere.
 
   ![](https://imgs.xkcd.com/comics/significant.png)\ 
 
