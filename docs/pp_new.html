@@ -11,7 +11,7 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2024-02-28" />
+<meta name="date" content="2024-03-01" />
 
 <title>Final Project</title>
 
@@ -368,7 +368,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Final Project</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2024-02-28</h4>
+<h4 class="date">2024-03-01</h4>
 
 </div>
 
@@ -407,7 +407,7 @@ presentations (<strong>not</strong> on the following Thursday).</li>
 <div id="general-description" class="section level1">
 <h1>General Description</h1>
 <ul>
-<li>For the final project you will work in teams of 2–3 to select a
+<li>For the final project you will work in teams of 2–4 to select a
 journal article from 2023 or later and reproduce their results.</li>
 </ul>
 </div>
@@ -442,11 +442,14 @@ one of these) based on the following that I picked out of a <a
 href="https://journals.plos.org/plosone/search?filterJournals=PLoSONE&amp;q=%22linear%20regression%22&amp;sortOrder=DATE_NEWEST_FIRST&amp;page=1&amp;utm_content=a&amp;utm_campaign=ENG-467">search
 from PLoS One</a>. These aren’t necessarily good or interesting
 articles, just ones that satisfy the above requirements and were
-released when I checked for the newest releases in PLoS One.</p>
+released when I checked for the newest releases in PLoS One. I don’t
+guarantee that these articles are fully reproducible. They just looked
+like the data were available and the methods were regression.</p>
 <p>If the data are in a weird format (like “sav” or “dta”), then try to
 use the <a
 href="https://cran.r-project.org/package=haven"><code>{haven}</code></a>
 package to load it into R.</p>
+<p>(Links at bottom of page in the References section)</p>
 <ul>
 <li><span class="citation">Fu (2024)</span></li>
 <li><span class="citation">Zhao (2024)</span></li>
@@ -455,10 +458,25 @@ package to load it into R.</p>
 <li><span class="citation">Shinozuka (2024)</span></li>
 <li><span class="citation">Wei (2024)</span></li>
 <li><span class="citation">De Ridder (2024)</span></li>
-<li><span class="citation">Xuan (2024)</span></li>
 <li><span class="citation">Vejřík (2024)</span></li>
 <li><span class="citation">Villiers (2024)</span></li>
+<li><span class="citation">Lares-Villaseñor (2024)</span></li>
+<li><span class="citation">Li (2024)</span></li>
+<li><span class="citation">Yasar (2024)</span></li>
+<li><span class="citation">Wu (2024)</span></li>
+<li><span class="citation">Zhang (2024)</span></li>
+<li><span class="citation">Geng (2024)</span></li>
+<li><span class="citation">Masters (2024)</span></li>
+<li><span class="citation">Marsh (2024)</span></li>
+<li><span class="citation">Wullems (2024)</span></li>
+<li><span class="citation">Nairz (2024)</span></li>
 </ul>
+<p>If you want to use one of the articles above, please provide me with
+rankings of your top five so I can apply <a
+href="https://en.wikipedia.org/wiki/Rank-maximal_allocation">Rank-maximal
+allocation</a> to assign journal articles.</p>
+<p>If you want to use one that is not on this list, please send me an
+email before the deadline so I can pre-approve it.</p>
 </div>
 <div id="progress-report-10-pts" class="section level1">
 <h1>Progress Report (10 pts)</h1>
@@ -487,13 +505,15 @@ for extensions.</p></li>
 <li><p><strong>There will be no extensions</strong> on the progress
 report, even if you need to switch papers. Instead, there will be an
 upper bound on the grade of your progress report grade based on how late
-you turn it in.</p></li>
-<li><p>&lt; Two days late: 9 out of 10 pts max</p></li>
-<li><p>&lt; Four days late: 8 out of 10 pts max</p></li>
-<li><p>&lt; Six days late: 7 out of 10 pts max</p></li>
-<li><p>&lt; Eight days late: 6 out of 10 pts max</p></li>
-<li><p>&lt; Ten days late: 5 out of 10 pts max</p></li>
-<li><p>More than ten days late: 0 out of 10 pts</p></li>
+you turn it in.</p>
+<ul>
+<li>&lt; Two days late: 9 out of 10 pts max</li>
+<li>&lt; Four days late: 8 out of 10 pts max</li>
+<li>&lt; Six days late: 7 out of 10 pts max</li>
+<li>&lt; Eight days late: 6 out of 10 pts max</li>
+<li>&lt; Ten days late: 5 out of 10 pts max</li>
+<li>More than ten days late: 0 out of 10 pts</li>
+</ul></li>
 </ul>
 </div>
 <div id="presentationwritten-report" class="section level1">
@@ -501,20 +521,34 @@ you turn it in.</p></li>
 <p>You will provide a presentation and a written report. They should
 both follow this outline:</p>
 <ul>
-<li>Introduce the problem/paper.</li>
+<li>Introduce the problem/paper.
+<ul>
+<li>Very short. This is the least interesting part.</li>
+</ul></li>
 <li>Describe the data.</li>
 <li>State the model(s)/method(s)</li>
 <li>Check assumptions.</li>
 <li>Provide interpretation of results.</li>
-<li>Critiques / expansion of analyses.</li>
-<li>Summary/Conclusion</li>
+<li>Critiques / expansion of analyses.
+<ul>
+<li>This is what I am most interested in. Please spend the most time on
+this.</li>
+<li>It is OK if you think the authors did a great job and you have no
+improvements. You just have to justify this.</li>
+</ul></li>
+<li>Summary/Conclusion
+<ul>
+<li>Very short. This is the least interesting part.</li>
+</ul></li>
 </ul>
 <div id="presentation-5-pts" class="section level2">
 <h2>Presentation (5 pts)</h2>
 <ul>
-<li><p>Your presentation should be 15 minutes long.</p></li>
+<li><p>Your presentation should be 12 minutes long. I will strict on
+time.</p></li>
 <li><p>All group members should speak.</p></li>
-<li><p>I will ask questions at the end of the presentation.</p></li>
+<li><p>I will ask questions for 3 minutes at the end of the
+presentation.</p></li>
 </ul>
 </div>
 <div id="final-written-report-5-pts" class="section level2">
@@ -524,13 +558,23 @@ both follow this outline:</p>
 Don’t make me read text not immediate relevant to the project. No
 yapping.
 <ul>
-<li>Summarize paper’s goals.</li>
+<li>Summarize paper’s goals.
+<ul>
+<li>Very short. This is the least interesting part.</li>
+</ul></li>
 <li>Summarize data.</li>
 <li>Summarize model.</li>
 <li>Check assumptions.</li>
 <li>Interpret results.</li>
-<li>Provide critiques (this is what I am most interested in)</li>
-<li>Summarize your findings.</li>
+<li>Provide critiques
+<ul>
+<li>This is what I am most interested in. Please spend the most time on
+this.</li>
+</ul></li>
+<li>Summarize your findings.
+<ul>
+<li>Very short. This is the least interesting part.</li>
+</ul></li>
 </ul></li>
 <li>Limit your write-up to 4 pages, double spaced, 12 point font. This
 does not include figures/tables/references/code.</li>
@@ -581,11 +625,52 @@ Productivity of Chinese Firms.”</span> <em>PLOS ONE</em> 19 (2): 1–23.
 <a
 href="https://doi.org/10.1371/journal.pone.0298428">https://doi.org/10.1371/journal.pone.0298428</a>.
 </div>
+<div id="ref-geng2024perception" class="csl-entry">
+Geng, Ningxue AND Ling, Puyang AND Fan. 2024. <span>“The Perception of
+Mandarin Speech Conveying Communicative Functions in Chinese Heroin
+Addicts.”</span> <em>PLOS ONE</em> 19 (2): 1–16. <a
+href="https://doi.org/10.1371/journal.pone.0299331">https://doi.org/10.1371/journal.pone.0299331</a>.
+</div>
 <div id="ref-khanthik2024factors" class="csl-entry">
 Khanthik, Ngamjit AND Yaisawang, Apisit AND Kasetsuwan. 2024.
 <span>“Factors Predicting the Visual Outcome of Intracorneal Ring
 Segment for Keratoconus.”</span> <em>PLOS ONE</em> 19 (2): 1–13. <a
 href="https://doi.org/10.1371/journal.pone.0288181">https://doi.org/10.1371/journal.pone.0288181</a>.
+</div>
+<div id="ref-villasenor2024genetic" class="csl-entry">
+Lares-Villaseñor, Martha AND Salazar-García, Eunice AND Guevara-Cruz.
+2024. <span>“Genetic Risk Score for Insulin Resistance Based on Gene
+Variants Associated to Amino Acid Metabolism in Young Adults.”</span>
+<em>PLOS ONE</em> 19 (2): 1–16. <a
+href="https://doi.org/10.1371/journal.pone.0299543">https://doi.org/10.1371/journal.pone.0299543</a>.
+</div>
+<div id="ref-li2024impact" class="csl-entry">
+Li, Dongli AND Liu, Yibo AND Yang. 2024. <span>“The Impact of
+Environmental Education at Chinese Universities on College Students’
+Environmental Attitudes.”</span> <em>PLOS ONE</em> 19 (2): 1–16. <a
+href="https://doi.org/10.1371/journal.pone.0299231">https://doi.org/10.1371/journal.pone.0299231</a>.
+</div>
+<div id="ref-marsh2024mindfully" class="csl-entry">
+Marsh, Elvira AND Spence, Elizabeth AND Perez Vallejos. 2024.
+<span>“Mindfully and Confidently Digital: A Mixed Methods Study on
+Personal Resources to Mitigate the Dark Side of Digital Working.”</span>
+<em>PLOS ONE</em> 19 (2): 1–24. <a
+href="https://doi.org/10.1371/journal.pone.0295631">https://doi.org/10.1371/journal.pone.0295631</a>.
+</div>
+<div id="ref-masters2024comprehensive" class="csl-entry">
+Masters, Jessica L. AND Guillot, Allison K. AND Ward. 2024.
+<span>“Comprehensive Characterization of the Effect of Mineralocorticoid
+Receptor Antagonism with Spironolactone on the
+Renin-Angiotensin-Aldosterone System in Healthy Dogs.”</span> <em>PLOS
+ONE</em> 19 (2): 1–16. <a
+href="https://doi.org/10.1371/journal.pone.0298030">https://doi.org/10.1371/journal.pone.0298030</a>.
+</div>
+<div id="ref-nairz2024determinants" class="csl-entry">
+Nairz, Alex AND Kiechl, Johannes AND Messner. 2024. <span>“Determinants
+of Non-Alcoholic Fatty Liver Disease in Young People: Maternal,
+Neonatal, and Adolescent Factors.”</span> <em>PLOS ONE</em> 19 (2):
+1–15. <a
+href="https://doi.org/10.1371/journal.pone.0298800">https://doi.org/10.1371/journal.pone.0298800</a>.
 </div>
 <div id="ref-shinozuka2024peripapillary" class="csl-entry">
 Shinozuka, Mizuho AND Hirayama, Masato AND Arai. 2024.
@@ -613,12 +698,33 @@ Environment on Retinol-Binding Protein Reference Values in Chinese
 Men.”</span> <em>PLOS ONE</em> 19 (1): 1–15. <a
 href="https://doi.org/10.1371/journal.pone.0297204">https://doi.org/10.1371/journal.pone.0297204</a>.
 </div>
-<div id="ref-xuan2024nonlinear" class="csl-entry">
-Xuan, Rong AND Peng, Xiuping AND Sun. 2024. <span>“The Nonlinear
-Association Between Triglyceride Glucose-Body Mass Index and Femoral
-Neck BMD in Nondiabetic Elderly Men: NHANES 2005-March 2020.”</span>
-<em>PLOS ONE</em> 19 (1): 1–15. <a
-href="https://doi.org/10.1371/journal.pone.0296935">https://doi.org/10.1371/journal.pone.0296935</a>.
+<div id="ref-wu2024application" class="csl-entry">
+Wu, Shengnan. 2024. <span>“Application of Multimedia Technology to
+Innovative Vocational Education on Learning Satisfaction in
+China.”</span> <em>PLOS ONE</em> 19 (2): 1–20. <a
+href="https://doi.org/10.1371/journal.pone.0298861">https://doi.org/10.1371/journal.pone.0298861</a>.
+</div>
+<div id="ref-wullems2024sedentary" class="csl-entry">
+Wullems, Hans AND Verschueren, Jorgen A. AND Degens. 2024.
+<span>“Sedentary Behaviour (Especially Accumulation Pattern) Has an
+Independent Negative Impact on Skeletal Muscle Size and Architecture in
+Community-Dwelling Older Adults.”</span> <em>PLOS ONE</em> 19 (2): 1–21.
+<a
+href="https://doi.org/10.1371/journal.pone.0294555">https://doi.org/10.1371/journal.pone.0294555</a>.
+</div>
+<div id="ref-yasar2024influence" class="csl-entry">
+Yasar, Pınar AND Sen, Burak AND Ozbilgehan. 2024. <span>“Influence of
+Systemic Inflammatory Indices on Hospital Stay and Dialysis
+Post-Earthquake: A Clinical Study.”</span> <em>PLOS ONE</em> 19 (2):
+1–12. <a
+href="https://doi.org/10.1371/journal.pone.0299737">https://doi.org/10.1371/journal.pone.0299737</a>.
+</div>
+<div id="ref-zhang2024unique" class="csl-entry">
+Zhang, Xibin, Baoshan AND Dong. 2024. <span>“The Unique Association
+Between Serum 25-Hydroxyvitamin d Concentrations and Blood Lipid
+Profiles in Agriculture, Forestry, and Fishing Occupations: Insights
+from NHANES 2001–2014.”</span> <em>PLOS ONE</em> 19 (2): 1–19. <a
+href="https://doi.org/10.1371/journal.pone.0297873">https://doi.org/10.1371/journal.pone.0297873</a>.
 </div>
 <div id="ref-zhao2024sex" class="csl-entry">
 Zhao, Jingjing AND for the Alzheimer’s Disease Neuroimaging Initiative,
