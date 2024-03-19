@@ -73,9 +73,13 @@ Here is a list of the equations I want you to have memorized on the top of your 
 
 - Interpretations:
     - If relationship is $y = \beta_0 + \beta_1x$, then add $c$ to $x$ means add $c\beta_1$ to $y$.
+        - "Individuals that are $c$ units higher in $x$ are $c\beta_1$ units higher in $y$ on average."
     - If relationship is $y = \beta_0 + \beta_1 \log(x)$, then multiply $x$ by $c$ means add $\beta_1\log(c)$ to $y$.
+        - "Individuals that are $c$ times higher in $x$ are $\beta_1\log(c)$ units higher in $y$ on average."
     - If relationship is $\log(y) = \beta_0 + \beta_1 x$, then add $c$ to $x$ means multiply $y$ by $\exp(c\beta_1)$.
+        - "Individuals that are $c$ units higher in $x$ are $\exp(c\beta_1)$ times higher in $y$ on average."
     - If relationship is $\log(y) = \beta_0 + \beta_1 \log(x)$, then multiply $x$ by $c$ means multiply $y$ by $c^{\beta_1}$.
+        - "Individuals that are $c$ times higher in $x$ are $c^{\beta_1}$ times higher in $y$ on average."
     - Make sure you describe interpretations in terms of the original variables (not saying "x" and "y").
     - Make sure you do not use causal language, implying any sort of "change" to the x variable.
     

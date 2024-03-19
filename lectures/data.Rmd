@@ -297,6 +297,19 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `lot`: Lot size (in square feet)
     - `highway`: `"yes"` = highway adjacent, `"no"` = highway not adjacent.
     
+# Roman Public Spaces
+
+- [rome2.csv](./data/rome2.csv): Data from @hanson2019urban, a study on urban design in ancient Rome. The authors were interested in the relationship between the population size of a settlement and measures of the settlement's infrastructure. The authors collected data on 125 settlements with the following variables:
+    - `id`: The identification number of the settlement.
+    - `name`: The name of the settlement.
+    - `area`: Area of the settlement in hectares (1hc = 10000m$^2$).
+    - `pop`: The population of the settlement.
+    - `fa_area`: Area of the settlement devoted to public space (i.e. fora and agora) in square meters.
+    - `st_area`: Area of the settlement devoted to public streets in square meters.
+    - `st_length:` Total length of public streets in meters.
+    - `st_width`: Average street width in meters.
+    - `bl_area`: Average area of city blocks in square meters.
+    
 # Roman Wheat Prices
 
 - [rome.csv](./data/rome.csv): Data from Figure 1 of @temin2019words. The researcher was interested in the association between the price of wheat and the distance from Rome. Data were collected during various time points between the late Roman republic and early Roman empire. Variables include.

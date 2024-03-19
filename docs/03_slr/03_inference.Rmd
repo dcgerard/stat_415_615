@@ -142,7 +142,7 @@ klippy::klippy()
 
 - This quantity is important for describing how certain we are about an estimate.
 
-- The standard error $\hat{\beta}_1$ is $\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}$.
+- The standard error $\hat{\beta}_1$ is $\sqrt{\frac{\sigma^2}{\sum_{i=1}^n (X_i - \bar{X})^2}}$.
 
 - We don't know $\sigma^2$, but we have an estimator for it, the mean squared error (MSE).
 
@@ -150,9 +150,9 @@ klippy::klippy()
     MSE = \frac{1}{n-2} \sum_{i=1}^n(Y_i - \hat{Y}_i)^2
     $$
 
-- So the estimated standard error of $\hat{\beta}_1$ is $s(\hat{\beta}_1)$ where
+- So the estimated standard error of $\hat{\beta}_1$ is
     $$
-    s^2(\hat{\beta}_1) = \frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}
+    s(\hat{\beta}_1) = \sqrt{\frac{MSE}{\sum_{i=1}^n (X_i - \bar{X})^2}}
     $$
 
 - We usually just say "standard error", even when we are talking about the estimated standard error.

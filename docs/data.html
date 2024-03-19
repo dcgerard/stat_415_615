@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-11-04" />
+<meta name="date" content="2024-03-19" />
 
 <title>Data</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -205,8 +205,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +214,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -371,7 +364,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-11-04</h4>
+<h4 class="date">2024-03-19</h4>
 
 </div>
 
@@ -990,6 +983,33 @@ style</li>
 </ul></li>
 </ul>
 </div>
+<div id="roman-public-spaces" class="section level1">
+<h1>Roman Public Spaces</h1>
+<ul>
+<li><a href="./data/rome2.csv">rome2.csv</a>: Data from <span
+class="citation">Hanson et al. (2019)</span>, a study on urban design in
+ancient Rome. The authors were interested in the relationship between
+the population size of a settlement and measures of the settlement’s
+infrastructure. The authors collected data on 125 settlements with the
+following variables:
+<ul>
+<li><code>id</code>: The identification number of the settlement.</li>
+<li><code>name</code>: The name of the settlement.</li>
+<li><code>area</code>: Area of the settlement in hectares (1hc =
+10000m<span class="math inline">\(^2\)</span>).</li>
+<li><code>pop</code>: The population of the settlement.</li>
+<li><code>fa_area</code>: Area of the settlement devoted to public space
+(i.e. fora and agora) in square meters.</li>
+<li><code>st_area</code>: Area of the settlement devoted to public
+streets in square meters.</li>
+<li><code>st_length:</code> Total length of public streets in
+meters.</li>
+<li><code>st_width</code>: Average street width in meters.</li>
+<li><code>bl_area</code>: Average area of city blocks in square
+meters.</li>
+</ul></li>
+</ul>
+</div>
 <div id="roman-wheat-prices" class="section level1">
 <h1>Roman Wheat Prices</h1>
 <ul>
@@ -1174,6 +1194,12 @@ Chung, Yeon Hak, Jae Rim Kim, Su Jung Choi, and Eun Yeon Joo. 2022.
 Obstructive Sleep Apnea Syndrome: A Retrospective Cross-Sectional
 Study.”</span> <em>PLOS ONE</em> 17 (4): 1–12. <a
 href="https://doi.org/10.1371/journal.pone.0267441">https://doi.org/10.1371/journal.pone.0267441</a>.
+</div>
+<div id="ref-hanson2019urban" class="csl-entry">
+Hanson, John W, Scott G Ortman, Luı́s MA Bettencourt, and Liam C Mazur.
+2019. <span>“Urban Form, Infrastructure and Spatial Organisation in the
+Roman Empire.”</span> <em>Antiquity</em> 93 (369): 702–18. <a
+href="https://doi.org/10.15184/aqy.2018.192">https://doi.org/10.15184/aqy.2018.192</a>.
 </div>
 <div id="ref-hibbs2000bread" class="csl-entry">
 Hibbs, Douglas A. 2000. <span>“Bread and Peace Voting in US Presidential
