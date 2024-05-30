@@ -268,6 +268,27 @@ ggplot2::theme_set(ggplot2::theme_bw() + ggplot2::theme(strip.background = ggplo
     - `stroke`: Indicator for whether the individual has had a stroke (`1`) or not (`0`).
     - `waso`: Wakefulness after sleep onset.
     
+    
+# Pig Bones
+
+- [pigbones.csv](./data/pigbones.csv): These data are from the study by @eriksen2020rapid, which investigates the factors influencing DNA degradation. This research could aid in interpreting findings in ancient DNA studies. In their experiment, the researchers simulated the treatment of pig bones by ancient humans, subjecting them to various conditions (raw, boiled, or baked), and placed them in five distinct environments. After some period of time, the bones were retrieved, and the extent of DNA degradation in each bone was assessed. Variables include:
+    - `id`: Sample id
+    - `prep`: The form of preparation. Either `"Raw"`, `"Boiled"`, or `"Baked"`
+    - `environment`: The environment of the sample. Either `"Control"`, `"Terrestrial sand"`, `"Tidal zone"`, `"Submerged gyttja"`, `"Submerged sand"`, or `"Marine water"`.
+    - `exposure`: The number of weeks the bones were exposed.
+    - `mtdna`: the estimated percentage of endogenous DNA surviving in each bone. 100% means no degradation, 0% means complete degradation.
+    - `irsf`: infrared splitting factor, a measure of endogenous DNA preservation.
+    - `cp`: carbonate/phosphate ratio, a measure of endogenous DNA preservation.
+    - `read_pairs`: Total number of read-pairs in the sample
+    - `clonality`: PCR clonality.
+    - `read_length`: average merged fragment length (in base pairs)
+    - `c_t`: C -> T substitution damage percentage
+    - `g_a`: G -> A substitution damage percentage
+    - `temp`: Mean temperature (in Celsius)
+    - `pH`: Mean pH
+    - `oxygen`: Oxygen status. Either `"Oxic"` or `"Anoxic"`
+    - `water`: Water status. Eitehr `"Fluctuating"` or `"Waterlogged"`
+    
 # Prostate Cancer
 
 - [prostate.csv](./data/prostate.csv): Dataset C.5 from KNNL. Researchers were interested in the association between prostate-specific antigen (PSA) and a few prognostic clincical measurements in men with prostate cancer. Data were collected on 97 men with prostate cancer. The variables are:

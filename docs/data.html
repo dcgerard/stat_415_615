@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2024-03-19" />
+<meta name="date" content="2024-05-30" />
 
 <title>Data</title>
 
-<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -67,6 +67,7 @@ if (window.hljs) {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging div.csl-entry {
   margin-left:2em;
@@ -364,7 +365,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2024-03-19</h4>
+<h4 class="date">2024-05-30</h4>
 
 </div>
 
@@ -929,6 +930,51 @@ stroke (<code>1</code>) or not (<code>0</code>).</li>
 </ul></li>
 </ul>
 </div>
+<div id="pig-bones" class="section level1">
+<h1>Pig Bones</h1>
+<ul>
+<li><a href="./data/pigbones.csv">pigbones.csv</a>: These data are from
+the study by <span class="citation">Eriksen et al. (2020)</span>, which
+investigates the factors influencing DNA degradation. This research
+could aid in interpreting findings in ancient DNA studies. In their
+experiment, the researchers simulated the treatment of pig bones by
+ancient humans, subjecting them to various conditions (raw, boiled, or
+baked), and placed them in five distinct environments. After some period
+of time, the bones were retrieved, and the extent of DNA degradation in
+each bone was assessed. Variables include:
+<ul>
+<li><code>id</code>: Sample id</li>
+<li><code>prep</code>: The form of preparation. Either
+<code>"Raw"</code>, <code>"Boiled"</code>, or <code>"Baked"</code></li>
+<li><code>environment</code>: The environment of the sample. Either
+<code>"Control"</code>, <code>"Terrestrial sand"</code>,
+<code>"Tidal zone"</code>, <code>"Submerged gyttja"</code>,
+<code>"Submerged sand"</code>, or <code>"Marine water"</code>.</li>
+<li><code>exposure</code>: The number of weeks the bones were
+exposed.</li>
+<li><code>mtdna</code>: the estimated percentage of endogenous DNA
+surviving in each bone. 100% means no degradation, 0% means complete
+degradation.</li>
+<li><code>irsf</code>: infrared splitting factor, a measure of
+endogenous DNA preservation.</li>
+<li><code>cp</code>: carbonate/phosphate ratio, a measure of endogenous
+DNA preservation.</li>
+<li><code>read_pairs</code>: Total number of read-pairs in the
+sample</li>
+<li><code>clonality</code>: PCR clonality.</li>
+<li><code>read_length</code>: average merged fragment length (in base
+pairs)</li>
+<li><code>c_t</code>: C -&gt; T substitution damage percentage</li>
+<li><code>g_a</code>: G -&gt; A substitution damage percentage</li>
+<li><code>temp</code>: Mean temperature (in Celsius)</li>
+<li><code>pH</code>: Mean pH</li>
+<li><code>oxygen</code>: Oxygen status. Either <code>"Oxic"</code> or
+<code>"Anoxic"</code></li>
+<li><code>water</code>: Water status. Eitehr <code>"Fluctuating"</code>
+or <code>"Waterlogged"</code></li>
+</ul></li>
+</ul>
+</div>
 <div id="prostate-cancer" class="section level1">
 <h1>Prostate Cancer</h1>
 <ul>
@@ -1180,7 +1226,8 @@ variable adjusting for this change. <code>1</code> if quarter 2 or 3 of
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 <div id="ref-cesaretti2020" class="csl-entry">
 Cesaretti, Rudolf, José Lobo, Luis M. A. Bettencourt, and Michael E.
 Smith. 2020. <span>“Increasing Returns to Scale in the Towns of Early
@@ -1194,6 +1241,14 @@ Chung, Yeon Hak, Jae Rim Kim, Su Jung Choi, and Eun Yeon Joo. 2022.
 Obstructive Sleep Apnea Syndrome: A Retrospective Cross-Sectional
 Study.”</span> <em>PLOS ONE</em> 17 (4): 1–12. <a
 href="https://doi.org/10.1371/journal.pone.0267441">https://doi.org/10.1371/journal.pone.0267441</a>.
+</div>
+<div id="ref-eriksen2020rapid" class="csl-entry">
+Eriksen, AMH, Henning Matthiesen, Ioannis Kontopoulos, David Gregory,
+Christophe Snoeck, Guojie Zhang, MJ Collins, and M Thomas P Gilbert.
+2020. <span>“Rapid Loss of Endogenous <span>DNA</span> in Pig Bone
+Buried in Five Different Environments.”</span> <em>Archaeometry</em> 62
+(4): 827–46. <a
+href="https://doi.org/10.1111/arcm.12553">https://doi.org/10.1111/arcm.12553</a>.
 </div>
 <div id="ref-hanson2019urban" class="csl-entry">
 Hanson, John W, Scott G Ortman, Luı́s MA Bettencourt, and Liam C Mazur.

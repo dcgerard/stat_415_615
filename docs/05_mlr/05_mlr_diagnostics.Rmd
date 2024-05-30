@@ -544,6 +544,11 @@ klippy::klippy()
     (VIF)_k = \frac{1}{1 - R_k^2}
     $$
     where $R_k^2$ is the coefficient of multiple determination using $X_k$ as the response and every other $X$ as the predictor.
+    
+- The VIF comes from the equation for the standard error of $\hat{\beta}_k$,
+    $$
+    s^2(\hat{\beta}) = \frac{\sigma^2}{(n-1)\mathrm{var}(X_{k})}\frac{1}{1 - R_k^2}
+    $$
 
 - $(VIF)_k$ is equal to 1 when there is no multicollinearity.
 

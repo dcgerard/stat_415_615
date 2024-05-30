@@ -1,0 +1,60 @@
+id,prep,environment,exposure,mtdna,irsf,cp,read_pairs,clonality,read_length,c_t,g_a,temp,pH,oxygen,water
+20,Raw,Control,0,100,3.193 ± 0.020,0.228 ± 0.003,71 789 860,0.03,127,0.004,0.004,NA,NA,NA,NA
+9,Raw,Terrestrial sand,4,9.6,3.185 ± 0.011,0.230 ± 0.002,50 448 625,0.026,116,0.003,0.003,12.9,7.3,Oxic,Fluctuating
+10,Raw,Terrestrial sand,15,1,3.181 ± 0.013,0.254 ± 0.001,50 355 728,0.03,113,0.006,0.006,12.9,7.3,Oxic,Fluctuating
+11,Raw,Terrestrial sand,26,2.7,3.154 ± 0.008,0.198 ± 0.002,18 586 719,0.02,115,0.005,0.005,12.9,7.3,Oxic,Fluctuating
+12,Raw,Terrestrial sand,52,0.1,3.227 ± 0.016,0.215 ± 0.008,96 774 330,0.09,133,0.008,0.007,12.9,7.3,Oxic,Fluctuating
+5,Raw,Tidal zone,2,NA,3.161 ± 0.034,0.275 ± 0.003,113 241 321,0.161,128,0.009,0.006,10.1,8.8,Oxic,Fluctuating
+6,Raw,Tidal zone,11,0.3,3.132 ± 0.036,0.221 ± 0.003,22 513 735,0.02,128,0.007,0.006,10.1,8.8,Oxic,Fluctuating
+7,Raw,Tidal zone,28,4.5,3.162 ± 0.016,0.223 ± 0.002,32 796 069,0.056,130,0.007,0.006,10.1,8.8,Oxic,Fluctuating
+8,Raw,Tidal zone,52,0.2,3.257 ± 0.023,0.224 ± 0.001,156 585 757,0.11,112,0.01,0.008,10.1,8.8,Oxic,Fluctuating
+123,Raw,Tidal zone,99,0.1,3.174 ± 0.041,0.207 ± 0.020,36 537 784,0.017,144,0.007,0.008,10.1,8.8,Oxic,Fluctuating
+1,Raw,Submerged gyttja,4,3.9,3.190 ± 0.019,0.263 ± 0.004,88 826 024,0.166,129,0.006,0.006,10.0,7.2,Anoxic,Waterlogged
+2,Raw,Submerged gyttja,14,3.6,3.185 ± 0.019,0.223 ± 0.002,61 316 351,0.086,132,0.006,0.005,10.0,7.2,Anoxic,Waterlogged
+3,Raw,Submerged gyttja,28,0.6,3.182 ± 0.024,0.248 ± 0.004,NA,NA,NA,NA,NA,10.0,7.2,Anoxic,Waterlogged
+4,Raw,Submerged gyttja,53,1.3,3.176 ± 0.011,0.214 ± 0.005,28 096 841,0.07,132,0.008,0.007,10.0,7.2,Anoxic,Waterlogged
+13,Raw,Submerged sand,3,1,3.205 ± 0.024,0.254 ± 0.002,59 552 232,0.32,130,0.008,0.006,10.8,7.2,Anoxic,Waterlogged
+14,Raw,Submerged sand,14,2.1,3.193 ± 0.013,0.261 ± 0.004,25 845 036,0.06,125,0.006,0.005,10.8,7.2,Anoxic,Waterlogged
+15,Raw,Submerged sand,26,0.5,3.162 ± 0.004,0.242 ± 0.003,110 229 450,0.04,133,0.006,0.005,10.8,7.2,Anoxic,Waterlogged
+65,Raw,Marine water,4,1.9,NA,NA,72 891 560,0.12,130,0.009,0.007,10.0,8.6,Oxic,Waterlogged
+66,Raw,Marine water,14,0.4,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+67,Raw,Marine water,28,0.3,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+68,Raw,Marine water,53,0.4,NA,NA,99 361 759,0.09,128,0.007,0.006,10.0,8.6,Oxic,Waterlogged
+21,Boiled,Control,0,100,3.377 ± 0.019,0.196 ± 0.006,53 172 667,0.11,113,0.016,0.014,NA,NA,NA,NA
+30,Boiled,Terrestrial sand,4,9.2,3.313 ± 0.024,0.234 ± 0.005,NA,NA,NA,NA,NA,12.9,7.3,Oxic,Fluctuating
+31,Boiled,Terrestrial sand,15,1.5,3.323 ± 0.011,0.211 ± 0.006,NA,NA,NA,NA,NA,12.9,7.3,Oxic,Fluctuating
+32,Boiled,Terrestrial sand,26,1.9,3.254 ± 0.019,0.211 ± 0.002,NA,NA,NA,NA,NA,12.9,7.3,Oxic,Fluctuating
+33,Boiled,Terrestrial sand,52,1,3.292 ± 0.016,0.194 ± 0.000,59 296 894,0.09,124,0.011,0.009,12.9,7.3,Oxic,Fluctuating
+26,Boiled,Tidal zone,2,5.9,NA,NA,93 298 737,0.33,101,0.02,0.02,10.1,8.8,Oxic,Fluctuating
+27,Boiled,Tidal zone,11,1.7,NA,NA,NA,NA,NA,NA,NA,10.1,8.8,Oxic,Fluctuating
+28,Boiled,Tidal zone,28,1.7,NA,NA,NA,NA,NA,NA,NA,10.1,8.8,Oxic,Fluctuating
+29,Boiled,Tidal zone,52,2.6,NA,NA,87 302 797,0.08,108,0.019,0.017,10.1,8.8,Oxic,Fluctuating
+125,Boiled,Tidal zone,99,0.7,3.309 ± 0.018,0.198 ± 0.004,49 109 159,0.01,129,0.017,0.016,10.1,8.8,Oxic,Fluctuating
+22,Boiled,Submerged gyttja,4,25.7,NA,NA,146 444 270,0.05,125,0.016,0.015,10.0,7.2,Anoxic,Waterlogged
+23,Boiled,Submerged gyttja,14,20.2,NA,NA,NA,NA,NA,NA,NA,10.0,7.2,Anoxic,Waterlogged
+24,Boiled,Submerged gyttja,28,9.2,NA,NA,NA,NA,NA,NA,NA,10.0,7.2,Anoxic,Waterlogged
+25,Boiled,Submerged gyttja,53,1.8,3.296 ± 0.012,0.250 ± 0.004,108 659 229,0.23,96,0.026,0.023,10.0,7.2,Anoxic,Waterlogged
+38,Boiled,Submerged sand,4,9.6,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
+39,Boiled,Submerged sand,14,4.6,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
+40,Boiled,Submerged sand,27,3.4,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
+69,Boiled,Marine water,4,2.1,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+70,Boiled,Marine water,14,0.6,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+71,Boiled,Marine water,28,4.8,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+72,Boiled,Marine water,53,0.5,NA,NA,NA,NA,NA,NA,NA,10.0,8.6,Oxic,Waterlogged
+41,Baked,Control,0,100,3.345 ± 0.012,0.197 ± 0.001,50 016 190,0.07,116,0.008,0.007,NA,NA,NA,NA
+50,Baked,Terrestrial sand,4,9.3,NA,NA,18 261 032,0.09,112,0.015,0.014,12.9,7.3,Oxic,Fluctuating
+51,Baked,Terrestrial sand,15,6.6,NA,NA,NA,NA,NA,NA,NA,12.9,7.3,Oxic,Fluctuating
+52,Baked,Terrestrial sand,26,3,NA,NA,NA,NA,NA,NA,NA,12.9,7.3,Oxic,Fluctuating
+53,Baked,Terrestrial sand,52,1.5,3.285 ± 0.010,0.231 ± 0.003,18 490 108,0.06,112,0.014,0.014,12.9,7.3,Oxic,Fluctuating
+46,Baked,Tidal zone,2,8.5,NA,NA,37 331 342,0.19,123,0.011,0.009,10.1,8.8,Oxic,Fluctuating
+47,Baked,Tidal zone,11,21.5,NA,NA,NA,NA,NA,NA,NA,10.1,8.8,Oxic,Fluctuating
+48,Baked,Tidal zone,28,5.9,NA,NA,NA,NA,NA,NA,NA,10.1,8.8,Oxic,Fluctuating
+49,Baked,Tidal zone,52,2,NA,NA,40 655 594,0.03,111,0.009,0.008,10.1,8.8,Oxic,Fluctuating
+124,Baked,Tidal zone,99,2,3.237 ± 0.022,0.212 ± 0.005,63 699 628,0.01,131,0.006,0.005,10.1,8.8,Oxic,Fluctuating
+42,Baked,Submerged gyttja,4,6.8,NA,NA,74 273 201,0.07,119,0.006,0.007,10.0,7.2,Anoxic,Waterlogged
+43,Baked,Submerged gyttja,14,2,NA,NA,NA,NA,NA,NA,NA,10.0,7.2,Anoxic,Waterlogged
+44,Baked,Submerged gyttja,28,4.5,NA,NA,NA,NA,NA,NA,NA,10.0,7.2,Anoxic,Waterlogged
+45,Baked,Submerged gyttja,53,0.9,3.218 ± 0.010,0.227 ± 0.002,142 779 978,0.75,127,0.008,0.007,10.0,7.2,Anoxic,Waterlogged
+58,Baked,Submerged sand,4,1.8,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
+59,Baked,Submerged sand,14,1.5,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
+60,Baked,Submerged sand,27,2.2,NA,NA,NA,NA,NA,NA,NA,10.8,7.2,Anoxic,Waterlogged
