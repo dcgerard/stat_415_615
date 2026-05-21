@@ -54,9 +54,13 @@ We will use the R computing language to complete assignments. R is free and may 
 
 # Assignments and Grading
 
-- Weekly homeworks: 25%
-  - Only a random subset of the questions each week will be graded.
-  - Lowest graded assignment will be dropped.
+- Weekly homeworks: 15%
+  - These will be self-graded.
+- Participation: 10%
+  - Show up to class
+  - Answer questions in class
+  - Work on in-class exercises
+  - Stay off your phones, stay off social media, etc
 - First Midterm: 25%
   - In class, closed notes, closed book.
   - Covers simple linear regression
@@ -110,24 +114,15 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
 
 # Important Dates
 
-- *02/27/2024: Section 001: Midterm 1 
-- *02/28/2024: Section 002: Midterm 1 
+- *Tuesday, 10/13/2026: Midterm 1
+- Friday, 10/16/2026: No class (Fall break).
+- Friday, 11/06/2026: Last day to withdraw or change a grade option
+- Tuesday, 11/24/2026: Class meets via Zoom (Thanksgiving)
+- Friday, 11/27/2026: No class (Thanksgiving)
+- *Friday, 12/11/2026: Midterm 2
+- Friday, 12/18/2026: Final project presentations (02:30PM-05:00PM)
 
-- 03/01/2024: Dune: Part Two release date.
-
-- 03/12/2024: Section 001: Spring break. No class.
-- 03/13/2024: Section 002: Spring break. No class.
-
-- *04/23/2024: Section 001: Midterm 2 
-- *04/24/2024: Section 002: Midterm 2
-
-- 04/30/2024: Section 001: Spring study day. No class.
-- 05/01/2024: Section 002: Spring study day. No class.
-
-- 05/07/2024: Section 001: Present final projects during final exam period (By Zoom).
-- 05/08/2024: Section 002: Present final projects during final exam period (By Zoom).
-
-- *These dates are subject to change.
+- *These dates are VERY tentative and subject to change.
     - Midterm 1 will be the week after we finish simple linear regression.
     - Midterm 2 will be the week after we finish multiple linear regression.
     
@@ -156,7 +151,7 @@ The learning objective of this course is to give you the main concepts and a wor
 - Please just let me know ahead of time that you will be using one of your two extensions. 
 - Please do **not** tell me why you need the extension. 
 - You cannot use an extension for elements of the final project. 
-- Any homeworks not submitted by the due date will recieve a grade of 0.
+- Any homeworks not submitted by the due date will receive a grade of 0.
 
 # Incomplete Policy
 
