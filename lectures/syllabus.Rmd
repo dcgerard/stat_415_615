@@ -50,11 +50,11 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 # Computing and Software
 
-We will use the R computing language to complete assignments. R is free and may be downloaded from the R website (<http://cran.r-project.org/>). In addition, I highly recommend you interface with R through the free RStudio IDE (<https://www.rstudio.com/>). R and RStudio are also available on computers in the Anderson Computing Complex, the Center for Teaching, Research, and Learning Lab (CTRL) in Hurst Hall, in addition to various labs across campus. R Studio may also be run from your web browser using American University's [Virtual Applications System](https://americanuniversity.service-now.com/help/?id=sc_cat_item&sys_id=1fdf972fdbb3db00771cfce9af961985). Please see me during office hours if you have questions regarding R.
+We will use the R computing language to complete assignments. R is free and may be downloaded from the R website (<http://cran.r-project.org/>). In addition, I highly recommend you interface with R through the free RStudio IDE (<https://www.rstudio.com/>). R and RStudio are also available on computers in the Anderson Computing Complex in addition to [various labs across campus](https://www.american.edu/oit/campus-computing-facilities.cfm). R Studio may also be run from your web browser using American University's [Virtual Applications System](https://americanuniversity.service-now.com/help/?id=sc_cat_item&sys_id=1fdf972fdbb3db00771cfce9af961985). Please see me during office hours if you have questions regarding R.
 
 # Assignments and Grading
 
-- Weekly homeworks: 15%
+- Weekly homeworks: 20%
   - These will be self-graded.
 - Participation: 10%
   - Show up to class
@@ -67,7 +67,7 @@ We will use the R computing language to complete assignments. R is free and may 
 - Second Midterm: 25%
   - In class, closed notes, closed book.
   - Covers multiple linear regression. But you can't know this without knowing simple linear regression, so this second midterm is effectively cumulative.
-- Final Project: 25%
+- Final Project: 20%
 
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
@@ -93,7 +93,7 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
     a. The model and interpretation.
     b. Inference (estimation/hypothesis testing).
     c. Diagnostics and remedial measures.
-4. STAT 615 Students Only: Linear Algebra (Chapter 5)
+4. Linear Algebra (Chapter 5)
 5. Multiple Linear Regression (Chapters 6-8 of KNNL).
     a. The model and interpretation.
     b. Inference (estimation/hypothesis testing).
@@ -106,11 +106,11 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
 
 # STAT 615 Students Only
 
-- If you are taking this class for graduate credit, I am going to require you to learn the linear algebra behind linear regression.
+- If you are taking this class for graduate credit, I'll have you learn and apply a novel statistical method in your final project. These are topics more advanced than what we cover in this class. Possible topics include:
 
-- I am going to have a recorded lecture on linear algebra that you will be required to watch.
-
-- I will give you separate homework and exam questions that use linear algebra in linear regression (e.g. create design matrices, implement linear regression in R using matrix algebra, etc)
+  - Principal components analysis
+  - LASSO
+  - Bayesian regression
 
 # Important Dates
 
@@ -138,10 +138,6 @@ The learning objective of this course is to give you the main concepts and a wor
 - Interpret and summarize the results of regression analysis results in the context of the study.
 - Understand limitations of the regression analysis.
 - Design and conduct a study to investigate a research problem using real-world data and regression analysis.
-- For STAT 615 Students only: 
-    - Derive the least squares estimators for linear regression.
-    - Write the linear regression model in matrix form.
-    - Understand matrix derivations for estimation, testing, and model building in multiple linear regression.
     
 # Late Work Policy
 
@@ -169,17 +165,11 @@ Students are not permitted to make visual or audio recordings (including livestr
 
 # Academic Integrity Code
 
-- Standards of academic conduct are set forth in the university’s [Academic Integrity Code](http://www.american.edu/academics/integrity/index.cfm). By registering for this course, students have acknowledged their awareness of the Academic Integrity Code and they are obliged to become familiar with their rights and responsibilities as defined by the Code. Violations of the Academic Integrity Code will not be treated lightly and disciplinary action will be taken should violations occur. This includes cheating, fabrication, and plagiarism.
-
-- I expect you to work with others and me, and I expect you to use online resources as you work on your assignments/projects. However, your submissions must be composed of your own thoughts, coding, and words. You should be able to explain your work on assignments/projects and your rationale.  **Based on your explanation (or lack thereof), I may modify your grade.** 
-
-- If you use an online resource, please cite it with a URL. This includes any generative AI source (e.g. ChatGPT, Bard, or Copilot). **Failure to include a URL citation for an online resource will be considered a violation of the Academic Integrity Code**.
-
-- If you do not understand an online resource, but believe it to be useful for a project/assignment, please ask me for help.
-
-- It is a violation of the Academic Code of Integrity if you obtain past homework solutions from students who took the course previously (whether they wrote those solutions, or I wrote those solutions).
-
-- All solutions that I provide are under my copyright. These solutions are for personal use only and may not be distributed to anyone else. Giving these solutions to others, including other students or posting them on the internet, is a violation of my copyright and a violation of the student code of conduct.
+Standards of academic conduct are set forth in the university’s [Academic Integrity Code](http://www.american.edu/academics/integrity/index.cfm). By registering for this course, students have acknowledged their awareness of the Academic Integrity Code and they are obliged to become familiar with their rights and responsibilities as defined by the Code. Violations of the Academic Integrity Code will not be treated lightly and disciplinary action will be taken should violations occur. This includes cheating, fabrication, and plagiarism.
+    
+No electronic resources are allowed for exams. If you touch your phone/computer/smart watch/smart glasses/etc during the exam then that is an automatic fail for the course.
+    
+All solutions that I provide are under my copyright. These solutions are for personal use only and may not be distributed to anyone else. Giving these solutions to others, including other students or posting them on the internet, is a violation of my copyright and a violation of the student code of conduct.
 
 # Syllabus Change Policy
 
