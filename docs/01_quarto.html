@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2026-07-07" />
+
+<title>Introduction to Quarto</title>
+
+<script src="site_libs/header-attrs-2.31/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Introduction to Quarto</h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2026-07-07</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<ul>
+<li><p>Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+is a file format that is a combination of plain text and R
+code.</p></li>
+<li><p>Lots of great educational material is available at <a
+href="https://quarto.org/" class="uri">https://quarto.org/</a></p></li>
+<li><p>You write code and commentary of code in one file. You may then
+compile (RStudio calls this “rendering”) the Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+file to many different kinds of output: pdf (including beamer
+presentations), html (including various presentation formats), Word,
+PowerPoint, etc.</p></li>
+<li><p>Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+is useful for:</p>
+<ol style="list-style-type: decimal">
+<li>Communication of statistical results.</li>
+<li>Collaborating with other data scientists.</li>
+<li>Using it as a modern lab notebook to <em>do</em> data science.</li>
+</ol></li>
+<li><p>Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+can also make “literate programming” documents for python, Julia,
+JavaScript, etc…</p></li>
+</ul>
+<div id="getting-statrted" class="section level2">
+<h2>Getting Statrted</h2>
+<ul>
+<li><p>Install Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+via: <a href="https://quarto.org/docs/get-started/"
+class="uri">https://quarto.org/docs/get-started/</a></p></li>
+<li><p>To make PDF files, you will need to install <span
+class="math inline">\(\LaTeX\)</span> if you don’t have it already. To
+install it, type in R:</p>
+<pre class="r"><code>install.packages(&quot;tinytex&quot;)
+tinytex::install_tinytex()</code></pre></li>
+<li><p>If you get an error while trying to install tinytex, try manually
+installing  instead:</p>
+<ul>
+<li>For Windows users, go to <a href="http://miktex.org/download"
+class="uri">http://miktex.org/download</a></li>
+<li>For OS users, go to <a href="https://tug.org/mactex/"
+class="uri">https://tug.org/mactex/</a></li>
+<li>For Linux users, go to <a href="https://www.tug.org/texlive/"
+class="uri">https://www.tug.org/texlive/</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="playing-with-quarto" class="section level2">
+<h2>Playing with Quarto
+<img src="01_figures/kuato_small.png" width="5%" alt="Kuato cartoon"></h2>
+<ul>
+<li>Open up a new Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+file:</li>
+</ul>
+<p><img src="01_figures/quarto_start.png"
+fig-alt="R studio screenshot of a new Quarto file." /> </p>
+<ul>
+<li>Choose the options for the type of output you want</li>
+</ul>
+<p><img src="01_figures/quarto_options.png"
+fig-alt="Options for new Quarto file." /> </p>
+<ul>
+<li><p>You should now have a rudimentary Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+file.</p></li>
+<li><p>Save a copy of this file in your “analysis” folder in the “week1”
+project.</p></li>
+<li><p>Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+contains three things</p>
+<ol style="list-style-type: decimal">
+<li>A YAML (Yet Another Markup Language) header that controls options
+for the Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+document. These are surrounded by <code>---</code>.</li>
+<li>Code <strong>chunks</strong> — bits of R code that that are
+surrounded by <code>```{r}</code> and <code>```</code>. Only valid R
+code should go in here.</li>
+<li>Plain text that contains simple formatting options.</li>
+</ol></li>
+<li><p>All of these are are displayed in the default Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+file. You can compile this file by clicking the “Render” button at the
+top of the screen or by typing CONTROL + SHIFT + K. Do this
+now.</p></li>
+</ul>
+<div id="formatting-markdown" class="section level3">
+<h3>Formatting markdown</h3>
+<ul>
+<li><p>Here is Hadley’s brief intro to formatting text in Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">:</p>
+<pre><code>## Text formatting
+
+*italic* **bold** ~~strikeout~~ `code`
+
+superscript^2^ subscript~2~
+
+[underline]{.underline} [small caps]{.smallcaps}
+
+## Headings
+
+# 1st Level Header
+
+## 2nd Level Header
+
+### 3rd Level Header
+
+## Lists
+
+-   Bulleted list item 1
+
+-   Item 2
+
+    -   Item 2a
+
+    -   Item 2b
+
+1.  Numbered list item 1
+
+2.  Item 2.
+    The numbers are incremented automatically in the output.
+
+## Links and images
+
+&lt;http://example.com&gt;
+
+[linked phrase](http://example.com)
+
+![optional caption text](img.png){fig-alt=&quot;accessibility text&quot;}
+
+## Tables
+
+| First Header | Second Header |
+|--------------|---------------|
+| Content Cell | Content Cell  |
+| Content Cell | Content Cell  |</code></pre></li>
+</ul>
+</div>
+<div id="code-chunks" class="section level3">
+<h3>Code Chunks</h3>
+<ul>
+<li><p>You can insert new code-chunks using CONTROL + ALT + I (or using
+the “Insert” button at the top of RStudio).</p></li>
+<li><p>You write all R code in chunks. You can send the current line of
+R code (the line where the cursor is) using CONTROL + ENTER (or the
+“Run” button at the top of RStudio).</p></li>
+<li><p>You can run all of the code in a chunk using CONTROL + ALT + C
+(or using the “Run” button at the top of RStudio).</p></li>
+<li><p>You can run all of the code in the next chunk using CONTROL + ALT
++ N (or using the “Run” button at the top of RStudio).</p></li>
+</ul>
+</div>
+<div id="yaml-header" class="section level3">
+<h3>YAML Header</h3>
+<ul>
+<li><p>My typical YAML header will looks like this</p>
+<pre><code>---
+title: &quot;Week 1 Worksheet: Installing R, Rmarkdown, Rbasics&quot;
+author: &quot;David Gerard&quot;
+date: today
+format: pdf
+urlcolor: &quot;blue&quot;
+---</code></pre></li>
+<li><p>All of those settings are fairly self-explanatory.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="writing-math" class="section level1">
+<h1>Writing Math</h1>
+<ul>
+<li><p>Skip if uninterested.</p></li>
+<li><p>You can use the <span class="math inline">\(\LaTeX\)</span>
+language to write math in Quarto
+<img src="01_figures/kuato_small.png" width="3%" alt="Kuato cartoon">
+documents.</p></li>
+<li><p>You put inline math between single dollar signs
+<code>$math code here$</code>.</p></li>
+<li><p>You put display math (equations on a separate line) between two
+dollar signs</p>
+<pre><code>$$
+math code here
+$$</code></pre></li>
+<li><p>Subscripts are written with an underscore <code>_</code> with
+braces <code>{}</code> surrounding the subscript.</p>
+<ul>
+<li><span class="math inline">\(x_{ik}\)</span> is
+<code>$x_{ik}$</code></li>
+</ul></li>
+<li><p>Superscripts are written with a caret <code>^</code> with braces
+<code>{}</code> surrounding the subscript.</p>
+<ul>
+<li><span class="math inline">\(x^{2p}\)</span> is
+<code>$x^{2p}$</code></li>
+</ul></li>
+<li><p>Big sigma notation is <code>\sum</code></p>
+<ul>
+<li><span class="math inline">\(\sum_{i=1}^{n}\)</span> is
+<code>$\sum_{i=1}^{n}$</code></li>
+</ul></li>
+<li><p>Square root: <code>\sqrt{}</code></p>
+<ul>
+<li><span class="math inline">\(\sqrt{x^2 + 1}\)</span> is
+<code>$\sqrt{x^2 + 1}$</code></li>
+</ul></li>
+<li><p>log and exponentiation: <code>\log()</code> and
+<code>\exp()</code> (note the parentheses, not braces)</p>
+<ul>
+<li><span class="math inline">\(\log(x^2 + 1)\)</span> is
+<code>$\log(x^2 + 1)$</code></li>
+<li><span class="math inline">\(\exp(x^2 + 1)\)</span> is
+<code>$\exp(x^2 + 1)$</code></li>
+</ul></li>
+<li><p>Greek letters are typically just their spelling beginning with a
+backslash <code>\</code></p>
+<ul>
+<li><span class="math inline">\(\sigma\)</span> is
+<code>$\sigma$</code></li>
+<li><span class="math inline">\(\mu\)</span> is <code>$\mu$</code></li>
+<li><span class="math inline">\(\alpha\)</span> is
+<code>$\alpha$</code></li>
+<li><span class="math inline">\(\beta\)</span> is
+<code>$\beta$</code></li>
+<li><span class="math inline">\(\pi\)</span> is <code>$\pi$</code></li>
+<li><span class="math inline">\(\tau\)</span> is
+<code>$\tau$</code></li>
+<li>etc</li>
+</ul></li>
+<li><p>The tilde, denoting “is distributed as” is <code>\sim</code></p>
+<ul>
+<li><span class="math inline">\(X \sim N(\mu, \sigma^2)\)</span> is
+<code>$X \sim N(\mu, \sigma^2)$</code></li>
+</ul></li>
+<li><p>These are the inequality operations</p>
+<ul>
+<li><span class="math inline">\(&lt;\)</span> is
+<code>$&lt;$</code></li>
+<li><span class="math inline">\(\leq\)</span> is
+<code>$\leq$</code></li>
+<li><span class="math inline">\(&gt;\)</span> is
+<code>$&gt;$</code></li>
+<li><span class="math inline">\(\geq\)</span> is
+<code>$\geq$</code></li>
+</ul></li>
+<li><p>You use a vertical pipe <code>|</code> for conditional
+statements.</p>
+<ul>
+<li><span class="math inline">\(Pr(X|Y)\)</span> is
+<code>$Pr(X|Y)$</code></li>
+</ul></li>
+<li><p>Here are some “and” and “or” statements</p>
+<ul>
+<li><span class="math inline">\(\cup\)</span> is
+<code>$\cup$</code></li>
+<li><span class="math inline">\(\cap\)</span> is
+<code>$\cap$</code></li>
+</ul></li>
+<li><p>Fractions are written with <code>\frac{}{}</code></p>
+<ul>
+<li><span class="math inline">\(\frac{x^2 + 1}{\sqrt{2}}\)</span> is
+<code>$\frac{x^2 + 1}{\sqrt{2}}$</code></li>
+</ul></li>
+<li><p>Binomial coefficients are <code>\binom{}{}</code></p>
+<ul>
+<li><span class="math inline">\(\binom{n}{2}\)</span> is
+<code>$\binom{n}{2}$</code></li>
+</ul></li>
+<li><p>Let’s do a more complicated example:</p>
+<p><span class="math display">\[
+\frac{1}{\sqrt{2\pi\sigma^2}}\exp(-\frac{1}{2\sigma^2}(x - \mu)^2)
+\]</span></p>
+<pre><code>$$
+\frac{1}{\sqrt{2\pi\sigma^2}}\exp(-\frac{1}{2\sigma^2}(x - \mu)^2)
+$$</code></pre></li>
+<li><p><strong>Exercise</strong>: Write this equation using <span
+class="math inline">\(\LaTeX\)</span></p>
+<p><span class="math display">\[
+\binom{n}{k}p^k(1-p)^{n-k}
+\]</span></p></li>
+<li><p><strong>Exercise</strong>: Write this equation using <span
+class="math inline">\(\LaTeX\)</span></p>
+<p><span class="math display">\[
+-\frac{n}{2}\log(2\pi\sigma^2) -
+\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i-\mu)^2
+\]</span></p></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
