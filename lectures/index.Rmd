@@ -20,17 +20,17 @@ University by [David Gerard](https://dcgerard.github.io/).
 
 # Lectures
 
-- 00 Motivation
+- 00 Motivation.
   - [Lecture 00-1: Linear Regression Overview](./00_motivation.html).
-- 01 Crash Course in R
+- 01 Crash Course in R.
   - [Lecture 01-1: R introduction](./01_r_intro.html).
   - [Lecture 01-2: Quarto introduction](01_quarto.html).
   - [Lecture 01-3: R graphics with `{ggplot2}`](./01_ggplot.html).
   - [Lab 01-1: R Lab](./01_r_lab.html).
-- 02 Review
+- 02 Review.
   - [Lecture 02-1: Mathematical prerequisites](./02_math_prereq.html).
   - [Lecture 02-2: Probability and simulation](./02_prob_sim.html).
-- 03 Simple linear regression
+- 03 Simple linear regression.
   - [Lecture 03-1: The Model](./03_ols.html). 
       - Chapter 1 of KNNL.
   - [Lecture 03-2: Inference](./03_inference.html). 
@@ -42,11 +42,11 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 4 of KNNL.
   - [Lab 03-1: Inference Lab](./03_inference_lab.html).
   - [Lab 03-2: Diagnostics Lab](./03_diagnostics_lab.html).
-- 04 Linear algebra
+- 04 Linear algebra.
   - [Lecture 04-1: Linear Algebra](./04_linear_algebra.html). 
       - Chapter 5 of KNNL.
   - [Lab 04-1: Linear Algebra Lab](./04_linear_algebra_lab.html). 
-- 05 Multiple linear regression
+- 05 Multiple linear regression.
   - [Lecture 05-1: Multiple Linear Regression](./05_mlr_i.html).
       - Model definition, interpretation, estimation, inference, assumptions.
       - Chapter 6 of KNNL.
@@ -66,11 +66,14 @@ University by [David Gerard](https://dcgerard.github.io/).
       - Chapter 10 of KNNL.
 - 06 Logistic Regression
   - [Lecture 06-1: Logistic Regression](./06_logistic.html).
-    - Chapter 20 of Statistical Sleuth
-    - Sections 14.1–14.10 of KNNL
+    - Chapter 20 of Statistical Sleuth.
+    - Sections 14.1–14.10 of KNNL.
 - Review Sheets
   - [Equations](./rr_equations.html).
 
 # Final Project
 
-- [Final Project Description](./pp_new.html).
+- [Final Project Description](./group_project.html).
+- [AU Data Subscriptions](https://subjectguides.library.american.edu/az/databases?t=7411).
+- [AU Data Librarian Resources](https://subjectguides.library.american.edu/c.php?g=1329947&p=9793262).
+- [AU List of Government Data](https://subjectguides.library.american.edu/c.php?g=1329947&p=9988298).

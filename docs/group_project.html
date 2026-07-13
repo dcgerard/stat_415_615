@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Gerard" />
+
+<meta name="date" content="2026-07-13" />
+
+<title>STAT-415/615 Final Project</title>
+
+<script src="site_libs/header-attrs-2.31/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Teaching Website for STAT 415/615</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="data.html">Data</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/dcgerard/stat_415_615">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">STAT-415/615 Final Project</h1>
+<h4 class="author">David Gerard</h4>
+<h4 class="date">2026-07-13</h4>
+
+</div>
+
+
+<p><em>Original project description by Laura Bernhofen. Adapted by David
+Gerard.</em></p>
+<div id="objective" class="section level2">
+<h2>Objective</h2>
+<p>As a group you will engage in the entire statistical analysis
+investigative cycle: stating an investigative question, identifying an
+appropriate data set, exploring the data, building a model, revising
+your model, and presenting the final results. You will use the
+statistical modeling techniques we are developing to investigate a
+question in a field of interest that the group will define. The project
+is intended to give you the opportunity to experience firsthand the
+entire statistical process and to synthesize the concepts and techniques
+that we have been developing throughout the semester.</p>
+<p>The project will entail:</p>
+<ul>
+<li>Identifying a problem of interest</li>
+<li>Collecting or finding a data set that can be used to address the
+problem</li>
+<li>Analyzing the data using appropriate statistical methods</li>
+<li>Critically evaluating the results and methodology</li>
+<li>Presenting the results in a clear and coherent manner</li>
+</ul>
+</div>
+<div id="due-dates" class="section level2">
+<h2>Due Dates</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Deliverable</th>
+<th>Due Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Project Proposal</td>
+<td>Friday, Nov 6</td>
+</tr>
+<tr class="even">
+<td>Group Meetings</td>
+<td>Week of Nov 9–13</td>
+</tr>
+<tr class="odd">
+<td>Initial Exploratory Data Analysis</td>
+<td>Tuesday, Nov 17</td>
+</tr>
+<tr class="even">
+<td>Initial Statistical Model</td>
+<td>Tuesday, Nov 24</td>
+</tr>
+<tr class="odd">
+<td>Revised Model</td>
+<td>Friday, Dec 11</td>
+</tr>
+<tr class="even">
+<td>Final Poster Presentation</td>
+<td>Friday, Dec 18</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="project-phases" class="section level2">
+<h2>Project Phases</h2>
+<div id="project-proposal" class="section level3">
+<h3>Project Proposal</h3>
+<p>Involves defining the problem of interest and formulating an
+investigative question that you want to answer, identifying a relevant
+data set or establishing an appropriate method for data collection.</p>
+</div>
+<div id="initial-exploratory-data-analysis" class="section level3">
+<h3>Initial Exploratory Data Analysis</h3>
+<p>Examining the data to identify issues with the data, examining the
+distributions of the associated variables, assessing outliers or other
+extreme values, and proposing potential remedies for issues
+encountered.</p>
+</div>
+<div id="developing-an-initial-statistical-model"
+class="section level3">
+<h3>Developing an Initial Statistical Model</h3>
+<p>Using an appropriate statistical model that we discuss during the
+course, you will build a provisional model that could be used to address
+your proposed problem of interest. You will also analyze the validity of
+the assumptions of the model for the data set you have chosen.</p>
+</div>
+<div id="revising-the-model" class="section level3">
+<h3>Revising the Model</h3>
+<p>Addressing any issues you discover with the initial statistical model
+and incorporating feedback, you will develop a final model which
+provides insight into answering your proposed question that satisfies
+the necessary assumptions.</p>
+</div>
+<div id="log" class="section level3">
+<h3>Log</h3>
+<p>Log your individual contribution to the group as well as group
+interactions.</p>
+</div>
+<div id="project-presentation" class="section level3">
+<h3>Project Presentation</h3>
+<p>The group will make a 15-minute poster presentation to the class
+describing your project and your results. Project presentations will be
+in person and all members of the group must participate.</p>
+</div>
+</div>
+<div id="requirements" class="section level2">
+<h2>Requirements</h2>
+<div id="log-1" class="section level3">
+<h3>Log</h3>
+<p>Each individual in the group needs to keep a log of the time spent on
+the project. Indicate what task was undertaken, the amount of time spent
+on the task, and who was involved in the task. You should divide the
+tasks amongst the group members to use time efficiently and take
+advantage of group members’ strengths. Maintain the log for the entirety
+of the project.</p>
+</div>
+<div id="project-proposal-1" class="section level3">
+<h3>Project Proposal</h3>
+<p>A 1–2 page well-written proposal.</p>
+<p>The project proposal must include:</p>
+<p><strong>1. Problem Statement</strong></p>
+<p>The proposal should begin with a clear statement of the investigative
+question that you want to answer in the data analysis that you will
+undertake. Include specific claims you’d like to address and why the
+problem is of interest to you. The problem can come from any discipline
+but must be well defined in terms of the question you intend to
+investigate. You want to make it an interesting question that uses the
+statistical techniques we are covering this semester — it should not be
+an exercise in descriptive statistics. The project may not be one you’ve
+already completed for another class, unless you can justify that this
+project extends that project in some statistically meaningful way.</p>
+<p><strong>Your project must involve building either a linear or
+logistic regression model with multiple variables that can be used to
+describe the relationship between a quantitative response variable and
+multiple potential explanatory variables.</strong></p>
+<p><strong>2. Identify a Data Set Relevant to Your Question</strong></p>
+<p>You should identify an available data set from a reliable source that
+you would like to analyze. I have on the course website links to our
+library’s resources for numerical data. We also have a <a
+href="https://subjectguides.library.american.edu/prf.php?id=61bbe661-7cdb-11ed-9922-0ad758b798c3">data
+librarian</a> that you can try to ask for help. My experience is that
+our librarians <strong>love it</strong> when you reach out to them for
+help.</p>
+<p>You may also get ideas for good data sources from professors or
+others with experience in your discipline. I would really like it if the
+data and project were related to your major or field-of-study, but this
+is not required.</p>
+<p>I will say no to any Kaggle data set (too picked over).</p>
+<p>I generally discourage sports and stock data projects. Most of those
+projects from students have been really boring (again, too picked over).
+But I have had one or two really strong ones, so this is not a hard no.
+Those projects covered less-popular sports, like professional ultimate
+Frisbee and college swimming.</p>
+<p>If a data set comes from a published journal article, I’ll only
+accept it if you can show me that you can show something new that the
+authors did not explore (like incorporating it with multiple journal
+article data sets), but this is a high bar.</p>
+<p><strong>3. Description of the Data Set</strong></p>
+<ul>
+<li>What is the source of the data? Try to establish who originally
+collected the data and for what purpose.</li>
+<li>How was the data collected? From whom? Over what time period?</li>
+<li>How many variables are in the data set?</li>
+<li>Which variables are categorical and which are quantitative?</li>
+<li>What variable would you use as your response variable?</li>
+<li>What variables do you initially think could serve as explanatory
+variables (may be both quantitative and categorical)?</li>
+</ul>
+</div>
+<div id="project-proposal-meeting" class="section level3">
+<h3>Project Proposal Meeting</h3>
+<p>As a group you will meet with me to discuss your project proposal. At
+that meeting we will discuss any adjustments to the project and finalize
+your proposal. You should provide me with a copy of the data set you
+intend to use with your project proposal.</p>
+</div>
+<div id="initial-exploratory-data-analysis-1" class="section level3">
+<h3>Initial Exploratory Data Analysis</h3>
+<p>Examine the data graphically and numerically to identify issues,
+examine the distributions of the associated variables, assess outliers
+or other extreme values, and propose potential remedies for issues
+encountered.</p>
+</div>
+<div id="initial-statistical-model" class="section level3">
+<h3>Initial Statistical Model</h3>
+<p>Build a preliminary model using your proposed response variable and
+at least three quantitative explanatory variables. Explore whether the
+assumptions of the model have been satisfied. Indicate any deficiencies
+in the model that you have discovered.</p>
+</div>
+<div id="revised-model" class="section level3">
+<h3>Revised Model</h3>
+<p>Extend your preliminary model incorporating any remedies necessary to
+address the deficiencies discovered in your initial model. Check your
+assumptions and modify the model if needed.</p>
+</div>
+<div id="final-presentation" class="section level3">
+<h3>Final Presentation</h3>
+<p>Poster session, in class. Each group will create a single one-page
+PowerPoint slide poster to summarize the project. The posters will be
+presented in class like a presentation at a professional meeting.</p>
+<p>The PowerPoint slide your group prepares should include:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Statement of the problem</strong>: Describe the question you
+investigated and any key issues surrounding it.</li>
+<li><strong>Data description</strong>: Describe the source of your data,
+how the data was originally collected, who collected it, and any issues
+you encountered.</li>
+<li><strong>Analyses</strong>: Describe the analyses you did. Be ready
+to explain why you believe these methods are justified.</li>
+<li><strong>Results</strong>: Present relevant descriptive statistics.
+Include tables or graphs that support your analyses (be judicious — too
+many tables and graphs hurt the clarity of your message).</li>
+<li><strong>Conclusions</strong>: Answer your question of interest.</li>
+<li><strong>Discussion</strong>: What implications do your results have?
+Does your conclusion hold for a wider population or just the data set
+you analyzed? What could be done to improve the study? What types of
+biases might exist?</li>
+</ol>
+</div>
+</div>
+<div id="tips-for-preparing-the-slide"
+class="section level2 callout-tip">
+<h2>Tips for Preparing the Slide</h2>
+<p>Strive to make the slide clear. Avoid unnecessary clutter, and don’t
+put too much information in any section.</p>
+</div>
+<div id="evaluation" class="section level2">
+<h2>Evaluation</h2>
+<p>Your project will be evaluated on the following:</p>
+<ul>
+<li><strong>Project Proposal</strong> — well-defined, clear problem
+statement, interesting</li>
+<li><strong>Data collection</strong> — appropriate to the problem</li>
+<li><strong>Data analysis</strong> — appropriate to the problem,
+conclusions substantiated by the data</li>
+<li><strong>Presentation</strong> — clear, relevant — did you answer the
+question of interest?</li>
+<li><strong>Participation</strong> — effort you invested in the
+group</li>
+</ul>
+<p>The final evaluation will be a combination of my assessments on each
+of the reports your group submits and on your poster presentation, your
+classmates’ assessments at the poster presentation, your individual
+evaluation of the project, your participation, and the other group
+members’ evaluation of your participation.</p>
+</div>
+<div id="stat-615-students" class="section level2">
+<h2>STAT-615 Students</h2>
+<p>STAT-615 students must also learn and apply a statistical method that
+is beyond the scope of the in-lecture component of this course. They
+should write-up a 1–2 page explanation of the results of applying this
+method to their data. Possible methods are:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a>
+— I would recommend using <a
+href="https://cran.r-project.org/web/packages/glmnet/index.html"><code>{glmnet}</code></a></li>
+<li><a
+href="https://en.wikipedia.org/wiki/Bayesian_linear_regression">Bayesian
+Regression</a> — I would recommend using <a
+href="https://cran.r-project.org/web/packages/brms/index.html"><code>{brms}</code></a></li>
+<li><a
+href="https://en.wikipedia.org/wiki/Principal_component_analysis">PCA</a></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
