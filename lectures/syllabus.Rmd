@@ -38,13 +38,15 @@ This course satisfies the AU Core Integrative Capstone Requirement for the Stati
 
 # Textbooks
 
-- **Required**: Applied Linear Statistical Models (Fifth Edition) by Kutner, Nachtsheim, Neter, and Li. They also released a book called "Applied Linear Regression Models (Fourth Edition)" which is just a subset of this book, and this is fine too. I will generally abbreviate this book as KNNL.
+- **Required**: Required: [Applied Linear Regression Models (4th Edition)](https://wrlc-amu.primo.exlibrisgroup.com/permalink/01WRLC_AMU/1g8hf8s/alma99146673233604102) **OR** [Applied Linear Statistical Models (Fifth Edition)](https://wrlc-amu.primo.exlibrisgroup.com/permalink/01WRLC_AMU/1g8hf8s/alma9978254993604102)
+  - Do **not** get both. One is a sub-book of the other.
+  - In the lecture notes, I abbeviate this book as "KNNL"
 
 - **Supplemental**: The **free** [Hands-on Programming with R](https://rstudio-education.github.io/hopr/) provides a crash course in the basics of the R programming language.
 
 - **Optional**: The **free** [Regression and Other Stories](https://users.aalto.fi/~ave/ROS.pdf) (ROS). Code and data for this book are available [here](https://avehtari.github.io/ROS-Examples/) as well. It's one of the best applied books I've read on applied regression analysis. The only issues are that the code they use is a little non-standard, and it is not rigorous enough for a Statistics program. But check it out!
 
-- **Optional**: [The Statistical Sleuth](http://www.statisticalsleuth.com/). This is the best non-mathematical treatment of basic Statistical analysis that exists. I use some of their datasets, and reference this book for best practices. If you do not remember basic statistical concepts, this is the best book you can get to review those concepts.
+- **Optional**: [The Statistical Sleuth](https://wrlc-amu.primo.exlibrisgroup.com/permalink/01WRLC_AMU/1g8hf8s/alma99132367533604102). This is the best non-mathematical treatment of basic Statistical analysis that exists. I use some of their datasets, and reference this book for best practices. If you do not remember basic statistical concepts, this is the best book you can get to review those concepts.
 
 - I will also provide you with supplemental PDF readings as required.
 
