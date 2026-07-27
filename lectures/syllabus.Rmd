@@ -144,11 +144,10 @@ The learning objective of this course is to give you the main concepts and a wor
 # Late Work Policy
 
 - All assignments must be submitted on the day they are due.
-- Homeworks will typically be due on Thursdays by end-of-day. 
 - Each student will have **two** three-day extensions, where you can turn in the assignment on Sunday by end-of-day. 
 - Please just let me know ahead of time that you will be using one of your two extensions. 
 - Please do **not** tell me why you need the extension. 
-- You cannot use an extension for elements of the final project. 
+- You cannot use an extension for elements of the final project or for exams.
 - Any homeworks not submitted by the due date will receive a grade of 0.
 
 # Incomplete Policy
