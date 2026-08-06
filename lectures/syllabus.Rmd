@@ -56,20 +56,20 @@ We will use the R computing language to complete assignments. R is free and may 
 
 # Assignments and Grading
 
-- Weekly homeworks: 30%
+- Weekly homeworks: 25%
   - These will be self-graded.
 - Participation: 15%
   - Show up to class
   - Answer questions in class
   - Work on in-class exercises
   - Stay off your phones, stay off social media, etc
-- First Midterm: 15%
+- First Midterm: 20%
   - In class, closed notes, closed book.
   - Covers simple linear regression
-- Second Midterm: 15%
+- Second Midterm: 20%
   - In class, closed notes, closed book.
   - Covers multiple linear regression. But you can't know this without knowing simple linear regression, so this second midterm is effectively cumulative.
-- Final Project: 25%
+- Final Project: 20%
 
 Usual grade cutoffs will be used:
 ```{r, echo = FALSE}
