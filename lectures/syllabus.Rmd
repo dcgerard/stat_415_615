@@ -128,7 +128,18 @@ Your final project grade will also be adjusted based on anonymous peer assessmen
     - Midterm 1 will be the week after we finish simple linear regression.
     - Midterm 2 will be the week after we finish multiple linear regression.
     
-# Course Learning Outcomes
+# Capstone Learning Outcomes
+
+![](./syllabus_capstone_banner.png){fig-alt="Capstone learning outcomes."}\ 
+
+
+1. Application: Build on prior knowledge, skills, or dispositions in a new context. 
+
+2. Synthesis: Identify and execute a significant project that addresses a substantive disciplinary or professional concern.  
+
+3. Reflection: Articulate the knowledge, skills, or dispositions gained during the student’s undergraduate education or used in the project.  
+
+# Additional Course Learning Outcomes
 
 The learning objective of this course is to give you the main concepts and a working knowledge of regression techniques that are routinely used to analyze different types of data. At the end of this course, you are expected to be able to:
 
@@ -162,7 +173,7 @@ The Associate Dean of the Academic Unit, with the concurrence of the instructor,
     
 # Sharing Course Content: 
 
-Students are not permitted to make visual or audio recordings (including livestreams) of lectures or any class-related content or use any type of recording device unless prior permission from the instructor is obtained and there are no objections from any student in the class. If permission is granted, only students registered in the course may use or share recordings and any electronic copies of course materials (e.g., PowerPoints, formulas, lecture notes, and any discussions – online or otherwise). Use is limited to educational purposes even after the end of the course. Exceptions will be made for students who present a signed Letter of Accommodation from the Academic Support and Access Center. Further details are available from the [ASAC website](https://www.american.edu/provost/academic-access/index.cfm).
+Students are not permitted to make visual or audio recordings (including livestreams) of lectures or any class-related content or use any type of recording device unless prior permission from the instructor is obtained and there are no objections from any student in the class. If permission is granted, only students registered in the course may use or share recordings and any electronic copies of course materials (e.g., PowerPoints, formulas, lecture notes, and any discussions – online or otherwise). Use is limited to educational purposes even after the end of the course. Exceptions will be made for students who present a signed Letter of Accommodation from the Office of Student Disability Support. Further details are available from the [OSDS website](https://www.american.edu/provost/disability-support/).
 
 # Academic Integrity Code
 
