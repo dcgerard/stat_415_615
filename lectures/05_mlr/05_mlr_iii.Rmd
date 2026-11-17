@@ -218,6 +218,28 @@ From the *Statistical Sleuth*:
 
 - Splines aren't good for interpretation, but they are good for flexibly controlling for a variable that you can't seem to get to behave via other transformations.
 
+-   Here is another example from Silverman (1985) giving acceleration (in g) vs milliseconds after impact of a simulated motorcycle accident:
+
+    ```{r}
+    data(mcycle, package = "MASS")
+    ggplot(mcycle, aes(x = times, y = accel)) +
+      geom_point()
+    ```
+
+-   The default for `geom_smooth()` doesn't work (you could change the bandwidth, though), but we can adjust the degrees of freedom to flexibly capture the relationship between time and acceleration.
+
+    ```{r}
+    #| message: false
+    ggplot(mcycle, aes(x = times, y = accel)) +
+      geom_point() +
+      geom_smooth(se = FALSE)
+    ggplot(mcycle, aes(x = times, y = accel)) +
+      geom_point() +
+      geom_smooth(method = lm, se = FALSE, formula = y ~ bs(x, df = 11))
+    ```
+
+
+
 # Categorical Variables
 
 ## Two classes

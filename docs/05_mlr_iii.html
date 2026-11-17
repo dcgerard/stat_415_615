@@ -11,11 +11,11 @@
 
 <meta name="author" content="David Gerard" />
 
-<meta name="date" content="2022-12-01" />
+<meta name="date" content="2026-11-17" />
 
 <title>MLR III: Special Predictors</title>
 
-<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.32/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -31,7 +31,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -346,7 +346,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">MLR III: Special Predictors</h1>
 <h4 class="author">David Gerard</h4>
-<h4 class="date">2022-12-01</h4>
+<h4 class="date">2026-11-17</h4>
 
 </div>
 
@@ -383,13 +383,13 @@ glimpse(muscle)</code></pre>
 <pre class="r"><code>ggplot(data = muscle, mapping = aes(x = age, y = mass)) +
   geom_point() +
   geom_smooth(se = FALSE)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-1.png" alt="" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>lm_musc &lt;- lm(mass ~ age, data = muscle)
 a_musc &lt;- augment(lm_musc)
 ggplot(data = a_musc, mapping = aes(x = .fitted, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0, lty = 2, col = 2)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-2-2.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>A quadratic regression model with one predictor variable is <span
 class="math display">\[
   Y_i = \beta_0 + \beta_1 X_i + \beta_{2}X_{i}^2 + \epsilon_i
@@ -506,7 +506,7 @@ show quadratic terms directly on the plot</p>
   geom_smooth(method = lm,
               formula = y ~ x + I(x^2),
               se = FALSE)</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-11-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="practical-considerations-for-using-quadratic-terms"
@@ -556,7 +556,7 @@ newdf$mass &lt;- predict(object = lm_mspline, newdata = newdf)
 ggplot() +
   geom_line(data = newdf, mapping = aes(x = age, y = mass)) +
   geom_point(data = muscle, mapping = aes(x = age, y = mass))</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-13-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Do <strong>not</strong> interpret the coefficient estimates and
 <span class="math inline">\(p\)</span>-values here</p>
 <pre class="r"><code>tidy(lm_mspline)</code></pre>
@@ -581,6 +581,25 @@ non-parameteric association exists.</p>
 <li><p>Splines aren’t good for interpretation, but they are good for
 flexibly controlling for a variable that you can’t seem to get to behave
 via other transformations.</p></li>
+<li><p>Here is another example from Silverman (1985) giving acceleration
+(in g) vs milliseconds after impact of a simulated motorcycle
+accident:</p>
+<pre class="r"><code>data(mcycle, package = &quot;MASS&quot;)
+ggplot(mcycle, aes(x = times, y = accel)) +
+  geom_point()</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-16-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
+<li><p>The default for <code>geom_smooth()</code> doesn’t work (you
+could change the bandwidth, though), but we can adjust the degrees of
+freedom to flexibly capture the relationship between time and
+acceleration.</p>
+<pre class="r"><code>ggplot(mcycle, aes(x = times, y = accel)) +
+  geom_point() +
+  geom_smooth(se = FALSE)</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-17-1.png" alt="" width="384" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(mcycle, aes(x = times, y = accel)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE, formula = y ~ bs(x, df = 11))</code></pre>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-17-2.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="categorical-variables" class="section level1">
@@ -648,7 +667,7 @@ instances.</p></li>
 the expected difference in months between mutual and stock companies
 that are about the same size.</p></li>
 <li><p>Let’s visualize this model</p>
-<p><img src="figs/cat_interp.png" width="150%" style="display: block; margin: auto;" /></p></li>
+<p><img src="figs/cat_interp.png" alt="" width="150%" style="display: block; margin: auto;" /></p></li>
 <li><p>In R, you fit this model by first converting the categorical
 variable into a <strong>factor</strong> with <code>parse_factor()</code>
 from the <code>{readr}</code> package. You specify the order of the
@@ -759,7 +778,7 @@ difference in city log-mpg between cars that are of the same type, but
 have 1 liter different engine displacement.</p></li>
 </ul></li>
 <li><p>We can visualize this model below:</p>
-<p><img src="figs/cat_interp3.png" width="825" style="display: block; margin: auto;" /></p></li>
+<p><img src="figs/cat_interp3.png" alt="" width="825" style="display: block; margin: auto;" /></p></li>
 <li><p>Of course, we would want to interpret these on the original
 scale.</p>
 <ul>
@@ -880,9 +899,9 @@ this is called an interaction of the <strong>interference</strong> or
 positive levels of <span class="math inline">\(X_1\)</span> or <span
 class="math inline">\(X_2\)</span>.</p></li>
 <li><p>Synergistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-30-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>Antagonistic:</p>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-29-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>If you include an interaction term, make sure that you include
 all lower-order terms. That is, <strong>Never</strong> fit a model like
 <span class="math display">\[
@@ -932,7 +951,7 @@ newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, wt = as_factor(round(wt, digits = 2)))
 ggplot(data = newdf, mapping = aes(x = drat, y = mpg, color = wt)) +
   geom_line()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-33-1.png" alt="" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## wt versus mpg at different levels of drat
 wt_seq &lt;- seq(min(mtcars$wt), max(mtcars$wt), length.out = 100)
 dr_seq &lt;- quantile(mtcars$drat, c(0.025, 0.25, 0.5, 0.75, 0.975))
@@ -941,7 +960,7 @@ newdf$mpg &lt;- predict(object = lm_mt, newdata = newdf)
 newdf &lt;- mutate(newdf, drat = as_factor(round(drat, digits = 2)))
 ggplot(data = newdf, mapping = aes(x = wt, y = mpg, color = drat)) +
   geom_line()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-31-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-33-2.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>So we could tell a client something like:</p>
 <ol style="list-style-type: decimal">
 <li>In general, higher weight tends to have lower fuel-mileage.</li>
@@ -954,7 +973,7 @@ ratios”</li>
 there are no cars with a rear-axle ratio of 3 and a weight of 2.</p>
 <pre class="r"><code>ggplot(data = mtcars, mapping = aes(x = wt, y = drat)) +
   geom_point()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-34-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 <div id="interactions-and-categorical-variables."
 class="section level2">
@@ -1016,7 +1035,7 @@ variable:</p>
   geom_point() +
   geom_smooth(method = lm, se = FALSE) +
   scale_y_log10()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-34-1.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-36-1.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 <li><p>To fit this in R, just make sure you have the reference level as
 you like via <code>parse_factor()</code> or <code>fct_relevel()</code>.
 Then use <code>lm()</code> the same way with interactions as before
@@ -1180,7 +1199,7 @@ newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, charge = as_factor(charge))
 ggplot(data = newdf, mapping = aes(x = temp, y = cycles, color = charge)) +
   geom_line()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-45-1.png" alt="" width="384" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Conditional effects plot for temperature
 temp_seq &lt;- unique(power$temp)
 charge_seq &lt;- seq(min(power$charge), max(power$charge), length.out = 200)
@@ -1192,7 +1211,7 @@ newdf$cycles &lt;- predict(object = lm_full, newdata = newdf)
 newdf &lt;- mutate(newdf, temp = as_factor(temp))
 ggplot(data = newdf, mapping = aes(x = charge, y = cycles, color = temp)) +
   geom_line()</code></pre>
-<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-43-2.png" width="384" style="display: block; margin: auto;" /></p></li>
+<p><img src="05_mlr_iii_files/figure-html/unnamed-chunk-45-2.png" alt="" width="384" style="display: block; margin: auto;" /></p></li>
 </ul>
 </div>
 <div id="exercise" class="section level1">
